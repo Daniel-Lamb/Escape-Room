@@ -1,0 +1,292 @@
+/* ============================================================
+   Blackmere Keep — animation library
+   Keyframes + utility classes usable inside room SVGs.
+   Room authors: apply these classes directly to SVG elements.
+   ============================================================ */
+
+/* ---------- generic entrances ---------- */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sceneEnter {
+  0%   { opacity: 0; transform: scale(1.045); filter: brightness(0.4) saturate(0.7); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); filter: brightness(1) saturate(1); }
+}
+
+@keyframes springIn {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ---------- fire & light ---------- */
+
+/* apply to an SVG flame shape; wobbles + stretches around its base */
+.torch-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flameDance 2.6s ease-in-out infinite;
+}
+.torch-flame.fast { animation-duration: 1.7s; }
+
+@keyframes flameDance {
+  0%   { transform: scaleY(1) scaleX(1) skewX(0deg); }
+  18%  { transform: scaleY(1.12) scaleX(0.94) skewX(-2.5deg); }
+  34%  { transform: scaleY(0.95) scaleX(1.05) skewX(2deg); }
+  52%  { transform: scaleY(1.08) scaleX(0.97) skewX(-1.5deg); }
+  70%  { transform: scaleY(0.98) scaleX(1.02) skewX(2.5deg); }
+  86%  { transform: scaleY(1.06) scaleX(0.96) skewX(-1deg); }
+  100% { transform: scaleY(1) scaleX(1) skewX(0deg); }
+}
+
+/* apply to a radial-gradient glow ellipse around light sources */
+.glow {
+  animation: glowPulse 3.2s ease-in-out infinite;
+}
+.glow.fast { animation-duration: 1.9s; }
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.75; }
+  35%      { opacity: 1; }
+  60%      { opacity: 0.62; }
+  80%      { opacity: 0.92; }
+}
+
+/* candle-like flicker for small lights */
+.flicker { animation: lightFlicker 4s steps(24) infinite; }
+
+@keyframes lightFlicker {
+  0%, 100% { opacity: 1; }
+  8%  { opacity: 0.82; }
+  12% { opacity: 0.96; }
+  27% { opacity: 0.78; }
+  33% { opacity: 1; }
+  51% { opacity: 0.86; }
+  58% { opacity: 0.99; }
+  74% { opacity: 0.8; }
+  82% { opacity: 0.95; }
+}
+
+/* moonbeam / godray — slow breathing opacity */
+.moonbeam { animation: moonPulse 9s ease-in-out infinite; }
+
+@keyframes moonPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.85; }
+}
+
+/* ---------- ambient motion ---------- */
+
+/* gentle vertical bob (hanging chains, keys, lanterns) */
+.float {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: floatBob 5s ease-in-out infinite;
+}
+
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+/* pendulum sway for hanging objects (origin = top of element) */
+.sway {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: swayPendulum 6s ease-in-out infinite;
+}
+.sway.slow { animation-duration: 9s; }
+
+@keyframes swayPendulum {
+  0%, 100% { transform: rotate(-2.4deg); }
+  50%      { transform: rotate(2.4deg); }
+}
+
+/* drifting fog band — pair with a wide translucent ellipse/rect */
+.fog {
+  animation: fogDrift 26s linear infinite alternate;
+}
+.fog.reverse { animation-direction: alternate-reverse; }
+
+@keyframes fogDrift {
+  from { transform: translateX(-60px); opacity: 0.5; }
+  50%  { opacity: 0.85; }
+  to   { transform: translateX(60px); opacity: 0.5; }
+}
+
+/* slow rotation (gears, astral charts). .spin-ccw reverses */
+.spin {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: spin360 24s linear infinite;
+}
+.spin.ccw { animation-direction: reverse; }
+.spin.slow { animation-duration: 60s; }
+
+@keyframes spin360 {
+  to { transform: rotate(360deg); }
+}
+
+/* water shimmer for moats/puddles */
+.shimmer { animation: waterShimmer 4.5s ease-in-out infinite; }
+
+@keyframes waterShimmer {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.7; }
+}
+
+/* subtle attention pulse for interactable set-dressing */
+.beckon {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: beckonPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes beckonPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+
+/* ---------- particles ---------- */
+
+@keyframes emberRise {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+  8%   { opacity: var(--peak, 0.85); }
+  60%  { opacity: calc(var(--peak, 0.85) * 0.6); }
+  100% { transform: translate(var(--driftX, 20px), calc(-1 * var(--rise, 70vh))) scale(0.4); opacity: 0; }
+}
+
+@keyframes dustFall {
+  0%   { transform: translateY(-10px); opacity: 0; }
+  15%  { opacity: 0.5; }
+  100% { transform: translateY(60px); opacity: 0; }
+}
+
+/* ---------- UI feedback ---------- */
+
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes bobHint {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
+}
+
+@keyframes critPulse {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 14px rgba(224, 82, 82, 0.4); }
+  50%      { transform: scale(1.06); text-shadow: 0 0 26px rgba(224, 82, 82, 0.8); }
+}
+
+@keyframes shakeX {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) translateX(0); }
+  15% { transform: translate(-50%, -50%) scale(1) translateX(-12px); }
+  30% { transform: translate(-50%, -50%) scale(1) translateX(10px); }
+  45% { transform: translate(-50%, -50%) scale(1) translateX(-8px); }
+  60% { transform: translate(-50%, -50%) scale(1) translateX(6px); }
+  75% { transform: translate(-50%, -50%) scale(1) translateX(-3px); }
+}
+
+/* shake for elements that are not centered modals */
+.shake-flat { animation: shakeFlat 0.45s both; }
+
+@keyframes shakeFlat {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes itemPop {
+  0%   { transform: scale(0.2) rotate(-14deg); opacity: 0; }
+  55%  { transform: scale(1.18) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes selectedPulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(232, 200, 90, 0.35), 0 0 18px rgba(232, 200, 90, 0.2); }
+  50%      { box-shadow: 0 0 0 3px rgba(232, 200, 90, 0.55), 0 0 30px rgba(232, 200, 90, 0.4); }
+}
+
+@keyframes dialTick {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes correctFlash {
+  0%   { border-color: rgba(123, 196, 127, 0.2); box-shadow: none; }
+  40%  { border-color: #7bc47f; box-shadow: 0 0 26px rgba(123, 196, 127, 0.5); }
+  100% { border-color: rgba(123, 196, 127, 0.55); box-shadow: 0 0 10px rgba(123, 196, 127, 0.2); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(0.97); }
+}
+
+@keyframes starTwinkle {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+
+@keyframes kickerGlow {
+  from { text-shadow: 0 0 8px rgba(255, 169, 77, 0.15); opacity: 0.8; }
+  to   { text-shadow: 0 0 22px rgba(255, 169, 77, 0.55); opacity: 1; }
+}
+
+/* success burst overlay used by engine on puzzle solve */
+.solve-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, rgba(232, 200, 90, 0.28) 0%, transparent 60%);
+  animation: solveBurst 1.1s var(--ease-out) both;
+}
+
+@keyframes solveBurst {
+  0%   { opacity: 0; transform: scale(0.6); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+/* door-unlock rumble applied to the scene wrap */
+.rumble { animation: rumble 0.7s linear both; }
+
+@keyframes rumble {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2px, 1px); }
+  20% { transform: translate(3px, -1px); }
+  30% { transform: translate(-3px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 1px); }
+  60% { transform: translate(3px, 1px); }
+  70% { transform: translate(-1px, -1px); }
+  80% { transform: translate(2px, 1px); }
+  90% { transform: translate(-1px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
