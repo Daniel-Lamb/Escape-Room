@@ -134,6 +134,10 @@ Puzzles must be fully re-openable: never assume the modal persists.
 
 ## Hotspot rules
 
+- **Gus's reserve zone (series rule): keep the TOP-LEFT ~220×250 scene units free of
+  hotspots.** Gus always docks top-left of the scene; narration always renders in its
+  own bar BELOW the scene (never overlaying it). Flavor art may extend into the zone,
+  but nothing clickable should.
 - 6–10 hotspots per room. Mix: puzzle-critical, clue-bearing, and 2–3 pure-flavor
   (atmosphere responses via `game.say`) — flavor spots make scenes feel alive.
 - Generous hit areas (min ~70×70 scene units). No pixel hunting: anything examinable

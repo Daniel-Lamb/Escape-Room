@@ -372,7 +372,7 @@ function tunnelSpots(state) {
   });
 
   spots.push({
-    id: 'back', x: 60, y: 80, w: 260, h: 700, label: 'The tunnel behind',
+    id: 'back', x: 60, y: 270, w: 260, h: 510, label: 'The tunnel behind',
     onInteract(game) {
       game.say('Back there: the keep, the rope, the morning shift. Ahead: water. It is not a difficult comparison.');
     },

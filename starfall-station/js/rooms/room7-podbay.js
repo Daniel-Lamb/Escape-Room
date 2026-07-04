@@ -172,7 +172,7 @@ function podSpots(state) {
   }
 
   spots.push({
-    id: 'window', x: 80, y: 140, w: 220, h: 320, label: 'The dark viewport',
+    id: 'window', x: 80, y: 255, w: 220, h: 205, label: 'The dark viewport',
     onInteract(game) {
       if (revealed || gone) {
         game.say('The reflection looks back: a maintenance chassis, drone-framed, one warm optic where you have been assuming eyes. It raises a hand when you do. Of course it does.');

@@ -331,11 +331,12 @@ function skipTyping() {
 function finishTyping() {
   typing = false;
   $('#message-card').classList.add('done');
-  // auto-dismiss so the card never permanently blocks scene hotspots beneath it
+  // narration lives in its own bar below the scene (never covers it);
+  // auto-advance after a comfortable read so the bar stays fresh
   if (hideHandle) clearTimeout(hideHandle);
   hideHandle = setTimeout(() => {
     if (!typing) nextMessage();
-  }, 5000);
+  }, 9000);
 }
 
 function stopTyping() {

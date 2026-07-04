@@ -186,7 +186,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'windows', x: 110, y: 110, w: 440, h: 460, label: 'The tall windows',
+      id: 'windows', x: 240, y: 130, w: 310, h: 440, label: 'The tall windows',
       onInteract(game) { game.say('The sky over the curtain wall is no longer black. It is the colour of a drawn blade, and it is getting paler while you stand here.'); },
     });
 

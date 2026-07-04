@@ -233,7 +233,7 @@ export default {
     });
 
     spots.push({
-      id: 'tally', x: 50, y: 190, w: 190, h: 220, label: 'Slate tally board',
+      id: 'tally', x: 60, y: 250, w: 180, h: 160, label: 'Slate tally board',
       onInteract(game) {
         const html = `<p>Chalk tallies, and one line pressed hard enough to score the slate:</p>
           <div class="parchment-note aged"><p>"First watch to the company of <strong>the tusked</strong>."</p></div>`;
