@@ -2,7 +2,7 @@
 // Puzzle: Edmund's verse grate — count crows (7), rats (4), chains (2),
 // set the three numeral rings to VII / IV / II.
 
-import { registerItems } from '../items.js';
+import { registerItems } from '../../../shared/js/items.js';
 
 registerItems({
   candle_stub: {

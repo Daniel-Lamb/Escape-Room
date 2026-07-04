@@ -1,10 +1,40 @@
-// Boot: title screen wiring, save detection, run lifecycle.
+// THE PILGRIM'S ROAD — boot & per-game configuration.
 
-import { hasSave, loadState, resetState, state } from './state.js';
-import { initEngine, startRun, teardown, retryCurrentRoom, game } from './engine.js';
+import { configureSave, hasSave, loadState, resetState } from '../../shared/js/state.js';
+import { initEngine, startRun, teardown, retryCurrentRoom, game } from '../../shared/js/engine.js';
+import { GUS } from './gus.js';
 import rooms from './rooms/index.js';
 
+configureSave('pilgrims-road-save-v1');
+
 const $ = (sel) => document.querySelector(sel);
+
+const CONFIG = {
+  gusForm: GUS,
+  journalTitle: "Pilgrim's Journal",
+  journalEmpty: 'Empty pages, waiting. Everything worth remembering — verses, rosters, recipes, and every carved sun you find — will be copied here the moment you examine it.',
+  collectiblesTitle: 'The Suns of the Road',
+  // default renderer (sun sketch) fits this game — no override needed
+  victory: {
+    title: 'Aurora',
+    heading: 'You Have Escaped',
+    story: `Black water closes over your head — then opens again into grey air and reeds.
+      You surface on the far bank of the mere as the first true light touches the towers of
+      Vayne Keep, Edmund's confession dry inside your shirt. The dawn that was meant to kill
+      you is the word that set you free.`,
+  },
+  defeat: {
+    title: 'Dawn',
+    heading: 'The Bell Tolls',
+    story: `Grey light spills through the arrow slits. Boots echo on stone — many of them,
+      and unhurried, because they know exactly where you are. Yet as they drag you past a cold
+      wall, a voice like wind through a visor whispers:
+      <em>"The road is still open, friend. Slip them. I shall be waiting."</em>`,
+    retryLabel: 'Rise Again (this chamber, 15:00)',
+    restartLabel: 'Restart from the Cell',
+  },
+  restartConfirm: 'Abandon this escape and begin again from the first cell? All progress will be lost.',
+};
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
@@ -30,6 +60,7 @@ function backToTitle() {
 }
 
 initEngine(rooms, {
+  config: CONFIG,
   onEnd(action) {
     teardown();
     if (action === 'restart') {

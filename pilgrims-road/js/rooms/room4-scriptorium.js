@@ -3,7 +3,7 @@
 // Puzzle: the Chronicle Cipher — 2:4, 5:1, 1:6, 7:3, 3:2 (line:word, first
 // letter) in "A Chronicle of the House of Vayne" -> N-O-R-T-H on the chest dials.
 
-import { registerItems } from '../items.js';
+import { registerItems } from '../../../shared/js/items.js';
 
 registerItems({
   still_key: {

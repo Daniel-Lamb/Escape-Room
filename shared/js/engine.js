@@ -2,14 +2,15 @@
 // inventory, timer, hints, transitions. Rooms interact ONLY through the
 // exported `game` object — see docs/ROOM_CONTRACT.md.
 
-import { state, saveState, resetState, TOTAL_SECONDS } from './state.js';
+import { state, saveState, resetState, getSaveKey, TOTAL_SECONDS } from './state.js';
 import * as audio from './audio.js';
 import { getItem, getCombo } from './items.js';
-import { initGus, openGusDialog } from './gus.js';
+import { initGus } from './gus-core.js';
 
 const $ = (sel) => document.querySelector(sel);
 
 let rooms = [];               // ordered room modules
+let cfg = null;               // per-game config passed to initEngine
 let currentRoom = null;
 let timerHandle = null;
 let emberHandle = null;
@@ -83,7 +84,9 @@ export const game = {
       void btn.offsetWidth;
       btn.classList.add('badge-pulse');
       toast(entry.category === 'sun'
-        ? `Sun-mark sketched in your journal: ${entry.sun.rays} rays — "${entry.sun.letter}"`
+        ? (cfg.collectibleToast
+            ? cfg.collectibleToast(entry)
+            : `Sun-mark sketched in your journal: ${entry.sun.rays} rays — "${entry.sun.letter}"`)
         : `Noted in your journal: ${entry.title}`);
     },
     has(id) { return state.journal.some(e => e.id === id); },
@@ -174,11 +177,23 @@ export const game = {
    BOOT / ROOM FLOW
    ============================================================ */
 
-export function initEngine(roomModules, { onEnd }) {
+// config: {
+//   gusForm,                        // the GUS object from the game's gus.js
+//   journalTitle, journalEmpty,     // journal modal title + empty-state text
+//   collectiblesTitle,              // journal section header for 'sun' entries
+//   renderCollectible(entry),       // card inner-html for a 'sun' entry
+//   collectibleToast(entry),        // toast text when a 'sun' entry is added
+//   victory: { title, heading, story },
+//   defeat:  { title, heading, story, retryLabel, restartLabel },
+//   restartConfirm,                 // text for the manual-restart dialog
+// }
+export function initEngine(roomModules, { onEnd, config }) {
   rooms = roomModules;
   onGameEnd = onEnd;
+  cfg = config || {};
 
   initGus({
+    form: cfg.gusForm,
     getRoom: () => currentRoom,
     getState: () => state,
     dialog: (opts) => game.dialog(opts),
@@ -483,16 +498,21 @@ function sunSketch(rays, letter) {
   </svg>`;
 }
 
+function defaultCollectibleCard(e) {
+  return `${sunSketch(e.sun.rays, e.sun.letter)}
+    <div class="journal-sun-cap">${e.sun.rays} rays &middot; ${e.title}</div>`;
+}
+
 function openJournal() {
   audio.playSfx('page');
   const suns = state.journal.filter(e => e.category === 'sun');
   const notes = state.journal.filter(e => e.category !== 'sun');
+  const renderCard = cfg.renderCollectible || defaultCollectibleCard;
 
   const sunsHtml = suns.length
-    ? `<div class="journal-section-title">The Suns of the Road</div>
+    ? `<div class="journal-section-title">${cfg.collectiblesTitle || 'The Suns of the Road'}</div>
        <div class="journal-suns">${suns.map(e =>
-         `<div class="journal-sun" title="${e.title}">${sunSketch(e.sun.rays, e.sun.letter)}
-          <div class="journal-sun-cap">${e.sun.rays} rays &middot; ${e.title}</div></div>`).join('')}</div>`
+         `<div class="journal-sun" title="${e.title}">${renderCard(e)}</div>`).join('')}</div>`
     : '';
 
   const notesHtml = notes.length
@@ -501,13 +521,12 @@ function openJournal() {
     : '';
 
   game.dialog({
-    title: "Pilgrim's Journal",
+    title: cfg.journalTitle || 'Journal',
     wide: true,
     html: (suns.length || notes.length)
       ? sunsHtml + notesHtml
-      : `<p style="font-style: italic; color: var(--text-dim);">Empty pages, waiting. Everything
-         worth remembering — verses, rosters, recipes, and every carved sun you find — will be
-         copied here the moment you examine it.</p>`,
+      : `<p style="font-style: italic; color: var(--text-dim);">${cfg.journalEmpty ||
+         'Empty pages, waiting. Everything worth remembering will be copied here the moment you examine it.'}</p>`,
   });
 }
 
@@ -596,15 +615,24 @@ function victory() {
 
   const t = Math.max(0, state.timeLeft);
   const m = Math.floor(t / 60), s = t % 60;
+
+  // record completion + best time for the series dashboard
+  try {
+    const key = `${getSaveKey()}-victory`;
+    const rec = JSON.parse(localStorage.getItem(key) || '{}');
+    rec.completions = (rec.completions || 0) + 1;
+    rec.bestTimeLeft = Math.max(rec.bestTimeLeft || 0, t);
+    rec.lastFinished = Date.now();
+    localStorage.setItem(key, JSON.stringify(rec));
+  } catch { /* storage unavailable */ }
+
+  const v = cfg.victory || {};
   game.dialog({
-    title: 'Aurora',
+    title: v.title || 'Freedom',
     html: `
       <div class="end-screen">
-        <h2>You Have Escaped</h2>
-        <p class="end-story">Black water closes over your head — then opens again into grey air
-        and reeds. You surface on the far bank of the mere as the first true light touches
-        the towers of Vayne Keep, Edmund's confession dry inside your shirt.
-        The dawn that was meant to kill you is the word that set you free.</p>
+        <h2>${v.heading || 'You Have Escaped'}</h2>
+        <p class="end-story">${v.story || ''}</p>
         <div class="end-stats">
           <div class="end-stat"><div class="num">${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</div><div class="lbl">Time to spare</div></div>
           <div class="end-stat"><div class="num">${state.totalHints}</div><div class="lbl">Hints used</div></div>
@@ -625,19 +653,17 @@ function defeat() {
   fader.classList.add('active');
   setTimeout(() => {
     fader.classList.remove('active');
+    const d = cfg.defeat || {};
     game.dialog({
-      title: 'Dawn',
+      title: d.title || 'Out of Time',
       html: `
         <div class="end-screen defeat">
-          <h2>The Bell Tolls</h2>
-          <p class="end-story">Grey light spills through the arrow slits. Boots echo on stone —
-          many of them, and unhurried, because they know exactly where you are.
-          Yet as they drag you past a cold wall, a voice like wind through a visor whispers:
-          <em>"The road is still open, friend. Slip them. I shall be waiting."</em></p>
+          <h2>${d.heading || 'Time Runs Out'}</h2>
+          <p class="end-story">${d.story || ''}</p>
         </div>`,
       buttons: [
-        { label: 'Rise Again (this chamber, 15:00)', class: 'btn-primary', onClick: () => { if (onGameEnd) onGameEnd('retry'); } },
-        { label: 'Restart from the Cell', class: 'btn-ghost', onClick: () => { if (onGameEnd) onGameEnd('restart'); } },
+        { label: d.retryLabel || 'Try Again (this chamber, 15:00)', class: 'btn-primary', onClick: () => { if (onGameEnd) onGameEnd('retry'); } },
+        { label: d.restartLabel || 'Restart from the Beginning', class: 'btn-ghost', onClick: () => { if (onGameEnd) onGameEnd('restart'); } },
         { label: 'Give In', class: 'btn-ghost', onClick: () => { if (onGameEnd) onGameEnd('title'); } },
       ],
     });
@@ -658,7 +684,7 @@ export function retryCurrentRoom() {
 function confirmRestart() {
   game.dialog({
     title: 'Start Over?',
-    html: '<p>Abandon this escape and begin again from the first cell? All progress will be lost.</p>',
+    html: `<p>${cfg.restartConfirm || 'Abandon this escape and begin again? All progress will be lost.'}</p>`,
     buttons: [
       { label: 'Keep Going', class: 'btn-ghost' },
       { label: 'Restart', class: 'btn-danger', onClick: () => { if (onGameEnd) onGameEnd('restart'); } },

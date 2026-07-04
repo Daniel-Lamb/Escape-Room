@@ -1,8 +1,12 @@
 // Central game state + persistence.
 // All mutable progress lives here so saving/loading is one JSON blob.
 
-const SAVE_KEY = 'pilgrims-road-save-v1';
+let SAVE_KEY = 'escape-room-save-v1';   // each game overrides via configureSave()
 const SAVE_VERSION = 1;
+
+// Called once by each game's main.js BEFORE any save/load operation.
+export function configureSave(key) { SAVE_KEY = key; }
+export function getSaveKey() { return SAVE_KEY; }
 
 export const TOTAL_SECONDS = 60 * 60;
 

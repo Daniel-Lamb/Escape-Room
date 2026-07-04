@@ -740,7 +740,7 @@ button { font-family: inherit; cursor: pointer; }
 #gus-dock svg { width: 100%; height: 100%; }
 
 #gus-dock::after {
-  content: "Ask Gus";
+  content: attr(data-label);
   position: absolute;
   left: 50%;
   bottom: calc(100% + 2px);

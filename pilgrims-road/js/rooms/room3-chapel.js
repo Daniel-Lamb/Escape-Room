@@ -2,7 +2,7 @@
 // Puzzle: the Lily Carillon — ring the bells C, E, A, D, B, C
 // (saints ordered by lilies held; the shepherd Cuthbert rings first AND last).
 
-import { registerItems } from '../items.js';
+import { registerItems } from '../../../shared/js/items.js';
 
 registerItems({
   silver_key: {

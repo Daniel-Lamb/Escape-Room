@@ -4,7 +4,7 @@
 // the dial's sun-arrow points clockwise) exactly 3 times; light the hearth;
 // bellows until the kettle sings ONCE, then draw off.
 
-import { registerItems, registerCombos } from '../items.js';
+import { registerItems, registerCombos } from '../../../shared/js/items.js';
 
 registerItems({
   recipe_left: {

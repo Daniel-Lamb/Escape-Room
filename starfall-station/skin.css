@@ -1,0 +1,112 @@
+/* ============================================================
+   Starfall Station — futurist skin over the shared engine CSS.
+   Overrides the medieval gold/torch palette with signal cyan,
+   swaps the serif for a clean grotesk, restyles found documents
+   as datapads, and turns the title castle into a planet horizon.
+   ============================================================ */
+
+:root {
+  --serif: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+  --gold: #2f9e97;
+  --gold-bright: #4fd8d0;
+  --torch: #4fd8d0;
+  --torch-deep: #2f9e97;
+  --parchment: #d7e8ff;
+  --ink: #0c1622;
+  --bg-2: #101724;
+  --stone-1: #2b3547;
+  --stone-2: #1c2431;
+}
+
+/* title screen: planet horizon instead of castle silhouette */
+#title-screen {
+  background:
+    radial-gradient(1100px 650px at 50% 130%, #12304d 0%, transparent 62%),
+    radial-gradient(900px 500px at 82% -10%, #10233a 0%, transparent 55%),
+    linear-gradient(180deg, #04060f 0%, #0a1524 60%, #0d1a2c 100%);
+}
+#title-bg {
+  background: radial-gradient(150px 150px at 74% 20%, rgba(143, 240, 234, 0.16) 0%, transparent 70%);
+}
+#title-bg::after {
+  clip-path: none;
+  left: 50%;
+  bottom: -46vh;
+  width: 160vw;
+  height: 70vh;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(79, 216, 208, 0.25) 0%, transparent 12%),
+    radial-gradient(ellipse at 45% 18%, #2c5687 0%, #16304f 45%, #0a1a2e 80%);
+  box-shadow: 0 -14px 60px rgba(79, 216, 208, 0.22);
+}
+
+#game-title {
+  background: linear-gradient(180deg, #e8fbf9 0%, #4fd8d0 48%, #1b6f6a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  filter: drop-shadow(0 6px 30px rgba(79, 216, 208, 0.28));
+}
+
+.title-kicker { letter-spacing: 0.5em; }
+.title-foot { letter-spacing: 0.22em; }
+
+/* HUD: tighter, more instrument-like */
+#room-title { letter-spacing: 0.18em; font-weight: 600; }
+#timer { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.05em; }
+#room-badge { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.14em; }
+
+/* embers become drifting static motes (cyan, smaller, slower) */
+.ember {
+  background: radial-gradient(circle, #d7fffc 0%, #4fd8d0 55%, transparent 75%);
+}
+
+/* narration reads as a suit HUD feed, not a storybook */
+#message-text { font-style: normal; font-size: 15.5px; letter-spacing: 0.02em; }
+#message-card { border-color: rgba(79, 216, 208, 0.3); }
+
+/* datapad: the futurist counterpart of .parchment-note */
+.datapad {
+  position: relative;
+  margin: 6px auto;
+  padding: 20px 24px;
+  max-width: 500px;
+  background: linear-gradient(170deg, #0d1a26 0%, #0a141f 100%);
+  color: #bfe8e4;
+  border: 1px solid rgba(79, 216, 208, 0.4);
+  border-left: 4px solid #4fd8d0;
+  border-radius: 8px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), inset 0 0 34px rgba(79, 216, 208, 0.05);
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 14px;
+  line-height: 1.75;
+  animation: fadeUp 0.5s var(--ease-out) both;
+}
+.datapad .pad-title {
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  margin-bottom: 10px;
+  color: #4fd8d0;
+}
+.datapad .pad-warn { color: #ffb45e; }
+.datapad .pad-bad { color: #ff8f8f; }
+.datapad.corrupt { border-left-color: #e05252; }
+.datapad.corrupt .pad-title { color: #ff8f8f; }
+
+/* memory-shard journal cards get a faint pulse */
+.journal-sun { border-color: rgba(79, 216, 208, 0.3); }
+
+/* puzzle dials read as instruments */
+.dial-face { font-family: Consolas, "Cascadia Mono", monospace; }
+
+/* Gus's dock glow: warm drone-light instead of ghost-light */
+#gus-dock { filter: drop-shadow(0 0 14px rgba(79, 216, 208, 0.4)); }
+#gus-dock:hover { filter: drop-shadow(0 0 24px rgba(79, 216, 208, 0.7)); }
+#gus-dock::after { color: #bfe8e4; border-color: rgba(79, 216, 208, 0.45); }
+.gus-portrait { filter: drop-shadow(0 0 18px rgba(79, 216, 208, 0.35)); }
+.gus-speech { color: #bfe8e4; }
+.gus-tier.next { border-color: rgba(79, 216, 208, 0.4); }

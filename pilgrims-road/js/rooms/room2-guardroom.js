@@ -3,7 +3,7 @@
 // the companies stand watch: Boar -> Serpent -> Wolf -> Stag -> Falcon.
 // Then: pry the concealed door behind the cabinet with the iron crow.
 
-import { registerItems, registerCombos } from '../items.js';
+import { registerItems, registerCombos } from '../../../shared/js/items.js';
 
 registerItems({
   iron_crow: {

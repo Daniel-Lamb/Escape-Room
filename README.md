@@ -8,20 +8,22 @@ immortal companion: **Gus**, who appears in every room in a form to match the th
 
 ## 🎮 Room Select
 
-> This table is the collection's source of truth. It will become a playable **dashboard**
-> (a room-select hub at the repo root) once a second escape room lands — see
-> [Roadmap](#-roadmap--the-dashboard) below.
+**The dashboard is live:** [**daniel-lamb.github.io/Escape-Room**](https://daniel-lamb.github.io/Escape-Room/)
+— pick your room, see your progress and best times (saved locally per game).
 
 | # | Escape Room | Theme | Gus's Form | Length | Difficulty | Status | Play |
 |---|-------------|-------|------------|--------|------------|--------|------|
-| **I** | **The Pilgrim's Road** | Medieval castle | 👻 Sir Gus, ghost-knight | ~60 min | Hard but fair | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/) |
-| II | *Untitled* | Animal kingdom | 🐒 Gus the monkey | ~60 min | — | 🗺️ Planned | — |
-| III | *Untitled* | *(open slot)* | 🤖 ? | — | — | 💤 Someday | — |
+| **I** | **The Pilgrim's Road** | Medieval castle | 👻 Sir Gus, ghost-knight | ~60 min | Hard but fair | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/pilgrims-road/) |
+| **II** | **Starfall Station** | Futurist / sci-fi | 🤖 GS-1 "Gus", maintenance drone | ~60 min | Intricate · **twist ending** | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/starfall-station/) |
+| III | *The Wild Court* | Animal kingdom | 🐒 Gus the monkey | ~60 min | — | 🗺️ In design | — |
+| IV | *Untitled* | *(open slot)* | ? | — | — | 💤 Someday | — |
 
 <!--
 Adding a room to this table:
 | **N** | **Title** | Theme | Gus's form | ~length | difficulty | status emoji | play link |
-Statuses: ✅ Live · 🚧 In progress · 🗺️ Planned · 💤 Someday
+Statuses: ✅ Live · 🚧 In progress · 🗺️ In design · 💤 Someday
+Then: new /<room-slug>/ folder (copy a game's index.html + skin.css + js/gus.js form +
+js/main.js config + js/rooms/*), and a new card in the root index.html dashboard.
 -->
 
 ---
@@ -57,30 +59,46 @@ of carved suns for whoever followed. **Seven chambers. One hour. Mark each sun a
   and every sound synthesized live with WebAudio. **Zero asset files.**
 - Autosaves; if dawn catches you, *Rise again* retries the chamber with progress intact.
 
-**Play**: [daniel-lamb.github.io/Escape-Room](https://daniel-lamb.github.io/Escape-Room/) —
-or locally:
+**Play**: [daniel-lamb.github.io/Escape-Room/pilgrims-road](https://daniel-lamb.github.io/Escape-Room/pilgrims-road/) —
+or locally from the repo root:
 
 ```bash
-python -m http.server 4173   # then open http://localhost:4173
+python -m http.server 4173   # dashboard at http://localhost:4173
 ```
 
 ---
 
-## 🗺️ Roadmap — the dashboard
+## 🛰️ Room II — Starfall Station *(live)*
 
-When escape room **II** lands, the repo reorganizes into a hub-and-games layout, and the
-Room Select table above becomes an actual clickable dashboard at the root URL:
+You wake from cryo on an evacuated orbital station, sixty minutes before its decaying
+orbit hits atmosphere. The crew is gone. The AI core is empty. The scale in the med bay
+thinks you weigh 212 kilograms, and every reflective surface on the station has
+"glare." **Seven decks. One hour. And a truth waiting at the escape pod.**
+
+- **7 new puzzle mechanics** (none shared with Room I): conservation-law observation,
+  pipe-flow routing, UV-reveal cross-referencing, logic gates, symbol substitution,
+  constrained resource balancing — and a finale that reassembles the six **memory
+  shards** you collected into a single word.
+- **A fair-play twist ending** foreshadowed by eight independent clues from Deck 1
+  onward. No spoilers here; the walkthrough has them all.
+- Gus is a **floating maintenance drone** this time (`starfall-station/js/gus.js`) —
+  same name, same tiered hints, new chassis, and a bigger part in the story than he
+  lets on.
+- Futurist skin over the same shared engine: signal-cyan palette, datapad documents,
+  monospace instruments, planet-below-the-viewport dread.
+
+## 🏗️ Repo layout (hub-and-games)
 
 ```
-/index.html          ← the dashboard: pick your escape room (art, status, best times)
-/shared/             ← the engine: engine.js, state.js, items.js, audio.js, css/
-/pilgrims-road/      ← Room I  (this game, moved intact)
-/<room-two>/         ← Room II (new rooms/*.js modules + its own gus.js form)
+/index.html          ← the DASHBOARD: room select, per-game status & best times
+/shared/             ← the engine: engine.js, state.js, items.js, audio.js, gus-core.js, css/
+/pilgrims-road/      ← Room I  — medieval  (index.html, js/gus.js form, js/rooms/*)
+/starfall-station/   ← Room II — futurist  (index.html, skin.css, js/gus.js form, js/rooms/*)
 ```
 
-Planned dashboard features: room cards with theme art and Gus's form for each, per-room
-completion/best-time pulled from localStorage, and a locked "next room" teaser.
-Until then, the root URL plays Room I directly.
+Adding Room III = a new game folder (shell + skin + Gus form + room modules + boot
+config) plus one card on the dashboard. The engine, hint tiers, journal, timer, and
+save system come free.
 
 ---
 
@@ -88,10 +106,12 @@ Until then, the root URL plays Room I directly.
 
 | Doc | What's in it |
 |---|---|
-| [docs/BUILD.md](docs/BUILD.md) | **How this was built** — engine architecture, Gus system, fairness gates, and the player progression (difficulty curve, item chain, the six suns) |
-| [docs/DESIGN.md](docs/DESIGN.md) | Full design document — story, every puzzle spec with deduction-chain proofs of solvability |
-| [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) | How to author a new room against the engine (start here for Room II) |
-| [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) | ⚠️ Total spoilers — every solution |
+| [docs/BUILD.md](docs/BUILD.md) | **How Room I was built** — engine architecture, Gus system, fairness gates, player progression (difficulty curve, item chain, the six suns) |
+| [docs/DESIGN.md](docs/DESIGN.md) | Room I design — story, every puzzle spec with deduction-chain proofs |
+| [docs/DESIGN-STARFALL.md](docs/DESIGN-STARFALL.md) | Room II design — the twist and its eight foreshadows, memory shards, all seven deck specs |
+| [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) | How to author a new room against the engine (start here for Room III) |
+| [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) | ⚠️ Room I spoilers — every solution |
+| [docs/WALKTHROUGH-STARFALL.md](docs/WALKTHROUGH-STARFALL.md) | ⚠️ Room II spoilers — every solution *and the ending* |
 
 ## 🧱 Tech
 

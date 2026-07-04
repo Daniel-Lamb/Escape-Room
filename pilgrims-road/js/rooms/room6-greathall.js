@@ -6,7 +6,7 @@
 // Unique fix: A x2, B x1, C x2 in any order. Invariant o1-o2+o3-o4 ≡ 0 (mod 4)
 // means no reachable state is unsolvable.
 
-import { registerItems } from '../items.js';
+import { registerItems } from '../../../shared/js/items.js';
 
 registerItems({
   crank_handle: {
