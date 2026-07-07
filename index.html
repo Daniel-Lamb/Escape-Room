@@ -94,6 +94,8 @@
     }
     .card.medieval:not(.locked):hover { border-color: rgba(201,162,39,0.55); }
     .card.scifi:not(.locked):hover { border-color: rgba(79,216,208,0.55); }
+    .card.roman:not(.locked):hover { border-color: rgba(240,168,90,0.55); }
+    .card:nth-child(4) { animation-delay: 0.36s; }
 
     .card-art { position: relative; height: 190px; overflow: hidden; }
     .card-art svg { width: 100%; height: 100%; display: block; }
@@ -106,6 +108,7 @@
     .card h2 { font-size: 26px; letter-spacing: 0.03em; margin-bottom: 8px; }
     .medieval h2 { color: var(--gold-bright); }
     .scifi h2 { color: var(--cyan-bright); }
+    .roman h2 { color: #f0a85a; }
     .card-tag { font-style: italic; color: var(--text-dim); font-size: 14.5px; line-height: 1.55; margin-bottom: 14px; flex: 1; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
@@ -139,6 +142,12 @@
       border: 1px solid rgba(79,216,208,0.6);
     }
     .scifi .enter-btn:hover { background: rgba(79,216,208,0.26); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(79,216,208,0.18); }
+    .roman .enter-btn {
+      color: #f0a85a;
+      background: linear-gradient(180deg, rgba(224,123,42,0.22), rgba(224,123,42,0.08));
+      border: 1px solid rgba(240,168,90,0.6);
+    }
+    .roman .enter-btn:hover { background: rgba(224,123,42,0.28); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(240,168,90,0.18); }
 
     .card.locked { opacity: 0.65; }
     .card.locked .card-art { filter: grayscale(0.7) brightness(0.6); }
@@ -312,6 +321,82 @@
         </div>
       </div>
 
+      <!-- ══════════ ROOM IV — THE GATE OF LIFE ══════════ -->
+      <div class="card roman">
+        <div class="card-art">
+          <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="d_rsky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#150c07"/><stop offset="1" stop-color="#31190e"/>
+              </linearGradient>
+              <radialGradient id="d_rtorch" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="rgba(255,169,77,0.85)"/><stop offset="1" stop-color="transparent"/>
+              </radialGradient>
+              <linearGradient id="d_rsand" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#5a4426"/><stop offset="1" stop-color="#241609"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="190" fill="url(#d_rsky)"/>
+            <!-- dusk haze over the city -->
+            <ellipse cx="200" cy="185" rx="260" ry="60" fill="rgba(255,169,77,0.07)"/>
+            <!-- the Colosseum: broken-ring silhouette, taller on the left -->
+            <path d="M0 190 L0 60 L235 60 L235 78 Q300 84 345 104 L345 190 Z" fill="#0d0704"/>
+            <!-- top-tier arches (tall section) -->
+            <g fill="#31190e">
+              <path d="M18 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              <path d="M58 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              <path d="M98 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              <path d="M138 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              <path d="M178 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+            </g>
+            <!-- lower-tier arches, two torch-lit -->
+            <g fill="#241207">
+              <path d="M18 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+              <path d="M58 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+              <path d="M98 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+              <path d="M138 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+              <path d="M178 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+              <path d="M218 152 a11 14 0 0 1 22 0 v38 h-22 z"/>
+              <path d="M258 158 a11 14 0 0 1 22 0 v32 h-22 z"/>
+              <path d="M298 166 a11 14 0 0 1 22 0 v24 h-22 z"/>
+            </g>
+            <path class="flame" d="M69 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+            <ellipse cx="69" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+            <path class="flame" d="M149 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+            <ellipse cx="149" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+            <!-- attic inscription line -->
+            <rect x="0" y="72" width="235" height="3" fill="#241207"/>
+            <!-- sand apron -->
+            <path d="M300 190 Q360 174 400 178 L400 190 Z" fill="url(#d_rsand)"/>
+            <!-- Gus the lion, sitting apart from the queue -->
+            <g class="bob">
+              <ellipse cx="344" cy="172" rx="15" ry="10" fill="#0d0704"/>
+              <circle cx="355" cy="156" r="10" fill="#0d0704"/>
+              <circle cx="355" cy="156" r="6" fill="#1c0f06"/>
+              <circle cx="352.5" cy="155" r="1.4" fill="#ffcf6a"/><circle cx="358" cy="155" r="1.4" fill="#ffcf6a"/>
+              <path d="M329 176 q-8 -2 -6 -10" stroke="#0d0704" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- drifting arena dust -->
+            <ellipse class="drift" cx="120" cy="182" rx="130" ry="10" fill="rgba(232,207,150,0.05)"/>
+            <ellipse class="drift" cx="320" cy="186" rx="110" ry="9" fill="rgba(232,207,150,0.045)" style="animation-delay: -5s"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-num">Room IV &middot; Ancient Rome</div>
+          <h2>The Gate of Life</h2>
+          <p class="card-tag">Condemned to the midday games beneath the Colosseum, you find
+            six bone tokens left by a man the guards say a lion ate. The lion disagrees.</p>
+          <div class="chips">
+            <span class="chip">7 chambers</span>
+            <span class="chip">~60 min</span>
+            <span class="chip">Hard but fair</span>
+            <span class="chip gus">🦁 Gus, the Emperor's lion</span>
+          </div>
+          <div class="status" id="status-gateoflife"><span class="fresh">Unplayed — the carcer waits.</span></div>
+          <a class="enter-btn" href="gate-of-life/">Enter the Hypogeum</a>
+        </div>
+      </div>
+
     </div>
 
     <footer>
@@ -341,6 +426,7 @@
     }
     status('pilgrims-road-save-v1', 'status-pilgrims', 'Unplayed — the cell waits.');
     status('starfall-station-save-v1', 'status-starfall', 'Unplayed — the cryo bay hums.');
-  </script>
+    status('gate-of-life-save-v1', 'status-gateoflife', 'Unplayed — the carcer waits.');
+</script>
 </body>
 </html>
