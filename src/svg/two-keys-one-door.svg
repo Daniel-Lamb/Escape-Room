@@ -1,0 +1,20 @@
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_duo1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_duoG" cx="0.5" cy="0.6" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.45)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_duo1)"/>
+              <ellipse cx="200" cy="150" rx="180" ry="46" fill="url(#d_duoG)"/>
+              <g fill="none" stroke="#ff9a3d" stroke-width="4" stroke-linecap="round">
+                <circle cx="140" cy="70" r="15"/><path d="M140 85 v34 M140 96 l-18 12 M140 96 l18 12"/>
+                <circle cx="260" cy="70" r="15"/><path d="M260 85 v34 M260 96 l-18 12 M260 96 l18 12"/>
+              </g>
+              <line x1="158" y1="80" x2="242" y2="80" stroke="rgba(255,183,101,0.4)" stroke-width="2" stroke-dasharray="4 5"/>
+              <g class="bob">
+                <rect x="184" y="66" width="32" height="26" rx="5" fill="#ffb765"/>
+                <path d="M190 66 v-9 a10 10 0 0 1 20 0 v9" fill="none" stroke="#ffb765" stroke-width="4"/>
+                <circle cx="200" cy="79" r="3.4" fill="#2a1207"/>
+              </g>
+              <circle class="drift" cx="90" cy="46" r="3.5" fill="#ffe0b0" opacity="0.7"/>
+              <circle class="drift" cx="320" cy="60" r="3" fill="#ffe0b0" opacity="0.6" style="animation-delay:-4s"/>
+            </svg>

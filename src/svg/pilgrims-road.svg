@@ -1,0 +1,28 @@
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_msky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0b0e1a"/><stop offset="1" stop-color="#1d1830"/>
+                </linearGradient>
+                <radialGradient id="d_moon" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(232,224,200,0.9)"/><stop offset="0.5" stop-color="rgba(232,224,200,0.2)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <radialGradient id="d_torch" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,169,77,0.8)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_msky)"/>
+              <circle cx="320" cy="42" r="34" fill="url(#d_moon)"/>
+              <circle cx="320" cy="42" r="15" fill="#e8e0c8" opacity="0.9"/>
+              <path d="M0 190 L0 120 L28 120 L28 96 L40 96 L40 120 L66 120 L66 74
+                       L80 74 L80 62 L92 62 L92 74 L106 74 L106 120 L150 120 L150 52
+                       L162 52 L166 34 L176 26 L186 34 L190 52 L202 52 L202 120
+                       L246 120 L246 84 L258 84 L258 70 L270 70 L270 84 L282 84 L282 120
+                       L330 120 L330 100 L344 100 L344 120 L370 120 L370 132 L400 132 L400 190 Z"
+                    fill="#080611"/>
+              <rect x="172" y="62" width="8" height="13" rx="3" fill="#ffa94d" opacity="0.9"/>
+              <ellipse cx="176" cy="68" rx="26" ry="20" fill="url(#d_torch)" opacity="0.5"/>
+              <path class="flame" d="M263 60 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="263" cy="70" rx="18" ry="14" fill="url(#d_torch)" opacity="0.6"/>
+              <ellipse class="drift" cx="120" cy="176" rx="150" ry="18" fill="rgba(154,196,255,0.06)"/>
+              <ellipse class="drift" cx="320" cy="184" rx="130" ry="16" fill="rgba(154,196,255,0.05)" style="animation-delay: -4s"/>
+            </svg>

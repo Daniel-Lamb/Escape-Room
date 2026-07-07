@@ -1,0 +1,40 @@
+---
+import type { Room } from '../data/rooms';
+import RoomArt from './RoomArt.astro';
+
+interface Props {
+  room: Room;
+}
+const { room } = Astro.props;
+const concept = room.status === 'concept';
+---
+
+<article class:list={['card', 'reveal', { concept }]} data-mode={room.mode}>
+  {concept && <span class="concept-badge">Coming soon</span>}
+  <div class="card-art">
+    <RoomArt art={room.art} />
+  </div>
+  <div class="card-body">
+    <div class="card-num">{room.kicker}</div>
+    <h3>{room.title}</h3>
+    <p class="card-tag">{room.blurb}</p>
+    <div class="chips">
+      {room.chips.map((chip) => <span class="chip">{chip}</span>)}
+      <span class="chip gus">{room.gusChip}</span>
+    </div>
+    {
+      concept ? (
+        <div class="soon-btn">🔒 In development</div>
+      ) : (
+        <>
+          <div class="status" id={`status-${room.id}`}>
+            <span class="fresh">{room.freshText}</span>
+          </div>
+          <a class="enter-btn" href={room.href}>
+            {room.cta} <span class="arw">→</span>
+          </a>
+        </>
+      )
+    }
+  </div>
+</article>

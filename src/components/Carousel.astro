@@ -1,0 +1,16 @@
+---
+// Server-rendered carousel shell. Cards are passed as an Astro slot, so they
+// render as direct flex children of .track (an Astro <slot/> adds no wrapper —
+// unlike passing children into a framework island, which wraps them in
+// <astro-slot> and would break the .track > .card sizing). Behavior lives in
+// the bundled script in index.astro, which finds every .carousel on the page.
+---
+
+<div class="carousel">
+  <button class="car-btn car-prev" aria-label="Scroll left" hidden>&#8249;</button>
+  <div class="viewport">
+    <div class="track"><slot /></div>
+  </div>
+  <button class="car-btn car-next" aria-label="Scroll right" hidden>&#8250;</button>
+  <div class="car-dots"></div>
+</div>

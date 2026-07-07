@@ -1,0 +1,19 @@
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_duo2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_duoG2" cx="0.5" cy="0.6" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.4)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_duo2)"/>
+              <ellipse cx="200" cy="150" rx="180" ry="46" fill="url(#d_duoG2)"/>
+              <!-- one figure holds a map, the other walks a maze -->
+              <g fill="none" stroke="#ff9a3d" stroke-width="4" stroke-linecap="round">
+                <circle cx="120" cy="68" r="15"/><path d="M120 83 v30 M120 92 l-16 10 M120 92 l16 10"/>
+                <circle cx="288" cy="68" r="15"/><path d="M288 83 v30 M288 92 l-16 10 M288 92 l16 10"/>
+              </g>
+              <rect x="98" y="96" width="30" height="22" rx="2" fill="#ffce9a" transform="rotate(-8 113 107)"/>
+              <path d="M103 104 h20 M103 110 h16" stroke="#a3541f" stroke-width="1.6" transform="rotate(-8 113 107)"/>
+              <g stroke="#ffb765" stroke-width="3" fill="none" opacity="0.85">
+                <path d="M250 118 h44 v-14 h-30 v-14 h30 v-14"/>
+              </g>
+              <circle class="drift" cx="200" cy="44" r="3.5" fill="#ffe0b0" opacity="0.7"/>
+            </svg>

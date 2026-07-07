@@ -1,0 +1,48 @@
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_rsky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#150c07"/><stop offset="1" stop-color="#31190e"/>
+                </linearGradient>
+                <radialGradient id="d_rtorch" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,169,77,0.85)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <linearGradient id="d_rsand" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#5a4426"/><stop offset="1" stop-color="#241609"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_rsky)"/>
+              <ellipse cx="200" cy="185" rx="260" ry="60" fill="rgba(255,169,77,0.07)"/>
+              <path d="M0 190 L0 60 L235 60 L235 78 Q300 84 345 104 L345 190 Z" fill="#0d0704"/>
+              <g fill="#31190e">
+                <path d="M18 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M58 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M98 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M138 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M178 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              </g>
+              <g fill="#241207">
+                <path d="M18 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M58 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M98 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M138 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M178 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M218 152 a11 14 0 0 1 22 0 v38 h-22 z"/>
+                <path d="M258 158 a11 14 0 0 1 22 0 v32 h-22 z"/>
+                <path d="M298 166 a11 14 0 0 1 22 0 v24 h-22 z"/>
+              </g>
+              <path class="flame" d="M69 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="69" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+              <path class="flame" d="M149 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="149" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+              <rect x="0" y="72" width="235" height="3" fill="#241207"/>
+              <path d="M300 190 Q360 174 400 178 L400 190 Z" fill="url(#d_rsand)"/>
+              <g class="bob">
+                <ellipse cx="344" cy="172" rx="15" ry="10" fill="#0d0704"/>
+                <circle cx="355" cy="156" r="10" fill="#0d0704"/>
+                <circle cx="355" cy="156" r="6" fill="#1c0f06"/>
+                <circle cx="352.5" cy="155" r="1.4" fill="#ffcf6a"/><circle cx="358" cy="155" r="1.4" fill="#ffcf6a"/>
+                <path d="M329 176 q-8 -2 -6 -10" stroke="#0d0704" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </g>
+              <ellipse class="drift" cx="120" cy="182" rx="130" ry="10" fill="rgba(232,207,150,0.05)"/>
+              <ellipse class="drift" cx="320" cy="186" rx="110" ry="9" fill="rgba(232,207,150,0.045)" style="animation-delay: -5s"/>
+            </svg>

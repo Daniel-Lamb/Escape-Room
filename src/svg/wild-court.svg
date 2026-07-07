@@ -1,0 +1,32 @@
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_jsky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0a1208"/><stop offset="1" stop-color="#14240f"/>
+                </linearGradient>
+                <radialGradient id="d_jshaft" cx="0.5" cy="0" r="1">
+                  <stop offset="0" stop-color="rgba(255,224,138,0.35)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <radialGradient id="d_jfly" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,224,138,0.9)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_jsky)"/>
+              <polygon points="150,0 260,0 320,190 210,190" fill="url(#d_jshaft)" opacity="0.5"/>
+              <path d="M110 190 L110 130 L135 130 L135 100 L160 100 L160 72 L185 72 L185 52 L215 52 L215 72 L240 72 L240 100 L265 100 L265 130 L290 130 L290 190 Z"
+                    fill="#0c150a"/>
+              <path d="M185 190 L185 120 L215 120 L215 190" fill="#060b05"/>
+              <path d="M0 190 Q60 90 90 190 M310 190 Q360 70 400 150" stroke="#0f1c0b" stroke-width="26" fill="none"/>
+              <path d="M40 0 q6 60 -8 100 M370 0 q-8 50 4 90 M120 0 q4 30 -4 56" stroke="#12200d" stroke-width="8" fill="none" stroke-linecap="round"/>
+              <circle cx="52" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/><circle cx="64" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/>
+              <circle cx="348" cy="96" r="2" fill="#ffe08a" opacity="0.8"/><circle cx="357" cy="96" r="2" fill="#ffe08a" opacity="0.8"/>
+              <g class="bob">
+                <circle cx="200" cy="96" r="11" fill="#d1a53f"/>
+                <circle cx="200" cy="98" r="6.5" fill="#4a3626"/>
+                <circle cx="197.5" cy="96.5" r="1.3" fill="#ffe9b0"/><circle cx="202.5" cy="96.5" r="1.3" fill="#ffe9b0"/>
+                <path d="M209 104 q14 2 14 -12 q0 -8 -7 -8" stroke="#d1a53f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                <path d="M193 106 q7 4 14 0 l-1 3 q-6 3 -12 0 z" fill="#3f7a37"/>
+              </g>
+              <circle class="drift" cx="120" cy="60" r="5" fill="url(#d_jfly)"/>
+              <circle class="drift" cx="300" cy="140" r="4" fill="url(#d_jfly)" style="animation-delay: -3s"/>
+              <circle class="drift" cx="250" cy="40" r="4.5" fill="url(#d_jfly)" style="animation-delay: -6s"/>
+            </svg>

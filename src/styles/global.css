@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Expose the escape-room palette + motion tokens to Tailwind so pasted
+   shadcn / 21st.dev components can speak the same language (text-o-500,
+   ease-spring, etc.). The verbatim dashboard styles keep their own :root
+   custom properties in dashboard.css; these mirror the load-bearing values. */
+@theme {
+  --color-bg-0: #0d0704;
+  --color-bg-1: #150b05;
+  --color-o-600: #e2620d;
+  --color-o-500: #ff7a18;
+  --color-o-400: #ff9a3d;
+  --color-o-300: #ffb765;
+  --color-o-200: #ffce9a;
+  --color-amber: #ffd9a0;
+  --color-ink: #f7ece0;
+  --color-dim: #c39a78;
+  --color-dim-2: #9a7458;
+
+  --font-serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

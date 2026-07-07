@@ -1,0 +1,22 @@
+---
+// Inlines a room's hand-authored SVG (src/svg/<art>.svg) so the shared theme's
+// animation classes (.flame, .drift, .bob, .ringspin) and the card hover-scale
+// apply to it. The SVGs are trusted, first-party static assets.
+const svgs = import.meta.glob<string>('../svg/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+interface Props {
+  art: string;
+}
+const { art } = Astro.props;
+const markup = svgs[`../svg/${art}.svg`];
+
+if (!markup) {
+  throw new Error(`RoomArt: no SVG found for art "${art}" (expected src/svg/${art}.svg)`);
+}
+---
+
+<Fragment set:html={markup} />
