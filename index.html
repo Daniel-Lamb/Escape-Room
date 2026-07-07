@@ -94,6 +94,7 @@
     }
     .card.medieval:not(.locked):hover { border-color: rgba(201,162,39,0.55); }
     .card.scifi:not(.locked):hover { border-color: rgba(79,216,208,0.55); }
+    .card.jungle:not(.locked):hover { border-color: rgba(156,224,138,0.55); }
     .card.roman:not(.locked):hover { border-color: rgba(240,168,90,0.55); }
     .card:nth-child(4) { animation-delay: 0.36s; }
 
@@ -108,6 +109,7 @@
     .card h2 { font-size: 26px; letter-spacing: 0.03em; margin-bottom: 8px; }
     .medieval h2 { color: var(--gold-bright); }
     .scifi h2 { color: var(--cyan-bright); }
+    .jungle h2 { color: #9ce08a; }
     .roman h2 { color: #f0a85a; }
     .card-tag { font-style: italic; color: var(--text-dim); font-size: 14.5px; line-height: 1.55; margin-bottom: 14px; flex: 1; }
 
@@ -142,6 +144,12 @@
       border: 1px solid rgba(79,216,208,0.6);
     }
     .scifi .enter-btn:hover { background: rgba(79,216,208,0.26); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(79,216,208,0.18); }
+    .jungle .enter-btn {
+      color: #9ce08a;
+      background: linear-gradient(180deg, rgba(90,165,82,0.22), rgba(90,165,82,0.08));
+      border: 1px solid rgba(156,224,138,0.6);
+    }
+    .jungle .enter-btn:hover { background: rgba(90,165,82,0.28); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(156,224,138,0.18); }
     .roman .enter-btn {
       color: #f0a85a;
       background: linear-gradient(180deg, rgba(224,123,42,0.22), rgba(224,123,42,0.08));
@@ -288,36 +296,62 @@
         </div>
       </div>
 
-      <!-- ══════════ ROOM III — LOCKED ══════════ -->
-      <div class="card locked">
+      <!-- ══════════ ROOM III — THE WILD COURT ══════════ -->
+      <div class="card jungle">
         <div class="card-art">
           <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <defs>
               <linearGradient id="d_jsky" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#0a1208"/><stop offset="1" stop-color="#14240f"/>
               </linearGradient>
+              <radialGradient id="d_jshaft" cx="0.5" cy="0" r="1">
+                <stop offset="0" stop-color="rgba(255,224,138,0.35)"/><stop offset="1" stop-color="transparent"/>
+              </radialGradient>
+              <radialGradient id="d_jfly" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="rgba(255,224,138,0.9)"/><stop offset="1" stop-color="transparent"/>
+              </radialGradient>
             </defs>
             <rect width="400" height="190" fill="url(#d_jsky)"/>
-            <path d="M0 190 Q60 90 90 190 M70 190 Q130 60 170 190 M150 190 Q220 80 260 190 M240 190 Q310 50 360 190 M330 190 Q380 110 400 190"
-                  stroke="#0f1c0b" stroke-width="26" fill="none"/>
-            <circle cx="205" cy="70" r="26" fill="#1c2f14"/>
-            <circle cx="196" cy="64" r="4" fill="#7bc47f" opacity="0.7"/>
-            <circle cx="214" cy="64" r="4" fill="#7bc47f" opacity="0.7"/>
-            <path d="M196 80 Q205 88 214 80" stroke="#7bc47f" stroke-width="2.5" fill="none" opacity="0.7"/>
-            <text x="200" y="150" text-anchor="middle" font-size="44" opacity="0.65">🔒</text>
+            <!-- late sun shaft through the canopy -->
+            <polygon points="150,0 260,0 320,190 210,190" fill="url(#d_jshaft)" opacity="0.5"/>
+            <!-- stepped temple, root-swallowed -->
+            <path d="M110 190 L110 130 L135 130 L135 100 L160 100 L160 72 L185 72 L185 52 L215 52 L215 72 L240 72 L240 100 L265 100 L265 130 L290 130 L290 190 Z"
+                  fill="#0c150a"/>
+            <path d="M185 190 L185 120 L215 120 L215 190" fill="#060b05"/>
+            <!-- hanging vines + fronds -->
+            <path d="M0 190 Q60 90 90 190 M310 190 Q360 70 400 150" stroke="#0f1c0b" stroke-width="26" fill="none"/>
+            <path d="M40 0 q6 60 -8 100 M370 0 q-8 50 4 90 M120 0 q4 30 -4 56" stroke="#12200d" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <!-- watching eye-glints in the dark -->
+            <circle cx="52" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/><circle cx="64" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/>
+            <circle cx="348" cy="96" r="2" fill="#ffe08a" opacity="0.8"/><circle cx="357" cy="96" r="2" fill="#ffe08a" opacity="0.8"/>
+            <!-- Gus on the temple steps, tail curled -->
+            <g class="bob">
+              <circle cx="200" cy="96" r="11" fill="#d1a53f"/>
+              <circle cx="200" cy="98" r="6.5" fill="#4a3626"/>
+              <circle cx="197.5" cy="96.5" r="1.3" fill="#ffe9b0"/><circle cx="202.5" cy="96.5" r="1.3" fill="#ffe9b0"/>
+              <path d="M209 104 q14 2 14 -12 q0 -8 -7 -8" stroke="#d1a53f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M193 106 q7 4 14 0 l-1 3 q-6 3 -12 0 z" fill="#3f7a37"/>
+            </g>
+            <!-- fireflies -->
+            <circle class="drift" cx="120" cy="60" r="5" fill="url(#d_jfly)"/>
+            <circle class="drift" cx="300" cy="140" r="4" fill="url(#d_jfly)" style="animation-delay: -3s"/>
+            <circle class="drift" cx="250" cy="40" r="4.5" fill="url(#d_jfly)" style="animation-delay: -6s"/>
           </svg>
         </div>
         <div class="card-body">
           <div class="card-num">Room III &middot; Animal Kingdom</div>
-          <h2 style="color: #9db98a;">The Wild Court</h2>
-          <p class="card-tag">Somewhere in a jungle that has learned to keep secrets, a certain
-            companion is growing a tail. In design.</p>
+          <h2>The Wild Court</h2>
+          <p class="card-tag">You fell into a jungle that appears on no map — because the
+            tribunal that lives there summons its own witnesses. Seven trials to nightfall,
+            and your advocate has a tail.</p>
           <div class="chips">
-            <span class="chip">?? chambers</span>
-            <span class="chip gus">🐒 Gus the monkey</span>
+            <span class="chip">7 trials</span>
+            <span class="chip">~60 min</span>
+            <span class="chip">Verdict twist</span>
+            <span class="chip gus">🐒 Gus, golden tamarin advocate</span>
           </div>
-          <div class="status"><span class="fresh">In design</span></div>
-          <span class="locked-btn">🔒 Not yet open</span>
+          <div class="status" id="status-wildcourt"><span class="fresh">Unplayed — the Court is in session.</span></div>
+          <a class="enter-btn" href="wild-court/">Enter the Green</a>
         </div>
       </div>
 
@@ -426,6 +460,7 @@
     }
     status('pilgrims-road-save-v1', 'status-pilgrims', 'Unplayed — the cell waits.');
     status('starfall-station-save-v1', 'status-starfall', 'Unplayed — the cryo bay hums.');
+    status('wild-court-save-v1', 'status-wildcourt', 'Unplayed — the Court is in session.');
     status('gate-of-life-save-v1', 'status-gateoflife', 'Unplayed — the carcer waits.');
 </script>
 </body>

@@ -15,7 +15,7 @@ immortal companion: **Gus**, who appears in every room in a form to match the th
 |---|-------------|-------|------------|--------|------------|--------|------|
 | **I** | **The Pilgrim's Road** | Medieval castle | 👻 Sir Gus, ghost-knight | ~60 min | Hard but fair | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/pilgrims-road/) |
 | **II** | **Starfall Station** | Futurist / sci-fi | 🤖 GS-1 "Gus", maintenance drone | ~60 min | Intricate · **twist ending** | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/starfall-station/) |
-| III | *The Wild Court* | Animal kingdom | 🐒 Gus the monkey | ~60 min | — | 🗺️ In design | — |
+| **III** | **The Wild Court** | Jungle / animal kingdom | 🐒 Gus, golden tamarin advocate | ~60 min | Intricate · **verdict twist** | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/wild-court/) |
 | **IV** | **The Gate of Life** | Ancient Rome / the Colosseum | 🦁 Gus, the Emperor's lion | ~60 min | Hard but fair | ✅ **Live** | [**▶ Play**](https://daniel-lamb.github.io/Escape-Room/gate-of-life/) |
 | V | *Untitled* | *(open slot)* | ? | — | — | 💤 Someday | — |
 
@@ -88,6 +88,28 @@ thinks you weigh 212 kilograms, and every reflective surface on the station has
 - Futurist skin over the same shared engine: signal-cyan palette, datapad documents,
   monospace instruments, planet-below-the-viewport dread.
 
+## 🌿 Room III — The Wild Court *(live)*
+
+You are Marlowe Reyes, contract surveyor for a timber concession, mapping a valley that
+appears on no chart. The ground opens. You come to inside a root-swallowed temple where
+the animals hold court, and a golden tamarin in a tiny woven collar introduces himself
+as **your advocate** — and means it, literally. **Seven trials. One hour to nightfall.
+And the verdict wants the one thing you came here to make.**
+
+- **7 new puzzle mechanics** (none shared with Rooms I–II): negative-evidence track
+  reading, a predator/prey river-crossing, territory **border surgery** on a bark map,
+  food-web assembly from carved remains, mirror-symmetry mosaic completion, a
+  counterfeit-tithe weighing under a two-answer budget — and a finale that orders your
+  six **court tokens** by a food chain you proved three trials earlier to spell the word
+  that shelters every clan.
+- **A fair-play verdict twist** — the stakes are in Gus's first sentence, journaled eight
+  ways, and earnable mid-game by a sharp-eyed player. The sinkhole was never an accident.
+- Gus is a **golden tamarin, advocate for the accused** (`wild-court/js/gus.js`) — same
+  name, same tiered counsel, new fur, and this time his little woven collar is on the
+  line too.
+- Jungle skin over the same shared engine: canopy light-shafts, firefly motes,
+  leaf-tablet documents, a temple the roots never gave back.
+
 ## 🏛️ Room IV — The Gate of Life *(live)*
 
 You are Aulus Pollio, architect of the Colosseum's underworks, condemned on a false
@@ -120,6 +142,7 @@ games. And the one word the crowd shouts when a life is to be spared.**
 /shared/             ← the engine: engine.js, state.js, items.js, audio.js, gus-core.js, css/
 /pilgrims-road/      ← Room I  — medieval  (index.html, js/gus.js form, js/rooms/*)
 /starfall-station/   ← Room II — futurist  (index.html, skin.css, js/gus.js form, js/rooms/*)
+/wild-court/         ← Room III — jungle    (index.html, skin.css, js/gus.js form, js/rooms/*)
 /gate-of-life/       ← Room IV — Rome      (index.html, skin.css, js/gus.js form, js/rooms/*)
 ```
 
@@ -136,10 +159,12 @@ save system come free.
 | [docs/BUILD.md](docs/BUILD.md) | **How Room I was built** — engine architecture, Gus system, fairness gates, player progression (difficulty curve, item chain, the six suns) |
 | [docs/DESIGN.md](docs/DESIGN.md) | Room I design — story, every puzzle spec with deduction-chain proofs |
 | [docs/DESIGN-STARFALL.md](docs/DESIGN-STARFALL.md) | Room II design — the twist and its eight foreshadows, memory shards, all seven deck specs |
+| [docs/DESIGN-WILDCOURT.md](docs/DESIGN-WILDCOURT.md) | Room III design — the verdict twist, court tokens, all seven trial specs (post-adversarial-review revision) |
 | [docs/DESIGN-GATEOFLIFE.md](docs/DESIGN-GATEOFLIFE.md) | Room IV design — the Felix/Gus story, bone tesserae, all seven chamber specs |
 | [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) | How to author a new room against the engine |
 | [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) | ⚠️ Room I spoilers — every solution |
 | [docs/WALKTHROUGH-STARFALL.md](docs/WALKTHROUGH-STARFALL.md) | ⚠️ Room II spoilers — every solution *and the ending* |
+| [docs/WALKTHROUGH-WILDCOURT.md](docs/WALKTHROUGH-WILDCOURT.md) | ⚠️ Room III spoilers — every solution *and the verdict* |
 | [docs/WALKTHROUGH-GATEOFLIFE.md](docs/WALKTHROUGH-GATEOFLIFE.md) | ⚠️ Room IV spoilers — every solution *and what's in the alcove* |
 
 ## 🧱 Tech

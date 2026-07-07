@@ -1,0 +1,121 @@
+/* ============================================================
+   The Wild Court — jungle skin over the shared engine CSS.
+   Overrides the medieval gold/torch palette with canopy greens
+   and firefly warmth, restyles found documents as leaf-tablets,
+   and turns the title castle into a root-swallowed temple.
+   ============================================================ */
+
+:root {
+  --gold: #5aa552;
+  --gold-bright: #9ce08a;
+  --torch: #ffe08a;
+  --torch-deep: #d1a53f;
+  --parchment: #e4f0d0;
+  --ink: #101c10;
+  --bg-2: #0e1a10;
+  --stone-1: #2e3a2c;
+  --stone-2: #1c2718;
+}
+
+/* title screen: night canopy instead of castle sky */
+#title-screen {
+  background:
+    radial-gradient(1200px 700px at 50% 120%, #14240f 0%, transparent 60%),
+    radial-gradient(900px 500px at 80% -10%, #0e1c12 0%, transparent 55%),
+    linear-gradient(180deg, #050904 0%, #0a1208 55%, #0d1a10 100%);
+}
+
+/* the moon-glow becomes a shaft of late sun through leaves */
+#title-bg {
+  background:
+    radial-gradient(160px 160px at 70% 18%, rgba(255, 224, 138, 0.2) 0%, rgba(255, 224, 138, 0.05) 40%, transparent 70%),
+    linear-gradient(112deg, transparent 46%, rgba(156, 224, 138, 0.07) 50%, transparent 56%);
+}
+
+/* stepped temple silhouette, half-swallowed by two great trees */
+#title-bg::after {
+  background: linear-gradient(180deg, #081008 0%, #040804 100%);
+  clip-path: polygon(
+    0% 100%, 0% 74%, 3% 70%, 5% 42%, 8% 38%, 10% 66%, 13% 74%,
+    22% 74%, 22% 64%, 26% 64%, 26% 54%, 30% 54%, 30% 44%, 34% 44%,
+    34% 34%, 40% 34%, 40% 24%, 47% 24%, 47% 16%, 50% 12%, 53% 16%,
+    53% 24%, 60% 24%, 60% 34%, 66% 34%, 66% 44%, 70% 44%, 70% 54%,
+    74% 54%, 74% 64%, 78% 64%, 78% 74%, 87% 74%, 90% 62%, 92% 36%,
+    95% 32%, 97% 58%, 100% 70%, 100% 100%
+  );
+}
+
+/* stars become fireflies: warmer, lower, lazier */
+#title-stars {
+  background-image:
+    radial-gradient(2px 2px at 12% 58%, rgba(255, 224, 138, 0.9), transparent),
+    radial-gradient(1.5px 1.5px at 28% 74%, rgba(255, 224, 138, 0.6), transparent),
+    radial-gradient(2px 2px at 41% 52%, rgba(255, 240, 180, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 55% 68%, rgba(255, 224, 138, 0.55), transparent),
+    radial-gradient(2px 2px at 63% 48%, rgba(255, 240, 180, 0.85), transparent),
+    radial-gradient(1.5px 1.5px at 84% 65%, rgba(255, 224, 138, 0.6), transparent),
+    radial-gradient(1.8px 1.8px at 91% 48%, rgba(255, 240, 180, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 7% 34%, rgba(255, 224, 138, 0.5), transparent);
+  animation-duration: 3.5s;
+}
+
+#game-title {
+  background: linear-gradient(180deg, #eaf7d8 0%, #9ce08a 48%, #3f7a37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 6px 30px rgba(156, 224, 138, 0.25));
+}
+
+/* embers become fireflies in-game too */
+.ember {
+  background: radial-gradient(circle, #fff6d8 0%, #ffe08a 55%, transparent 75%);
+}
+
+/* narration reads as a field-journal hand */
+#message-card { border-color: rgba(156, 224, 138, 0.28); }
+
+/* leaf-tablet: the jungle counterpart of .parchment-note / .datapad */
+.leaf-tablet {
+  position: relative;
+  margin: 6px auto;
+  padding: 20px 24px;
+  max-width: 500px;
+  background: linear-gradient(168deg, #eaf2d4 0%, #d8e6bc 100%);
+  color: #22321c;
+  border: 1px solid #9fb37e;
+  border-left: 5px solid #5aa552;
+  border-radius: 16px 5px 16px 5px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(90, 165, 82, 0.10);
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  font-size: 15px;
+  line-height: 1.75;
+  animation: fadeUp 0.5s var(--ease-out) both;
+}
+.leaf-tablet .leaf-title {
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #3f7a37;
+}
+.leaf-tablet .leaf-warn { color: #a3541f; font-weight: 600; }
+.leaf-tablet em { color: #405537; }
+.leaf-tablet.carved {
+  background: linear-gradient(168deg, #3a4632 0%, #2c3626 100%);
+  color: #d8e6bc;
+  border-color: #4a5a40;
+  border-left-color: #d1a53f;
+}
+.leaf-tablet.carved .leaf-title { color: #ffe08a; }
+
+/* court-token journal cards get bark warmth */
+.journal-sun { border-color: rgba(209, 165, 63, 0.35); }
+
+/* Gus's dock glow: warm firefly-light instead of ghost-light */
+#gus-dock { filter: drop-shadow(0 0 14px rgba(255, 224, 138, 0.4)); }
+#gus-dock:hover { filter: drop-shadow(0 0 24px rgba(255, 224, 138, 0.7)); }
+#gus-dock::after { color: #e4f0d0; border-color: rgba(156, 224, 138, 0.45); }
+.gus-portrait { filter: drop-shadow(0 0 18px rgba(255, 224, 138, 0.35)); }
+.gus-speech { color: #e4f0d0; }
+.gus-tier.next { border-color: rgba(156, 224, 138, 0.4); }
