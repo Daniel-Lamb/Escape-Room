@@ -3,435 +3,796 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Escape Rooms — Room Select</title>
-  <meta name="description" content="A collection of hour-long browser escape rooms. Pick your room; Gus will meet you inside." />
+  <title>Escape Rooms — Choose Your Door</title>
+  <meta name="description" content="A collection of hour-long browser escape rooms — solo, two-player, and group. Pick your room; Gus will meet you inside." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>" />
   <style>
+    @property --beam { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
     :root {
-      --bg-0: #070912;
-      --bg-1: #0b0e1a;
-      --gold: #c9a227;
-      --gold-bright: #e8c85a;
-      --cyan: #4fd8d0;
-      --cyan-bright: #8ff0ea;
-      --text: #d8d3c8;
-      --text-dim: #8b8878;
+      --bg-0: #0d0704;
+      --bg-1: #150b05;
+      --o-600: #e2620d;
+      --o-500: #ff7a18;
+      --o-400: #ff9a3d;
+      --o-300: #ffb765;
+      --o-200: #ffce9a;
+      --amber: #ffd9a0;
+      --text: #f7ece0;
+      --dim: #c39a78;
+      --dim-2: #9a7458;
       --serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
       --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     html, body {
       min-height: 100%;
-      background:
-        radial-gradient(1100px 600px at 20% -10%, #141a33 0%, transparent 55%),
-        radial-gradient(900px 550px at 85% 110%, #1a1430 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, #0a0714);
+      background: var(--bg-0);
       color: var(--text);
       font-family: var(--serif);
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    /* starfield */
-    body::before {
-      content: "";
-      position: fixed; inset: 0;
-      pointer-events: none;
-      background-image:
-        radial-gradient(1.5px 1.5px at 11% 16%, rgba(255,255,255,0.7), transparent),
-        radial-gradient(1px 1px at 31% 8%, rgba(255,255,255,0.45), transparent),
-        radial-gradient(1.4px 1.4px at 47% 22%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 66% 12%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1.6px 1.6px at 82% 26%, rgba(255,255,255,0.65), transparent),
-        radial-gradient(1px 1px at 92% 7%, rgba(255,255,255,0.4), transparent),
-        radial-gradient(1.2px 1.2px at 22% 84%, rgba(255,255,255,0.35), transparent),
-        radial-gradient(1px 1px at 74% 90%, rgba(255,255,255,0.3), transparent);
-      animation: twinkle 6s ease-in-out infinite alternate;
-    }
-    @keyframes twinkle { from { opacity: 0.5; } to { opacity: 1; } }
 
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 60px 24px 80px;
-      position: relative;
+    /* ---------- animated aurora + vignette background ---------- */
+    .bg {
+      position: fixed; inset: 0; z-index: -3; pointer-events: none;
+      background:
+        radial-gradient(1200px 700px at 18% -8%, #3a1a08 0%, transparent 55%),
+        radial-gradient(1000px 650px at 88% 8%, #431f06 0%, transparent 52%),
+        radial-gradient(1100px 800px at 50% 120%, #2a1206 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 55%, #0a0503);
     }
-    header { text-align: center; margin-bottom: 54px; animation: fadeUp 0.9s var(--ease-out) both; }
+    .bg::after {
+      content: ""; position: absolute; inset: -20%;
+      background:
+        radial-gradient(600px 400px at 30% 40%, rgba(255,122,24,0.12), transparent 60%),
+        radial-gradient(700px 460px at 72% 62%, rgba(226,98,13,0.10), transparent 62%);
+      animation: aurora 22s ease-in-out infinite alternate;
+      filter: blur(20px);
+    }
+    @keyframes aurora {
+      0%   { transform: translate3d(-3%, -2%, 0) scale(1.05); opacity: 0.8; }
+      50%  { transform: translate3d(4%, 3%, 0) scale(1.15); opacity: 1; }
+      100% { transform: translate3d(-2%, 4%, 0) scale(1.08); opacity: 0.85; }
+    }
+    .bg-vignette {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background: radial-gradient(120% 100% at 50% 30%, transparent 55%, rgba(6,3,1,0.75) 100%);
+    }
+    /* drifting embers */
+    #embers { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    .ember {
+      position: absolute; bottom: -14px;
+      width: var(--sz, 4px); height: var(--sz, 4px); border-radius: 50%;
+      background: radial-gradient(circle, #ffe0b0 0%, var(--o-500) 55%, transparent 72%);
+      opacity: 0;
+      animation: emberRise var(--dur, 9s) linear var(--delay, 0s) infinite;
+    }
+    @keyframes emberRise {
+      0%   { transform: translate(0, 0) scale(0.7); opacity: 0; }
+      12%  { opacity: var(--peak, 0.6); }
+      88%  { opacity: var(--peak, 0.6); }
+      100% { transform: translate(var(--dx, 0), calc(-1 * var(--rise, 80vh))) scale(1.1); opacity: 0; }
+    }
+
+    .wrap { max-width: 1140px; margin: 0 auto; padding: 64px 24px 90px; position: relative; }
+
+    /* ---------- hero ---------- */
+    header { text-align: center; margin-bottom: 30px; }
     .kicker {
       font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase;
-      color: var(--text-dim); margin-bottom: 16px;
+      color: var(--o-300); margin-bottom: 18px;
+      opacity: 0; animation: fadeUp 0.8s var(--ease-out) 0.05s both;
     }
     h1 {
-      font-size: clamp(44px, 7vw, 76px);
-      letter-spacing: 0.05em; line-height: 1;
-      background: linear-gradient(180deg, #f4e9c8 0%, var(--gold-bright) 45%, #8a6d1c 100%);
+      font-size: clamp(48px, 8vw, 92px);
+      letter-spacing: 0.03em; line-height: 0.98; font-weight: 600;
+      background: linear-gradient(100deg, var(--o-200) 0%, var(--o-500) 30%, var(--amber) 50%, var(--o-500) 70%, var(--o-200) 100%);
+      background-size: 220% auto;
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      filter: drop-shadow(0 6px 28px rgba(201,162,39,0.22));
+      filter: drop-shadow(0 8px 34px rgba(255,122,24,0.28));
+      animation: shimmer 7s linear infinite, fadeUp 0.9s var(--ease-out) 0.12s both;
     }
-    .sub { margin-top: 16px; font-style: italic; color: var(--text-dim); font-size: 17px; }
-    .sub b { color: var(--text); }
+    @keyframes shimmer { to { background-position: 220% center; } }
+    .sub {
+      margin-top: 18px; font-style: italic; color: var(--dim); font-size: clamp(15px, 2vw, 18px);
+      opacity: 0; animation: fadeUp 0.9s var(--ease-out) 0.22s both;
+    }
+    .sub b { color: var(--amber); font-style: normal; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 26px;
+    /* ---------- stat tickers ---------- */
+    .stats {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 14px;
+      margin: 34px auto 8px;
+      opacity: 0; animation: fadeUp 0.9s var(--ease-out) 0.32s both;
     }
+    .stat {
+      min-width: 108px; padding: 14px 20px; border-radius: 14px;
+      background: linear-gradient(168deg, rgba(40,22,10,0.7), rgba(22,12,6,0.8));
+      border: 1px solid rgba(255,150,70,0.16);
+    }
+    .stat-num {
+      display: block; font-size: 30px; font-variant-numeric: tabular-nums;
+      color: var(--amber); line-height: 1; letter-spacing: 0.02em;
+    }
+    .stat-num .suf { font-size: 17px; color: var(--o-300); }
+    .stat-label {
+      display: block; margin-top: 7px; font-size: 10.5px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--dim-2);
+    }
+
+    /* ---------- sticky segmented filter ---------- */
+    .seg-wrap {
+      position: sticky; top: 12px; z-index: 40;
+      display: flex; justify-content: center; margin: 30px 0 6px;
+    }
+    .seg {
+      position: relative; display: inline-flex; padding: 5px; gap: 2px;
+      border-radius: 999px;
+      background: rgba(24,13,6,0.72); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,150,70,0.22);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+    }
+    .seg-ind {
+      position: absolute; top: 5px; bottom: 5px; left: 0; width: 0;
+      border-radius: 999px; z-index: 0;
+      background: linear-gradient(180deg, var(--o-400), var(--o-600));
+      box-shadow: 0 6px 20px rgba(255,122,24,0.45);
+      transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring);
+    }
+    .seg-btn {
+      position: relative; z-index: 1; border: none; background: transparent; cursor: pointer;
+      font-family: var(--serif); font-size: 14.5px; letter-spacing: 0.05em;
+      color: var(--dim); padding: 9px 20px; border-radius: 999px;
+      transition: color 0.3s;
+    }
+    .seg-btn:hover { color: var(--amber); }
+    .seg-btn.active { color: #1c0d04; font-weight: 600; }
+
+    /* ---------- mode sections ---------- */
+    .mode { margin-top: 30px; }
+    .mode.collapsed { display: none; }
+    .mode-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 40px 2px 22px; }
+    .mode-head h2 {
+      font-size: clamp(23px, 3.2vw, 32px); letter-spacing: 0.02em;
+      background: linear-gradient(180deg, var(--amber), var(--o-400));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .mode-count {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--o-300);
+      border: 1px solid rgba(255,150,70,0.32); padding: 5px 12px; border-radius: 999px;
+    }
+    .mode-sub { flex-basis: 100%; color: var(--dim-2); font-style: italic; font-size: 14.5px; margin-top: -4px; }
+    .mode-rule { flex: 1; height: 1px; min-width: 30px; background: linear-gradient(90deg, rgba(255,150,70,0.35), transparent); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 26px; }
+
+    /* ---------- carousel (ports the shadcn carousel-card behaviour, vanilla) ---------- */
+    .carousel { position: relative; --cpv: 3; --gap: 24px; }
+    @media (max-width: 980px) { .carousel { --cpv: 2; } }
+    @media (max-width: 640px) { .carousel { --cpv: 1; } }
+    .viewport { overflow: hidden; padding: 24px 2px; margin: -24px -2px; }
+    .track { display: flex; gap: var(--gap); will-change: transform; transition: transform 0.55s var(--ease-out); }
+    .track > .card { flex: 0 0 calc((100% - (var(--cpv) - 1) * var(--gap)) / var(--cpv)); }
+    .car-btn {
+      position: absolute; top: 122px; z-index: 15;
+      width: 46px; height: 46px; border-radius: 50%; padding: 0;
+      display: grid; place-items: center; cursor: pointer;
+      background: rgba(20,11,5,0.72); color: var(--o-200);
+      border: 1px solid rgba(255,150,70,0.42); backdrop-filter: blur(8px);
+      font-size: 22px; line-height: 1; font-family: var(--serif);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.45);
+      transition: background 0.25s, transform 0.2s var(--ease-spring), opacity 0.25s, box-shadow 0.25s;
+    }
+    .car-prev { left: -8px; } .car-next { right: -8px; }
+    .car-btn:hover { background: linear-gradient(180deg, var(--o-400), var(--o-600)); color: #1c0d04; transform: scale(1.09); box-shadow: 0 12px 30px rgba(255,122,24,0.42); }
+    .car-btn.disabled { opacity: 0.26; pointer-events: none; }
+    .car-btn[hidden] { display: none; }
+    .car-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; min-height: 8px; }
+    .car-dot { width: 8px; height: 8px; border-radius: 50%; padding: 0; cursor: pointer; border: none; background: rgba(255,150,70,0.28); transition: transform 0.25s var(--ease-spring), background 0.25s, width 0.25s; }
+    .car-dot:hover { background: rgba(255,150,70,0.5); }
+    .car-dot.on { width: 22px; border-radius: 5px; background: linear-gradient(90deg, var(--o-400), var(--o-600)); }
+
+    /* ---------- card ---------- */
     .card {
-      position: relative;
-      display: flex; flex-direction: column;
-      border-radius: 18px;
-      overflow: hidden;
-      background: linear-gradient(170deg, #151928 0%, #0e111d 100%);
-      border: 1px solid rgba(216,211,200,0.12);
+      position: relative; display: flex; flex-direction: column;
+      border-radius: 20px; overflow: hidden;
+      background: linear-gradient(168deg, rgba(40,23,12,0.92), rgba(20,11,5,0.96));
+      border: 1px solid rgba(255,150,70,0.14);
       box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-      transition: transform 0.35s var(--ease-spring), border-color 0.3s, box-shadow 0.35s;
-      animation: fadeUp 0.9s var(--ease-out) both;
+      transition: transform 0.5s var(--ease-out), border-color 0.35s, box-shadow 0.4s;
+      transform-style: preserve-3d; will-change: transform;
     }
-    .card:nth-child(2) { animation-delay: 0.12s; }
-    .card:nth-child(3) { animation-delay: 0.24s; }
-    .card:not(.locked):hover {
-      transform: translateY(-8px);
-      box-shadow: 0 34px 80px rgba(0,0,0,0.65);
+    .card:hover { border-color: rgba(255,138,42,0.5); box-shadow: 0 36px 90px rgba(0,0,0,0.6), 0 0 44px rgba(255,122,24,0.14); }
+    /* spotlight glow follows cursor */
+    .card::before {
+      content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+      background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(255,150,70,0.20), transparent 62%);
+      opacity: 0; transition: opacity 0.35s;
     }
-    .card.medieval:not(.locked):hover { border-color: rgba(201,162,39,0.55); }
-    .card.scifi:not(.locked):hover { border-color: rgba(79,216,208,0.55); }
-    .card.jungle:not(.locked):hover { border-color: rgba(156,224,138,0.55); }
-    .card.roman:not(.locked):hover { border-color: rgba(240,168,90,0.55); }
-    .card:nth-child(4) { animation-delay: 0.36s; }
-
-    .card-art { position: relative; height: 190px; overflow: hidden; }
-    .card-art svg { width: 100%; height: 100%; display: block; }
-
-    .card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
-    .card-num {
-      font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-dim);
-      margin-bottom: 6px;
+    .card:hover::before { opacity: 1; }
+    /* rotating conic border-beam */
+    .card::after {
+      content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--beam), transparent 52%, rgba(255,190,120,0.85) 76%, var(--o-500) 88%, transparent 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity 0.45s; animation: beam 4.6s linear infinite;
     }
-    .card h2 { font-size: 26px; letter-spacing: 0.03em; margin-bottom: 8px; }
-    .medieval h2 { color: var(--gold-bright); }
-    .scifi h2 { color: var(--cyan-bright); }
-    .jungle h2 { color: #9ce08a; }
-    .roman h2 { color: #f0a85a; }
-    .card-tag { font-style: italic; color: var(--text-dim); font-size: 14.5px; line-height: 1.55; margin-bottom: 14px; flex: 1; }
+    .card:hover::after { opacity: 1; }
+    @keyframes beam { to { --beam: 360deg; } }
 
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .card-art { position: relative; height: 194px; overflow: hidden; }
+    .card-art svg { width: 100%; height: 100%; display: block; transition: transform 0.6s var(--ease-out); }
+    .card:hover .card-art svg { transform: scale(1.06); }
+    .card-art::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(20,11,5,0.75) 100%);
+    }
+
+    .card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; position: relative; z-index: 2; }
+    .card-num { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--o-300); margin-bottom: 7px; }
+    .card h3 { font-size: 25px; letter-spacing: 0.02em; margin-bottom: 9px; color: var(--amber); }
+    .card-tag { color: var(--dim); font-size: 14.5px; line-height: 1.58; margin-bottom: 15px; flex: 1; font-style: italic; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
     .chip {
-      font-size: 11.5px; letter-spacing: 0.08em;
-      padding: 4px 11px; border-radius: 999px;
-      border: 1px solid rgba(216,211,200,0.18); color: var(--text-dim);
+      font-size: 11.5px; letter-spacing: 0.06em; padding: 4px 11px; border-radius: 999px;
+      border: 1px solid rgba(255,150,70,0.2); color: var(--dim);
     }
-    .chip.gus { border-color: rgba(154,196,255,0.35); color: #aecbff; }
+    .chip.gus { border-color: rgba(255,183,101,0.4); color: var(--o-200); }
 
-    .status { font-size: 13px; margin-bottom: 16px; min-height: 18px; letter-spacing: 0.04em; }
-    .status .done { color: #7bc47f; }
-    .status .prog { color: var(--gold-bright); }
-    .status .fresh { color: var(--text-dim); font-style: italic; }
+    .status { font-size: 13px; margin-bottom: 16px; min-height: 18px; letter-spacing: 0.03em; }
+    .status .done { color: #ffb765; }
+    .status .prog { color: var(--o-400); }
+    .status .fresh { color: var(--dim-2); font-style: italic; }
 
     .enter-btn {
-      display: block; text-align: center; text-decoration: none;
-      padding: 13px 0; border-radius: 11px;
-      font-family: var(--serif); font-size: 16px; letter-spacing: 0.08em;
-      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s, background 0.25s;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      text-decoration: none; padding: 14px 0; border-radius: 13px;
+      font-family: var(--serif); font-size: 16px; letter-spacing: 0.05em; font-weight: 600;
+      color: #1c0d04;
+      background: linear-gradient(180deg, var(--o-300), var(--o-500));
+      border: 1px solid rgba(255,190,120,0.55);
+      box-shadow: 0 10px 28px rgba(255,122,24,0.28);
+      transition: transform 0.2s var(--ease-spring), box-shadow 0.25s, filter 0.2s;
     }
-    .medieval .enter-btn {
-      color: var(--gold-bright);
-      background: linear-gradient(180deg, rgba(201,162,39,0.24), rgba(201,162,39,0.1));
-      border: 1px solid var(--gold);
+    .enter-btn:hover { filter: brightness(1.07); box-shadow: 0 14px 38px rgba(255,122,24,0.44); }
+    .enter-btn::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,0.4) 50%, transparent 75%);
+      transform: translateX(-130%); transition: transform 0.7s var(--ease-out);
     }
-    .medieval .enter-btn:hover { background: rgba(201,162,39,0.3); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,162,39,0.2); }
-    .scifi .enter-btn {
-      color: var(--cyan-bright);
-      background: linear-gradient(180deg, rgba(79,216,208,0.2), rgba(79,216,208,0.07));
-      border: 1px solid rgba(79,216,208,0.6);
-    }
-    .scifi .enter-btn:hover { background: rgba(79,216,208,0.26); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(79,216,208,0.18); }
-    .jungle .enter-btn {
-      color: #9ce08a;
-      background: linear-gradient(180deg, rgba(90,165,82,0.22), rgba(90,165,82,0.08));
-      border: 1px solid rgba(156,224,138,0.6);
-    }
-    .jungle .enter-btn:hover { background: rgba(90,165,82,0.28); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(156,224,138,0.18); }
-    .roman .enter-btn {
-      color: #f0a85a;
-      background: linear-gradient(180deg, rgba(224,123,42,0.22), rgba(224,123,42,0.08));
-      border: 1px solid rgba(240,168,90,0.6);
-    }
-    .roman .enter-btn:hover { background: rgba(224,123,42,0.28); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(240,168,90,0.18); }
+    .enter-btn:hover::after { transform: translateX(130%); }
+    .enter-btn .arw { transition: transform 0.3s var(--ease-spring); }
+    .enter-btn:hover .arw { transform: translateX(4px); }
 
-    .card.locked { opacity: 0.65; }
-    .card.locked .card-art { filter: grayscale(0.7) brightness(0.6); }
-    .locked-btn {
-      display: block; text-align: center; padding: 13px 0; border-radius: 11px;
-      border: 1px dashed rgba(216,211,200,0.25); color: var(--text-dim);
-      font-size: 15px; letter-spacing: 0.08em; cursor: not-allowed;
+    /* ---------- concept ("coming soon") cards ---------- */
+    .card.concept { background: linear-gradient(168deg, rgba(34,19,10,0.9), rgba(18,10,5,0.95)); }
+    .card.concept .card-art { height: 160px; }
+    .soon-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 0; border-radius: 13px; cursor: default;
+      font-family: var(--serif); font-size: 15px; letter-spacing: 0.06em;
+      color: var(--o-200);
+      background: rgba(255,138,42,0.07);
+      border: 1px dashed rgba(255,150,70,0.42);
+    }
+    .concept-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 5;
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--o-200); background: rgba(20,11,5,0.72);
+      border: 1px solid rgba(255,150,70,0.4); padding: 4px 10px; border-radius: 999px;
+      backdrop-filter: blur(6px);
     }
 
-    footer { text-align: center; margin-top: 56px; color: rgba(139,136,120,0.7); font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; }
-    footer a { color: var(--text-dim); }
+    /* ---------- reveal on scroll ---------- */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .reveal.in { opacity: 1; transform: none; }
 
+    /* ---------- footer ---------- */
+    footer { text-align: center; margin-top: 64px; color: rgba(195,154,120,0.65); font-size: 12.5px; letter-spacing: 0.18em; text-transform: uppercase; }
+    footer a { color: var(--o-300); text-decoration: none; }
+    footer a:hover { color: var(--amber); }
+
+    /* ---------- card-art keyframes (used by the room SVGs) ---------- */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
     @keyframes flame { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.15) scaleX(0.93); } }
     @keyframes drift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
     @keyframes ringspin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
     .bob { animation: bob 4.5s ease-in-out infinite; }
     .flame { transform-origin: 50% 100%; animation: flame 2.4s ease-in-out infinite; transform-box: fill-box; }
     .drift { animation: drift 9s ease-in-out infinite alternate; }
     .ringspin { transform-origin: center; transform-box: fill-box; animation: ringspin 40s linear infinite; }
+    .pulse { animation: pulse 2.6s ease-in-out infinite; }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 44px 16px 70px; }
+      .seg-btn { padding: 8px 13px; font-size: 13px; }
+      .stat { min-width: 88px; padding: 11px 15px; }
+      .stat-num { font-size: 25px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
+  <div class="bg-vignette"></div>
+  <div id="embers" aria-hidden="true"></div>
+
   <div class="wrap">
     <header>
       <p class="kicker">Choose your door</p>
       <h1>Escape Rooms</h1>
       <p class="sub">One hour on the clock. One way out. And in every room, in every era — <b>Gus</b>.</p>
+      <div class="stats" id="stats">
+        <div class="stat"><span class="stat-num" data-to="4">0</span><span class="stat-label">Rooms live</span></div>
+        <div class="stat"><span class="stat-num" data-to="28">0</span><span class="stat-label">Puzzles</span></div>
+        <div class="stat"><span class="stat-num" data-to="60" data-suffix="m">0</span><span class="stat-label">Each</span></div>
+        <div class="stat"><span class="stat-num" id="stat-escapes" data-to="0">0</span><span class="stat-label">Your escapes</span></div>
+      </div>
     </header>
 
-    <div class="grid">
-
-      <!-- ══════════ ROOM I — THE PILGRIM'S ROAD ══════════ -->
-      <div class="card medieval">
-        <div class="card-art">
-          <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="d_msky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#0b0e1a"/><stop offset="1" stop-color="#1d1830"/>
-              </linearGradient>
-              <radialGradient id="d_moon" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0" stop-color="rgba(232,224,200,0.9)"/><stop offset="0.5" stop-color="rgba(232,224,200,0.2)"/><stop offset="1" stop-color="transparent"/>
-              </radialGradient>
-              <radialGradient id="d_torch" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0" stop-color="rgba(255,169,77,0.8)"/><stop offset="1" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="400" height="190" fill="url(#d_msky)"/>
-            <circle cx="320" cy="42" r="34" fill="url(#d_moon)"/>
-            <circle cx="320" cy="42" r="15" fill="#e8e0c8" opacity="0.9"/>
-            <!-- castle silhouette -->
-            <path d="M0 190 L0 120 L28 120 L28 96 L40 96 L40 120 L66 120 L66 74
-                     L80 74 L80 62 L92 62 L92 74 L106 74 L106 120 L150 120 L150 52
-                     L162 52 L166 34 L176 26 L186 34 L190 52 L202 52 L202 120
-                     L246 120 L246 84 L258 84 L258 70 L270 70 L270 84 L282 84 L282 120
-                     L330 120 L330 100 L344 100 L344 120 L370 120 L370 132 L400 132 L400 190 Z"
-                  fill="#080611"/>
-            <!-- lit window + torch glow -->
-            <rect x="172" y="62" width="8" height="13" rx="3" fill="#ffa94d" opacity="0.9"/>
-            <ellipse cx="176" cy="68" rx="26" ry="20" fill="url(#d_torch)" opacity="0.5"/>
-            <path class="flame" d="M263 60 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
-            <ellipse cx="263" cy="70" rx="18" ry="14" fill="url(#d_torch)" opacity="0.6"/>
-            <!-- mist -->
-            <ellipse class="drift" cx="120" cy="176" rx="150" ry="18" fill="rgba(154,196,255,0.06)"/>
-            <ellipse class="drift" cx="320" cy="184" rx="130" ry="16" fill="rgba(154,196,255,0.05)" style="animation-delay: -4s"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-num">Room I &middot; Medieval</div>
-          <h2>The Pilgrim's Road</h2>
-          <p class="card-tag">Condemned at dawn in Vayne Keep, you find a dead monk's trail of
-            carved suns — and one hour to finish the road he died building.</p>
-          <div class="chips">
-            <span class="chip">7 chambers</span>
-            <span class="chip">~60 min</span>
-            <span class="chip">Hard but fair</span>
-            <span class="chip gus">👻 Sir Gus, ghost-knight</span>
-          </div>
-          <div class="status" id="status-pilgrims"><span class="fresh">Unplayed — the cell waits.</span></div>
-          <a class="enter-btn" href="pilgrims-road/">Enter the Keep</a>
-        </div>
+    <!-- ══════════ FILTER ══════════ -->
+    <div class="seg-wrap">
+      <div class="seg" role="tablist" aria-label="Filter by players">
+        <span class="seg-ind" aria-hidden="true"></span>
+        <button class="seg-btn active" role="tab" data-filter="all">All</button>
+        <button class="seg-btn" role="tab" data-filter="single">Single Player</button>
+        <button class="seg-btn" role="tab" data-filter="duo">Two Player</button>
+        <button class="seg-btn" role="tab" data-filter="group">Group</button>
       </div>
-
-      <!-- ══════════ ROOM II — STARFALL STATION ══════════ -->
-      <div class="card scifi">
-        <div class="card-art">
-          <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="d_ssky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#04060f"/><stop offset="1" stop-color="#0a1524"/>
-              </linearGradient>
-              <radialGradient id="d_earth" cx="0.35" cy="0.3" r="0.9">
-                <stop offset="0" stop-color="#3d6fa8"/><stop offset="0.6" stop-color="#1d3a63"/><stop offset="1" stop-color="#0c1930"/>
-              </radialGradient>
-              <linearGradient id="d_burn" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="rgba(255,140,70,0)"/><stop offset="1" stop-color="rgba(255,140,70,0.75)"/>
-              </linearGradient>
-            </defs>
-            <rect width="400" height="190" fill="url(#d_ssky)"/>
-            <!-- earth below -->
-            <circle cx="200" cy="330" r="190" fill="url(#d_earth)"/>
-            <path d="M60 240 Q200 180 340 240" stroke="rgba(143,240,234,0.35)" stroke-width="2" fill="none"/>
-            <!-- the station -->
-            <g class="bob">
-              <g class="ringspin">
-                <ellipse cx="200" cy="88" rx="86" ry="26" fill="none" stroke="#3a4f66" stroke-width="7"/>
-                <ellipse cx="200" cy="88" rx="86" ry="26" fill="none" stroke="#4fd8d0" stroke-width="1.5" opacity="0.6"/>
-              </g>
-              <circle cx="200" cy="88" r="30" fill="#16222f" stroke="#3a4f66" stroke-width="4"/>
-              <circle cx="200" cy="88" r="30" fill="none" stroke="rgba(79,216,208,0.4)" stroke-width="1.5"/>
-              <rect x="168" y="52" width="12" height="6" rx="2" fill="#4fd8d0" opacity="0.8"/>
-              <rect x="222" y="116" width="12" height="6" rx="2" fill="#ffb45e" opacity="0.9"/>
-              <circle cx="200" cy="88" r="7" fill="#8ff0ea" opacity="0.9"/>
-              <!-- re-entry streak warning -->
-              <path d="M120 150 L260 128" stroke="url(#d_burn)" stroke-width="4" stroke-linecap="round"/>
-            </g>
-            <circle cx="60" cy="30" r="1.6" fill="#fff" opacity="0.8"/>
-            <circle cx="340" cy="22" r="1.3" fill="#fff" opacity="0.6"/>
-            <circle cx="300" cy="60" r="1" fill="#fff" opacity="0.5"/>
-            <circle cx="100" cy="70" r="1.2" fill="#fff" opacity="0.55"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-num">Room II &middot; Futurist</div>
-          <h2>Starfall Station</h2>
-          <p class="card-tag">You wake alone on a dying orbital station, sixty minutes from
-            re-entry. The crew is gone, the AI core is empty, and something about your own
-            reflection is... unavailable.</p>
-          <div class="chips">
-            <span class="chip">7 decks</span>
-            <span class="chip">~60 min</span>
-            <span class="chip">Intricate · twist ending</span>
-            <span class="chip gus">🤖 GS-1 "Gus", maintenance drone</span>
-          </div>
-          <div class="status" id="status-starfall"><span class="fresh">Unplayed — the cryo bay hums.</span></div>
-          <a class="enter-btn" href="starfall-station/">Board the Station</a>
-        </div>
-      </div>
-
-      <!-- ══════════ ROOM III — THE WILD COURT ══════════ -->
-      <div class="card jungle">
-        <div class="card-art">
-          <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="d_jsky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#0a1208"/><stop offset="1" stop-color="#14240f"/>
-              </linearGradient>
-              <radialGradient id="d_jshaft" cx="0.5" cy="0" r="1">
-                <stop offset="0" stop-color="rgba(255,224,138,0.35)"/><stop offset="1" stop-color="transparent"/>
-              </radialGradient>
-              <radialGradient id="d_jfly" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0" stop-color="rgba(255,224,138,0.9)"/><stop offset="1" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="400" height="190" fill="url(#d_jsky)"/>
-            <!-- late sun shaft through the canopy -->
-            <polygon points="150,0 260,0 320,190 210,190" fill="url(#d_jshaft)" opacity="0.5"/>
-            <!-- stepped temple, root-swallowed -->
-            <path d="M110 190 L110 130 L135 130 L135 100 L160 100 L160 72 L185 72 L185 52 L215 52 L215 72 L240 72 L240 100 L265 100 L265 130 L290 130 L290 190 Z"
-                  fill="#0c150a"/>
-            <path d="M185 190 L185 120 L215 120 L215 190" fill="#060b05"/>
-            <!-- hanging vines + fronds -->
-            <path d="M0 190 Q60 90 90 190 M310 190 Q360 70 400 150" stroke="#0f1c0b" stroke-width="26" fill="none"/>
-            <path d="M40 0 q6 60 -8 100 M370 0 q-8 50 4 90 M120 0 q4 30 -4 56" stroke="#12200d" stroke-width="8" fill="none" stroke-linecap="round"/>
-            <!-- watching eye-glints in the dark -->
-            <circle cx="52" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/><circle cx="64" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/>
-            <circle cx="348" cy="96" r="2" fill="#ffe08a" opacity="0.8"/><circle cx="357" cy="96" r="2" fill="#ffe08a" opacity="0.8"/>
-            <!-- Gus on the temple steps, tail curled -->
-            <g class="bob">
-              <circle cx="200" cy="96" r="11" fill="#d1a53f"/>
-              <circle cx="200" cy="98" r="6.5" fill="#4a3626"/>
-              <circle cx="197.5" cy="96.5" r="1.3" fill="#ffe9b0"/><circle cx="202.5" cy="96.5" r="1.3" fill="#ffe9b0"/>
-              <path d="M209 104 q14 2 14 -12 q0 -8 -7 -8" stroke="#d1a53f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-              <path d="M193 106 q7 4 14 0 l-1 3 q-6 3 -12 0 z" fill="#3f7a37"/>
-            </g>
-            <!-- fireflies -->
-            <circle class="drift" cx="120" cy="60" r="5" fill="url(#d_jfly)"/>
-            <circle class="drift" cx="300" cy="140" r="4" fill="url(#d_jfly)" style="animation-delay: -3s"/>
-            <circle class="drift" cx="250" cy="40" r="4.5" fill="url(#d_jfly)" style="animation-delay: -6s"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-num">Room III &middot; Animal Kingdom</div>
-          <h2>The Wild Court</h2>
-          <p class="card-tag">You fell into a jungle that appears on no map — because the
-            tribunal that lives there summons its own witnesses. Seven trials to nightfall,
-            and your advocate has a tail.</p>
-          <div class="chips">
-            <span class="chip">7 trials</span>
-            <span class="chip">~60 min</span>
-            <span class="chip">Verdict twist</span>
-            <span class="chip gus">🐒 Gus, golden tamarin advocate</span>
-          </div>
-          <div class="status" id="status-wildcourt"><span class="fresh">Unplayed — the Court is in session.</span></div>
-          <a class="enter-btn" href="wild-court/">Enter the Green</a>
-        </div>
-      </div>
-
-      <!-- ══════════ ROOM IV — THE GATE OF LIFE ══════════ -->
-      <div class="card roman">
-        <div class="card-art">
-          <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="d_rsky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#150c07"/><stop offset="1" stop-color="#31190e"/>
-              </linearGradient>
-              <radialGradient id="d_rtorch" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0" stop-color="rgba(255,169,77,0.85)"/><stop offset="1" stop-color="transparent"/>
-              </radialGradient>
-              <linearGradient id="d_rsand" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#5a4426"/><stop offset="1" stop-color="#241609"/>
-              </linearGradient>
-            </defs>
-            <rect width="400" height="190" fill="url(#d_rsky)"/>
-            <!-- dusk haze over the city -->
-            <ellipse cx="200" cy="185" rx="260" ry="60" fill="rgba(255,169,77,0.07)"/>
-            <!-- the Colosseum: broken-ring silhouette, taller on the left -->
-            <path d="M0 190 L0 60 L235 60 L235 78 Q300 84 345 104 L345 190 Z" fill="#0d0704"/>
-            <!-- top-tier arches (tall section) -->
-            <g fill="#31190e">
-              <path d="M18 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
-              <path d="M58 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
-              <path d="M98 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
-              <path d="M138 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
-              <path d="M178 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
-            </g>
-            <!-- lower-tier arches, two torch-lit -->
-            <g fill="#241207">
-              <path d="M18 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
-              <path d="M58 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
-              <path d="M98 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
-              <path d="M138 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
-              <path d="M178 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
-              <path d="M218 152 a11 14 0 0 1 22 0 v38 h-22 z"/>
-              <path d="M258 158 a11 14 0 0 1 22 0 v32 h-22 z"/>
-              <path d="M298 166 a11 14 0 0 1 22 0 v24 h-22 z"/>
-            </g>
-            <path class="flame" d="M69 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
-            <ellipse cx="69" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
-            <path class="flame" d="M149 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
-            <ellipse cx="149" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
-            <!-- attic inscription line -->
-            <rect x="0" y="72" width="235" height="3" fill="#241207"/>
-            <!-- sand apron -->
-            <path d="M300 190 Q360 174 400 178 L400 190 Z" fill="url(#d_rsand)"/>
-            <!-- Gus the lion, sitting apart from the queue -->
-            <g class="bob">
-              <ellipse cx="344" cy="172" rx="15" ry="10" fill="#0d0704"/>
-              <circle cx="355" cy="156" r="10" fill="#0d0704"/>
-              <circle cx="355" cy="156" r="6" fill="#1c0f06"/>
-              <circle cx="352.5" cy="155" r="1.4" fill="#ffcf6a"/><circle cx="358" cy="155" r="1.4" fill="#ffcf6a"/>
-              <path d="M329 176 q-8 -2 -6 -10" stroke="#0d0704" stroke-width="3" fill="none" stroke-linecap="round"/>
-            </g>
-            <!-- drifting arena dust -->
-            <ellipse class="drift" cx="120" cy="182" rx="130" ry="10" fill="rgba(232,207,150,0.05)"/>
-            <ellipse class="drift" cx="320" cy="186" rx="110" ry="9" fill="rgba(232,207,150,0.045)" style="animation-delay: -5s"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-num">Room IV &middot; Ancient Rome</div>
-          <h2>The Gate of Life</h2>
-          <p class="card-tag">Condemned to the midday games beneath the Colosseum, you find
-            six bone tokens left by a man the guards say a lion ate. The lion disagrees.</p>
-          <div class="chips">
-            <span class="chip">7 chambers</span>
-            <span class="chip">~60 min</span>
-            <span class="chip">Hard but fair</span>
-            <span class="chip gus">🦁 Gus, the Emperor's lion</span>
-          </div>
-          <div class="status" id="status-gateoflife"><span class="fresh">Unplayed — the carcer waits.</span></div>
-          <a class="enter-btn" href="gate-of-life/">Enter the Hypogeum</a>
-        </div>
-      </div>
-
     </div>
+
+    <!-- ══════════ SINGLE PLAYER ══════════ -->
+    <section class="mode" data-mode="single">
+      <div class="mode-head reveal">
+        <h2>Single-player</h2>
+        <span class="mode-count">4 rooms · live</span>
+        <span class="mode-rule"></span>
+        <p class="mode-sub">One player, one hour, one companion. Every room is hand-built, strictly fair, and playable start to finish today.</p>
+      </div>
+      <div class="carousel" data-cpv="3">
+        <button class="car-btn car-prev" aria-label="Scroll left" hidden>&#8249;</button>
+        <div class="viewport">
+          <div class="track">
+
+        <!-- ROOM I — THE PILGRIM'S ROAD -->
+        <article class="card reveal" data-mode="single">
+          <div class="card-art">
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_msky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0b0e1a"/><stop offset="1" stop-color="#1d1830"/>
+                </linearGradient>
+                <radialGradient id="d_moon" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(232,224,200,0.9)"/><stop offset="0.5" stop-color="rgba(232,224,200,0.2)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <radialGradient id="d_torch" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,169,77,0.8)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_msky)"/>
+              <circle cx="320" cy="42" r="34" fill="url(#d_moon)"/>
+              <circle cx="320" cy="42" r="15" fill="#e8e0c8" opacity="0.9"/>
+              <path d="M0 190 L0 120 L28 120 L28 96 L40 96 L40 120 L66 120 L66 74
+                       L80 74 L80 62 L92 62 L92 74 L106 74 L106 120 L150 120 L150 52
+                       L162 52 L166 34 L176 26 L186 34 L190 52 L202 52 L202 120
+                       L246 120 L246 84 L258 84 L258 70 L270 70 L270 84 L282 84 L282 120
+                       L330 120 L330 100 L344 100 L344 120 L370 120 L370 132 L400 132 L400 190 Z"
+                    fill="#080611"/>
+              <rect x="172" y="62" width="8" height="13" rx="3" fill="#ffa94d" opacity="0.9"/>
+              <ellipse cx="176" cy="68" rx="26" ry="20" fill="url(#d_torch)" opacity="0.5"/>
+              <path class="flame" d="M263 60 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="263" cy="70" rx="18" ry="14" fill="url(#d_torch)" opacity="0.6"/>
+              <ellipse class="drift" cx="120" cy="176" rx="150" ry="18" fill="rgba(154,196,255,0.06)"/>
+              <ellipse class="drift" cx="320" cy="184" rx="130" ry="16" fill="rgba(154,196,255,0.05)" style="animation-delay: -4s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Room I &middot; Medieval</div>
+            <h3>The Pilgrim's Road</h3>
+            <p class="card-tag">Condemned at dawn in Vayne Keep, you find a dead monk's trail of
+              carved suns — and one hour to finish the road he died building.</p>
+            <div class="chips">
+              <span class="chip">1 player</span>
+              <span class="chip">7 chambers</span>
+              <span class="chip">~60 min</span>
+              <span class="chip gus">👻 Sir Gus, ghost-knight</span>
+            </div>
+            <div class="status" id="status-pilgrims"><span class="fresh">Unplayed — the cell waits.</span></div>
+            <a class="enter-btn" href="pilgrims-road/">Enter the Keep <span class="arw">→</span></a>
+          </div>
+        </article>
+
+        <!-- ROOM II — STARFALL STATION -->
+        <article class="card reveal" data-mode="single">
+          <div class="card-art">
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_ssky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#04060f"/><stop offset="1" stop-color="#0a1524"/>
+                </linearGradient>
+                <radialGradient id="d_earth" cx="0.35" cy="0.3" r="0.9">
+                  <stop offset="0" stop-color="#3d6fa8"/><stop offset="0.6" stop-color="#1d3a63"/><stop offset="1" stop-color="#0c1930"/>
+                </radialGradient>
+                <linearGradient id="d_burn" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="rgba(255,140,70,0)"/><stop offset="1" stop-color="rgba(255,140,70,0.75)"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_ssky)"/>
+              <circle cx="200" cy="330" r="190" fill="url(#d_earth)"/>
+              <path d="M60 240 Q200 180 340 240" stroke="rgba(143,240,234,0.35)" stroke-width="2" fill="none"/>
+              <g class="bob">
+                <g class="ringspin">
+                  <ellipse cx="200" cy="88" rx="86" ry="26" fill="none" stroke="#3a4f66" stroke-width="7"/>
+                  <ellipse cx="200" cy="88" rx="86" ry="26" fill="none" stroke="#4fd8d0" stroke-width="1.5" opacity="0.6"/>
+                </g>
+                <circle cx="200" cy="88" r="30" fill="#16222f" stroke="#3a4f66" stroke-width="4"/>
+                <circle cx="200" cy="88" r="30" fill="none" stroke="rgba(79,216,208,0.4)" stroke-width="1.5"/>
+                <rect x="168" y="52" width="12" height="6" rx="2" fill="#4fd8d0" opacity="0.8"/>
+                <rect x="222" y="116" width="12" height="6" rx="2" fill="#ffb45e" opacity="0.9"/>
+                <circle cx="200" cy="88" r="7" fill="#8ff0ea" opacity="0.9"/>
+                <path d="M120 150 L260 128" stroke="url(#d_burn)" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <circle cx="60" cy="30" r="1.6" fill="#fff" opacity="0.8"/>
+              <circle cx="340" cy="22" r="1.3" fill="#fff" opacity="0.6"/>
+              <circle cx="300" cy="60" r="1" fill="#fff" opacity="0.5"/>
+              <circle cx="100" cy="70" r="1.2" fill="#fff" opacity="0.55"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Room II &middot; Futurist</div>
+            <h3>Starfall Station</h3>
+            <p class="card-tag">You wake alone on a dying orbital station, sixty minutes from
+              re-entry. The crew is gone, the AI core is empty, and something about your own
+              reflection is... unavailable.</p>
+            <div class="chips">
+              <span class="chip">1 player</span>
+              <span class="chip">7 decks</span>
+              <span class="chip">Twist ending</span>
+              <span class="chip gus">🤖 GS-1 "Gus", drone</span>
+            </div>
+            <div class="status" id="status-starfall"><span class="fresh">Unplayed — the cryo bay hums.</span></div>
+            <a class="enter-btn" href="starfall-station/">Board the Station <span class="arw">→</span></a>
+          </div>
+        </article>
+
+        <!-- ROOM III — THE WILD COURT -->
+        <article class="card reveal" data-mode="single">
+          <div class="card-art">
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_jsky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0a1208"/><stop offset="1" stop-color="#14240f"/>
+                </linearGradient>
+                <radialGradient id="d_jshaft" cx="0.5" cy="0" r="1">
+                  <stop offset="0" stop-color="rgba(255,224,138,0.35)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <radialGradient id="d_jfly" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,224,138,0.9)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_jsky)"/>
+              <polygon points="150,0 260,0 320,190 210,190" fill="url(#d_jshaft)" opacity="0.5"/>
+              <path d="M110 190 L110 130 L135 130 L135 100 L160 100 L160 72 L185 72 L185 52 L215 52 L215 72 L240 72 L240 100 L265 100 L265 130 L290 130 L290 190 Z"
+                    fill="#0c150a"/>
+              <path d="M185 190 L185 120 L215 120 L215 190" fill="#060b05"/>
+              <path d="M0 190 Q60 90 90 190 M310 190 Q360 70 400 150" stroke="#0f1c0b" stroke-width="26" fill="none"/>
+              <path d="M40 0 q6 60 -8 100 M370 0 q-8 50 4 90 M120 0 q4 30 -4 56" stroke="#12200d" stroke-width="8" fill="none" stroke-linecap="round"/>
+              <circle cx="52" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/><circle cx="64" cy="128" r="2.4" fill="#9ce08a" opacity="0.8"/>
+              <circle cx="348" cy="96" r="2" fill="#ffe08a" opacity="0.8"/><circle cx="357" cy="96" r="2" fill="#ffe08a" opacity="0.8"/>
+              <g class="bob">
+                <circle cx="200" cy="96" r="11" fill="#d1a53f"/>
+                <circle cx="200" cy="98" r="6.5" fill="#4a3626"/>
+                <circle cx="197.5" cy="96.5" r="1.3" fill="#ffe9b0"/><circle cx="202.5" cy="96.5" r="1.3" fill="#ffe9b0"/>
+                <path d="M209 104 q14 2 14 -12 q0 -8 -7 -8" stroke="#d1a53f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                <path d="M193 106 q7 4 14 0 l-1 3 q-6 3 -12 0 z" fill="#3f7a37"/>
+              </g>
+              <circle class="drift" cx="120" cy="60" r="5" fill="url(#d_jfly)"/>
+              <circle class="drift" cx="300" cy="140" r="4" fill="url(#d_jfly)" style="animation-delay: -3s"/>
+              <circle class="drift" cx="250" cy="40" r="4.5" fill="url(#d_jfly)" style="animation-delay: -6s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Room III &middot; Animal Kingdom</div>
+            <h3>The Wild Court</h3>
+            <p class="card-tag">You fell into a jungle that appears on no map — because the
+              tribunal that lives there summons its own witnesses. Seven trials to nightfall,
+              and your advocate has a tail.</p>
+            <div class="chips">
+              <span class="chip">1 player</span>
+              <span class="chip">7 trials</span>
+              <span class="chip">Verdict twist</span>
+              <span class="chip gus">🐒 Gus, tamarin advocate</span>
+            </div>
+            <div class="status" id="status-wildcourt"><span class="fresh">Unplayed — the Court is in session.</span></div>
+            <a class="enter-btn" href="wild-court/">Enter the Green <span class="arw">→</span></a>
+          </div>
+        </article>
+
+        <!-- ROOM IV — THE GATE OF LIFE -->
+        <article class="card reveal" data-mode="single">
+          <div class="card-art">
+            <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_rsky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#150c07"/><stop offset="1" stop-color="#31190e"/>
+                </linearGradient>
+                <radialGradient id="d_rtorch" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="rgba(255,169,77,0.85)"/><stop offset="1" stop-color="transparent"/>
+                </radialGradient>
+                <linearGradient id="d_rsand" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#5a4426"/><stop offset="1" stop-color="#241609"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="190" fill="url(#d_rsky)"/>
+              <ellipse cx="200" cy="185" rx="260" ry="60" fill="rgba(255,169,77,0.07)"/>
+              <path d="M0 190 L0 60 L235 60 L235 78 Q300 84 345 104 L345 190 Z" fill="#0d0704"/>
+              <g fill="#31190e">
+                <path d="M18 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M58 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M98 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M138 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+                <path d="M178 96 a11 13 0 0 1 22 0 v22 h-22 z"/>
+              </g>
+              <g fill="#241207">
+                <path d="M18 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M58 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M98 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M138 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M178 148 a11 14 0 0 1 22 0 v42 h-22 z"/>
+                <path d="M218 152 a11 14 0 0 1 22 0 v38 h-22 z"/>
+                <path d="M258 158 a11 14 0 0 1 22 0 v32 h-22 z"/>
+                <path d="M298 166 a11 14 0 0 1 22 0 v24 h-22 z"/>
+              </g>
+              <path class="flame" d="M69 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="69" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+              <path class="flame" d="M149 138 q6 8 0 15 q-6 -7 0 -15z" fill="#ffd9a0"/>
+              <ellipse cx="149" cy="150" rx="20" ry="15" fill="url(#d_rtorch)" opacity="0.55"/>
+              <rect x="0" y="72" width="235" height="3" fill="#241207"/>
+              <path d="M300 190 Q360 174 400 178 L400 190 Z" fill="url(#d_rsand)"/>
+              <g class="bob">
+                <ellipse cx="344" cy="172" rx="15" ry="10" fill="#0d0704"/>
+                <circle cx="355" cy="156" r="10" fill="#0d0704"/>
+                <circle cx="355" cy="156" r="6" fill="#1c0f06"/>
+                <circle cx="352.5" cy="155" r="1.4" fill="#ffcf6a"/><circle cx="358" cy="155" r="1.4" fill="#ffcf6a"/>
+                <path d="M329 176 q-8 -2 -6 -10" stroke="#0d0704" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </g>
+              <ellipse class="drift" cx="120" cy="182" rx="130" ry="10" fill="rgba(232,207,150,0.05)"/>
+              <ellipse class="drift" cx="320" cy="186" rx="110" ry="9" fill="rgba(232,207,150,0.045)" style="animation-delay: -5s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Room IV &middot; Ancient Rome</div>
+            <h3>The Gate of Life</h3>
+            <p class="card-tag">Condemned to the midday games beneath the Colosseum, you find
+              six bone tokens left by a man the guards say a lion ate. The lion disagrees.</p>
+            <div class="chips">
+              <span class="chip">1 player</span>
+              <span class="chip">7 chambers</span>
+              <span class="chip">Hard but fair</span>
+              <span class="chip gus">🦁 Gus, the Emperor's lion</span>
+            </div>
+            <div class="status" id="status-gateoflife"><span class="fresh">Unplayed — the carcer waits.</span></div>
+            <a class="enter-btn" href="gate-of-life/">Enter the Hypogeum <span class="arw">→</span></a>
+          </div>
+        </article>
+
+          </div>
+        </div>
+        <button class="car-btn car-next" aria-label="Scroll right" hidden>&#8250;</button>
+        <div class="car-dots"></div>
+      </div>
+    </section>
+
+    <!-- ══════════ TWO PLAYER ══════════ -->
+    <section class="mode" data-mode="duo">
+      <div class="mode-head reveal">
+        <h2>For Duos</h2>
+        <span class="mode-count">In development</span>
+        <span class="mode-rule"></span>
+        <p class="mode-sub">Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites.</p>
+      </div>
+      <div class="carousel" data-cpv="3">
+        <button class="car-btn car-prev" aria-label="Scroll left" hidden>&#8249;</button>
+        <div class="viewport">
+          <div class="track">
+
+        <article class="card concept reveal" data-mode="duo">
+          <span class="concept-badge">Coming soon</span>
+          <div class="card-art">
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_duo1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_duoG" cx="0.5" cy="0.6" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.45)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_duo1)"/>
+              <ellipse cx="200" cy="150" rx="180" ry="46" fill="url(#d_duoG)"/>
+              <g fill="none" stroke="#ff9a3d" stroke-width="4" stroke-linecap="round">
+                <circle cx="140" cy="70" r="15"/><path d="M140 85 v34 M140 96 l-18 12 M140 96 l18 12"/>
+                <circle cx="260" cy="70" r="15"/><path d="M260 85 v34 M260 96 l-18 12 M260 96 l18 12"/>
+              </g>
+              <line x1="158" y1="80" x2="242" y2="80" stroke="rgba(255,183,101,0.4)" stroke-width="2" stroke-dasharray="4 5"/>
+              <g class="bob">
+                <rect x="184" y="66" width="32" height="26" rx="5" fill="#ffb765"/>
+                <path d="M190 66 v-9 a10 10 0 0 1 20 0 v9" fill="none" stroke="#ffb765" stroke-width="4"/>
+                <circle cx="200" cy="79" r="3.4" fill="#2a1207"/>
+              </g>
+              <circle class="drift" cx="90" cy="46" r="3.5" fill="#ffe0b0" opacity="0.7"/>
+              <circle class="drift" cx="320" cy="60" r="3" fill="#ffe0b0" opacity="0.6" style="animation-delay:-4s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Duo &middot; Asymmetric</div>
+            <h3>Two Keys, One Door</h3>
+            <p class="card-tag">Two players, two screens, one lock. Each of you sees half the truth —
+              and the door opens only when you trust the half you cannot see.</p>
+            <div class="chips">
+              <span class="chip">2 players</span>
+              <span class="chip">Split screen</span>
+              <span class="chip gus">Gus, referee</span>
+            </div>
+            <div class="soon-btn">🔒 In development</div>
+          </div>
+        </article>
+
+        <article class="card concept reveal" data-mode="duo">
+          <span class="concept-badge">Coming soon</span>
+          <div class="card-art">
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_duo2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_duoG2" cx="0.5" cy="0.6" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.4)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_duo2)"/>
+              <ellipse cx="200" cy="150" rx="180" ry="46" fill="url(#d_duoG2)"/>
+              <!-- one figure holds a map, the other walks a maze -->
+              <g fill="none" stroke="#ff9a3d" stroke-width="4" stroke-linecap="round">
+                <circle cx="120" cy="68" r="15"/><path d="M120 83 v30 M120 92 l-16 10 M120 92 l16 10"/>
+                <circle cx="288" cy="68" r="15"/><path d="M288 83 v30 M288 92 l-16 10 M288 92 l16 10"/>
+              </g>
+              <rect x="98" y="96" width="30" height="22" rx="2" fill="#ffce9a" transform="rotate(-8 113 107)"/>
+              <path d="M103 104 h20 M103 110 h16" stroke="#a3541f" stroke-width="1.6" transform="rotate(-8 113 107)"/>
+              <g stroke="#ffb765" stroke-width="3" fill="none" opacity="0.85">
+                <path d="M250 118 h44 v-14 h-30 v-14 h30 v-14"/>
+              </g>
+              <circle class="drift" cx="200" cy="44" r="3.5" fill="#ffe0b0" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Duo &middot; Guide &amp; Ghost</div>
+            <h3>The Blind Cartographer</h3>
+            <p class="card-tag">One of you holds the only map. The other walks the dark and never
+              sees it. Nightfall comes for whoever stops talking first.</p>
+            <div class="chips">
+              <span class="chip">2 players</span>
+              <span class="chip">Voice co-op</span>
+              <span class="chip gus">Gus, unreliable narrator</span>
+            </div>
+            <div class="soon-btn">🔒 In development</div>
+          </div>
+        </article>
+
+          </div>
+        </div>
+        <button class="car-btn car-next" aria-label="Scroll right" hidden>&#8250;</button>
+        <div class="car-dots"></div>
+      </div>
+    </section>
+
+    <!-- ══════════ GROUP ══════════ -->
+    <section class="mode" data-mode="group">
+      <div class="mode-head reveal">
+        <h2>For Groups</h2>
+        <span class="mode-count">In development</span>
+        <span class="mode-rule"></span>
+        <p class="mode-sub">Party-sized rooms for three to six — roles, sabotage, and a verdict that needs a quorum.</p>
+      </div>
+      <div class="carousel" data-cpv="3">
+        <button class="car-btn car-prev" aria-label="Scroll left" hidden>&#8249;</button>
+        <div class="viewport">
+          <div class="track">
+
+        <article class="card concept reveal" data-mode="group">
+          <span class="concept-badge">Coming soon</span>
+          <div class="card-art">
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_grp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_grpG" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.5)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_grp1)"/>
+              <ellipse cx="200" cy="140" rx="190" ry="48" fill="url(#d_grpG)"/>
+              <!-- vault -->
+              <g class="ringspin" style="transform-origin:200px 78px">
+                <circle cx="200" cy="78" r="40" fill="none" stroke="#ffb765" stroke-width="5"/>
+                <path d="M200 38 v14 M200 104 v14 M160 78 h14 M226 78 h14 M172 50 l10 10 M228 106 l-10 -10 M228 50 l-10 10 M172 106 l10 -10" stroke="#ff9a3d" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <circle cx="200" cy="78" r="12" fill="#ff7a18"/>
+              <!-- four figures around it -->
+              <g fill="none" stroke="#ff9a3d" stroke-width="3.5" stroke-linecap="round">
+                <circle cx="70" cy="86" r="12"/><path d="M70 98 v22 M70 106 l-13 8 M70 106 l13 8"/>
+                <circle cx="120" cy="122" r="10"/><path d="M120 132 v16"/>
+                <circle cx="330" cy="86" r="12"/><path d="M330 98 v22 M330 106 l-13 8 M330 106 l13 8"/>
+                <circle cx="280" cy="122" r="10"/><path d="M280 132 v16"/>
+              </g>
+              <circle class="drift" cx="150" cy="40" r="3.5" fill="#ffe0b0" opacity="0.7"/>
+              <circle class="drift" cx="260" cy="52" r="3" fill="#ffe0b0" opacity="0.6" style="animation-delay:-3s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Group &middot; 3–6 players</div>
+            <h3>The Vault</h3>
+            <p class="card-tag">Six pairs of hands, one time-locked vault, and exactly enough rope for
+              everyone to hang the plan. Split the roles. Don't split the party.</p>
+            <div class="chips">
+              <span class="chip">3–6 players</span>
+              <span class="chip">Roles</span>
+              <span class="chip gus">Gus, quartermaster</span>
+            </div>
+            <div class="soon-btn">🔒 In development</div>
+          </div>
+        </article>
+
+        <article class="card concept reveal" data-mode="group">
+          <span class="concept-badge">Coming soon</span>
+          <div class="card-art">
+            <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="d_grp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1207"/><stop offset="1" stop-color="#160b05"/></linearGradient>
+                <radialGradient id="d_grpG2" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="rgba(255,138,42,0.45)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+              </defs>
+              <rect width="400" height="160" fill="url(#d_grp2)"/>
+              <ellipse cx="200" cy="140" rx="190" ry="48" fill="url(#d_grpG2)"/>
+              <!-- scales of a group verdict -->
+              <g class="bob">
+                <rect x="196" y="40" width="8" height="70" rx="2" fill="#ffb765"/>
+                <rect x="150" y="40" width="100" height="6" rx="3" fill="#ffb765"/>
+                <path d="M150 43 l-20 34 h40 z" fill="none" stroke="#ff9a3d" stroke-width="3"/>
+                <path d="M250 43 l-20 34 h40 z" fill="none" stroke="#ff9a3d" stroke-width="3"/>
+                <circle cx="200" cy="40" r="6" fill="#ff7a18"/>
+              </g>
+              <!-- jurors -->
+              <g fill="#ff9a3d" opacity="0.9">
+                <circle cx="70" cy="118" r="8"/><circle cx="110" cy="126" r="7"/>
+                <circle cx="300" cy="122" r="8"/><circle cx="340" cy="128" r="7"/>
+                <circle cx="200" cy="132" r="7"/>
+              </g>
+              <circle class="drift" cx="120" cy="44" r="3.2" fill="#ffe0b0" opacity="0.7"/>
+              <circle class="drift" cx="300" cy="56" r="3" fill="#ffe0b0" opacity="0.6" style="animation-delay:-4s"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-num">Group &middot; Social deduction</div>
+            <h3>Trial by Jury</h3>
+            <p class="card-tag">The Wild Court reconvenes — and this time the jury is you. One of you
+              is lying to the bench. The verdict escapes the room; the wrong verdict keeps it.</p>
+            <div class="chips">
+              <span class="chip">4–8 players</span>
+              <span class="chip">Hidden roles</span>
+              <span class="chip gus">🐒 Gus, presiding</span>
+            </div>
+            <div class="soon-btn">🔒 In development</div>
+          </div>
+        </article>
+
+          </div>
+        </div>
+        <button class="car-btn car-next" aria-label="Scroll right" hidden>&#8250;</button>
+        <div class="car-dots"></div>
+      </div>
+    </section>
 
     <footer>
       One companion across every era &middot; <a href="https://github.com/Daniel-Lamb/Escape-Room">source on GitHub</a>
@@ -439,17 +800,21 @@
   </div>
 
   <script>
-    // Per-room status from each game's localStorage records (same origin).
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- per-room status from localStorage ---------- */
     function fmt(t) {
       const m = Math.floor(t / 60), s = t % 60;
       return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
+    let totalEscapes = 0;
     function status(saveKey, elId, freshText) {
       const el = document.getElementById(elId);
       try {
         const vic = JSON.parse(localStorage.getItem(`${saveKey}-victory`) || 'null');
         const save = JSON.parse(localStorage.getItem(saveKey) || 'null');
         if (vic && vic.completions) {
+          totalEscapes += vic.completions;
           el.innerHTML = `<span class="done">✓ Escaped ×${vic.completions} · best: ${fmt(vic.bestTimeLeft)} to spare</span>`;
         } else if (save && save.started && !save.finished) {
           el.innerHTML = `<span class="prog">◐ In progress — chamber ${(save.currentRoom || 0) + 1} of 7, ${fmt(Math.max(0, save.timeLeft))} left</span>`;
@@ -462,6 +827,183 @@
     status('starfall-station-save-v1', 'status-starfall', 'Unplayed — the cryo bay hums.');
     status('wild-court-save-v1', 'status-wildcourt', 'Unplayed — the Court is in session.');
     status('gate-of-life-save-v1', 'status-gateoflife', 'Unplayed — the carcer waits.');
-</script>
+
+    /* ---------- animated stat counters ---------- */
+    (function counters() {
+      document.getElementById('stat-escapes').dataset.to = String(totalEscapes);
+      const nums = document.querySelectorAll('.stat-num');
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      nums.forEach(el => {
+        const to = Number(el.dataset.to) || 0;
+        const suf = el.dataset.suffix ? `<span class="suf">${el.dataset.suffix}</span>` : '';
+        if (reduceMotion || to === 0) { el.innerHTML = to + suf; return; }
+        const dur = 1100; const start = performance.now();
+        const tick = now => {
+          const p = Math.min(1, (now - start) / dur);
+          el.innerHTML = Math.round(ease(p) * to) + suf;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    })();
+
+    /* ---------- segmented filter + sliding pill ---------- */
+    (function filters() {
+      const seg = document.querySelector('.seg');
+      const ind = document.querySelector('.seg-ind');
+      const btns = [...seg.querySelectorAll('.seg-btn')];
+      const sections = [...document.querySelectorAll('.mode')];
+      function moveInd(btn) {
+        ind.style.width = btn.offsetWidth + 'px';
+        ind.style.transform = `translateX(${btn.offsetLeft - 5}px)`;
+      }
+      function apply(filter) {
+        sections.forEach(sec => {
+          const show = filter === 'all' || sec.dataset.mode === filter;
+          sec.classList.toggle('collapsed', !show);
+          if (show) {
+            sec.querySelectorAll('.reveal').forEach(r => r.classList.add('in'));
+            const car = sec.querySelector('.carousel');
+            if (car && car._render) requestAnimationFrame(car._render);
+          }
+        });
+      }
+      btns.forEach(btn => btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        moveInd(btn);
+        apply(btn.dataset.filter);
+      }));
+      const active = seg.querySelector('.seg-btn.active');
+      requestAnimationFrame(() => moveInd(active));
+      window.addEventListener('resize', () => moveInd(seg.querySelector('.seg-btn.active')));
+    })();
+
+    /* ---------- scroll reveal (staggered) ---------- */
+    (function reveal() {
+      if (reduceMotion) { document.querySelectorAll('.reveal').forEach(r => r.classList.add('in')); return; }
+      // section headers reveal individually
+      const headIO = new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+      }, { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
+      document.querySelectorAll('.reveal:not(.card)').forEach(r => headIO.observe(r));
+      // carousel cards reveal together when the carousel enters view (they can sit off the
+      // horizontal clip, so observing them individually would leave off-screen ones hidden)
+      const carIO = new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            [...e.target.querySelectorAll('.card.reveal')].forEach((c, i) => {
+              c.style.transitionDelay = (Math.min(i, 4) * 70) + 'ms';
+              c.classList.add('in');
+            });
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('.carousel').forEach(c => carIO.observe(c));
+    })();
+
+    /* ---------- carousels (vanilla port of the shadcn carousel-card) ---------- */
+    (function carousels() {
+      document.querySelectorAll('.carousel').forEach(car => {
+        const track = car.querySelector('.track');
+        const cards = [...track.children];
+        const prev = car.querySelector('.car-prev');
+        const next = car.querySelector('.car-next');
+        const dotsWrap = car.querySelector('.car-dots');
+        let index = 0;
+
+        const cpv = () => Math.max(1, parseInt(getComputedStyle(car).getPropertyValue('--cpv')) || 1);
+        const gap = () => parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 24;
+        const maxIndex = () => Math.max(0, cards.length - cpv());
+
+        function render() {
+          index = Math.min(Math.max(0, index), maxIndex());
+          const cw = cards[0] ? cards[0].getBoundingClientRect().width : 0;
+          track.style.transform = `translateX(${-index * (cw + gap())}px)`;
+          const scrollable = cards.length > cpv();
+          prev.hidden = next.hidden = !scrollable;
+          prev.classList.toggle('disabled', index <= 0);
+          next.classList.toggle('disabled', index >= maxIndex());
+          renderDots(scrollable);
+        }
+        function renderDots(scrollable) {
+          if (!scrollable) { dotsWrap.innerHTML = ''; return; }
+          const pages = maxIndex() + 1;
+          dotsWrap.innerHTML = Array.from({ length: pages }, (_, i) =>
+            `<button class="car-dot${i === index ? ' on' : ''}" data-i="${i}" aria-label="Go to page ${i + 1}"></button>`).join('');
+          dotsWrap.querySelectorAll('.car-dot').forEach(d =>
+            d.addEventListener('click', () => { index = Number(d.dataset.i); render(); }));
+        }
+
+        prev.addEventListener('click', () => { index--; render(); });
+        next.addEventListener('click', () => { index++; render(); });
+
+        // pointer / touch swipe
+        let startX = null, dragging = false;
+        car.querySelector('.viewport').addEventListener('pointerdown', e => { startX = e.clientX; dragging = true; });
+        window.addEventListener('pointerup', e => {
+          if (!dragging) return; dragging = false;
+          const dx = e.clientX - startX;
+          if (Math.abs(dx) > 45) { index += dx < 0 ? 1 : -1; render(); }
+        });
+
+        let rt;
+        window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 120); });
+        car._render = render;
+        render();
+      });
+    })();
+
+    /* ---------- card spotlight + 3D tilt ---------- */
+    (function tilt() {
+      if (reduceMotion || matchMedia('(pointer: coarse)').matches) return;
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          card.style.setProperty('--mx', (px * 100) + '%');
+          card.style.setProperty('--my', (py * 100) + '%');
+          const rx = (0.5 - py) * 7, ry = (px - 0.5) * 8;
+          card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    })();
+
+    /* ---------- magnetic enter buttons ---------- */
+    (function magnetic() {
+      if (reduceMotion || matchMedia('(pointer: coarse)').matches) return;
+      document.querySelectorAll('.enter-btn').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const r = btn.getBoundingClientRect();
+          const x = (e.clientX - r.left - r.width / 2) * 0.18;
+          const y = (e.clientY - r.top - r.height / 2) * 0.28;
+          btn.style.transform = `translate(${x}px, ${y}px)`;
+        });
+        btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+      });
+    })();
+
+    /* ---------- drifting embers ---------- */
+    (function embers() {
+      if (reduceMotion) return;
+      const layer = document.getElementById('embers');
+      const N = window.innerWidth < 720 ? 10 : 18;
+      for (let i = 0; i < N; i++) {
+        const e = document.createElement('span');
+        e.className = 'ember';
+        e.style.left = Math.random() * 100 + '%';
+        e.style.setProperty('--sz', (2 + Math.random() * 4) + 'px');
+        e.style.setProperty('--dur', (7 + Math.random() * 9) + 's');
+        e.style.setProperty('--delay', (-Math.random() * 12) + 's');
+        e.style.setProperty('--dx', (-40 + Math.random() * 80) + 'px');
+        e.style.setProperty('--rise', (60 + Math.random() * 45) + 'vh');
+        e.style.setProperty('--peak', (0.35 + Math.random() * 0.5).toFixed(2));
+        layer.appendChild(e);
+      }
+    })();
+  </script>
 </body>
 </html>

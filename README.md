@@ -152,6 +152,36 @@ save system come free.
 
 ---
 
+## 🧭 Roadmap — where we are, and what's next
+
+**Where we are now.** Four rooms are **live and finished** — The Pilgrim's Road, Starfall
+Station, The Wild Court, and The Gate of Life — all single-player, all hand-built on the
+shared zero-dependency engine, deployed on **both GitHub Pages and Vercel** (git-connected,
+push-to-deploy). The room-select dashboard has been rebuilt with an **orange theme, three
+player-count sections (Single-player / For Duos / For Groups), and shadcn-style
+carousels** — still pure vanilla HTML/CSS/JS, no build step.
+
+**What's next.**
+
+1. **(Optional) Framework migration — Astro + Tailwind + TypeScript.** Componentize the
+   dashboard, unlock drop-in shadcn / 21st.dev components and Framer Motion, and add type
+   safety — while **keeping static output and free hosting**, and leaving the four games
+   untouched in `public/`. Full plan, step-by-step, and checklist in
+   [**docs/MIGRATION.md**](docs/MIGRATION.md).
+2. **Duo rooms (2 players).** Local co-op with **no servers and no live calls**: each player
+   picks Player 1 / 2 / 3, every browser runs the same deterministic game, and each role
+   sees a *different slice* of the puzzle. To clear a stage you need details that live only
+   in the **other** players' browsers — so you solve it by **talking**, and the puzzle
+   itself keeps everyone in lockstep (no network needed to "progress at the same rate").
+3. **Group rooms (3–6 players).** The same talk-don't-sync model at party scale — roles,
+   distributed clues, a verdict that needs a quorum.
+
+Because the multiplayer design never syncs over a network, **the whole series stays static,
+serverless, and $0 to host — even once co-op ships.** See
+[docs/MIGRATION.md](docs/MIGRATION.md) for the full architecture.
+
+---
+
 ## 📚 Docs
 
 | Doc | What's in it |
@@ -162,6 +192,7 @@ save system come free.
 | [docs/DESIGN-WILDCOURT.md](docs/DESIGN-WILDCOURT.md) | Room III design — the verdict twist, court tokens, all seven trial specs (post-adversarial-review revision) |
 | [docs/DESIGN-GATEOFLIFE.md](docs/DESIGN-GATEOFLIFE.md) | Room IV design — the Felix/Gus story, bone tesserae, all seven chamber specs |
 | [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) | How to author a new room against the engine |
+| [docs/MIGRATION.md](docs/MIGRATION.md) | **Migration guide** — moving to Astro + Tailwind + TypeScript while staying static & free, plus the no-backend (talk-don't-sync) multiplayer architecture |
 | [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) | ⚠️ Room I spoilers — every solution |
 | [docs/WALKTHROUGH-STARFALL.md](docs/WALKTHROUGH-STARFALL.md) | ⚠️ Room II spoilers — every solution *and the ending* |
 | [docs/WALKTHROUGH-WILDCOURT.md](docs/WALKTHROUGH-WILDCOURT.md) | ⚠️ Room III spoilers — every solution *and the verdict* |
