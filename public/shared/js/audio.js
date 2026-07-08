@@ -1,21 +1,28 @@
+// @ts-check
 // WebAudio synth — every sound is generated, zero asset files.
 // Public API: init(), toggleMute() -> muted, playSfx(name), startAmbience(), stopAmbience()
 
+/** @type {AudioContext | null} */
 let ctx = null;
+/** @type {GainNode | null} */
 let master = null;
 let muted = false;
+/** @type {AudioScheduledSourceNode[]} */
 let ambienceNodes = [];
+/** @type {ReturnType<typeof setTimeout> | null} */
 let dripTimer = null;
 
+/** @returns {AudioContext} */
 function ensureCtx() {
   if (!ctx) {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx = new (window.AudioContext || /** @type {any} */ (window).webkitAudioContext)();
     master = ctx.createGain();
     master.gain.value = muted ? 0 : 0.8;
     master.connect(ctx.destination);
   }
-  if (ctx.state === 'suspended') ctx.resume();
-  return ctx;
+  const c = ctx; // set above; non-null from here
+  if (c.state === 'suspended') c.resume();
+  return c;
 }
 
 export function init() { ensureCtx(); }
@@ -24,12 +31,19 @@ export function isMuted() { return muted; }
 
 export function toggleMute() {
   muted = !muted;
-  if (master) master.gain.setTargetAtTime(muted ? 0 : 0.8, ctx.currentTime, 0.05);
+  if (master && ctx) master.gain.setTargetAtTime(muted ? 0 : 0.8, ctx.currentTime, 0.05);
   return muted;
 }
 
 /* ---------- building blocks ---------- */
 
+/**
+ * @param {GainNode} gainNode
+ * @param {number} t0
+ * @param {number} attack
+ * @param {number} peak
+ * @param {number} decay
+ */
 function env(gainNode, t0, attack, peak, decay) {
   const g = gainNode.gain;
   g.setValueAtTime(0.0001, t0);
@@ -37,6 +51,16 @@ function env(gainNode, t0, attack, peak, decay) {
   g.exponentialRampToValueAtTime(0.0001, t0 + attack + decay);
 }
 
+/**
+ * @param {number} freq
+ * @param {OscillatorType} type
+ * @param {number} t0
+ * @param {number} attack
+ * @param {number} peak
+ * @param {number} decay
+ * @param {number} [detune]
+ * @param {AudioNode | null} [dest]
+ */
 function tone(freq, type, t0, attack, peak, decay, detune = 0, dest = null) {
   const c = ensureCtx();
   const osc = c.createOscillator();
@@ -45,12 +69,13 @@ function tone(freq, type, t0, attack, peak, decay, detune = 0, dest = null) {
   osc.frequency.setValueAtTime(freq, t0);
   osc.detune.value = detune;
   env(g, t0, attack, peak, decay);
-  osc.connect(g).connect(dest || master);
+  osc.connect(g).connect(dest || /** @type {GainNode} */ (master));
   osc.start(t0);
   osc.stop(t0 + attack + decay + 0.05);
   return osc;
 }
 
+/** @param {number} [seconds] */
 function noiseBuffer(seconds = 1) {
   const c = ensureCtx();
   const buf = c.createBuffer(1, c.sampleRate * seconds, c.sampleRate);
@@ -59,6 +84,15 @@ function noiseBuffer(seconds = 1) {
   return buf;
 }
 
+/**
+ * @param {number} t0
+ * @param {number} attack
+ * @param {number} peak
+ * @param {number} decay
+ * @param {BiquadFilterType} filterType
+ * @param {number} freq
+ * @param {number} [q]
+ */
 function noiseBurst(t0, attack, peak, decay, filterType, freq, q = 1) {
   const c = ensureCtx();
   const src = c.createBufferSource();
@@ -69,13 +103,14 @@ function noiseBurst(t0, attack, peak, decay, filterType, freq, q = 1) {
   f.Q.value = q;
   const g = c.createGain();
   env(g, t0, attack, peak, decay);
-  src.connect(f).connect(g).connect(master);
+  src.connect(f).connect(g).connect(/** @type {GainNode} */ (master));
   src.start(t0);
   src.stop(t0 + attack + decay + 0.1);
 }
 
 /* ---------- sfx ---------- */
 
+/** @type {Record<string, (t: number, opt?: number) => void>} */
 const SFX = {
   click(t) {
     noiseBurst(t, 0.002, 0.12, 0.05, 'bandpass', 2600, 4);
@@ -97,7 +132,7 @@ const SFX = {
     osc.frequency.setValueAtTime(180, t);
     osc.frequency.exponentialRampToValueAtTime(95, t + 0.32);
     env(g, t, 0.01, 0.13, 0.34);
-    osc.connect(g).connect(master);
+    osc.connect(g).connect(/** @type {GainNode} */ (master));
     osc.start(t); osc.stop(t + 0.4);
   },
   solve(t) {
@@ -131,7 +166,7 @@ const SFX = {
     const f = c.createBiquadFilter();
     f.type = 'bandpass'; f.frequency.value = 300; f.Q.value = 9;
     env(g, t, 0.05, 0.09, 0.95);
-    osc.connect(f).connect(g).connect(master);
+    osc.connect(f).connect(g).connect(/** @type {GainNode} */ (master));
     osc.start(t); osc.stop(t + 1.1);
   },
   pour(t) {
@@ -145,6 +180,10 @@ const SFX = {
   },
 };
 
+/**
+ * @param {string} name
+ * @param {number} [opt]
+ */
 export function playSfx(name, opt) {
   if (muted) return;
   try {
@@ -155,6 +194,7 @@ export function playSfx(name, opt) {
 }
 
 // Play a bell at a specific pitch (used by musical puzzles)
+/** @param {number} freq */
 export function playBell(freq) {
   if (muted) return;
   try {
@@ -196,7 +236,7 @@ export function startAmbience() {
     lfoGain.gain.value = 0.028;
     lfo.connect(lfoGain).connect(g.gain);
 
-    src.connect(filter).connect(g).connect(master);
+    src.connect(filter).connect(g).connect(/** @type {GainNode} */ (master));
     src.start();
     lfo.start();
     ambienceNodes = [src, lfo];

@@ -96,7 +96,7 @@ import { initGus } from './gus-core.js';
  * @property {(opts?: { delay?: number }) => void} completeRoom
  * @property {(seconds: number, reason?: string) => void} penalize
  * @property {(name: string) => void} playSfx
- * @property {() => void} playBell
+ * @property {(freq: number) => void} playBell
  */
 
 /**
