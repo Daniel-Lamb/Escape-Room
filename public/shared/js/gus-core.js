@@ -1,17 +1,51 @@
+// @ts-check
 // Gus core — the theme-agnostic companion machinery shared by every escape
 // room in the series. Each game supplies a FORM (see e.g.
 // pilgrims-road/js/gus.js): { name, epithet, form, portrait(size), lines }.
 // The core owns the dock button, the dialog, and the paid hint-tier ladder:
 // nudge (−1:00) → method (−2:00) → answer (−4:00), re-readable once paid.
 
+/**
+ * @typedef {Object} GusLines
+ * @property {string[]} greetings
+ * @property {string} noMore
+ * @property {string} stuck
+ * @property {string[]} tierNames
+ * @property {string} [buyLabel]
+ */
+
+/**
+ * A game's Gus identity. Machinery is shared; only this differs per game.
+ * @typedef {Object} GusForm
+ * @property {string} name
+ * @property {string} epithet
+ * @property {string} [form]
+ * @property {(size: string) => string} portrait
+ * @property {GusLines} lines
+ */
+
+/**
+ * Everything the core needs from the engine, injected by initGus.
+ * @typedef {Object} GusDeps
+ * @property {GusForm} form
+ * @property {() => import('./engine.js').RoomModule} getRoom
+ * @property {() => import('./state.js').SaveState} getState
+ * @property {(opts: object) => import('./engine.js').ModalHandle} dialog
+ * @property {(seconds: number) => void} penalize
+ * @property {() => void} save
+ * @property {(name: string) => void} playSfx
+ */
+
 const TIER_COSTS = [60, 120, 240];
 
-let deps = null;   // { form, getRoom, getState, dialog, penalize, save, playSfx }
+/** @type {GusDeps} */
+let deps = /** @type {any} */ (null);
 let greetIdx = 0;
 
+/** @param {GusDeps} dependencies */
 export function initGus(dependencies) {
   deps = dependencies;
-  const dock = document.getElementById('gus-dock');
+  const dock = /** @type {HTMLElement} */ (document.getElementById('gus-dock'));
   dock.innerHTML = deps.form.portrait('small');
   dock.dataset.label = `Ask ${deps.form.name}`;
   dock.title = `${deps.form.epithet} — stuck? Ask ${deps.form.name}.`;
@@ -21,6 +55,11 @@ export function initGus(dependencies) {
   });
 }
 
+/**
+ * @param {import('./engine.js').RoomModule} room
+ * @param {import('./state.js').SaveState} state
+ * @returns {import('./engine.js').Hint[]}
+ */
 function resolveHints(room, state) {
   const h = typeof room.hints === 'function' ? room.hints(state) : room.hints;
   return h || [];
@@ -74,7 +113,7 @@ export function openGusDialog() {
       </div>`,
   });
 
-  const buyBtn = modal.card.querySelector('.gus-tier-buy');
+  const buyBtn = /** @type {HTMLButtonElement | null} */ (modal.card.querySelector('.gus-tier-buy'));
   if (buyBtn) {
     buyBtn.addEventListener('click', () => {
       const tier = Number(buyBtn.dataset.tier);
@@ -90,6 +129,7 @@ export function openGusDialog() {
   }
 }
 
+/** @param {*} s */
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

@@ -1,3 +1,4 @@
+// @ts-check
 // Game engine: scene rendering, hotspots, typewriter narration, modals,
 // inventory, timer, hints, transitions. Rooms interact ONLY through the
 // exported `game` object — see docs/ROOM_CONTRACT.md.
@@ -7,23 +8,140 @@ import * as audio from './audio.js';
 import { getItem, getCombo } from './items.js';
 import { initGus } from './gus-core.js';
 
-const $ = (sel) => document.querySelector(sel);
+/** @typedef {import('./state.js').SaveState} SaveState */
 
+/**
+ * A clickable region over the scene. Coordinates are in the scene's 1600x900
+ * space; the engine converts them to percentages.
+ * @typedef {Object} Hotspot
+ * @property {number} x
+ * @property {number} y
+ * @property {number} w
+ * @property {number} h
+ * @property {string} [label]
+ * @property {(game: GameAPI) => void} onInteract
+ */
+
+/**
+ * One rung of a room's hint ladder. cost overrides the default tier cost.
+ * @typedef {Object} Hint
+ * @property {string} text
+ * @property {number} [cost]  seconds; defaults to the tier cost (60/120/240)
+ */
+
+/**
+ * The API handed to a puzzle's render() so it can report the outcome.
+ * @typedef {Object} PuzzleAPI
+ * @property {() => void} close
+ * @property {(opts?: { message?: string }) => void} solved
+ * @property {(msg?: string) => void} fail
+ * @property {(msg: string, cls?: string) => void} setFeedback
+ */
+
+/**
+ * A puzzle modal definition.
+ * @typedef {Object} PuzzleDef
+ * @property {string} title
+ * @property {string} [id]
+ * @property {boolean} [wide]
+ * @property {(body: HTMLElement, api: PuzzleAPI) => void} render
+ * @property {() => void} [onCleanup]
+ */
+
+/**
+ * A room module. Each game's rooms export objects of this shape; the engine
+ * drives them. See docs/ROOM_CONTRACT.md.
+ * @typedef {Object} RoomModule
+ * @property {string} id
+ * @property {string} title
+ * @property {string} [intro]
+ * @property {(state: SaveState) => string} scene            inline SVG markup for the scene
+ * @property {(state: SaveState) => Hotspot[]} hotspots
+ * @property {(game: GameAPI) => void} [onEnter]
+ * @property {Hint[] | ((state: SaveState) => Hint[])} [hints]
+ * @property {(state: SaveState) => string} [hintContext]    key for multi-ladder rooms
+ */
+
+/**
+ * Per-game configuration passed to initEngine.
+ * @typedef {Object} GameConfig
+ * @property {import('./gus-core.js').GusForm} gusForm
+ * @property {string} [journalTitle]
+ * @property {string} [journalEmpty]
+ * @property {string} [collectiblesTitle]
+ * @property {(entry: import('./state.js').JournalEntry) => string} [renderCollectible]
+ * @property {(entry: import('./state.js').JournalEntry) => string} [collectibleToast]
+ * @property {{ title: string, heading: string, story: string }} [victory]
+ * @property {{ title: string, heading: string, story: string, retryLabel?: string, restartLabel?: string }} [defeat]
+ * @property {string} [restartConfirm]
+ */
+
+/**
+ * The public game object every room interacts through.
+ * @typedef {Object} GameAPI
+ * @property {SaveState} state
+ * @property {string | null} selectedItem
+ * @property {(text: string) => void} say
+ * @property {() => void} clearSay
+ * @property {(id: string, opts?: { from?: { x: number, y: number }, silent?: boolean }) => void} addItem
+ * @property {(id: string) => boolean} hasItem
+ * @property {(id: string) => void} removeItem
+ * @property {() => string | null} useSelected
+ * @property {(key: string, value?: unknown) => void} setFlag
+ * @property {(key: string) => unknown} getFlag
+ * @property {{ add: (id: string, entry: Omit<import('./state.js').JournalEntry, 'id'>) => void, has: (id: string) => boolean }} journal
+ * @property {() => void} refreshScene
+ * @property {(opts: { title?: string, html?: string, wide?: boolean, buttons?: ModalButton[] | null, onClose?: (() => void) | null }) => ModalHandle} dialog
+ * @property {(def: PuzzleDef) => ModalHandle} openPuzzle
+ * @property {(opts?: { delay?: number }) => void} completeRoom
+ * @property {(seconds: number, reason?: string) => void} penalize
+ * @property {(name: string) => void} playSfx
+ * @property {() => void} playBell
+ */
+
+/**
+ * @typedef {Object} ModalButton
+ * @property {string} label
+ * @property {string} [class]
+ * @property {() => void} [onClick]
+ * @property {boolean} [closes]
+ */
+
+/**
+ * @typedef {Object} ModalHandle
+ * @property {HTMLElement} card
+ * @property {HTMLElement} body
+ * @property {() => void} close
+ */
+
+/** @type {(sel: string) => HTMLElement} — every id here exists in the game shell */
+const $ = (sel) => /** @type {HTMLElement} */ (document.querySelector(sel));
+
+/** @type {RoomModule[]} */
 let rooms = [];               // ordered room modules
-let cfg = null;               // per-game config passed to initEngine
-let currentRoom = null;
+/** @type {Partial<GameConfig>} */
+let cfg = /** @type {any} */ (null);   // per-game config passed to initEngine
+/** @type {RoomModule} — always set before any use (enterRoom runs first) */
+let currentRoom = /** @type {any} */ (null);
+/** @type {number | null} */
 let timerHandle = null;
+/** @type {number | null} */
 let emberHandle = null;
+/** @type {string[]} */
 let messageQueue = [];
 let typing = false;
+/** @type {number | null} */
 let typeHandle = null;
+/** @type {number | null} */
 let hideHandle = null;
+/** @type {((reason: string) => void) | null} */
 let onGameEnd = null;         // callback into main.js (show title screen etc.)
 
 /* ============================================================
    PUBLIC GAME API (what room modules use)
    ============================================================ */
 
+/** @type {GameAPI} */
 export const game = {
   get state() { return state; },
   selectedItem: null,
@@ -83,10 +201,11 @@ export const game = {
       btn.classList.remove('badge-pulse');
       void btn.offsetWidth;
       btn.classList.add('badge-pulse');
+      const sun = /** @type {{ rays: number, letter: string }} */ (entry.sun);
       toast(entry.category === 'sun'
         ? (cfg.collectibleToast
-            ? cfg.collectibleToast(entry)
-            : `Sun-mark sketched in your journal: ${entry.sun.rays} rays — "${entry.sun.letter}"`)
+            ? cfg.collectibleToast(/** @type {import('./state.js').JournalEntry} */ (entry))
+            : `Sun-mark sketched in your journal: ${sun.rays} rays — "${sun.letter}"`)
         : `Noted in your journal: ${entry.title}`);
     },
     has(id) { return state.journal.some(e => e.id === id); },
@@ -111,6 +230,7 @@ export const game = {
       wide: def.wide !== false,
       onClose: def.onCleanup || null,
     });
+    /** @type {PuzzleAPI} */
     const api = {
       close: modal.close,
       solved(opts = {}) {
@@ -187,13 +307,17 @@ export const game = {
 //   defeat:  { title, heading, story, retryLabel, restartLabel },
 //   restartConfirm,                 // text for the manual-restart dialog
 // }
+/**
+ * @param {RoomModule[]} roomModules
+ * @param {{ onEnd: (reason: string) => void, config: GameConfig }} opts
+ */
 export function initEngine(roomModules, { onEnd, config }) {
   rooms = roomModules;
   onGameEnd = onEnd;
   cfg = config || {};
 
   initGus({
-    form: cfg.gusForm,
+    form: /** @type {import('./gus-core.js').GusForm} */ (cfg.gusForm),
     getRoom: () => currentRoom,
     getState: () => state,
     dialog: (opts) => game.dialog(opts),
@@ -214,6 +338,7 @@ export function initEngine(roomModules, { onEnd, config }) {
   });
 }
 
+/** @param {boolean} [resumed] */
 export function startRun(resumed = false) {
   if (!resumed) {
     resetState();
@@ -229,6 +354,10 @@ export function startRun(resumed = false) {
   enterRoom(state.currentRoom, true);
 }
 
+/**
+ * @param {number} idx
+ * @param {boolean} [immediate]
+ */
 function enterRoom(idx, immediate = false) {
   state.currentRoom = idx;
   saveState();
@@ -248,6 +377,7 @@ function enterRoom(idx, immediate = false) {
   if (currentRoom.onEnter) currentRoom.onEnter(game);
 }
 
+/** @param {number} idx */
 function transitionToRoom(idx) {
   const fader = $('#fader');
   fader.classList.add('active');
@@ -261,6 +391,7 @@ function transitionToRoom(idx) {
    SCENE + HOTSPOTS
    ============================================================ */
 
+/** @param {boolean} withEntrance */
 function renderScene(withEntrance) {
   const sceneEl = $('#scene');
   sceneEl.innerHTML = currentRoom.scene(state);
@@ -306,7 +437,7 @@ function nextMessage() {
     card.classList.add('hidden');
     return;
   }
-  const text = messageQueue.shift();
+  const text = /** @type {string} */ (messageQueue.shift());   // guarded: queue non-empty above
   card.classList.remove('hidden', 'done');
   const target = $('#message-text');
   target.textContent = '';
@@ -348,6 +479,7 @@ function stopTyping() {
    INVENTORY
    ============================================================ */
 
+/** @param {string | null} [justAddedId] */
 function renderInventory(justAddedId = null) {
   const slots = $('#inv-slots');
   slots.innerHTML = '';
@@ -388,6 +520,10 @@ function renderInventory(justAddedId = null) {
 }
 
 // animate an item icon flying from a scene point into the inventory bar
+/**
+ * @param {string} itemId
+ * @param {{ x: number, y: number }} from
+ */
 function flyToInventory(itemId, from) {
   const wrap = $('#scene-wrap').getBoundingClientRect();
   const startX = wrap.left + (from.x / 1600) * wrap.width;
@@ -414,6 +550,10 @@ function flyToInventory(itemId, from) {
    MODALS
    ============================================================ */
 
+/**
+ * @param {{ title?: string, html?: string, wide?: boolean, buttons?: ModalButton[] | null, onClose?: (() => void) | null }} opts
+ * @returns {ModalHandle}
+ */
 function openModal({ title, html, wide, buttons, onClose }) {
   const root = $('#modal-root');
   const backdrop = document.createElement('div');
@@ -428,8 +568,8 @@ function openModal({ title, html, wide, buttons, onClose }) {
     </div>
     <div class="modal-body"></div>
   `;
-  card.querySelector('.modal-title').textContent = title || '';
-  const body = card.querySelector('.modal-body');
+  /** @type {HTMLElement} */ (card.querySelector('.modal-title')).textContent = title || '';
+  const body = /** @type {HTMLElement} */ (card.querySelector('.modal-body'));
   if (typeof html === 'string') body.innerHTML = html;
 
   if (buttons && buttons.length) {
@@ -465,7 +605,7 @@ function openModal({ title, html, wide, buttons, onClose }) {
     if (onClose) onClose();
   }
   backdrop.addEventListener('click', close);
-  card.querySelector('.modal-close').addEventListener('click', close);
+  /** @type {HTMLElement} */ (card.querySelector('.modal-close')).addEventListener('click', close);
 
   return { close, card, body };
 }
@@ -481,6 +621,10 @@ function burst() {
    PILGRIM'S JOURNAL
    ============================================================ */
 
+/**
+ * @param {number} rays
+ * @param {string} letter
+ */
 function sunSketch(rays, letter) {
   // small hand-sketched sun: circle + N rays + letter beneath
   const cx = 40, cy = 34, r = 13;
@@ -499,9 +643,11 @@ function sunSketch(rays, letter) {
   </svg>`;
 }
 
+/** @param {import('./state.js').JournalEntry} e — always a 'sun' entry here */
 function defaultCollectibleCard(e) {
-  return `${sunSketch(e.sun.rays, e.sun.letter)}
-    <div class="journal-sun-cap">${e.sun.rays} rays &middot; ${e.title}</div>`;
+  const sun = /** @type {{ rays: number, letter: string }} */ (e.sun);
+  return `${sunSketch(sun.rays, sun.letter)}
+    <div class="journal-sun-cap">${sun.rays} rays &middot; ${e.title}</div>`;
 }
 
 function openJournal() {
@@ -531,13 +677,18 @@ function openJournal() {
   });
 }
 
+/** @type {HTMLElement | null} */
 let toastEl = null;
+/**
+ * @param {string} text
+ * @param {string} [costLabel]
+ */
 function toast(text, costLabel = '') {
   if (toastEl) toastEl.remove();
   toastEl = document.createElement('div');
   toastEl.className = 'toast';
   toastEl.innerHTML = `<span></span>${costLabel ? `<span class="toast-cost">${costLabel}</span>` : ''}`;
-  toastEl.querySelector('span').textContent = text;
+  /** @type {HTMLElement} */ (toastEl.querySelector('span')).textContent = text;
   document.body.appendChild(toastEl);
   const el = toastEl;
   setTimeout(() => {
@@ -627,7 +778,7 @@ function victory() {
     localStorage.setItem(key, JSON.stringify(rec));
   } catch { /* storage unavailable */ }
 
-  const v = cfg.victory || {};
+  const v = cfg.victory || /** @type {NonNullable<GameConfig['victory']>} */ ({});
   game.dialog({
     title: v.title || 'Freedom',
     html: `
@@ -654,7 +805,7 @@ function defeat() {
   fader.classList.add('active');
   setTimeout(() => {
     fader.classList.remove('active');
-    const d = cfg.defeat || {};
+    const d = cfg.defeat || /** @type {NonNullable<GameConfig['defeat']>} */ ({});
     game.dialog({
       title: d.title || 'Out of Time',
       html: `
@@ -697,7 +848,9 @@ function confirmRestart() {
    UTIL
    ============================================================ */
 
+/** @param {number} n */
 function romanNumeral(n) {
+  /** @type {[number, string][]} */
   const map = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
   let out = '';
   for (const [v, sym] of map) while (n >= v) { out += sym; n -= v; }

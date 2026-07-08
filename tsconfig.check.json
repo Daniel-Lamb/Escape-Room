@@ -1,0 +1,16 @@
+{
+  "//": "Type-checks the hand-authored game engine in public/shared/js. Files opt in with a // @ts-check comment, so this never touches runtime (the games are still served verbatim). Run with: npm run check:engine",
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["public/shared/js/**/*.js"]
+}
