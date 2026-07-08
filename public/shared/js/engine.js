@@ -147,9 +147,13 @@ export const game = {
   selectedItem: null,
 
   /* ---- narration ---- */
+  // A new line interrupts whatever is showing rather than queuing behind it, so
+  // clicking around the scene always shows the most recent thing you touched
+  // (repeated clicks don't stack up the same narration).
   say(text) {
-    messageQueue.push(text);
-    if (!typing) nextMessage();
+    messageQueue = [text];
+    stopTyping();
+    nextMessage();
   },
   clearSay() {
     messageQueue = [];
