@@ -397,3 +397,32 @@
       .show-card-wrap { animation: none; }
       .show-track { animation: none; }
     }
+
+    /* ═══════════ INTRO OVERLAY (scatter → line → circle → rows, then fades) ═══════════
+       #intro-cover is a server-rendered opaque bridge that hides the dashboard
+       until the client:only overlay mounts (which then removes the cover). */
+    #intro-cover { position: fixed; inset: 0; background: var(--bg-0); z-index: 9998; }
+
+    .intro-overlay { position: fixed; inset: 0; background: var(--bg-0); z-index: 9999; overflow: hidden; cursor: pointer; }
+    .intro-stage { position: absolute; inset: 0; }
+    .intro-card { position: absolute; left: 50%; top: 50%; will-change: transform; }
+    .intro-card img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 10px;
+      border: 1px solid rgba(255, 150, 70, 0.25); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+    .intro-title {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      text-align: center; pointer-events: none; z-index: 2;
+    }
+    .intro-kicker { font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--o-300); margin-bottom: 12px; }
+    .intro-title h1 {
+      font-size: clamp(40px, 7vw, 80px); font-weight: 600; letter-spacing: 0.03em;
+      background: linear-gradient(100deg, var(--o-200), var(--o-500) 40%, var(--amber) 50%, var(--o-500) 60%, var(--o-200));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 8px 34px rgba(255, 122, 24, 0.28));
+    }
+    .intro-skip {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim-2); pointer-events: none;
+    }
+    @media (prefers-reduced-motion: reduce) { #intro-cover { display: none; } }

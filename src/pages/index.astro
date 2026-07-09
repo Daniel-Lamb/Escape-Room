@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/dashboard.css';
 import { liveRooms } from '../data/rooms';
 import RoomShowcase from '../components/RoomShowcase.tsx';
+import ScrollMorphHero from '../components/ui/scroll-morph-hero.tsx';
 
 const roomsLive = liveRooms.length;
 const puzzles = roomsLive * 7;
@@ -23,6 +24,9 @@ const favicon =
     <link rel="icon" href={favicon} />
   </head>
   <body>
+    <div id="intro-cover"></div>
+    <ScrollMorphHero client:only="react" />
+
     <div class="bg"></div>
     <div class="bg-vignette"></div>
     <div id="embers" aria-hidden="true"></div>
