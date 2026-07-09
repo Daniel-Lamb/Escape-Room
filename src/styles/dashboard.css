@@ -410,13 +410,17 @@
       width: 100%; height: 100%; object-fit: cover; border-radius: 10px;
       border: 1px solid rgba(255, 150, 70, 0.25); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
-    .intro-title {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-      text-align: center; pointer-events: none; z-index: 2;
+    /* Center via a full-size grid so framer-motion's inline transform (the y
+       animation) doesn't override a CSS centering transform. */
+    .intro-title { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 2; }
+    .intro-title-inner {
+      text-align: center;
+      /* keep the text within the ring of cards (circle radius ≈ 0.34·min-viewport) */
+      max-width: min(52vmin, 440px);
     }
-    .intro-kicker { font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--o-300); margin-bottom: 12px; }
+    .intro-kicker { font-size: clamp(9px, 1.4vmin, 13px); letter-spacing: 0.5em; text-transform: uppercase; color: var(--o-300); margin-bottom: clamp(6px, 1.4vmin, 12px); }
     .intro-title h1 {
-      font-size: clamp(40px, 7vw, 80px); font-weight: 600; letter-spacing: 0.03em;
+      font-size: clamp(24px, 7vmin, 54px); line-height: 1.02; font-weight: 600; letter-spacing: 0.02em;
       background: linear-gradient(100deg, var(--o-200), var(--o-500) 40%, var(--amber) 50%, var(--o-500) 60%, var(--o-200));
       -webkit-background-clip: text; background-clip: text; color: transparent;
       filter: drop-shadow(0 8px 34px rgba(255, 122, 24, 0.28));

@@ -113,12 +113,14 @@ export default function ScrollMorphHero() {
         opacity: 0,
       }))
     )
+    // Total ~11.4s (5s longer than before); most of the extra time lingers in
+    // the circle, where the "Escape Rooms" title sits centered inside the ring.
     const timers = [
-      window.setTimeout(() => setPhase("line"), 550),
-      window.setTimeout(() => setPhase("circle"), 2150),
-      window.setTimeout(() => setPhase("rows"), 4200),
-      window.setTimeout(() => setFading(true), 5400),
-      window.setTimeout(() => setGone(true), 6400),
+      window.setTimeout(() => setPhase("line"), 900),
+      window.setTimeout(() => setPhase("circle"), 3100),
+      window.setTimeout(() => setPhase("rows"), 7500),
+      window.setTimeout(() => setFading(true), 10400),
+      window.setTimeout(() => setGone(true), 11400),
     ]
     return () => {
       window.removeEventListener("resize", onResize)
@@ -150,8 +152,10 @@ export default function ScrollMorphHero() {
           animate={{ opacity: showTitle ? 1 : 0, y: showTitle ? 0 : 12 }}
           transition={{ duration: 0.7 }}
         >
-          <p className="intro-kicker">Choose your door</p>
-          <h1>Escape Rooms</h1>
+          <div className="intro-title-inner">
+            <p className="intro-kicker">Choose your door</p>
+            <h1>Escape Rooms</h1>
+          </div>
         </motion.div>
 
         {cards.map((c) => {
