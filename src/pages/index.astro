@@ -1,12 +1,9 @@
 ---
 import '../styles/global.css';
 import '../styles/dashboard.css';
-import { rooms, sections, liveRooms } from '../data/rooms';
-import RoomCard from '../components/RoomCard.astro';
-import Carousel from '../components/Carousel.astro';
-import ModeFilter from '../components/ModeFilter.tsx';
+import { liveRooms } from '../data/rooms';
+import RoomShowcase from '../components/RoomShowcase.tsx';
 
-const roomsOf = (mode: string) => rooms.filter((r) => r.mode === mode);
 const roomsLive = liveRooms.length;
 const puzzles = roomsLive * 7;
 const favicon =
@@ -57,25 +54,7 @@ const favicon =
         </div>
       </header>
 
-      <ModeFilter client:load />
-
-      {
-        sections.map((sec) => (
-          <section class="mode" data-mode={sec.mode}>
-            <div class="mode-head reveal">
-              <h2>{sec.title}</h2>
-              <span class="mode-count">{sec.count ?? `${roomsLive} rooms · live`}</span>
-              <span class="mode-rule" />
-              <p class="mode-sub">{sec.sub}</p>
-            </div>
-            <Carousel>
-              {roomsOf(sec.mode).map((room) => (
-                <RoomCard room={room} />
-              ))}
-            </Carousel>
-          </section>
-        ))
-      }
+      <RoomShowcase client:load />
 
       <footer>
         One companion across every era &middot;
@@ -88,28 +67,15 @@ const favicon =
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      /* ---------- per-room status from localStorage ---------- */
-      function fmt(t: number) {
-        const m = Math.floor(t / 60),
-          s = t % 60;
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      }
+      /* ---------- total escapes across all rooms (from localStorage) ---------- */
       let totalEscapes = 0;
       for (const room of rooms) {
         if (!room.saveKey) continue;
-        const el = document.getElementById(`status-${room.id}`);
-        if (!el) continue;
         try {
           const vic = JSON.parse(localStorage.getItem(`${room.saveKey}-victory`) || 'null');
-          const save = JSON.parse(localStorage.getItem(room.saveKey) || 'null');
-          if (vic && vic.completions) {
-            totalEscapes += vic.completions;
-            el.innerHTML = `<span class="done">✓ Escaped ×${vic.completions} · best: ${fmt(vic.bestTimeLeft)} to spare</span>`;
-          } else if (save && save.started && !save.finished) {
-            el.innerHTML = `<span class="prog">◐ In progress — chamber ${(save.currentRoom || 0) + 1} of 7, ${fmt(Math.max(0, save.timeLeft))} left</span>`;
-          }
+          if (vic && vic.completions) totalEscapes += vic.completions;
         } catch {
-          /* leave the server-rendered "unplayed" text in place */
+          /* storage unavailable */
         }
       }
 
@@ -134,172 +100,6 @@ const favicon =
             if (p < 1) requestAnimationFrame(tick);
           };
           requestAnimationFrame(tick);
-        });
-      })();
-
-      /* ---------- scroll reveal (staggered) ---------- */
-      function revealVisibleSections() {
-        document.querySelectorAll<HTMLElement>('.mode').forEach((sec) => {
-          if (getComputedStyle(sec).display === 'none') return;
-          sec.querySelectorAll('.reveal').forEach((r) => r.classList.add('in'));
-        });
-      }
-      (function reveal() {
-        if (reduceMotion) {
-          document.querySelectorAll('.reveal').forEach((r) => r.classList.add('in'));
-          return;
-        }
-        const headIO = new IntersectionObserver(
-          (entries, obs) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                e.target.classList.add('in');
-                obs.unobserve(e.target);
-              }
-            });
-          },
-          { threshold: 0.2, rootMargin: '0px 0px -6% 0px' }
-        );
-        document.querySelectorAll('.reveal:not(.card)').forEach((r) => headIO.observe(r));
-        const carIO = new IntersectionObserver(
-          (entries, obs) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                [...e.target.querySelectorAll<HTMLElement>('.card.reveal')].forEach((c, i) => {
-                  c.style.transitionDelay = Math.min(i, 4) * 70 + 'ms';
-                  c.classList.add('in');
-                });
-                obs.unobserve(e.target);
-              }
-            });
-          },
-          { threshold: 0.08 }
-        );
-        document.querySelectorAll('.carousel').forEach((c) => carIO.observe(c));
-      })();
-
-      /* ---------- carousels (vanilla port of the shadcn carousel-card) ---------- */
-      const carouselApis: Array<() => void> = [];
-      (function carousels() {
-        document.querySelectorAll<HTMLElement>('.carousel').forEach((car) => {
-          const track = car.querySelector<HTMLElement>('.track')!;
-          const cards = () => [...track.children] as HTMLElement[];
-          const prev = car.querySelector<HTMLButtonElement>('.car-prev')!;
-          const next = car.querySelector<HTMLButtonElement>('.car-next')!;
-          const dotsWrap = car.querySelector<HTMLElement>('.car-dots')!;
-          let index = 0;
-
-          const cpv = () =>
-            Math.max(1, parseInt(getComputedStyle(car).getPropertyValue('--cpv')) || 1);
-          const gap = () =>
-            parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 24;
-          const maxIndex = () => Math.max(0, cards().length - cpv());
-
-          function render() {
-            index = Math.min(Math.max(0, index), maxIndex());
-            const first = cards()[0];
-            const cw = first ? first.getBoundingClientRect().width : 0;
-            track.style.transform = `translateX(${-index * (cw + gap())}px)`;
-            const scrollable = cards().length > cpv();
-            prev.hidden = next.hidden = !scrollable;
-            prev.classList.toggle('disabled', index <= 0);
-            next.classList.toggle('disabled', index >= maxIndex());
-            renderDots(scrollable);
-          }
-          function renderDots(scrollable: boolean) {
-            if (!scrollable) {
-              dotsWrap.innerHTML = '';
-              return;
-            }
-            const pages = maxIndex() + 1;
-            dotsWrap.innerHTML = Array.from(
-              { length: pages },
-              (_, i) =>
-                `<button class="car-dot${i === index ? ' on' : ''}" data-i="${i}" aria-label="Go to page ${i + 1}"></button>`
-            ).join('');
-            dotsWrap.querySelectorAll<HTMLButtonElement>('.car-dot').forEach((d) =>
-              d.addEventListener('click', () => {
-                index = Number(d.dataset.i);
-                render();
-              })
-            );
-          }
-
-          prev.addEventListener('click', () => {
-            index--;
-            render();
-          });
-          next.addEventListener('click', () => {
-            index++;
-            render();
-          });
-
-          let startX: number | null = null,
-            dragging = false;
-          car.querySelector('.viewport')!.addEventListener('pointerdown', (e) => {
-            startX = (e as PointerEvent).clientX;
-            dragging = true;
-          });
-          window.addEventListener('pointerup', (e) => {
-            if (!dragging) return;
-            dragging = false;
-            const dx = (e as PointerEvent).clientX - (startX ?? 0);
-            if (Math.abs(dx) > 45) {
-              index += dx < 0 ? 1 : -1;
-              render();
-            }
-          });
-
-          // Re-lay-out on any size change — including a section becoming visible
-          // again after the filter hid it (display:none → block fires the RO).
-          const ro = new ResizeObserver(() => render());
-          ro.observe(car);
-          carouselApis.push(render);
-          render();
-        });
-      })();
-
-      // When the filter changes, reveal newly shown cards and re-lay-out carousels.
-      document.addEventListener('dashboard:filter', () => {
-        requestAnimationFrame(() => {
-          revealVisibleSections();
-          carouselApis.forEach((render) => render());
-        });
-      });
-
-      /* ---------- card spotlight + 3D tilt ---------- */
-      (function tilt() {
-        if (reduceMotion || matchMedia('(pointer: coarse)').matches) return;
-        document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
-          card.addEventListener('mousemove', (e) => {
-            const r = card.getBoundingClientRect();
-            const px = (e.clientX - r.left) / r.width;
-            const py = (e.clientY - r.top) / r.height;
-            card.style.setProperty('--mx', px * 100 + '%');
-            card.style.setProperty('--my', py * 100 + '%');
-            const rx = (0.5 - py) * 7,
-              ry = (px - 0.5) * 8;
-            card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
-          });
-          card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-          });
-        });
-      })();
-
-      /* ---------- magnetic enter buttons ---------- */
-      (function magnetic() {
-        if (reduceMotion || matchMedia('(pointer: coarse)').matches) return;
-        document.querySelectorAll<HTMLElement>('.enter-btn').forEach((btn) => {
-          btn.addEventListener('mousemove', (e) => {
-            const r = btn.getBoundingClientRect();
-            const x = (e.clientX - r.left - r.width / 2) * 0.18;
-            const y = (e.clientY - r.top - r.height / 2) * 0.28;
-            btn.style.transform = `translate(${x}px, ${y}px)`;
-          });
-          btn.addEventListener('mouseleave', () => {
-            btn.style.transform = '';
-          });
         });
       })();
 

@@ -324,3 +324,76 @@
     body[data-mode-filter="group"]  .mode[data-mode]:not([data-mode="group"]) {
       display: none;
     }
+
+    /* ═══════════ SCROLL-MORPH SHOWCASE (three infinite-marquee rows) ═══════════
+       Rooms scatter in (show-in), then each row scrolls forever (show-marq) by
+       shifting exactly one room-set copy so it loops seamlessly. Placards are
+       16:9 and grow on hover; hovering a row pauses it so you can click. */
+    .showcase { display: flex; flex-direction: column; gap: 34px; margin-top: 26px; }
+
+    .show-row-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 0 2px 2px; }
+    .show-row-head h2 {
+      font-size: clamp(22px, 3vw, 30px); letter-spacing: 0.02em;
+      background: linear-gradient(180deg, var(--amber), var(--o-400));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .show-row-count {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--o-300);
+      border: 1px solid rgba(255, 150, 70, 0.32); padding: 5px 12px; border-radius: 999px;
+    }
+    .show-row-sub { flex-basis: 100%; color: var(--dim-2); font-style: italic; font-size: 14px; margin-top: -2px; }
+
+    .show-marquee {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    }
+    .show-track {
+      display: flex; gap: 18px; width: max-content; padding: 30px 0; margin: 0; list-style: none;
+      animation: show-marq var(--dur, 24s) linear infinite;
+      animation-play-state: paused;   /* released once the scatter settles */
+    }
+    .showcase.ready .show-track { animation-play-state: running; }
+    .show-marquee:hover .show-track { animation-play-state: paused; }
+    @keyframes show-marq { to { transform: translateX(var(--shift, -20%)); } }
+
+    .show-card-wrap {
+      flex: 0 0 auto;
+      animation: show-in 0.85s var(--delay, 0s) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes show-in {
+      from { opacity: 0; transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--rot, 0)) scale(0.7); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .show-card {
+      position: relative; display: block; overflow: hidden;
+      width: clamp(230px, 24vw, 340px); aspect-ratio: 16 / 9;
+      border-radius: 16px; background: #140b05; text-decoration: none;
+      border: 1px solid rgba(255, 150, 70, 0.18);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      transition: transform 0.35s var(--ease-spring), box-shadow 0.35s, border-color 0.35s;
+    }
+    .show-card:hover {
+      transform: scale(1.06); z-index: 5;
+      border-color: rgba(255, 138, 42, 0.55);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.6), 0 0 42px rgba(255, 122, 24, 0.18);
+    }
+    .show-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .show-card-grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 6, 3, 0) 38%, rgba(10, 6, 3, 0.9) 100%); }
+    .show-card-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 14px 13px; z-index: 2; }
+    .show-card-kicker { display: block; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--o-300); margin-bottom: 3px; }
+    .show-card-title { font-size: clamp(15px, 1.6vw, 19px); letter-spacing: 0.01em; color: var(--amber); }
+    .show-card-cta { display: inline-block; margin-top: 6px; font-size: 12.5px; color: var(--o-200); opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s; }
+    .show-card:hover .show-card-cta { opacity: 1; transform: none; }
+    .show-card.concept { cursor: default; }
+    .show-card.concept .show-card-img { filter: grayscale(0.35) brightness(0.78); }
+    .show-card-soon {
+      display: inline-block; margin-top: 6px; font-size: 11px; letter-spacing: 0.06em; color: var(--o-200);
+      border: 1px dashed rgba(255, 150, 70, 0.42); padding: 2px 9px; border-radius: 999px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .show-card-wrap { animation: none; }
+      .show-track { animation: none; }
+    }
