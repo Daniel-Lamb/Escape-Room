@@ -1,8 +1,11 @@
 # 🏰 Escape Rooms
 
 **A growing collection of hour-long, browser-native escape rooms** — one shared engine,
-hand-authored SVG scenes, synthesized sound, zero dependencies, zero build step. And one
-immortal companion: **Gus**, who appears in every room in a form to match the theme.
+hand-authored SVG scenes, and synthesized sound. The four games are hand-authored with
+**zero runtime dependencies** and served verbatim; the room-select dashboard is now an
+**Astro + TypeScript + Tailwind** app that opens with a scroll-morph reveal and three
+infinitely-scrolling rows of rooms. Output is still **100% static and free to host**.
+And one immortal companion: **Gus**, who appears in every room in a form to match the theme.
 
 ---
 
@@ -61,10 +64,13 @@ of carved suns for whoever followed. **Seven chambers. One hour. Mark each sun a
 - Autosaves; if dawn catches you, *Rise again* retries the chamber with progress intact.
 
 **Play**: [daniel-lamb.github.io/Escape-Room/pilgrims-road](https://daniel-lamb.github.io/Escape-Room/pilgrims-road/) —
-or locally from the repo root:
+or run the whole site locally:
 
 ```bash
-python -m http.server 4173   # dashboard at http://localhost:4173
+npm install
+npm run dev        # dashboard at http://localhost:4321
+# or a production preview:
+npm run build && npm run preview
 ```
 
 ---
@@ -135,20 +141,28 @@ games. And the one word the crowd shouts when a life is to be spared.**
   through the arena floor above, wax-tablet documents, Latin inscriptions — and the
   Porta Sanavivaria, the real gate spared gladiators walked out of alive.
 
-## 🏗️ Repo layout (hub-and-games)
+## 🏗️ Repo layout (Astro app + verbatim games)
 
 ```
-/index.html          ← the DASHBOARD: room select, per-game status & best times
-/shared/             ← the engine: engine.js, state.js, items.js, audio.js, gus-core.js, css/
-/pilgrims-road/      ← Room I  — medieval  (index.html, js/gus.js form, js/rooms/*)
-/starfall-station/   ← Room II — futurist  (index.html, skin.css, js/gus.js form, js/rooms/*)
-/wild-court/         ← Room III — jungle    (index.html, skin.css, js/gus.js form, js/rooms/*)
-/gate-of-life/       ← Room IV — Rome      (index.html, skin.css, js/gus.js form, js/rooms/*)
+escape-room/
+├─ astro.config.mjs                ← static output; env-driven base (Vercel '/' · Pages '/Escape-Room/')
+├─ src/
+│  ├─ pages/index.astro            ← the dashboard, assembled from data
+│  ├─ data/rooms.ts                ← the rooms as a typed array (drives the whole dashboard)
+│  ├─ components/
+│  │  ├─ RoomShowcase.tsx          ← the three infinite-marquee rows
+│  │  └─ ui/scroll-morph-hero.tsx  ← the on-load intro (scatter → circle → rows → reveal)
+│  └─ styles/                      ← the orange theme + tokens
+└─ public/                         ← copied to the site root, served verbatim
+   ├─ shared/                      ← the engine: engine.js, state.js, items.js, audio.js, gus-core.js, css/
+   ├─ pilgrims-road/  starfall-station/  wild-court/  gate-of-life/   ← the four games, unchanged
 ```
 
-Adding a room = a new game folder (shell + skin + Gus form + room modules + boot
-config) plus one card on the dashboard. The engine, hint tiers, journal, timer, and
-save system come free.
+The **games are untouched** — plain ES-module JS + hand-authored SVG + WebAudio under
+`public/`, still zero-dependency and served as-is. Only the **dashboard** is built. Adding
+a room is now **one object in `src/data/rooms.ts`** plus a game folder in `public/`; the
+shared engine (hint tiers, journal, timer, save system) comes free. The engine is also
+type-checked in place (`// @ts-check` + JSDoc): run `npm run check:engine`.
 
 ---
 
@@ -156,24 +170,21 @@ save system come free.
 
 **Where we are now.** Four rooms are **live and finished** — The Pilgrim's Road, Starfall
 Station, The Wild Court, and The Gate of Life — all single-player, all hand-built on the
-shared zero-dependency engine, deployed on **both GitHub Pages and Vercel** (git-connected,
-push-to-deploy). The room-select dashboard has been rebuilt with an **orange theme, three
-player-count sections (Single-player / For Duos / For Groups), and shadcn-style
-carousels** — still pure vanilla HTML/CSS/JS, no build step.
+shared engine, deployed on **both GitHub Pages and Vercel** (git-connected, push-to-deploy).
+The **Astro + TypeScript + Tailwind migration is done** (see [docs/MIGRATION.md](docs/MIGRATION.md)):
+the dashboard is componentized and data-driven, the shared engine is type-checked in place,
+and the room-select screen opens with a **scroll-morph intro** (the placards scatter → form
+a circle → spread into three rows) that settles into three **infinitely-scrolling rows** of
+16:9 room placards — one per player count. Output stays 100% static and free to host.
 
 **What's next.**
 
-1. **(Optional) Framework migration — Astro + Tailwind + TypeScript.** Componentize the
-   dashboard, unlock drop-in shadcn / 21st.dev components and Framer Motion, and add type
-   safety — while **keeping static output and free hosting**, and leaving the four games
-   untouched in `public/`. Full plan, step-by-step, and checklist in
-   [**docs/MIGRATION.md**](docs/MIGRATION.md).
-2. **Duo rooms (2 players).** Local co-op with **no servers and no live calls**: each player
+1. **Duo rooms (2 players).** Local co-op with **no servers and no live calls**: each player
    picks Player 1 / 2 / 3, every browser runs the same deterministic game, and each role
    sees a *different slice* of the puzzle. To clear a stage you need details that live only
    in the **other** players' browsers — so you solve it by **talking**, and the puzzle
    itself keeps everyone in lockstep (no network needed to "progress at the same rate").
-3. **Group rooms (3–6 players).** The same talk-don't-sync model at party scale — roles,
+2. **Group rooms (3–6 players).** The same talk-don't-sync model at party scale — roles,
    distributed clues, a verdict that needs a quorum.
 
 Because the multiplayer design never syncs over a network, **the whole series stays static,
@@ -200,8 +211,12 @@ serverless, and $0 to host — even once co-op ships.** See
 
 ## 🧱 Tech
 
-Vanilla JS ES modules · hand-authored layered SVG scenes · CSS animation library ·
-WebAudio synthesis · localStorage saves · GitHub Pages. No frameworks, no assets, no build.
+**Dashboard:** Astro (static output) · TypeScript (strict) · Tailwind v4 · React islands +
+Framer Motion (the scroll-morph intro). **Games:** vanilla ES-module JS · hand-authored
+layered SVG scenes · CSS animation library · WebAudio synthesis · `localStorage` saves —
+still zero-dependency and served verbatim from `public/`. The shared engine is
+`// @ts-check`-clean (`npm run check:engine`). **Hosting:** GitHub Pages + Vercel — static,
+free, push-to-deploy. No backend, no assets.
 
 ---
 
