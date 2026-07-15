@@ -453,6 +453,65 @@ function GateCourt() {
   )
 }
 
+/* ---------- 2.5D plate (spec §8 Layer 3): Higgsfield loop with still fallback ---------- */
+function Plate({
+  video,
+  still,
+  position,
+  rotation,
+  size,
+}: {
+  video: string
+  still: string
+  position: [number, number, number]
+  rotation: [number, number, number]
+  size: [number, number]
+}) {
+  const [tex, setTex] = useState<THREE.Texture | null>(null)
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL || "/"
+    let disposed = false
+    let texture: THREE.Texture | null = null
+    const el = document.createElement("video")
+    el.src = base + video
+    el.muted = true
+    el.loop = true
+    el.playsInline = true
+    el.crossOrigin = "anonymous"
+    const useStill = () => {
+      new THREE.TextureLoader().load(base + still, (t) => {
+        if (disposed) return
+        t.colorSpace = THREE.SRGBColorSpace
+        texture = t
+        setTex(t)
+      })
+    }
+    el.addEventListener("canplay", () => {
+      if (disposed) return
+      el.play().catch(useStill)
+      const t = new THREE.VideoTexture(el)
+      t.colorSpace = THREE.SRGBColorSpace
+      texture = t
+      setTex(t)
+    })
+    el.addEventListener("error", useStill)
+    el.load()
+    return () => {
+      disposed = true
+      el.pause()
+      el.removeAttribute("src")
+      texture?.dispose()
+    }
+  }, [video, still])
+  if (!tex) return null
+  return (
+    <mesh position={position} rotation={rotation}>
+      <planeGeometry args={size} />
+      <meshBasicMaterial map={tex} toneMapped={false} />
+    </mesh>
+  )
+}
+
 /* ---------- Inner Eden ---------- */
 function InnerEden() {
   const st = useEden()
@@ -538,6 +597,16 @@ function InnerEden() {
       <Text position={[31, 0.6, 6.5]} fontSize={0.2} color="#c39a78" anchorX="center">
         {"Mara's journal: “...opens to an empty hand.”"}
       </Text>
+      {/* distant waterfall — Higgsfield loop plate on the valley's far wall */}
+      {!exile && (
+        <Plate
+          video="eden/plates/waterfall-loop.mp4"
+          still="eden/plates/waterfall-still.png"
+          position={[41.8, 4.5, 0]}
+          rotation={[0, -Math.PI / 2, 0]}
+          size={[19, 10.7]}
+        />
+      )}
     </group>
   )
 }
