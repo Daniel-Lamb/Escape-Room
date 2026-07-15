@@ -1,0 +1,20 @@
+---
+import EdenGame from '../components/eden/EdenGame.tsx';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDEN: The Four Rivers — Escape Room V (greybox)</title>
+    <meta name="description" content="A cinematic 3D escape room: restore the four rivers, pass the guardians, and learn why Eden was hidden." />
+    <style>
+      html, body { margin: 0; background: #0d0704; height: 100%; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <EdenGame client:only="react" />
+    <noscript>EDEN: The Four Rivers is a 3D room and needs JavaScript.</noscript>
+  </body>
+</html>

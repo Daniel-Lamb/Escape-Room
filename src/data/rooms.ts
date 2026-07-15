@@ -98,6 +98,22 @@ export const rooms: Room[] = [
     freshText: 'Unplayed — the carcer waits.',
   },
   {
+    id: 'eden',
+    mode: 'single',
+    status: 'live',
+    kicker: 'Room V · Antediluvian',
+    title: 'EDEN: The Four Rivers',
+    blurb:
+      'The tunnel collapses behind you at the eastern boundary of Eden. Restore the four rivers, learn the creatures’ names, pass the guardians — and do not take anything from the garden.',
+    chips: ['1 player', '3D · greybox', 'Two endings'],
+    gusChip: '🦌 Gus, the Gentle Wanderer',
+    art: 'eden',
+    href: 'eden/',
+    cta: 'Enter the Boundary',
+    saveKey: 'eden-save-v1',
+    freshText: 'Unplayed — the rivers are dry.',
+  },
+  {
     id: 'two-keys-one-door',
     mode: 'duo',
     status: 'concept',

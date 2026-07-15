@@ -1,0 +1,47 @@
+<svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="d_esky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0c1a12"/><stop offset="1" stop-color="#17301c"/>
+    </linearGradient>
+    <radialGradient id="d_eglow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="rgba(255,232,170,0.85)"/><stop offset="0.6" stop-color="rgba(255,210,120,0.25)"/><stop offset="1" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="d_efly" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="rgba(255,238,170,0.9)"/><stop offset="1" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="190" fill="url(#d_esky)"/>
+  <!-- divine glow behind the gate -->
+  <ellipse cx="200" cy="80" rx="120" ry="90" fill="url(#d_eglow)"/>
+  <!-- the golden gate -->
+  <path d="M170 150 L170 70 Q200 34 230 70 L230 150 Z" fill="none" stroke="#d1a53f" stroke-width="6"/>
+  <path d="M200 150 L200 52" stroke="#d1a53f" stroke-width="3"/>
+  <path d="M178 150 L178 76 Q200 50 222 76 L222 150" fill="rgba(255,236,180,0.16)" stroke="#b8862f" stroke-width="2"/>
+  <!-- guardian silhouettes -->
+  <path d="M150 150 L150 96 q-16 -8 -10 -30 q22 6 22 28 l0 52 z" fill="#0a130c"/>
+  <path d="M250 150 L250 96 q16 -8 10 -30 q-22 6 -22 28 l0 52 z" fill="#0a130c"/>
+  <!-- four rivers running toward the viewer -->
+  <path d="M200 150 Q160 165 60 178 M200 150 Q180 168 140 186 M200 150 Q220 168 260 186 M200 150 Q240 165 340 178"
+        stroke="#4fc3d0" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.85"/>
+  <!-- canopy framing -->
+  <path d="M0 0 q60 14 74 66 q-52 -6 -74 -30 z" fill="#0d1c10"/>
+  <path d="M400 0 q-60 14 -74 66 q52 -6 74 -30 z" fill="#0d1c10"/>
+  <path d="M40 0 q8 40 -6 62 M360 0 q-8 40 6 62" stroke="#123018" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <!-- the flaming sword, rotating between the guardians -->
+  <g class="ringspin" style="transform-origin:200px 96px">
+    <path class="flame" d="M200 74 q7 10 0 22 q-7 -12 0 -22z" fill="#ffd9a0"/>
+  </g>
+  <!-- blossoms + drifting light -->
+  <circle cx="88" cy="140" r="3.4" fill="#e88ab0" opacity="0.85"/>
+  <circle cx="118" cy="156" r="2.8" fill="#8ab0e8" opacity="0.8"/>
+  <circle cx="296" cy="148" r="3.2" fill="#e88ab0" opacity="0.8"/>
+  <circle class="drift" cx="140" cy="60" r="4.5" fill="url(#d_efly)"/>
+  <circle class="drift" cx="270" cy="44" r="4" fill="url(#d_efly)" style="animation-delay:-4s"/>
+  <circle class="drift" cx="220" cy="120" r="3.5" fill="url(#d_efly)" style="animation-delay:-7s"/>
+  <!-- the white deer, watching -->
+  <g class="bob">
+    <ellipse cx="96" cy="160" rx="10" ry="6" fill="#f2ede2"/>
+    <circle cx="106" cy="150" r="5" fill="#f2ede2"/>
+    <path d="M104 146 l-3 -7 M108 146 l3 -7" stroke="#f2ede2" stroke-width="1.6" fill="none"/>
+  </g>
+</svg>
