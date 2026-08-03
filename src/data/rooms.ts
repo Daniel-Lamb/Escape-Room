@@ -132,6 +132,22 @@ export const rooms: Room[] = [
     freshText: 'Unplayed — the mirror waits.',
   },
   {
+    id: 'silent-alarm',
+    mode: 'duo',
+    status: 'live',
+    kicker: 'Duo · Two-screen heist',
+    title: 'Silent Alarm',
+    blurb:
+      "One of you is inside the museum with your hands on the locks; the other is in the van with the schematics, the cameras, and the whole building on a green screen. Every code you need is on your partner's screen — and the alarm is listening.",
+    chips: ['2 players', '7 scenes', 'Two screens'],
+    gusChip: '🐀 Gus, museum rat',
+    art: 'silent-alarm',
+    href: 'silent-alarm/',
+    cta: 'Take the Job',
+    saveKey: 'silent-alarm-p1-save-v1',
+    freshText: 'Unplayed — the vault is cold.',
+  },
+  {
     id: 'two-keys-one-door',
     mode: 'duo',
     status: 'concept',
@@ -190,8 +206,8 @@ export const sections: Section[] = [
   {
     mode: 'duo',
     title: 'For Duos',
-    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Two are live; more are coming.',
-    count: '2 live · more soon',
+    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Three are live; more are coming.',
+    count: '3 live · more soon',
   },
   {
     mode: 'group',
