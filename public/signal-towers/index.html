@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twin Signal Towers — A Two-Keeper Escape</title>
+  <meta name="description" content="A two-player co-op escape room in your browser. Two keepers, two lighthouses, one sinking ship — and every lock's answer is on the other keeper's screen." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗼</text></svg>" />
+  <link rel="stylesheet" href="../shared/css/main.css" />
+  <link rel="stylesheet" href="../shared/css/animations.css" />
+  <link rel="stylesheet" href="skin.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="title-screen" class="screen">
+      <div id="title-bg"></div>
+      <div id="title-stars"></div>
+      <div class="title-content">
+        <p class="title-kicker">A two-keeper co-op &middot; one hour to the turning tide</p>
+        <h1 id="game-title">Twin&nbsp;Signal&nbsp;Towers</h1>
+        <p class="title-sub" id="game-tagline">Two lighthouses. One sinking ship. Neither of you can see the whole coast.</p>
+        <div class="title-buttons">
+          <button class="btn btn-primary" id="btn-begin">Take a Watch</button>
+          <button class="btn btn-ghost" id="btn-how">How to Play</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;">&#8962; All Rooms</a>
+        </div>
+        <p class="title-foot">Play on two devices &middot; talk to each other &middot; sound on</p>
+      </div>
+    </section>
+
+    <!-- ============ ROLE SELECT SCREEN ============ -->
+    <section id="role-screen" class="screen hidden">
+      <div id="title-bg"></div>
+      <div class="role-content">
+        <h2 class="role-heading">Which light will you keep?</h2>
+        <p class="role-note">
+          This is a game for <strong>two players on two screens</strong>. Each of you picks
+          one tower. Through the whole night, the answer to <em>your</em> lock is shown on
+          <em>your partner's</em> screen — so keep talking, and tell each other what you see.
+        </p>
+        <div class="role-cards">
+          <button class="role-card" id="pick-west">
+            <div class="role-card-badge">Player 1</div>
+            <div class="role-card-art">🌊🗼</div>
+            <div class="role-card-name">West Tower</div>
+            <div class="role-card-sub">Kestrel Point</div>
+            <div class="role-card-resume hidden" data-resume="west">Watch in progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-east">
+            <div class="role-card-badge">Player 2</div>
+            <div class="role-card-art">🗼🌊</div>
+            <div class="role-card-name">East Tower</div>
+            <div class="role-card-sub">Gannet Rock</div>
+            <div class="role-card-resume hidden" data-resume="east">Watch in progress — resume</div>
+          </button>
+        </div>
+        <button class="btn btn-ghost" id="btn-role-back">&#8592; Back</button>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="game-screen" class="screen hidden">
+      <header id="hud">
+        <div class="hud-left">
+          <span id="room-badge"></span>
+          <h2 id="room-title"></h2>
+        </div>
+        <div class="hud-center">
+          <div id="timer" title="Time until the tide turns">60:00</div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="btn-journal" title="Keeper's Log — everything you've recorded">
+            <span class="hud-btn-icon">&#9998;</span> Keeper's Log
+          </button>
+          <button class="hud-btn" id="btn-sound" title="Toggle sound">
+            <span class="hud-btn-icon" id="sound-icon">&#9834;</span>
+          </button>
+          <button class="hud-btn" id="btn-restart" title="Start this watch over">&#8635;</button>
+          <a class="hud-btn" href="../" title="Back to room select" style="text-decoration:none;">&#8962;</a>
+        </div>
+      </header>
+
+      <main id="stage">
+        <div id="scene-wrap">
+          <div id="scene" aria-label="tower scene"></div>
+          <div id="hotspots"></div>
+          <div id="embers" aria-hidden="true"></div>
+          <div id="vignette" aria-hidden="true"></div>
+          <button id="gus-dock" aria-label="Ask Gus for help"></button>
+        </div>
+      </main>
+
+      <div id="narration-bar">
+        <div id="message-card" class="hidden">
+          <p id="message-text"></p>
+          <span id="message-more" aria-hidden="true">&#9660;</span>
+        </div>
+      </div>
+
+      <footer id="inventory">
+        <span id="inv-label">Oilskin</span>
+        <div id="inv-slots"></div>
+      </footer>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <div id="modal-root"></div>
+    <div id="fader"></div>
+    <div id="fly-layer" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

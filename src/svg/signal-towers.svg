@@ -1,0 +1,42 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="d_st_sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f"/><stop offset="0.6" stop-color="#0a1622"/><stop offset="1" stop-color="#0e2436"/></linearGradient>
+    <linearGradient id="d_st_sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e2436"/><stop offset="1" stop-color="#05101a"/></linearGradient>
+    <radialGradient id="d_st_glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="rgba(255,207,106,0.6)"/><stop offset="1" stop-color="transparent"/></radialGradient>
+  </defs>
+  <rect width="400" height="160" fill="url(#d_st_sky)"/>
+  <rect y="108" width="400" height="52" fill="url(#d_st_sea)"/>
+  <!-- crossing beams -->
+  <polygon points="52,44 250,150 30,150" fill="rgba(255,230,166,0.10)"/>
+  <polygon points="348,44 370,150 150,150" fill="rgba(255,230,166,0.10)"/>
+  <!-- headlands -->
+  <path d="M0 120 q30 -30 70 -20 l0 60 -70 0 z" fill="#141c26"/>
+  <path d="M400 120 q-30 -30 -70 -20 l0 60 70 0 z" fill="#141c26"/>
+  <!-- west tower -->
+  <g>
+    <path d="M40 112 l6 -66 12 0 6 66 z" fill="#cfc6b4"/>
+    <rect x="44" y="34" width="16" height="14" rx="2" fill="#2b3547"/>
+    <circle class="flame" cx="52" cy="41" r="4.5" fill="#ffcf6a"/>
+    <circle cx="52" cy="41" r="11" fill="url(#d_st_glow)"/>
+  </g>
+  <!-- east tower -->
+  <g>
+    <path d="M336 112 l6 -66 12 0 6 66 z" fill="#cfc6b4"/>
+    <rect x="340" y="34" width="16" height="14" rx="2" fill="#2b3547"/>
+    <circle class="flame" cx="348" cy="41" r="4.5" fill="#ffcf6a"/>
+    <circle cx="348" cy="41" r="11" fill="url(#d_st_glow)"/>
+  </g>
+  <!-- the ship between them -->
+  <g class="bob">
+    <path d="M176 118 q24 -8 48 0 l-7 12 q-17 5 -34 0 z" fill="#1c2431" stroke="#3a4656" stroke-width="2"/>
+    <rect x="198" y="96" width="4" height="22" fill="#2b3547"/>
+    <circle cx="200" cy="92" r="3" fill="#ffe6a6"/>
+  </g>
+  <!-- rain -->
+  <g stroke="#bcd6e6" stroke-width="1" opacity="0.2" stroke-linecap="round">
+    <line class="drift" x1="90" y1="20" x2="84" y2="38"/>
+    <line class="drift" x1="150" y1="10" x2="144" y2="28" style="animation-delay:-2s"/>
+    <line class="drift" x1="250" y1="24" x2="244" y2="42" style="animation-delay:-3s"/>
+    <line class="drift" x1="310" y1="14" x2="304" y2="32" style="animation-delay:-1.5s"/>
+  </g>
+</svg>

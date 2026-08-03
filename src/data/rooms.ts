@@ -100,6 +100,38 @@ export const rooms: Room[] = [
   // Room V (EDEN: The Four Rivers) is live at /eden/ but unlisted while the
   // greybox is playtested — restore its card here when it's ready to show.
   {
+    id: 'signal-towers',
+    mode: 'duo',
+    status: 'live',
+    kicker: 'Duo · Asymmetric co-op',
+    title: 'Twin Signal Towers',
+    blurb:
+      "Two keepers, two lighthouses, one sinking ship. Each of you sees only half the coast — and every lock you face is answered on your partner's screen. Talk to each other, or the tide takes her.",
+    chips: ['2 players', '7 scenes', 'Two screens'],
+    gusChip: '🐦 Gus, storm petrel',
+    art: 'signal-towers',
+    href: 'signal-towers/',
+    cta: 'Take a Watch',
+    saveKey: 'signal-towers-p1-save-v1',
+    freshText: 'Unplayed — the lamps are cold.',
+  },
+  {
+    id: 'looking-glass',
+    mode: 'duo',
+    status: 'live',
+    kicker: 'Duo · Through the glass',
+    title: 'The Looking Glass',
+    blurb:
+      'One of you is in the manor; the other is trapped inside the mirror, where every room hangs reversed. Each side sees clues the other cannot — trade them before the glass breaks at dawn.',
+    chips: ['2 players', '7 rooms', 'Reversed world'],
+    gusChip: '🐈‍⬛ Gus, the manor cat',
+    art: 'looking-glass',
+    href: 'looking-glass/',
+    cta: 'Step to the Glass',
+    saveKey: 'looking-glass-p1-save-v1',
+    freshText: 'Unplayed — the mirror waits.',
+  },
+  {
     id: 'two-keys-one-door',
     mode: 'duo',
     status: 'concept',
@@ -158,8 +190,8 @@ export const sections: Section[] = [
   {
     mode: 'duo',
     title: 'For Duos',
-    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites.',
-    count: 'In development',
+    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Two are live; more are coming.',
+    count: '2 live · more soon',
   },
   {
     mode: 'group',

@@ -1,0 +1,138 @@
+/* ============================================================
+   The Looking Glass — a candlelit-manor / silvered-mirror skin.
+   Warm gold on the Waking Side, cold silver on the Glass Side;
+   found documents restyled as manor notes and ciphers; the title
+   is a mirror in its frame; plus the two-player role-select screen.
+   ============================================================ */
+
+:root {
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --bg-0: #0c0a14;
+  --bg-1: #141020;
+  --bg-2: #1c1830;
+  --stone-1: #2a2636;
+  --stone-2: #181524;
+  --torch: #ffcf8a;
+  --torch-deep: #e0a84a;
+  --gold: #c9a24a;
+  --gold-bright: #e8c85a;
+  --parchment: #e8dcc0;
+  --ink: #1a1428;
+}
+
+/* title: a tall mirror in a silver frame throwing a reflection */
+#title-screen {
+  background:
+    radial-gradient(900px 600px at 50% 120%, #241c30 0%, transparent 60%),
+    radial-gradient(700px 500px at 30% -10%, #1a1626 0%, transparent 55%),
+    linear-gradient(180deg, #0c0a14 0%, #141020 60%, #1c1830 100%);
+}
+#title-bg::after {
+  clip-path: polygon(50% 4%, 82% 20%, 82% 84%, 50% 96%, 18% 84%, 18% 20%);
+  left: 50%;
+  bottom: -8vh;
+  width: 34vw;
+  height: 76vh;
+  background:
+    linear-gradient(160deg, rgba(232,235,242,0.14) 0%, rgba(159,168,189,0.06) 40%, transparent 70%),
+    linear-gradient(180deg, #241c30, #12101c);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(201,204,214,0.14), inset 0 0 60px rgba(201,204,214,0.06);
+  opacity: 0.8;
+}
+
+#game-title {
+  background: linear-gradient(180deg, #f2ecdb 0%, #e8c85a 44%, #9fa8bd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  filter: drop-shadow(0 6px 30px rgba(201,204,214,0.22));
+}
+.title-kicker { letter-spacing: 0.3em; }
+.title-foot { letter-spacing: 0.2em; }
+
+.ember { background: radial-gradient(circle, #f2ecdb 0%, #c9ccd6 55%, transparent 75%); }
+
+#room-title { letter-spacing: 0.12em; font-weight: 600; }
+#timer { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.05em; }
+#room-badge { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.14em; }
+#message-text { font-style: italic; font-size: 15.5px; }
+#message-card { border-color: rgba(201,204,214,0.28); }
+
+/* ---------- role select ---------- */
+.role-content {
+  position: relative; z-index: 2; max-width: 860px; margin: 0 auto; min-height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; padding: 40px 24px; text-align: center;
+}
+.role-heading { font-size: clamp(26px, 4vw, 40px); color: var(--parchment); letter-spacing: 0.04em; margin: 0; }
+.role-note { max-width: 640px; color: var(--text-dim); line-height: 1.7; font-size: 15px; }
+.role-note strong { color: var(--gold-bright); }
+.role-note em { color: #c9ccd6; font-style: italic; }
+.role-cards { display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
+.role-card {
+  width: 240px; padding: 26px 20px 22px;
+  background: linear-gradient(170deg, #241c3040 0%, #12101c 100%);
+  border: 1px solid rgba(201,204,214,0.24); border-radius: 16px; cursor: pointer; color: var(--text);
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out), border-color 0.18s;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.role-card:hover {
+  transform: translateY(-6px); border-color: #c9ccd6;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.55), 0 0 30px rgba(201,204,214,0.16);
+}
+.role-card-badge { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-bright); }
+.role-card-art { font-size: 44px; line-height: 1; margin: 4px 0; }
+.role-card-name { font-size: 22px; color: var(--parchment); letter-spacing: 0.04em; }
+.role-card-sub { font-size: 13px; color: var(--text-dim); letter-spacing: 0.08em; font-style: italic; }
+.role-card-resume {
+  margin-top: 8px; font-size: 11.5px; color: var(--ok);
+  border: 1px solid rgba(123,196,127,0.4); border-radius: 20px; padding: 3px 12px;
+}
+#pick-glass:hover { box-shadow: 0 18px 46px rgba(0,0,0,0.55), 0 0 30px rgba(127,176,184,0.2); }
+
+/* ---------- documents ---------- */
+.manor-note {
+  position: relative; margin: 6px auto; padding: 20px 24px; max-width: 520px;
+  background: linear-gradient(170deg, #efe6cf 0%, #ddd0b2 100%);
+  color: #322a1a; border: 1px solid #b6a374; border-left: 5px solid #8a7f6a;
+  border-radius: 6px; box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+  font-size: 15px; line-height: 1.75; animation: fadeUp 0.5s var(--ease-out) both;
+}
+.manor-note .note-head { font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 12px; margin-bottom: 10px; color: #6b4f2c; }
+.manor-note.aged { filter: sepia(0.28) brightness(0.96); }
+
+.cipher {
+  position: relative; margin: 6px auto; padding: 18px 22px; max-width: 560px;
+  background: linear-gradient(170deg, #1a1626 0%, #12101c 100%);
+  color: #cfd4e2; border: 1px solid rgba(201,204,214,0.3); border-radius: 8px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55), inset 0 0 30px rgba(201,204,214,0.04);
+  font-family: Consolas, "Cascadia Mono", monospace; font-size: 14px; line-height: 1.75;
+}
+.cipher .cipher-title { font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; font-size: 11.5px; margin-bottom: 10px; color: #c9ccd6; }
+.cipher b, .cipher strong { color: #f2ecdb; }
+.cipher .warn { color: var(--torch-deep); }
+
+/* mirror-writing block: shown reversed, so the reader must relay it */
+.mirror-text {
+  display: inline-block; transform: scaleX(-1); font-family: Georgia, serif;
+  font-size: 30px; letter-spacing: 6px; color: #e8ebf2;
+}
+
+/* the cross-screen callout */
+.relay {
+  margin: 10px auto; max-width: 520px; padding: 10px 16px;
+  border: 1px dashed rgba(201,204,214,0.5); border-radius: 8px;
+  background: rgba(201,204,214,0.06); color: #c9ccd6; font-size: 13.5px; letter-spacing: 0.02em;
+}
+.relay::before { content: "\1F4E3  "; }
+
+.dial-face { font-family: Consolas, "Cascadia Mono", monospace; }
+
+/* Gus's dock glow: cool silver cat-light */
+#gus-dock { filter: drop-shadow(0 0 14px rgba(201,204,214,0.4)); }
+#gus-dock:hover { filter: drop-shadow(0 0 24px rgba(201,204,214,0.7)); }
+#gus-dock::after { color: #cfd4e2; border-color: rgba(201,204,214,0.45); }
+.gus-portrait { filter: drop-shadow(0 0 18px rgba(201,204,214,0.3)); }
+.gus-tier.next { border-color: rgba(201,204,214,0.4); }

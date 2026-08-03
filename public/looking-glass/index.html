@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Looking Glass — A Two-Reflection Escape</title>
+  <meta name="description" content="A two-player co-op escape room. One of you is in the manor; the other is trapped inside the mirror, seeing everything reversed. Neither escapes alone." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪞</text></svg>" />
+  <link rel="stylesheet" href="../shared/css/main.css" />
+  <link rel="stylesheet" href="../shared/css/animations.css" />
+  <link rel="stylesheet" href="skin.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="title-screen" class="screen">
+      <div id="title-bg"></div>
+      <div id="title-stars"></div>
+      <div class="title-content">
+        <p class="title-kicker">A two-reflection co-op &middot; one hour until the glass breaks</p>
+        <h1 id="game-title">The&nbsp;Looking&nbsp;Glass</h1>
+        <p class="title-sub" id="game-tagline">One of you is in the manor. One of you is in the mirror. Everything the mirror shows is reversed.</p>
+        <div class="title-buttons">
+          <button class="btn btn-primary" id="btn-begin">Step to the Glass</button>
+          <button class="btn btn-ghost" id="btn-how">How to Play</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;">&#8962; All Rooms</a>
+        </div>
+        <p class="title-foot">Play on two devices &middot; talk to each other &middot; sound on</p>
+      </div>
+    </section>
+
+    <!-- ============ ROLE SELECT SCREEN ============ -->
+    <section id="role-screen" class="screen hidden">
+      <div id="title-bg"></div>
+      <div class="role-content">
+        <h2 class="role-heading">Which side of the glass?</h2>
+        <p class="role-note">
+          A game for <strong>two players on two screens</strong>. One keeps
+          <em>The Waking Side</em> — the real manor. One is caught on
+          <em>The Glass Side</em> — inside the mirror, where the same rooms appear
+          <strong>reversed</strong>. Each of you sees clues the other cannot. Talk, or
+          the one in the glass is lost at dawn.
+        </p>
+        <div class="role-cards">
+          <button class="role-card" id="pick-waking">
+            <div class="role-card-badge">Player 1</div>
+            <div class="role-card-art">🕯️🚪</div>
+            <div class="role-card-name">The Waking Side</div>
+            <div class="role-card-sub">the real manor</div>
+            <div class="role-card-resume hidden" data-resume="waking">In progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-glass">
+            <div class="role-card-badge">Player 2</div>
+            <div class="role-card-art">🪞✨</div>
+            <div class="role-card-name">The Glass Side</div>
+            <div class="role-card-sub">inside the mirror</div>
+            <div class="role-card-resume hidden" data-resume="glass">In progress — resume</div>
+          </button>
+        </div>
+        <button class="btn btn-ghost" id="btn-role-back">&#8592; Back</button>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="game-screen" class="screen hidden">
+      <header id="hud">
+        <div class="hud-left">
+          <span id="room-badge"></span>
+          <h2 id="room-title"></h2>
+        </div>
+        <div class="hud-center">
+          <div id="timer" title="Until the glass breaks at dawn">60:00</div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="btn-journal" title="Reflections — everything you've recorded">
+            <span class="hud-btn-icon">&#9998;</span> Reflections
+          </button>
+          <button class="hud-btn" id="btn-sound" title="Toggle sound">
+            <span class="hud-btn-icon" id="sound-icon">&#9834;</span>
+          </button>
+          <button class="hud-btn" id="btn-restart" title="Begin the night over">&#8635;</button>
+          <a class="hud-btn" href="../" title="Back to room select" style="text-decoration:none;">&#8962;</a>
+        </div>
+      </header>
+
+      <main id="stage">
+        <div id="scene-wrap">
+          <div id="scene" aria-label="manor scene"></div>
+          <div id="hotspots"></div>
+          <div id="embers" aria-hidden="true"></div>
+          <div id="vignette" aria-hidden="true"></div>
+          <button id="gus-dock" aria-label="Ask Gus for help"></button>
+        </div>
+      </main>
+
+      <div id="narration-bar">
+        <div id="message-card" class="hidden">
+          <p id="message-text"></p>
+          <span id="message-more" aria-hidden="true">&#9660;</span>
+        </div>
+      </div>
+
+      <footer id="inventory">
+        <span id="inv-label">Pockets</span>
+        <div id="inv-slots"></div>
+      </footer>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <div id="modal-root"></div>
+    <div id="fader"></div>
+    <div id="fly-layer" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
