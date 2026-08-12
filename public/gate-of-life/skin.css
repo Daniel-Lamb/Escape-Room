@@ -290,3 +290,69 @@
 .ring:hover { border-color: var(--gold-bright); }
 .ring:active { transform: scale(0.94); }
 .ring.tick { animation: dialTick 0.25s var(--ease-spring); }
+
+/* the editor's ordo: six-bolt chronological sequence lock (Chamber 7 finale) */
+.ordo-slots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 16px auto 6px;
+}
+.ordo-slot {
+  position: relative;
+  width: 118px;
+  min-height: 58px;
+  padding: 8px 6px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px dashed rgba(201, 162, 39, 0.4);
+  background: rgba(7, 5, 3, 0.5);
+}
+.ordo-slot .ord {
+  position: absolute;
+  top: 3px; left: 7px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.ordo-slot.filled {
+  border-style: solid;
+  border-color: var(--gold-bright);
+  background: linear-gradient(180deg, #3a2f20, #241c12);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 12px rgba(232, 200, 90, 0.12);
+  cursor: pointer;
+  transition: transform 0.18s var(--ease-spring), box-shadow 0.2s;
+}
+.ordo-slot.filled:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(232, 200, 90, 0.28); }
+.ordo-tray {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  min-height: 58px;
+  max-width: 500px;
+  margin: 12px auto 4px;
+}
+.ordo-chip {
+  width: 118px;
+  padding: 9px 6px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--parchment);
+  background: linear-gradient(180deg, #2b2318, #1a140c);
+  border: 1px solid rgba(232, 220, 192, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s var(--ease-spring), border-color 0.2s, box-shadow 0.2s;
+}
+.ordo-chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 14px rgba(232, 200, 90, 0.18);
+}
+.ordo-name { font-size: 15px; letter-spacing: 0.1em; color: var(--gold-bright); }
+.ordo-gloss { font-size: 11px; color: var(--text-dim); margin-top: 2px; }

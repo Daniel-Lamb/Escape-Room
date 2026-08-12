@@ -43,11 +43,15 @@ is who the lion is.
 **Ending (R7).** Behind a half-bricked arch beside the gate: Felix's bones, his tools,
 a finished rudis he carved for himself, and a last tablet — he *could* have left in
 September; the lion, chained above for the games, could not; he stayed the winter and the
-fever took him. *"If you read this — take him. The word is the one the crowd shouts when
-a life is to be spared."* The six tesserae, matched to the procession frieze above the
-wicket, spell **MISSIO** — the crowd's cry of mercy. You set the word, heave the gate,
-and walk out into the festival crowd with a lion at your heel and a dead man's rudis in
-your hand. Victory screen: **MISSIO — GRANTED.**
+fever took him. *"If you read this — take him. The order is the day's own, and the last
+bolt is the word the crowd shouts when a life is spared."* Felix wired the Gate of Life
+to a fail-safe: it opens only when the six **ordo-bolts** are thrown in the day's true
+running order — **POMPA · VENATIO · MERIDIES · PROBATIO · MVNVS · MISSIO** (procession →
+morning beasts → noon executions → arms proved → afternoon pairs → the sparing), a chain
+you reconstruct from the programma, the water-clock, and Felix's own note. The sixth bolt
+is **MISSIO** — the crowd's cry of mercy. You set the day in order, heave the gate, and
+walk out into the festival crowd with a lion at your heel and a dead man's rudis in your
+hand. Victory screen: **MISSIO — GRANTED.**
 
 No twist mechanic this time (Room I's model: story beats, an emotional payoff instead of
 a rug-pull). The payoff is Gus — see below.
@@ -142,15 +146,19 @@ is internal only (never rendered); the card and toast show the **emblem + letter
 | 5 | `token5` | R5 — in the lion's old cage | palm frond | 6 | O |
 | 6 | `token6` | R6 — in the grease pit | fish-crest | 4 | S |
 
-**The ordering rule (series-fresh — NOT the sort-by-count cipher of Rooms I–II, NOT
-Room III's proven-chain):** carved above the R7 wicket is a **procession frieze** — six
-marchers of the pompa, left to right: **spear-man · net-man · egg-helm · fish-crest ·
-griffin-crest · palm-bearer** (journaled `note_frieze` on examine, listing the order in
-words). Felix's scratched line beneath: **"AS THEY MARCH, THEY SPEAK."** Match each
-tessera's emblem to its marcher → **M·I·S·S·I·O**. Room-order letters read S·M·I·I·O·S
-(meaningless). The emblems are pre-taught: R2's mural names the fish-crest, griffin,
-net-man, and egg-helm ("the chaser"); the spear is named on R2's slate; the palm frond
-is the victory token (R7's garlands echo it, and the tessera examine text names it).
+**The tesserae thread (collectible + foreshadow):** carved above the R7 ordo-bank is a
+**procession frieze** — six marchers of the pompa, left to right: **spear-man · net-man ·
+egg-helm · fish-crest · griffin-crest · palm-bearer** (journaled `note_frieze` on
+examine). Matching each tessera's emblem to its marcher spells **M·I·S·S·I·O** — the
+crowd's cry of mercy, and (since the finale rework) the **sixth and final ordo-bolt**:
+the tesserae now *foreshadow* the last office of the day rather than serving as the gate
+lock themselves. Room-order letters read S·M·I·I·O·S (meaningless), so the frieze order
+is what resolves them. The emblems are pre-taught: R2's mural names the fish-crest,
+griffin, net-man, and egg-helm ("the chaser"); the spear is named on R2's slate; the palm
+frond is the victory token (R7's garlands echo it, and the tessera examine text names it).
+The **gate lock proper** is the chronological **ordo sequence** (see Chamber 7 below) —
+a strict story-correct solve order deduced from the room's programma, water-clock, and
+Felix's ordo-note.
 First-tessera examine text teaches the convention: *"a gladiator's name-token — the
 emblem is the man's class, the letter is Felix's addition."*
 
@@ -225,7 +233,8 @@ twist + count-sort meta. Room III used negative-evidence tracking, river-crossin
 border surgery, food-web assembly, mirror symmetry, balance-scale counterfeit,
 proven-chain meta. This game: **acrostic, attribute-assignment from mixed physical +
 written evidence, jug measuring, palindromic word square, guided maze traversal,
-mechanical-advantage assembly, procession-frieze letter meta.**
+mechanical-advantage assembly, chronological ordo sequence-lock (strict story-correct
+solve order deduced from interlocking constraints).**
 
 ### CHAMBER 1 — The Carcer (≈5 min, tutorial) — `id: 'carcer'`, file `room1-carcer.js`
 
@@ -589,7 +598,7 @@ forgotten since the fire. Daylight in the seams. Crowd-roar through the stone.
 
 **The gate hotspot is present and clickable from room entry.** Clicking it enumerates
 the remaining refusals diegetically (*"The hinge weeps rust. The bar sleeps in its
-seat. The wicket lock waits for a word."*) — a free, in-world progress checklist.
+seat. The ordo-bolts stand out of true."*) — a free, in-world progress checklist.
 
 **Phase 1 — the way (three item beats, any discovery order):**
 1. **The seized hinge** — weeping rust. Held **oiled_rag** (combo of wool rag + sacred
@@ -604,49 +613,90 @@ seat. The wicket lock waits for a word."*) — a free, in-world progress checkli
    `note_felix`, wax-tablet): *"I could have gone in September. The lion could not —
    they chain him above all season, and a door is no use to a friend on the wrong side
    of it. So I winter here. If the fever wins and you are reading this: the lock is
-   mine, the word is the one the crowd shouts when a life is to be spared. Take my
-   sword — I earned it, even if no lanista signed it. And take the lion. He answers to
-   Gus."* Taking the rudis: `porta_rudisTaken`.
+   mine, the order is the day's own — dawn to the sparing — and the last bolt is the word
+   the crowd shouts when a life is spared. Take my sword — I earned it, even if no lanista
+   signed it. And take the lion. He answers to Gus."* Taking the rudis: `porta_rudisTaken`.
 
-**Phase 2 — the word:** the gate's wicket carries Felix's own **six-ring letter-lock**,
-each ring cycling the twelve letters `A C E F I L M N O R S T`. Carved above the
-wicket, the **procession frieze** — six marchers, left to right: spear-man · net-man ·
-egg-helm · fish-crest · griffin-crest · palm-bearer — with Felix's scratched line
-beneath: **"AS THEY MARCH, THEY SPEAK."** (journal `note_frieze`, listing the order in
-words). Match the tesserae emblems to the marchers → **M I S S I O**. Setting it
-(`porta_wordSet`) frees the wicket mechanism with a sound like a verdict.
+**Phase 2 — the order (the hard chronological escape, `porta_ordo`):** the gate's
+release is Felix's **fail-safe** — he wired the Gate of Life so it opens *only when the
+day is set in its true running order*, "so no fool springs the Life-door before its
+hour." The **editor's ordo-bank** carries six iron bolts, each stamped with one office
+of a Roman games-day (with a plain gloss so no Latin is needed): **POMPA** (the
+procession) · **VENATIO** (the beast-hunt) · **MERIDIES** (the noon killings) ·
+**PROBATIO** (the arms proved) · **MVNVS** (the pairs fight) · **MISSIO** (the sparing).
+The player seats the bolts left-to-right into six slots; **"Throw the Bank"** commits.
+A wrong order **springs the entire bank back to empty with no positional feedback** —
+so the order must be *deduced*, not brute-forced. Correct order sets `porta_ordoSet`.
 
-**Final beat:** the gate hotspot, once hinge oiled + bar pried + word set: if
+This is a **strict-order interlocking-gate lock**: the escape is gated on reconstructing
+the day's chronology and entering it in sequence. The order is fully derivable from three
+pieces of in-room evidence (no outside history required — the "no history degree" rule
+holds):
+
+- **The programma** (painted games-bill, left wall; `note_programma`): the PROCESSION is
+  first ("the god goes before all"); the Gate of Life / sparing is **last**; the PROVING
+  of the arms stands **immediately before** the pairs.
+- **The clepsydra** (water-clock, centre-left; `note_clepsydra`): the BEASTS run in the
+  morning; the CONDEMNED die at the **sixth hour** (noon, when the stands break for
+  bread); the PAIRS are matched in the afternoon.
+- **Felix's ordo-note** (centre post; `note_ordo`): *"Beasts before the bread. The bread
+  before the blades."* — venatio < meridies < the afternoon block.
+
+**Deduction (unique solution):** POMPA = 1 and MISSIO = 6 (programma). Felix's note fixes
+VENATIO < MERIDIES < {PROBATIO, MVNVS}, so venatio + meridies take slots 2–3 in that
+order; the programma's "proving immediately before the pairs" forces PROBATIO = 4,
+MVNVS = 5. Result: **POMPA · VENATIO · MERIDIES · PROBATIO · MVNVS · MISSIO** — the one
+order satisfying every clue. The clepsydra's morning/noon/afternoon marks independently
+confirm the same chain (redundancy for a confident solver). **MISSIO survives as the
+sixth bolt** — Felix's word intact, and the victory screen (MISSIO — GRANTED) is
+unchanged. The six tesserae still spell MISSIO in frieze order as the collectible thread
+and Felix's signature.
+
+**Final beat:** the gate hotspot, once hinge oiled + bar pried + ordo set: if
 `porta_rudisTaken` or `note_felix` is missing, Gus plants himself in the doorway —
 *"The alcove first. Both of us walked in here because of what is in that alcove."*
 Then: the doors swing into white daylight and roar — `completeRoom()` → victory screen
 (MISSIO — GRANTED).
 
-**Scene:** torch-dark corridor to a huge double gate rimmed in daylight; the wicket +
-rings; the frieze above; the bar; hinges; the bricked arch (→ open, lamplit alcove);
-fallen votive garlands (palm fronds among them — echoing token5's emblem). States:
-hinge shining, bar upright, arch open, rudis gone, word set (rings show it), gate
-open at the very end.
+**Scene:** torch-dark corridor to a huge double gate rimmed in daylight; the ordo bolt-
+bank (six bolts, thrown + glowing when set); the procession frieze above (the pompa —
+"the procession opens the day"); the bar; hinges; the bricked arch (→ open, lamplit
+alcove); the three evidence props (programma poster, water-clock, Felix's nailed ordo-
+note); fallen votive garlands. States: hinge shining, bar upright, arch open, rudis gone,
+ordo set (bolts thrown), gate open at the very end.
 
-**Hotspots (9, incl. 2 flavor):** the gate (always present — checklist + final open) ·
-hinge (oiled_rag use) · bar seat (dolabra use) · wicket rings (→ word puzzle) · frieze
-(`note_frieze`) · bricked arch (dolabra use) · alcove (post-open: rudis + `note_felix`)
-— flavor: spy-slit view of the sand (the show mid-roar — what you are not dying in
-today), the fallen garlands.
+**Hotspots (11, incl. 2 flavor):** the gate (always present — checklist + final open) ·
+hinge (oiled_rag use) · bar seat (dolabra use) · ordo-bank (→ ordo sequence puzzle) ·
+programma (`note_programma`) · clepsydra (`note_clepsydra`) · ordo-note (`note_ordo`) ·
+frieze (`note_frieze`) · bricked arch (dolabra use) · alcove (post-open: rudis +
+`note_felix`) — flavor: spy-slit view of the sand (a morning hunt — reinforces
+venatio = morning), the fallen garlands.
 
 **hintContext:**
-`s => !(s.flags.porta_hingeOiled && s.flags.porta_barPried && s.flags.porta_archOpen) ? 'way' : !s.flags.porta_wordSet ? 'word' : 'felix'`.
+`s => !(s.flags.porta_hingeOiled && s.flags.porta_barPried && s.flags.porta_archOpen) ? 'way' : !s.flags.porta_ordoSet ? 'ordo' : 'felix'`.
 **Hints (`way`):** ① Three refusals: a hinge that wants oil that stays put, a bar
 rusted to its seat, and bricks laid in a hurry a generation ago. Your loculus answers
 all three. ② Soak the rag in the sacred oil — hold the one, touch the other, in your
 loculus. The dolabra was made for the bar and the bricks. ③ Oiled rag on the hinge,
 dolabra on the bar, dolabra on the arch.
-**Hints (`word`):** ① Six rings, six tesserae in your tablets — and six marchers
-carved above the wicket. ② Match each tessera's emblem to its marcher, left to right.
-The parade gives the order. ③ M-I-S-S-I-O.
+**Hints (`ordo`):** ① Six bolts, the six offices of a games-day — throw them in the
+order the day runs, dawn to dusk. ② Read the programma, water-clock, and Felix's note:
+procession first; beasts in the morning; the condemned at the sixth hour; the pairs in
+the afternoon, but never before the arms are proved; the Gate of Life is the last mercy.
+③ POMPA, VENATIO, MERIDIES, PROBATIO, MVNVS, MISSIO.
 **Hints (`felix`):** ① The alcove is why this gate exists. Gus will not leave without
 what it holds. ② Read Felix's tablet. Take the sword he earned. ③ Take the rudis from
-the alcove, then open the gate — the word is already set.
+the alcove, then open the gate — the order is already set.
+
+**Historical note (chronology verified).** The order mirrors the documented structure of
+a Roman *munus*: the *pompa* (opening procession) first; *venationes* (beast-hunts) in
+the morning; the *meridianum spectaculum* (midday executions of the condemned) at the
+sixth hour, when the crowd broke for food (Seneca, *Epistulae* 7); and the gladiatorial
+*munera* (paired combats) in the afternoon, the *probatio armorum* proving the blades
+sharp as their immediate prelude. *Missio* (the reprieve of a beaten fighter) and the
+Porta Sanavivaria — the Gate of Life the spared leave by — close the day. Setting is the
+reign of Titus, consistent with R1. The player never needs this knowledge: every
+constraint is supplied by the room's own evidence.
 
 ---
 
@@ -660,8 +710,8 @@ the alcove, then open the gate — the word is already set.
 | 4 | The Lanista's Tablinum | palindromic word square | ★★★★☆ peak 1 | 10 |
 | 5 | The Hypogeum | guided maze traversal | ★★★☆☆ breather-with-teeth | 8 |
 | 6 | The Great Winch | mechanical-advantage assembly | ★★★★☆ peak 2 | 9 |
-| 7 | The Gate of Life | item synthesis + frieze-matched meta | ★★★☆☆ | 9 |
-| | | | **Total** | **55** |
+| 7 | The Gate of Life | item synthesis + **chronological ordo sequence-lock** | ★★★★★ peak (finale) | 12 |
+| | | | **Total** | **58** |
 
 Estimates are **hint-free solver ceilings, not medians** — a first-time player who
 reads the story beats and buys a hint or two should still clear the gate with minutes

@@ -82,12 +82,35 @@
 3. **Dolabra** on the bar seat — pry the great bar upright.
 4. **Dolabra** on the half-bricked arch. Inside: Felix. Read his last tablet. Take
    the **rudis**. Gus will not leave without this, and neither should you.
-5. The wicket's six rings, and above them the procession frieze: **spear-man ·
-   net-man · egg-helm · fish-crest · griffin · palm-bearer.** *"As they march, they
-   speak."* Match your tesserae's emblems to the marchers:
-   spear **M** · net **I** · egg-helm **S** · fish **S** · griffin **I** · palm **O**
-   → **MISSIO** — the word the crowd shouts when a life is to be spared.
+5. **The Editor's Ordo** (the finale lock). Felix wired the Gate of Life so it opens
+   only when the day is set in its **true chronological order**. Read the three pieces
+   of evidence on the walls, then throw the six bolts in that order:
+   - **The programma** (left wall): the PROCESSION is first; the Gate of Life (the
+     sparing) is last; the PROVING of the arms stands *immediately before* the pairs.
+   - **The water-clock** (centre): the BEASTS run in the morning; the CONDEMNED die at
+     the sixth hour (noon); the PAIRS are matched in the afternoon.
+   - **Felix's ordo-note** (centre post): *beasts before the bread, the bread before
+     the blades* — i.e. the beast-hunt, then the noon killings, then the afternoon.
+
+   Chaining those: procession opens; beasts (morning) before the noon killings;
+   afternoon is the proving then the pairs; the sparing is last. The one order that
+   satisfies every clue is:
+
+   **POMPA · VENATIO · MERIDIES · PROBATIO · MVNVS · MISSIO**
+   *(procession → morning beast-hunt → noon executions → arms proved sharp → the
+   afternoon pairs → the sparing).* Any wrong order springs the whole bank — there is
+   no positional hint, so deduce it, don't brute-force it. The sixth bolt, **MISSIO**,
+   is Felix's word intact: the cry the crowd shouts when a life is spared.
 6. Open the Gate of Life. Walk out with the lion. **MISSIO — GRANTED.**
+
+> **Why this order (historically):** a Roman *munus* ran to a fixed daily programme —
+> the *pompa* (opening procession) first; *venationes* (beast-hunts) in the morning;
+> the *meridianum spectaculum* (executions of the condemned) at midday, the hour the
+> stands broke for food (Seneca, *Ep.* 7); and the gladiatorial *munera* (the paired
+> combats) in the afternoon, the *probatio armorum* proving the blades sharp just
+> before them. *Missio* — the reprieve of a beaten fighter — and the Porta Sanavivaria,
+> the Gate of Life he leaves by, close the sequence. Every clue in the room derives the
+> order from what the stones show; no outside history is needed to solve it.
 
 ## The tesserae, for reference
 
