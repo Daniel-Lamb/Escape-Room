@@ -32,8 +32,10 @@ Gus's core, he asks to come — to RV-7 as data. "Escape" was always going to me
    consent forms, the upload chair, "the body won't make the year, Elin."
 8. Gus never once suggests you eat, sleep, or breathe.
 
-**Ending.** Passphrase accepted, dish aligned, TRANSMIT: the station burns as a signal
-leaves it — two passengers, one carrier wave. Victory screen: **SIGNAL FOUND.**
+**Ending.** Passphrase accepted, dish aligned — then the array is woken by running the
+cold-start sequence in its true order (THERMAL → POWER → ATTITUDE → CARRIER → HANDSHAKE →
+BURST); the station burns as a signal leaves it — two passengers, one carrier wave. Victory
+screen: **SIGNAL FOUND.**
 
 ---
 
@@ -163,19 +165,56 @@ Elin."* The reveal sequence (your hands → the dark window that finally shows a
 a maintenance drone; the shards' memories reassembling) sets the truth. The bulkhead to
 the uplink array opens. There was always a second way off this station. It was built for
 data.
-**Phase 2 — the uplink (META).** Four steps, all earned earlier:
+**Phase 2 — prep the uplink (META).** Four steps, all earned earlier, any order:
 1. **Repair** the cracked emitter — **biogel** ("organic-derived conductive medium").
 2. **Power** — seat the **charged capacitor**.
 3. **Passphrase** — console: *"Voiceprint passphrase — the word you asked us to wake you
    with."* Sort the six shards by wave-peaks (journal shows them): **WAKEUP**.
 4. **Alignment** — two dials to the RV-7 hold vector from the R5 comms log:
-   **AZ 117 / EL 43** → **TRANSMIT.**
-Gus asks to come — his core slots in beside yours. Transmission as the sky turns to fire.
+   **AZ 117 / EL 43**.
+
+**Phase 3 — the cold-start (the hard finale escape, `array_ignition`).** The array is
+built but **eleven months cold**, and the pre-charge cell fires **once**. Pressing the
+console no longer transmits directly — it demands the **emergency cold-start sequence** run
+in its **true engineering order**, a strict-order interlocking lock. Six step-keys seated
+left-to-right; **"Run the Sequence"** commits; a wrong order **trips the breaker and springs
+the whole bank back to cold** (no positional feedback → deduce, don't brute-force; never
+locks out). The order is fully derivable from three in-room evidence props (the "no outside
+knowledge" rule holds):
+- **Cold-start placard** (bolted above the console; `note_coldstart`): **THAW before you
+  POWER** (a frozen line cracks under load; nothing precedes the thaw), and the cell
+  **BURSTS last** — it fires once.
+- **Dish-gimbal caution** (on the mast; `note_gimbal`): the dish won't hold a heading while
+  the station tumbles — **null attitude before you raise the carrier**.
+- **Gus's comms note** (taped datapad; `note_gus_comms`): **power before you fight the spin**
+  (no bus, no gyros), and **carrier → handshake → send** (never commit the burst to a
+  carrier RV-7 hasn't answered).
+
+**Deduction (unique):** THERMAL = 1, BURST = 6 (placard). The middle four chain
+POWER < ATTITUDE (Gus) < CARRIER (gimbal) < HANDSHAKE (Gus), forcing slots 2–5. Result:
+**THERMAL · POWER BUS · ATTITUDE · CARRIER · HANDSHAKE · BURST** (thaw the lines → main bus
+on → null the tumble → RF carrier up → RV-7 answers → fire the cell). On a correct run the
+console goes all-green (`array_launched`) and Gus asks to come — his core slots in beside
+yours. Transmission as the sky turns to fire; victory **Signal Found** unchanged. The six
+shards still spell **WAKEUP** as the passphrase in Phase 2.
+
 Hints (pod): ① The scanner is not broken. ② It is telling the truth. What did it fail to
 find? ③ Look at your hands, at your sleeve, at the manifest, at the empty core. Then let
 Gus talk. Hints (uplink): ① Four sockets: mend, power, speak, aim. ② The word is in your
 shards — fewest wave-peaks speaks first. ③ Gel the emitter, seat the capacitor, WAKEUP,
-AZ 117 / EL 43, transmit.
+AZ 117 / EL 43. Hints (ignition): ① Eleven months cold — wake it in the right order or the
+one-shot cell is wasted; the placard, gimbal caution, and Gus's note hold the sequence.
+② Thaw before power; power before you fight the spin; null the tumble before the carrier;
+RV-7 answers before you commit; the cell bursts last. ③ THERMAL, POWER BUS, ATTITUDE,
+CARRIER, HANDSHAKE, BURST.
+
+**Cold-start chronology (verified plausible).** The order mirrors a real spacecraft/comms
+cold-start: thermal conditioning before applying power (avoid thermal-shock/load on cold
+components); main-bus power before attitude control (reaction wheels/gyros need power);
+attitude/pointing stabilized before RF (a high-gain dish must hold a fixed heading); carrier
+up, then a low-power handshake/acknowledgment before committing the payload; payload burst
+last. Every constraint is supplied by the room; no engineering background is needed to
+solve it.
 
 ---
 
@@ -189,8 +228,8 @@ AZ 117 / EL 43, transmit.
 | 4 | AI Core | logic gates | ★★★★☆ peak 1 | 10 |
 | 5 | Observation | symbol substitution + dials | ★★☆☆☆ breather | 8 |
 | 6 | Reactor | constrained balancing | ★★★★☆ peak 2 | 9 |
-| 7 | Pod Bay/Uplink | twist + meta synthesis | ★★★☆☆ | 12 |
-| | | | **Total** | **59** |
+| 7 | Pod Bay/Uplink | twist + meta synthesis + **cold-start strict-order sequence** | ★★★★★ peak (finale) | 14 |
+| | | | **Total** | **61** |
 
 Seven mechanics, none shared with *The Pilgrim's Road*'s seven. Fairness rules identical:
 exit gates enforce shard collection and required items; wrong answers cost nothing but

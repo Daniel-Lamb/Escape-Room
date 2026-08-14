@@ -58,13 +58,36 @@
 1. Approach the pod. The biometric arch: **NO ORGANIC SIGNATURE DETECTED.**
 2. Try again. The pod launches — empty, saving itself.
 3. Click **Your hands**. Read everything. Choose to stand up.
-4. Through the rear bulkhead (MAINTENANCE ONLY — it always would have opened for you):
+4. Through the rear bulkhead (MAINTENANCE ONLY — it always would have opened for you),
+   **prep the array** (any order):
    - **Biogel** on the cracked emitter.
    - **Charged capacitor** into the socket.
    - Passphrase — sort the shards by wave-peaks, fewest first:
      W(2) A(3) K(4) E(5) U(6) P(7) → **WAKEUP**.
    - Dish alignment: **AZ 117 / EL 43** (from the Deck 5 comms log).
-5. Say yes to Gus. Press **TRANSMIT**.
+5. **The cold-start sequence (the finale lock).** The console won't transmit — the array is
+   eleven months cold, and the cell fires once. Read the three evidence props and run the
+   emergency cold-start in its true order:
+   - **Cold-start placard** (above the console): THAW first (nothing precedes the coolant
+     bleed); the cell BURSTS last.
+   - **Dish-gimbal caution** (on the mast): null ATTITUDE before you raise the CARRIER.
+   - **Gus's comms note** (taped, upper-left): POWER before you fight the spin; CARRIER →
+     HANDSHAKE → send.
+
+   Chaining those constraints gives the one valid order:
+
+   **THERMAL · POWER BUS · ATTITUDE · CARRIER · HANDSHAKE · BURST**
+   *(thaw the lines → main bus on → null the tumble → RF carrier up → RV-7 answers → fire
+   the cell).* A wrong order trips the breaker and springs the whole bank back — no
+   positional hint, so deduce it, don't brute-force. On a correct run the console goes
+   all-green.
+6. Say yes to Gus. The cell discharges — **SIGNAL FOUND.**
+
+> **Why this order:** it mirrors a real spacecraft/comms cold-start — thermal conditioning
+> before applying power; main-bus power before the reaction wheels/gyros that null the spin;
+> attitude stabilized before a high-gain dish can hold a heading and raise its carrier; a
+> low-power handshake/acknowledgment before committing the payload; the one-shot payload
+> burst last. Every constraint is supplied in-room; no engineering background is needed.
 
 ## The shards, for reference
 

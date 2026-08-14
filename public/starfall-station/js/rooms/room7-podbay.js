@@ -3,7 +3,30 @@
 // itself. The reveal: you are E. Voss (instance 2) in maintenance chassis
 // MC-7. Phase 2: the uplink — biogel the emitter, seat the capacitor, speak
 // the passphrase the shards spell (peaks ascending: W-A-K-E-U-P), align the
-// dish to RV-7 (AZ 117 / EL 43, from the observation deck), and TRANSMIT.
+// dish to RV-7 (AZ 117 / EL 43, from the observation deck).
+// Phase 3 (the finale escape): the array has been dark eleven months and
+// must be woken in a STRICT cold-start order or the one-shot cell is wasted.
+// Throw the six ignition steps in the true engineering order, deduced from
+// the cold-start placard, the dish-gimbal caution, and Gus's comms note:
+//   THERMAL -> POWER -> ATTITUDE -> CARRIER -> HANDSHAKE -> BURST
+// (thaw the lines, main bus on, null the tumble, RF carrier up, RV-7
+//  answers, fire the cell). A wrong order trips the breaker and springs the
+//  whole sequence back. Then Gus asks to come, and you transmit.
+
+// The six cold-start steps. `name` is on the console key; `gloss` is the plain
+// meaning the evidence teaches — no jargon knowledge required to order them.
+const IGNITION = [
+  { id: 'thermal',   name: 'THERMAL',   gloss: 'thaw the lines' },
+  { id: 'power',     name: 'POWER BUS', gloss: 'main bus on' },
+  { id: 'attitude',  name: 'ATTITUDE',  gloss: 'null the tumble' },
+  { id: 'carrier',   name: 'CARRIER',   gloss: 'RF carrier up' },
+  { id: 'handshake', name: 'HANDSHAKE', gloss: 'RV-7 answers' },
+  { id: 'burst',     name: 'BURST',     gloss: 'fire the cell' },
+];
+// How the keys sit on the console before you touch them — scrambled, not the answer.
+const IGN_TRAY = ['carrier', 'burst', 'thermal', 'handshake', 'power', 'attitude'];
+// The true cold-start order, cold array to committed signal.
+const IGN_SOLUTION = ['thermal', 'power', 'attitude', 'carrier', 'handshake', 'burst'];
 
 export default {
   id: 'podbay',
@@ -19,7 +42,11 @@ export default {
   },
 
   hintContext(state) {
-    if (state.flags.podbay_inArray) return 'uplink';
+    if (state.flags.podbay_inArray) {
+      const prepped = state.flags.array_emitter && state.flags.array_cap
+        && state.flags.array_pass && state.flags.array_aligned;
+      return prepped ? 'ignition' : 'uplink';
+    }
     return state.flags.podbay_revealed ? 'go' : 'pod';
   },
 
@@ -38,10 +65,19 @@ export default {
         { text: 'Click the opened bulkhead at the back of the bay.', cost: 240 },
       ];
     }
+    const prepped = state.flags.array_emitter && state.flags.array_cap
+      && state.flags.array_pass && state.flags.array_aligned;
+    if (prepped) {
+      return [
+        { text: 'The array is built, but eleven months cold. It has to be woken in the right order or the one-shot cell is wasted. The cold-start placard on the console, the caution on the dish gimbal, and Gus\'s comms note hold the whole sequence between them.', cost: 60 },
+        { text: 'Thaw the frozen lines before you power them; power the bus before the gyros can fight the spin; null the tumble before the dish will hold a heading and raise the carrier; get RV-7\'s answer before you commit; the cell bursts last.', cost: 120 },
+        { text: 'THERMAL, POWER BUS, ATTITUDE, CARRIER, HANDSHAKE, BURST.', cost: 240 },
+      ];
+    }
     return [
       { text: 'Four sockets, in effect: mend, power, speak, aim. The emitter is cracked, the charge slot is empty, the console wants a word, the dish wants a direction.', cost: 60 },
       { text: 'Biogel mends the emitter. The capacitor powers it. The word is written in your six shards — the plaque on the console says how to order them: fewest wave-peaks speaks first. The direction is in your suit log, from the observation deck.', cost: 120 },
-      { text: 'Gel the emitter, seat the capacitor, type WAKEUP, set AZ 117 / EL 43, and press TRANSMIT.', cost: 240 },
+      { text: 'Gel the emitter, seat the capacitor, type WAKEUP, set AZ 117 / EL 43. Then the console wants the cold-start sequence.', cost: 240 },
     ];
   },
 };
@@ -247,6 +283,8 @@ function arrayScene(state) {
   const cap = !!state.flags.array_cap;
   const pass = !!state.flags.array_pass;
   const aligned = !!state.flags.array_aligned;
+  const launched = !!state.flags.array_launched;
+  const prepped = gel && cap && pass && aligned;
   const az = state.flags.array_az ?? 0;
   const el = state.flags.array_el ?? 0;
 
@@ -308,10 +346,34 @@ function arrayScene(state) {
         <text x="1090" y="700" fill="${pass ? '#7bc47f' : '#ff8f8f'}">${pass ? '✓' : '✗'} PASSPHRASE ${pass ? 'ACCEPTED' : 'REQUIRED'}</text>
         <text x="1090" y="726" fill="${aligned ? '#7bc47f' : '#ff8f8f'}">${aligned ? '✓' : '✗'} DISH ${aligned ? 'LOCKED: AZ 117 · EL 43' : `AZ ${az} · EL ${el}`}</text>
       </g>
-      ${gel && cap && pass && aligned
+      ${prepped
         ? `<rect x="1150" y="742" width="260" height="38" rx="9" fill="rgba(79,216,208,0.18)" stroke="#4fd8d0" stroke-width="2.5" class="beckon"/>
-           <text x="1280" y="767" text-anchor="middle" font-size="15" fill="#8ff0ea" font-family="Consolas, monospace">▶ TRANSMIT</text>`
+           <text x="1280" y="767" text-anchor="middle" font-size="15" fill="#8ff0ea" font-family="Consolas, monospace">${launched ? '▶ TRANSMIT' : '▶ BEGIN COLD-START'}</text>`
         : ''}
+    </g>
+
+    <!-- COLD-START PLACARD: bolted above the console (order rules) -->
+    <g>
+      <rect x="1080" y="470" width="200" height="74" rx="8" fill="#0d1a26" stroke="#4fd8d0" stroke-width="2.5"/>
+      <text x="1180" y="492" text-anchor="middle" font-size="11" letter-spacing="2" fill="#4fd8d0" font-family="Consolas, monospace">COLD-START</text>
+      ${[506, 520, 534].map((y, i) =>
+        `<line x1="1096" y1="${y}" x2="${1250 - i * 22}" y2="${y}" stroke="#39485a" stroke-width="3"/>`).join('')}
+    </g>
+
+    <!-- DISH-GIMBAL CAUTION: a yellow label on the mast base -->
+    <g>
+      <rect x="560" y="470" width="150" height="74" rx="8" fill="#241a10" stroke="#ffb45e" stroke-width="2.5"/>
+      <text x="635" y="492" text-anchor="middle" font-size="10" letter-spacing="1" fill="#ffb45e" font-family="Consolas, monospace">⚠ GIMBAL</text>
+      ${[506, 520, 534].map((y, i) =>
+        `<line x1="576" y1="${y}" x2="${694 - i * 18}" y2="${y}" stroke="#5a4426" stroke-width="3"/>`).join('')}
+    </g>
+
+    <!-- GUS'S COMMS NOTE: a taped datapad, upper-left deck -->
+    <g transform="rotate(-3 425 340)">
+      <rect x="330" y="300" width="190" height="80" rx="6" fill="#101b28" stroke="#5d7080" stroke-width="2.5"/>
+      <text x="425" y="322" text-anchor="middle" font-size="10" letter-spacing="1" fill="#8fa3b8" font-family="Consolas, monospace">— GS-1 "GUS" —</text>
+      ${[336, 350, 364].map((y, i) =>
+        `<line x1="346" y1="${y}" x2="${500 - i * 20}" y2="${y}" stroke="#39485a" stroke-width="3"/>`).join('')}
     </g>
 
     <!-- capacitor socket -->
@@ -370,10 +432,53 @@ function arraySpots(state) {
   spots.push({
     id: 'console', x: 1050, y: 550, w: 460, h: 250, label: 'Uplink control',
     onInteract(game) {
-      if (gel && cap && pass && aligned) { doTransmit(game); return; }
+      if (gel && cap && pass && aligned) {
+        if (game.getFlag('array_launched')) doTransmit(game);
+        else openIgnition(game);
+        return;
+      }
       if (!pass) { openPassphrase(game); return; }
       if (!aligned) { openAlignment(game); return; }
       game.say('The console ticks through its checklist and points, politely, at whatever is still red.');
+    },
+  });
+
+  spots.push({
+    id: 'placard', x: 1080, y: 470, w: 200, h: 74, label: 'Cold-start placard',
+    onInteract(game) {
+      const html = `<div class="datapad"><div class="pad-title">EMERGENCY UPLINK — COLD-START</div>
+        This array has been dark since the evacuation. Bring it up <strong>in order</strong>
+        or the pre-charge cell is spent for nothing.<br><br>
+        &bull; <strong>THAW before you POWER</strong> — a frozen line cracks under load. Begin
+        with the coolant bleed; nothing precedes it.<br>
+        &bull; The cell <strong>BURSTS last</strong>. It fires exactly once.</div>`;
+      game.journal.add('note_coldstart', { title: 'Cold-start placard (Uplink Array)', category: 'note', html });
+      game.dialog({ title: 'Cold-Start Placard', html });
+    },
+  });
+
+  spots.push({
+    id: 'gimbal', x: 560, y: 470, w: 150, h: 74, label: 'Dish-gimbal caution',
+    onInteract(game) {
+      const html = `<div class="datapad"><div class="pad-title">⚠ GIMBAL CAUTION</div>
+        The dish will <strong>not hold a heading while the station tumbles</strong>. Null the
+        station's attitude <strong>before</strong> you raise the RF carrier — a carrier on a
+        rolling platform only sprays the sky.</div>`;
+      game.journal.add('note_gimbal', { title: 'Dish-gimbal caution (Uplink Array)', category: 'note', html });
+      game.dialog({ title: 'Gimbal Caution', html });
+    },
+  });
+
+  spots.push({
+    id: 'commsnote', x: 330, y: 300, w: 190, h: 80, label: "Gus's comms note",
+    onInteract(game) {
+      const html = `<div class="datapad"><div class="pad-title">GS-1 "GUS" — comms note</div>
+        "I ran the cold-start a hundred times in simulation while you slept, Elin.<br><br>
+        No bus, no gyros — <strong>power before you fight the spin</strong>. And never commit
+        the burst to a carrier RV-7 has not answered: <strong>carrier, then handshake, then
+        send</strong>."</div>`;
+      game.journal.add('note_gus_comms', { title: "Gus's comms note (Uplink Array)", category: 'note', html });
+      game.dialog({ title: "Gus's Comms Note", html });
     },
   });
 
@@ -491,6 +596,87 @@ function openAlignment(game) {
         });
       }
       draw();
+    },
+  });
+}
+
+function openIgnition(game) {
+  // order = step ids placed left-to-right into the six sequence slots.
+  let order = [];
+
+  game.openPuzzle({
+    id: 'array_ignition',
+    title: 'Cold-Start Sequence',
+    wide: true,
+    render(body, api) {
+      body.innerHTML = `
+        <p class="puzzle-desc">The array is built, but eleven months cold — and the pre-charge
+        cell fires <em>once</em>. The console will not transmit until you run the emergency
+        cold-start <strong>in its true order</strong>. Seat the six steps in sequence; a wrong
+        order trips the breaker and springs the whole bank. The cold-start placard, the gimbal
+        caution, and Gus's comms note tell you the order between them.</p>
+        <div class="seq-slots" id="ign-slots"></div>
+        <div class="seq-tray" id="ign-tray"></div>
+        <div class="puzzle-row"><button class="btn btn-primary" id="ign-run">Run the Sequence</button></div>
+        <div class="puzzle-feedback"></div>`;
+
+      const slotsEl = body.querySelector('#ign-slots');
+      const trayEl = body.querySelector('#ign-tray');
+      const step = (id) => IGNITION.find(s => s.id === id);
+
+      function draw() {
+        slotsEl.innerHTML = '';
+        for (let i = 0; i < 6; i++) {
+          const id = order[i];
+          const slot = document.createElement('div');
+          slot.className = 'seq-slot' + (id ? ' filled' : '');
+          if (id) {
+            const s = step(id);
+            slot.innerHTML = `<span class="seq-ord">${i + 1}</span>
+              <span class="seq-name">${s.name}</span><span class="seq-gloss">${s.gloss}</span>`;
+            slot.title = 'Pull this step back';
+            slot.addEventListener('click', () => { order.splice(i, 1); game.playSfx('click'); draw(); });
+          } else {
+            slot.innerHTML = `<span class="seq-ord">${i + 1}</span><span class="seq-gloss">—</span>`;
+          }
+          slotsEl.appendChild(slot);
+        }
+        trayEl.innerHTML = '';
+        for (const id of IGN_TRAY) {
+          if (order.includes(id)) continue;
+          const s = step(id);
+          const chip = document.createElement('button');
+          chip.className = 'seq-chip';
+          chip.innerHTML = `<span class="seq-name">${s.name}</span><span class="seq-gloss">${s.gloss}</span>`;
+          chip.addEventListener('click', () => {
+            if (order.length >= 6) return;
+            order.push(id);
+            game.playSfx('click');
+            draw();
+          });
+          trayEl.appendChild(chip);
+        }
+      }
+      draw();
+
+      body.querySelector('#ign-run').addEventListener('click', () => {
+        if (order.length < 6) {
+          api.setFeedback('Six steps, six slots. The sequence is incomplete — the console will not arm.', 'bad');
+          return;
+        }
+        const correct = order.every((id, i) => id === IGN_SOLUTION[i]);
+        if (correct) {
+          game.setFlag('array_launched');
+          game.playSfx('solve');
+          api.solved({ message: 'The array wakes in order — lines thawing, bus closing, the tumble bleeding off until the dish holds dead still, the carrier climbing, and then, clean and close, RV-7\'s handshake. Every light on the console goes green at once. The cell is armed for its one shout.' });
+          game.refreshScene();
+          setTimeout(() => doTransmit(game), 1100);
+        } else {
+          order = [];
+          draw();
+          api.fail('A breaker trips somewhere in the frame and the whole sequence springs back to cold. Out of order — you will spend the one shot on nothing. Read the placard, the gimbal, and Gus again.');
+        }
+      });
     },
   });
 }
