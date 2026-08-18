@@ -10,6 +10,7 @@ configureSave('pilgrims-road-save-v1');
 const $ = (sel) => document.querySelector(sel);
 
 const CONFIG = {
+  assetBase: new URL('../', import.meta.url).href,   // <game>/ — makes art/ refs deploy-base-proof
   gusForm: GUS,
   journalTitle: "Pilgrim's Journal",
   journalEmpty: 'Empty pages, waiting. Everything worth remembering — verses, rosters, recipes, and every carved sun you find — will be copied here the moment you examine it.',

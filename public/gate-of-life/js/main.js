@@ -34,6 +34,7 @@ function tesseraCard(e) {
 }
 
 const CONFIG = {
+  assetBase: new URL('../', import.meta.url).href,   // <game>/ — makes art/ refs deploy-base-proof
   gusForm: GUS,
   journalTitle: 'Wax Tablets',
   journalEmpty: 'The wax is smooth, waiting. Every inscription, ledger, plan, and bone tessera you examine is pressed here automatically. The tesserae matter more than they look like they should.',

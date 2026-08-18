@@ -398,7 +398,11 @@ function transitionToRoom(idx) {
 /** @param {boolean} withEntrance */
 function renderScene(withEntrance) {
   const sceneEl = $('#scene');
-  sceneEl.innerHTML = currentRoom.scene(state);
+  let html = currentRoom.scene(state);
+  // Resolve relative `art/…` asset refs against the game's absolute base so they
+  // work regardless of the page's trailing slash / deploy base path (Pages vs Vercel).
+  if (cfg && cfg.assetBase) html = html.replace(/(href|src|poster)="art\//g, `$1="${cfg.assetBase}art/`);
+  sceneEl.innerHTML = html;
   if (withEntrance) {
     sceneEl.classList.remove('scene-enter');
     void sceneEl.offsetWidth;
