@@ -9,6 +9,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'Sir Gus, Knight of the Vayne — deceased, unbothered',
   form: 'ghost-knight',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small';

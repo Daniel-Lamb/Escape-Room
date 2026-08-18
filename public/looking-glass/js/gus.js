@@ -6,6 +6,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'Gus — the manor cat, who crosses the glass as he pleases',
   form: 'cat',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';

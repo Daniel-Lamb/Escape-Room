@@ -6,6 +6,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'GS-1 "Gus" — maintenance drone, self-appointed morale officer',
   form: 'hover-drone',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';

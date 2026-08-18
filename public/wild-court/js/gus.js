@@ -6,6 +6,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'Gus — golden tamarin, advocate for the accused',
   form: 'golden-tamarin',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';

@@ -6,6 +6,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'Gus — storm petrel, the only soul who flies between the two lights',
   form: 'petrel',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';

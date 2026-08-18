@@ -20,6 +20,7 @@
  * @property {string} name
  * @property {string} epithet
  * @property {string} [form]
+ * @property {string} [art]
  * @property {(size: string) => string} portrait
  * @property {GusLines} lines
  */
@@ -42,11 +43,25 @@ const TIER_COSTS = [60, 120, 240];
 let deps = /** @type {any} */ (null);
 let greetIdx = 0;
 
+/**
+ * Gus's visual for a slot: a cut-out character portrait (`form.art`) when the
+ * game supplies one, else the legacy inline-SVG `portrait(size)` fallback.
+ * @param {GusForm} form
+ * @param {string} size
+ * @returns {string}
+ */
+function gusVisual(form, size) {
+  if (form.art) {
+    return `<img class="gus-img" src="${form.art}" alt="${escapeHtml(form.name)}" draggable="false"/>`;
+  }
+  return form.portrait(size);
+}
+
 /** @param {GusDeps} dependencies */
 export function initGus(dependencies) {
   deps = dependencies;
   const dock = /** @type {HTMLElement} */ (document.getElementById('gus-dock'));
-  dock.innerHTML = deps.form.portrait('small');
+  dock.innerHTML = gusVisual(deps.form, 'small');
   dock.dataset.label = `Ask ${deps.form.name}`;
   dock.title = `${deps.form.epithet} — stuck? Ask ${deps.form.name}.`;
   dock.addEventListener('click', () => {
@@ -105,7 +120,7 @@ export function openGusDialog() {
     wide: false,
     html: `
       <div class="gus-dialog">
-        <div class="gus-portrait">${GUS.portrait('large')}</div>
+        <div class="gus-portrait">${gusVisual(GUS, 'large')}</div>
         <div class="gus-right">
           <p class="gus-speech">&ldquo;${escapeHtml(greeting)}&rdquo;</p>
           <div class="gus-tiers">${tiersHtml}</div>

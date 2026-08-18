@@ -752,6 +752,7 @@ button { font-family: inherit; cursor: pointer; }
   filter: drop-shadow(0 0 24px rgba(154, 196, 255, 0.65));
 }
 #gus-dock svg { width: 100%; height: 100%; }
+#gus-dock img.gus-img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
 
 #gus-dock::after {
   content: attr(data-label);
@@ -781,6 +782,7 @@ button { font-family: inherit; cursor: pointer; }
 .gus-dialog { display: flex; gap: 20px; align-items: flex-start; }
 .gus-portrait { flex: 0 0 120px; filter: drop-shadow(0 0 18px rgba(154, 196, 255, 0.3)); animation: gusBob 5s ease-in-out infinite; }
 .gus-portrait svg { width: 120px; height: 140px; }
+.gus-portrait img.gus-img { width: 120px; height: auto; display: block; border-radius: 12px; }
 .gus-right { flex: 1 1 auto; min-width: 0; }
 
 .gus-speech {

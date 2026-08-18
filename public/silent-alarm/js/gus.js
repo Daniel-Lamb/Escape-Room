@@ -7,6 +7,7 @@ export const GUS = {
   name: 'Gus',
   epithet: "Gus — museum rat, the one who's cased every duct in the building",
   form: 'rat',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';

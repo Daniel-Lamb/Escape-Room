@@ -7,6 +7,7 @@ export const GUS = {
   name: 'Gus',
   epithet: 'Gustus — the Emperor\'s lion, retired by his own decision',
   form: 'lion',
+  art: new URL('../art/gus.webp', import.meta.url).href,   // photoreal cut-out portrait
 
   portrait(size = 'large') {
     const s = size === 'small' ? '_s' : '';
