@@ -64,77 +64,23 @@ export default {
         </linearGradient>
       </defs>
 
-      <!-- curved pit wall -->
-      <rect x="0" y="0" width="1600" height="640" fill="url(#gd_oub_wall)"/>
-      <!-- ashlar block courses, curving -->
-      <g stroke="#11141f" stroke-width="5" fill="none" opacity="0.8">
-        ${[80, 170, 262, 356, 452, 550].map(y =>
-          `<path d="M0 ${y} Q800 ${y + 28} 1600 ${y}"/>`).join('')}
-        ${[140, 420, 700, 980, 1260, 1540].map((x, i) =>
-          `<line x1="${x}" y1="${i % 2 ? 90 : 20}" x2="${x + 12}" y2="620"/>`).join('')}
-      </g>
-      <!-- damp streaks -->
-      <path d="M310 0 q-8 300 6 620" stroke="rgba(10,14,24,0.55)" stroke-width="40" fill="none"/>
-      <path d="M1210 0 q10 320 -4 620" stroke="rgba(10,14,24,0.45)" stroke-width="56" fill="none"/>
+      <!-- background plate (generated); murals/props/effects layer on top -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/oubliette.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/oubliette.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- straw floor -->
-      <ellipse cx="800" cy="780" rx="980" ry="220" fill="url(#gd_oub_floor)"/>
-      <g stroke="#6b5a2a" stroke-width="3" stroke-linecap="round" opacity="0.7">
-        <line x1="420" y1="800" x2="500" y2="784"/><line x1="530" y1="820" x2="610" y2="812"/>
-        <line x1="700" y1="836" x2="790" y2="820"/><line x1="900" y1="830" x2="985" y2="842"/>
-        <line x1="1080" y1="800" x2="1160" y2="816"/><line x1="1220" y1="840" x2="1300" y2="826"/>
-        <line x1="620" y1="790" x2="690" y2="800"/><line x1="980" y1="786" x2="1050" y2="778"/>
-      </g>
+      <!-- warm animated glow over the plate's painted wall-torch (upper centre) -->
+      <ellipse cx="800" cy="150" rx="340" ry="220" fill="url(#gd_oub_torch)" class="glow"/>
 
-      <!-- torch, high on the wall -->
-      <g>
-        <ellipse cx="800" cy="120" rx="330" ry="200" fill="url(#gd_oub_torch)" class="glow"/>
-        <rect x="787" y="120" width="26" height="90" rx="6" fill="#4a3520"/>
-        <path class="torch-flame" d="M800 40 Q824 76 806 112 Q800 120 794 112 Q776 76 800 40 Z" fill="#ffa94d"/>
-        <path class="torch-flame fast" d="M800 62 Q812 84 803 108 Q800 113 797 108 Q788 84 800 62 Z" fill="#ffd9a0"/>
-        <circle cx="800" cy="112" r="16" fill="#e07b2a" opacity="0.8"/>
-      </g>
+      <!-- MURAL: gallows tree with 7 crows (photoreal chalk, screen-blended onto the stone) -->
+      <image href="art/oub-gallows.webp" x="230" y="179" width="300" height="222" preserveAspectRatio="xMidYMid meet" style="mix-blend-mode:screen"/>
 
-      <!-- MURAL: gallows tree with 7 crows (chalk) -->
-      <g stroke="#cfd4de" stroke-width="4" fill="none" opacity="0.75" stroke-linecap="round">
-        <line x1="300" y1="420" x2="300" y2="250"/>
-        <line x1="300" y1="250" x2="470" y2="250"/>
-        <line x1="440" y1="250" x2="440" y2="300"/>
-        <circle cx="440" cy="316" r="16"/>
-      </g>
-      <g fill="#cfd4de" opacity="0.85">
-        ${[[320, 236], [360, 222], [400, 234], [430, 218], [468, 240], [285, 300], [318, 350]].map(([x, y]) =>
-          `<path d="M${x} ${y} q7 -10 14 0 q-4 4 -7 3 l-6 6 z"/>`).join('')}
-      </g>
+      <!-- MURAL: 4 rats about a loaf (photoreal chalk, screen-blended) -->
+      <image href="art/oub-rats.webp" x="1105" y="230" width="285" height="166" preserveAspectRatio="xMidYMid meet" style="mix-blend-mode:screen"/>
 
-      <!-- MURAL: 4 rats about a loaf (chalk) -->
-      <g stroke="#cfd4de" stroke-width="4" fill="none" opacity="0.7" stroke-linecap="round">
-        <ellipse cx="1240" cy="300" rx="46" ry="27"/>
-        ${[[1160, 268, 1], [1320, 262, -1], [1170, 344, 1], [1312, 348, -1]].map(([x, y, d]) =>
-          `<g><ellipse cx="${x}" cy="${y}" rx="24" ry="12"/><circle cx="${x + d * 26}" cy="${y - 5}" r="8"/><path d="M${x - d * 22} ${y} q${-d * 26} 8 ${-d * 36} -2"/></g>`).join('')}
-      </g>
+      <!-- MURAL: kneeling monk (photoreal chalk, screen-blended) -->
+      <image href="art/oub-monk.webp" x="595" y="224" width="120" height="202" preserveAspectRatio="xMidYMid meet" style="mix-blend-mode:screen"/>
 
-      <!-- MURAL: kneeling monk (chalk) -->
-      <g stroke="#cfd4de" stroke-width="4" fill="none" opacity="0.6" stroke-linecap="round">
-        <circle cx="640" cy="300" r="18"/>
-        <path d="M640 318 q-6 30 -28 44 l40 0 q-8 -22 -12 -44"/>
-        <path d="M640 330 q22 8 30 26"/>
-        <path d="M628 296 a14 14 0 0 1 24 0" opacity="0.8"/>
-      </g>
-
-      <!-- chains: two, with empty shackles -->
-      <g class="sway slow">
-        <g stroke="#565b6c" stroke-width="7" fill="none">
-          <path d="M980 180 q6 60 0 130 q-4 50 4 96"/>
-        </g>
-        <circle cx="984" cy="426" r="26" fill="none" stroke="#565b6c" stroke-width="9"/>
-      </g>
-      <g class="sway">
-        <g stroke="#565b6c" stroke-width="7" fill="none">
-          <path d="M1060 190 q-6 66 2 128 q4 44 -2 84"/>
-        </g>
-        <circle cx="1058" cy="422" r="24" fill="none" stroke="#565b6c" stroke-width="9"/>
-      </g>
+      <!-- chains: two, with empty shackles (photoreal) -->
+      <image href="art/oub-chains.webp" x="952" y="168" width="135" height="300" preserveAspectRatio="xMidYMid meet" class="sway slow"/>
 
       <!-- the verse, scratched beside the grate -->
       <g font-family="Palatino Linotype, Georgia, serif" fill="#b9bfcf" opacity="0.85">
@@ -148,39 +94,26 @@ export default {
         ${open
           ? `<ellipse cx="700" cy="742" rx="132" ry="52" fill="#05070d"/>
              <path d="M582 742 a118 46 0 0 1 236 0" fill="none" stroke="#3c4152" stroke-width="10"/>
-             <g transform="translate(818 700) rotate(24)">
-               <ellipse cx="0" cy="0" rx="132" ry="52" fill="url(#gd_oub_grate)"/>
-               ${[-90, -45, 0, 45, 90].map(x => `<line x1="${x}" y1="-46" x2="${x}" y2="46" stroke="#161a26" stroke-width="8"/>`).join('')}
-             </g>`
-          : `<ellipse cx="700" cy="742" rx="132" ry="52" fill="url(#gd_oub_grate)"/>
-             ${[-90, -45, 0, 45, 90].map(x => `<line x1="${700 + x}" y1="${742 - Math.sqrt(1 - (x / 132) ** 2) * 48}" x2="${700 + x}" y2="${742 + Math.sqrt(1 - (x / 132) ** 2) * 48}" stroke="#161a26" stroke-width="8"/>`).join('')}
-             <ellipse cx="700" cy="742" rx="132" ry="52" fill="none" stroke="#494f63" stroke-width="5"/>
-             <g font-family="Palatino Linotype, Georgia, serif" font-size="22" fill="#c9a227" text-anchor="middle">
-               <text x="640" y="750">${ROMAN[(state.flags.oubliette_r1 ?? 0)]}</text>
-               <text x="700" y="756">${ROMAN[(state.flags.oubliette_r2 ?? 0)]}</text>
-               <text x="760" y="750">${ROMAN[(state.flags.oubliette_r3 ?? 0)]}</text>
+             <g transform="translate(818 700) rotate(24)"><image href="art/oub-grate.webp" x="-140" y="-86" width="280" height="172" preserveAspectRatio="none"/></g>`
+          : `<image href="art/oub-grate.webp" x="580" y="662" width="240" height="156" preserveAspectRatio="none"/>
+             <rect x="628" y="732" width="144" height="30" rx="8" fill="#161009" stroke="#57432a" stroke-width="2" opacity="0.92"/>
+             <g font-family="Palatino Linotype, Georgia, serif" font-size="22" fill="#e8c85a" text-anchor="middle">
+               <text x="662" y="755">${ROMAN[(state.flags.oubliette_r1 ?? 0)]}</text>
+               <text x="700" y="755">${ROMAN[(state.flags.oubliette_r2 ?? 0)]}</text>
+               <text x="738" y="755">${ROMAN[(state.flags.oubliette_r3 ?? 0)]}</text>
              </g>`}
       </g>
 
-      <!-- sun-mark #1: seven rays, letter R, beside the grate -->
+      <!-- sun-mark #1: carved gilded sun (photoreal), scratched letter R below -->
       <g class="beckon">
-        <circle cx="530" cy="700" r="16" fill="none" stroke="#c9a227" stroke-width="3.5"/>
-        ${Array.from({ length: 7 }, (_, i) => {
-          const a = (i / 7) * Math.PI * 2 - Math.PI / 2;
-          return `<line x1="${530 + Math.cos(a) * 21}" y1="${700 + Math.sin(a) * 21}"
-                        x2="${530 + Math.cos(a) * 32}" y2="${700 + Math.sin(a) * 32}"
-                        stroke="#c9a227" stroke-width="3.5" stroke-linecap="round"/>`;
-        }).join('')}
-        <text x="530" y="762" text-anchor="middle" font-size="26" fill="#c9a227"
+        <image href="art/oub-sun.webp" x="470" y="646" width="100" height="102" preserveAspectRatio="xMidYMid meet"/>
+        <text x="520" y="784" text-anchor="middle" font-size="24" fill="#e8c85a"
           font-family="Palatino Linotype, Georgia, serif">R</text>
       </g>
 
       <!-- bread board with loaf ${spoonHere ? '+ spoon' : ''} -->
       <g>
-        <rect x="1150" y="756" width="220" height="26" rx="8" fill="#4a3520"/>
-        <ellipse cx="1225" cy="744" rx="58" ry="26" fill="#8a6d3c"/>
-        <path d="M1180 738 q18 -14 44 -10" stroke="#6b5330" stroke-width="4" fill="none"/>
-        <path d="M1262 726 q14 8 12 20 l-24 -6 z" fill="#5d4626"/>
+        <image href="art/oub-board.webp" x="1128" y="694" width="240" height="146" preserveAspectRatio="xMidYMid meet"/>
         ${spoonHere ? `
         <g transform="translate(1318 742) rotate(18)">
           <ellipse cx="0" cy="0" rx="13" ry="9" fill="none" stroke="#9a9a8a" stroke-width="3"/>
@@ -190,11 +123,7 @@ export default {
 
       <!-- candle stub glinting in the straw -->
       ${candleHere ? `
-      <g class="beckon">
-        <rect x="452" y="812" width="20" height="30" rx="4" fill="#e8d9b0" transform="rotate(-12 462 827)"/>
-        <line x1="466" y1="808" x2="470" y2="800" stroke="#4a4a4a" stroke-width="3"/>
-        <ellipse cx="462" cy="824" rx="26" ry="12" fill="rgba(232,217,176,0.12)"/>
-      </g>` : ''}
+      <image href="art/oub-candle.webp" x="430" y="758" width="52" height="112" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
 
       <!-- foreground shadow lip of the pit -->
       <path d="M0 900 L0 840 Q800 920 1600 840 L1600 900 Z" fill="#05070d"/>

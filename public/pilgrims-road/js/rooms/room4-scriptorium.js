@@ -84,11 +84,8 @@ export default {
         </linearGradient>
       </defs>
 
-      <rect width="1600" height="620" fill="url(#gd_sc_wall)"/>
-      <rect y="620" width="1600" height="280" fill="#171320"/>
-      <g stroke="#0c0912" stroke-width="4" opacity="0.6">
-        ${[670, 730, 800, 870].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <!-- background plate (generated, lit state); the darkness scrim below dims it until the candle is lit -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/scriptorium.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/scriptorium.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- high shelf of six tomes -->
       <g>

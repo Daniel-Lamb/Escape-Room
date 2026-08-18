@@ -77,13 +77,7 @@ export default {
         </linearGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_arm_wall)"/>
-      <!-- vault ribs -->
-      <g stroke="#171209" stroke-width="10" fill="none" opacity="0.8">
-        <path d="M0 200 Q400 40 800 200"/>
-        <path d="M800 200 Q1200 40 1600 200"/>
-      </g>
-      <rect y="640" width="1600" height="260" fill="url(#gd_arm_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/armory.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/armory.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- torches -->
       ${[240, 1360].map(x => `

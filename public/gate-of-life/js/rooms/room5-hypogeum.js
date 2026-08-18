@@ -73,26 +73,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="900" fill="url(#gd_hyp_wall)"/>
-
-      <!-- the arena floor as ceiling: planks + joists -->
-      <g>
-        <rect width="1600" height="140" fill="#332a1e"/>
-        ${[0, 200, 400, 600, 800, 1000, 1200, 1400].map(x => `<rect x="${x}" y="0" width="12" height="140" fill="#241c12"/>`).join('')}
-        ${[46, 92].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}" stroke="#241c12" stroke-width="6"/>`).join('')}
-      </g>
-      <!-- light blades through the planking -->
-      <polygon points="500,140 540,140 620,760 540,760" fill="url(#gd_hyp_blade)" class="moonbeam"/>
-      <polygon points="1210,140 1240,140 1300,600 1240,600" fill="url(#gd_hyp_blade)" class="moonbeam" style="animation-delay:-3s"/>
-      <!-- falling sand motes -->
-      <g fill="#c9a45f" opacity="0.4">
-        <circle cx="560" cy="300" r="2" class="float"/>
-        <circle cx="580" cy="480" r="1.5" class="float" style="animation-delay:-2s"/>
-        <circle cx="1250" cy="330" r="1.7" class="float" style="animation-delay:-1s"/>
-        <circle cx="1268" cy="470" r="1.4" class="float" style="animation-delay:-3.4s"/>
-      </g>
-
-      <rect y="760" width="1600" height="140" fill="url(#gd_hyp_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/hypogeum.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/hypogeum.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- overhead lift machinery (flavor art) -->
       <g stroke="#453a2e" stroke-width="8" fill="none" opacity="0.9">

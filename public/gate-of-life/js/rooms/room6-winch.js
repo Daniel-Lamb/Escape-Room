@@ -37,13 +37,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="900" fill="url(#gd_win_wall)"/>
-
-      <!-- high slot of arena light -->
-      <rect x="1180" y="0" width="240" height="26" fill="#e8cf96" opacity="0.9" class="flicker"/>
-      <polygon points="1180,26 1420,26 1360,420 1240,420" fill="url(#gd_win_slot)" class="moonbeam"/>
-
-      <rect y="740" width="1600" height="160" fill="url(#gd_win_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/winch.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/winch.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- fire-scarred beams -->
       <g>

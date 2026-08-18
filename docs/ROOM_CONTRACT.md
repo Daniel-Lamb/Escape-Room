@@ -116,7 +116,7 @@ Puzzles must be fully re-openable: never assume the modal persists.
 
 ## SVG scene authoring rules
 
-- `viewBox="0 0 1600 900"`, `preserveAspectRatio="xMidYMid slice"`, no external refs, no `<image>`.
+- `viewBox="0 0 1600 900"`, `preserveAspectRatio="xMidYMid slice"`. **`<image>` layers are now allowed** (visual & interaction upgrade, see [upgrade/README.md](upgrade/README.md)): a room may reference a generated background plate at `<game>/art/<room>.*` as the first `<image>` layer, with state-driven prop sprites and the light effects kept on top. Use repo-relative `href` (e.g. `art/oubliette.jpg`) so it resolves under both the Pages `/Escape-Room/` base and the Vercel root. Purely-procedural scenes remain valid; keep the composition rules below regardless of whether the background is a plate or synthesized.
 - Layered depth: background wall → mid furniture → foreground props → light effects last.
 - **Palette:** stone `#1c1f2b` `#2a2d3a` `#3a3e4f`, shadows `#0b0e1a`, torch warmth `#ffa94d` `#e07b2a`, gold accents `#c9a227`, parchment `#e8d9b0`, moonlight `#aebfdd`.
 - Use `<defs>` gradients generously (radial for light pools, linear for walls/floors). Prefix every gradient/filter id with your room slug (`gd_guardroom_wall`) — scenes share the DOM over a session and ids must not collide.

@@ -83,11 +83,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="760" fill="url(#gd_por_wall)"/>
-      <rect y="760" width="1600" height="140" fill="url(#gd_por_floor)"/>
-      <g stroke="#171209" stroke-width="5" opacity="0.7">
-        ${[160, 320, 480].map(y => `<line x1="0" y1="${y}" x2="1000" y2="${y}"/>`).join('')}
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/porta.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/porta.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- torches along the corridor -->
       ${[300, 700].map(x => `

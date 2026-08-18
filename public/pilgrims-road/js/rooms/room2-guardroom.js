@@ -92,25 +92,13 @@ export default {
         </linearGradient>
       </defs>
 
-      <rect x="0" y="0" width="1600" height="620" fill="url(#gd_gr_wall)"/>
-      <!-- timber beams -->
-      <g fill="#241a2b">
-        <rect x="0" y="70" width="1600" height="34"/>
-        <rect x="200" y="0" width="30" height="620"/>
-        <rect x="760" y="0" width="30" height="620"/>
-        <rect x="1330" y="0" width="30" height="620"/>
-        <path d="M200 104 L440 300 l-20 18 L200 140 Z" opacity="0.8"/>
-        <path d="M790 104 L560 300 l20 18 L790 140 Z" opacity="0.8"/>
-      </g>
-      <rect x="0" y="620" width="1600" height="280" fill="url(#gd_gr_floor)"/>
-      <g stroke="#0c0912" stroke-width="4" opacity="0.7">
-        ${[660, 705, 755, 810, 868].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <!-- background plate (generated); props/documents/effects layer on top -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/guardroom.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/guardroom.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- duty roster parchment on wall -->
+      <!-- duty roster parchment on wall (photoreal parchment + legible text) -->
       <g class="sway slow">
-        <rect x="285" y="180" width="190" height="240" rx="4" fill="#d9c493" transform="rotate(-2 380 300)"/>
-        <g font-family="Palatino Linotype, Georgia, serif" fill="#4a3a1c" transform="rotate(-2 380 300)">
+        <image href="art/gr-roster.webp" x="278" y="172" width="204" height="266" preserveAspectRatio="xMidYMid meet" transform="rotate(-2 380 300)"/>
+        <g font-family="Palatino Linotype, Georgia, serif" fill="#3a2c14" transform="rotate(-2 380 300)">
           <text x="380" y="215" font-size="22" text-anchor="middle" font-weight="bold">DUTY ROSTER</text>
           <line x1="310" y1="228" x2="450" y2="228" stroke="#4a3a1c" stroke-width="2"/>
           ${['Dusk', 'Evensong', 'Dead of Night', 'Cock-crow', 'Dawn'].map((w, i) =>
@@ -118,9 +106,9 @@ export default {
         </g>
       </g>
 
-      <!-- slate tally board -->
-      <rect x="60" y="200" width="160" height="200" rx="6" fill="#1e222e" stroke="#3a3e4f" stroke-width="5"/>
-      <g stroke="#cfd4de" stroke-width="3" opacity="0.8" stroke-linecap="round">
+      <!-- slate tally board (photoreal slate + chalk tallies) -->
+      <image href="art/gr-slate.webp" x="52" y="196" width="180" height="180" preserveAspectRatio="xMidYMid meet"/>
+      <g stroke="#eef2f6" stroke-width="3" opacity="0.9" stroke-linecap="round">
         ${[0, 1, 2].map(r => [0, 1, 2, 3].map(c =>
           `<line x1="${86 + c * 26}" y1="${240 + r * 46}" x2="${86 + c * 26}" y2="${268 + r * 46}"/>`).join('')).join('')}
         <line x1="80" y1="268" x2="164" y2="240"/>
@@ -138,9 +126,7 @@ export default {
         ${[0, 1, 2].map(i => `<circle cx="${230 + i * 30}" cy="${566 - (i % 2) * 10}" r="6" fill="#e07b2a" class="flicker"/>`).join('')}
       </g>
       ${crowHere ? `
-      <g class="beckon">
-        <path d="M360 640 L390 480 q3 -12 12 -8 q8 4 2 14 l-6 8" fill="none" stroke="#7d8494" stroke-width="10" stroke-linecap="round"/>
-      </g>` : ''}
+      <image href="art/gr-crow.webp" x="352" y="474" width="60" height="180" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
 
       <!-- trestle table -->
       <g>
@@ -162,7 +148,7 @@ export default {
           <line x1="940" y1="520" x2="990" y2="520"/>
         </g>
         <path d="M1010 470 q20 -18 34 -20 q-8 14 -24 26z" fill="#cfd4de"/>
-        ${flintHere ? `<g class="beckon"><path d="M640 500 q5 -10 15 -8 q-2 8 -10 11 q-4 1 -5 -3z" fill="#8b8878"/><path d="M655 488 q9 2 9 10 q0 6 -6 8" fill="none" stroke="#a9b0c0" stroke-width="3.5" stroke-linecap="round"/></g>` : ''}
+        ${flintHere ? `<image href="art/gr-flint.webp" x="612" y="476" width="80" height="50" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
         <!-- knife-carved words -->
         <text x="810" y="546" font-size="15" fill="#2b2015" font-style="italic"
           font-family="Palatino Linotype, Georgia, serif" text-anchor="middle" opacity="0.9">"the serpent slithers in the moment the boar lies down"</text>
@@ -195,16 +181,10 @@ export default {
         `}
       </g>
 
-      <!-- sun-mark #2: three rays, letter A, above the bolt rack -->
+      <!-- sun-mark #2: carved gilded sun (photoreal, reused), letter A -->
       <g class="beckon">
-        <circle cx="1345" cy="150" r="13" fill="none" stroke="#c9a227" stroke-width="3"/>
-        ${[0, 1, 2].map(i => {
-          const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
-          return `<line x1="${1345 + Math.cos(a) * 17}" y1="${150 + Math.sin(a) * 17}"
-                        x2="${1345 + Math.cos(a) * 27}" y2="${150 + Math.sin(a) * 27}"
-                        stroke="#c9a227" stroke-width="3" stroke-linecap="round"/>`;
-        }).join('')}
-        <text x="1378" y="160" font-size="22" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif">A</text>
+        <image href="art/oub-sun.webp" x="1312" y="116" width="66" height="68" preserveAspectRatio="xMidYMid meet"/>
+        <text x="1388" y="160" font-size="22" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">A</text>
       </g>
 
       <!-- open cistern hatch you climbed from -->

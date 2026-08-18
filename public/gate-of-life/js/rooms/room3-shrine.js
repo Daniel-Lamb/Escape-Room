@@ -82,11 +82,7 @@ export default {
         </linearGradient>
       </defs>
 
-      <rect width="1600" height="650" fill="url(#gd_shr_wall)"/>
-      <g stroke="#171209" stroke-width="5" opacity="0.7">
-        ${[140, 280, 420].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
-      <rect y="650" width="1600" height="250" fill="url(#gd_shr_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/shrine.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/shrine.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- Nemesis -->
       <g>

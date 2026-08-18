@@ -55,12 +55,8 @@ function chamberScene(state) {
       </radialGradient>
     </defs>
 
-    <rect width="1600" height="640" fill="url(#gd_gt_wall)"/>
-    <g stroke="#0b0812" stroke-width="5" opacity="0.8" fill="none">
-      ${[100, 200, 300, 400, 500].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      ${[220, 540, 860, 1180, 1500].map((x, i) => `<line x1="${x + (i % 2) * 40}" y1="${(i % 2) * 100}" x2="${x + (i % 2) * 40}" y2="640"/>`).join('')}
-    </g>
-    <rect y="640" width="1600" height="260" fill="#131019"/>
+    <!-- background plate (generated); murder-holes, windlass, torch & props layer on top -->
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/gatehouse.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/gatehouse.mp4" type="video/mp4"/></video></foreignObject>
 
     <!-- murder-holes above -->
     ${[400, 700, 1000].map(x => `
@@ -241,12 +237,8 @@ function tunnelScene(state) {
       </linearGradient>
     </defs>
 
-    <rect width="1600" height="900" fill="url(#gd_tn_wall)"/>
-    <!-- brick tunnel walls converging toward the water-gate -->
-    <g stroke="#0a0810" stroke-width="4" opacity="0.85" fill="none">
-      ${[0, 1, 2, 3, 4, 5].map(i => `<path d="M${i * 90} 0 Q${420 + i * 60} ${180 + i * 30} ${380 + i * 105} 900" />`).join('')}
-      ${[140, 260, 380, 500].map(y => `<path d="M0 ${y} Q700 ${y + 60} 900 ${y + 140}"/>`).join('')}
-    </g>
+    <!-- background plate (generated, water-gate tunnel); winch, water & props layer on top -->
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/gatehouse-tunnel.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/gatehouse-tunnel.mp4" type="video/mp4"/></video></foreignObject>
     <path d="M0 0 L0 900 L330 900 Q240 420 520 130 L380 0 Z" fill="#0c0912" opacity="0.75"/>
 
     <!-- the water-gate: portcullis grate into the mere -->

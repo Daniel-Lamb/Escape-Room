@@ -77,37 +77,30 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_ch_wall)"/>
-      <rect y="640" width="1600" height="260" fill="url(#gd_ch_floor)"/>
-      <g stroke="#0a0d15" stroke-width="3" opacity="0.7">
-        ${[690, 750, 815, 880].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-        ${[200, 480, 760, 1040, 1320].map(x => `<line x1="${x}" y1="640" x2="${x - 60}" y2="900"/>`).join('')}
-      </g>
+      <!-- background plate (generated); stained glass, bells, altar & props layer on top -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/chapel.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/chapel.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- five-panel stained glass window -->
       <g>
         ${BELLS.map((b, i) => {
           const x = 330 + i * 130;
+          const arch = `M${x} 340 L${x} 130 Q${x + 55} 70 ${x + 110} 130 L${x + 110} 340 Z`;
           return `
           <g>
-            <path d="M${x} 340 L${x} 130 Q${x + 55} 70 ${x + 110} 130 L${x + 110} 340 Z"
-              fill="${GLASS_COLORS[i]}" opacity="0.55" class="flicker"/>
-            <path d="M${x} 340 L${x} 130 Q${x + 55} 70 ${x + 110} 130 L${x + 110} 340 Z"
-              fill="none" stroke="#0a0d15" stroke-width="7"/>
-            <!-- saint figure -->
-            <circle cx="${x + 55}" cy="170" r="16" fill="#e8d9b0" opacity="0.85"/>
-            <path d="M${x + 38} 188 q17 -10 34 0 l6 82 -46 0 z" fill="#e8d9b0" opacity="0.75"/>
-            ${b.crook ? `<path d="M${x + 20} 180 q-10 -14 4 -20 q10 -4 10 6 M${x + 26} 172 L${x + 30} 268"
-              stroke="#c9a227" stroke-width="5" fill="none" stroke-linecap="round"/>` : ''}
-            <!-- lilies: distinct three-petal shapes -->
+            <clipPath id="clip_saint_${i}"><path d="${arch}"/></clipPath>
+            <image href="art/ch-saint-${i}.webp" x="${x - 4}" y="66" width="118" height="278"
+              preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_saint_${i})"/>
+            <path d="${arch}" fill="none" stroke="#0a0d15" stroke-width="6"/>
+            <!-- authoritative lily count (this saint's puzzle number) -->
+            <rect x="${x + 55 - b.lilies * 10}" y="284" width="${b.lilies * 20}" height="26" rx="9" fill="rgba(6,10,20,0.68)"/>
             ${Array.from({ length: b.lilies }, (_, k) =>
-              `<g transform="translate(${x + 26 + k * 15} ${288})">
-                 <path d="M0 10 q-6 -10 0 -14 q6 4 0 14 M0 10 q-9 -2 -9 -9 M0 10 q9 -2 9 -9"
-                   stroke="#e8e0c8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              `<g transform="translate(${x + 55 - (b.lilies - 1) * 10 + k * 20} 297)">
+                 <path d="M0 7 q-6 -11 0 -15 q6 4 0 15 M0 7 q-10 -2 -10 -9 M0 7 q10 -2 10 -9"
+                   stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
                </g>`).join('')}
             <!-- name scroll -->
-            <rect x="${x + 12}" y="308" width="86" height="20" rx="4" fill="#e8d9b0" opacity="0.9"/>
-            <text x="${x + 55}" y="323" text-anchor="middle" font-size="14" fill="#2b2015"
+            <rect x="${x + 12}" y="314" width="86" height="20" rx="4" fill="#e8d9b0" opacity="0.92"/>
+            <text x="${x + 55}" y="329" text-anchor="middle" font-size="14" fill="#2b2015"
               font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${b.saint.toUpperCase()}</text>
           </g>`;
         }).join('')}
@@ -116,11 +109,10 @@ export default {
       </g>
 
       <!-- brass plaque beneath window -->
-      <rect x="560" y="372" width="440" height="54" rx="6" fill="#8a6d1c"/>
-      <rect x="566" y="378" width="428" height="42" rx="4" fill="#c9a227" opacity="0.35"/>
-      <text x="780" y="398" text-anchor="middle" font-size="17" fill="#f4e9c8"
+      <image href="art/ch-plaque.webp" x="556" y="362" width="448" height="72" preserveAspectRatio="none"/>
+      <text x="780" y="396" text-anchor="middle" font-size="17" fill="#2b1f08" font-weight="bold"
         font-family="Palatino Linotype, Georgia, serif" letter-spacing="1">SING AS THE LILIES BLOOM;</text>
-      <text x="780" y="417" text-anchor="middle" font-size="17" fill="#f4e9c8"
+      <text x="780" y="417" text-anchor="middle" font-size="17" fill="#2b1f08" font-weight="bold"
         font-family="Palatino Linotype, Georgia, serif" letter-spacing="1">LET THE SHEPHERD SING FIRST AND LAST.</text>
 
       <!-- bell frame -->
@@ -132,13 +124,10 @@ export default {
           const x = 470 + i * 160;
           return `
           <g id="bell_chapel_${i}" class="chapel-bell">
-            <line x1="${x}" y1="488" x2="${x}" y2="516" stroke="#6b5330" stroke-width="5"/>
-            <path d="M${x - 34} 576 Q${x - 34} 516 ${x} 516 Q${x + 34} 516 ${x + 34} 576 L${x + 40} 590 L${x - 40} 590 Z"
-              fill="#b08d2a" stroke="#7a5f16" stroke-width="3"/>
-            <circle cx="${x}" cy="596" r="7" fill="#7a5f16"/>
-            <text x="${x}" y="560" text-anchor="middle" font-size="24" fill="#3d2f0a"
+            <image href="art/ch-bell.webp" x="${x - 28}" y="486" width="56" height="120" preserveAspectRatio="xMidYMid meet"/>
+            <text x="${x}" y="556" text-anchor="middle" font-size="22" fill="#fff2cf" stroke="#5a4410" stroke-width="0.6"
               font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${b.note}</text>
-            <text x="${x}" y="628" text-anchor="middle" font-size="13" fill="#8b8878"
+            <text x="${x}" y="628" text-anchor="middle" font-size="13" fill="#cbb98f"
               font-family="Palatino Linotype, Georgia, serif" font-style="italic">${b.saint}</text>
           </g>`;
         }).join('')}
@@ -164,21 +153,16 @@ export default {
       <g>
         <rect x="620" y="660" width="320" height="30" rx="6" fill="#3a3e4f"/>
         <rect x="650" y="690" width="260" height="120" fill="#2a2d3a"/>
-        <g ${solved ? '' : 'opacity="0.98"'}>
+        <g>
           ${solved ? `
-            <path d="M700 742 L860 742 L860 700 L700 700 Z" fill="#241a10"/>
-            <path d="M700 700 L860 700 L852 682 L708 682 Z" fill="#38290f"/>
+            <image href="art/ch-reliquary-open.webp" x="705" y="614" width="150" height="178" preserveAspectRatio="xMidYMid meet"/>
+            <ellipse cx="780" cy="740" rx="70" ry="18" fill="rgba(255,190,110,0.10)"/>
             ${taken ? '' : `
               <g class="beckon">
-                <circle cx="750" cy="722" r="9" fill="none" stroke="#c8d4e8" stroke-width="3"/>
-                <path d="M757 729 l16 14" stroke="#c8d4e8" stroke-width="3.5" stroke-linecap="round"/>
-                <path d="M800 706 h10 v6 q6 3 6 10 q0 9 -11 9 q-11 0 -11 -9 q0 -7 6 -10 z" fill="none" stroke="#c9a227" stroke-width="2.5"/>
-              </g>`}
-            <ellipse cx="780" cy="716" rx="70" ry="20" fill="rgba(255,190,110,0.08)"/>`
-          : `
-            <path d="M700 745 L860 745 L860 700 Q780 678 700 700 Z" fill="#5a4a20" stroke="#8a6d1c" stroke-width="3"/>
-            <circle cx="780" cy="720" r="10" fill="#c9a227"/>
-            <rect x="776" y="720" width="8" height="14" fill="#8a6d1c"/>`}
+                <image href="art/ch-key.webp" x="726" y="700" width="38" height="58" preserveAspectRatio="xMidYMid meet"/>
+                <image href="art/ch-oil.webp" x="796" y="698" width="42" height="60" preserveAspectRatio="xMidYMid meet"/>
+              </g>`}`
+          : `<image href="art/ch-reliquary.webp" x="690" y="652" width="180" height="98" preserveAspectRatio="xMidYMid meet"/>`}
         </g>
       </g>
 
@@ -187,14 +171,8 @@ export default {
         <path d="M60 640 L60 380 Q140 300 220 380 L220 640 Z" fill="#05070d"/>
         <path d="M60 640 L60 380 Q140 300 220 380 L220 640" fill="none" stroke="#3a3e4f" stroke-width="10"/>
         <g class="beckon">
-          <circle cx="140" cy="352" r="13" fill="none" stroke="#c9a227" stroke-width="3"/>
-          ${[0, 1, 2, 3].map(i => {
-            const a = (i / 4) * Math.PI * 2 - Math.PI / 4;
-            return `<line x1="${140 + Math.cos(a) * 17}" y1="${352 + Math.sin(a) * 17}"
-                          x2="${140 + Math.cos(a) * 27}" y2="${352 + Math.sin(a) * 27}"
-                          stroke="#c9a227" stroke-width="3" stroke-linecap="round"/>`;
-          }).join('')}
-          <text x="176" y="360" font-size="20" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif">U</text>
+          <image href="art/oub-sun.webp" x="108" y="322" width="64" height="66" preserveAspectRatio="xMidYMid meet"/>
+          <text x="182" y="362" font-size="20" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">U</text>
         </g>
       </g>
 

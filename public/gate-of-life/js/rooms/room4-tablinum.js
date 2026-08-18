@@ -47,11 +47,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="650" fill="url(#gd_tab_wall2)"/>
-      <rect y="650" width="1600" height="250" fill="url(#gd_tab_floor)"/>
-      <g stroke="#171209" stroke-width="4" opacity="0.6">
-        ${[150, 300, 450].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/tablinum.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/tablinum.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- fresco: the amphitheatre in cutaway (your drawings, stolen) -->
       <g>

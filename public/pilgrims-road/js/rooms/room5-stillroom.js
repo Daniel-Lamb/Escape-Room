@@ -119,20 +119,8 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_st_wall)"/>
-      <!-- vault ribs -->
-      <g stroke="#0e0b15" stroke-width="26" fill="none" opacity="0.9">
-        <path d="M0 240 Q400 60 800 240"/>
-        <path d="M800 240 Q1200 60 1600 240"/>
-      </g>
-      <g stroke="#332b40" stroke-width="8" fill="none">
-        <path d="M0 240 Q400 60 800 240"/>
-        <path d="M800 240 Q1200 60 1600 240"/>
-      </g>
-      <rect y="640" width="1600" height="260" fill="#141019"/>
-      <g stroke="#0a0810" stroke-width="4" opacity="0.7">
-        ${[690, 760, 835].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <!-- background plate (generated); jars, chart, kettle, props & effects layer on top -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/stillroom.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/stillroom.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- jar shelf -->
       <g>

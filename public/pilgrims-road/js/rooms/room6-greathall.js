@@ -61,12 +61,8 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="660" fill="url(#gd_gh_wall)"/>
-      <rect y="660" width="1600" height="240" fill="#161221"/>
-      <g stroke="#0b0812" stroke-width="4" opacity="0.7">
-        ${[700, 760, 830].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-        ${[260, 620, 980, 1340].map(x => `<line x1="${x}" y1="660" x2="${x - 50}" y2="900"/>`).join('')}
-      </g>
+      <!-- background plate (generated); windows, hearths, wheel, fresco & props layer on top -->
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/greathall.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/greathall.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- tall windows, sky lightening -->
       ${[120, 420].map(x => `
