@@ -48,6 +48,7 @@ function tokenCard(e) {
 }
 
 const CONFIG = {
+  assetBase: new URL('../', import.meta.url).href,   // <game>/ — makes art/ refs deploy-base-proof
   gusForm: GUS,
   journalTitle: 'Field Journal',
   journalEmpty: 'Blank pages. Every print, law, mural, and court token you examine is copied here automatically. The tokens are not souvenirs — they are spelling something.',

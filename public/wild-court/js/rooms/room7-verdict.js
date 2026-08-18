@@ -197,9 +197,7 @@ export default {
       </defs>
 
       <!-- night sky, moon through the canopy -->
-      <rect width="1600" height="900" fill="url(#gd_verdict_sky)"/>
-      <circle cx="990" cy="118" r="150" fill="url(#gd_verdict_moon)"/>
-      <circle cx="990" cy="118" r="46" fill="#9fd4a8" opacity="0.28"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/verdict.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/verdict.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- canopy masses and flanking trunks -->
       <path d="M0 0 L1600 0 L1600 118 Q1500 88 1440 128 Q1380 78 1300 116 Q1240 68 1150 106
@@ -228,7 +226,7 @@ export default {
       <path d="M0 626 Q800 522 1600 626" stroke="#4a3626" stroke-width="3" opacity="0.3" fill="none"/>
 
       <!-- ground -->
-      <rect y="680" width="1600" height="220" fill="url(#gd_verdict_ground)"/>
+      <!-- forest floor supplied by the plate -->
       <ellipse cx="420" cy="770" rx="180" ry="26" fill="#223a26" opacity="0.35"/>
       <ellipse cx="1240" cy="800" rx="220" ry="30" fill="#223a26" opacity="0.3"/>
 

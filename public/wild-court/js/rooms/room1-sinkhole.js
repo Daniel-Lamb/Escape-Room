@@ -85,8 +85,7 @@ export default {
         @keyframes sink_drift_b { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-26px,14px); } }
       </style>
 
-      <rect width="1600" height="660" fill="url(#gd_sink_wall)"/>
-      <rect y="660" width="1600" height="240" fill="url(#gd_sink_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/sinkhole.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/sinkhole.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- the coin of sky, far above -->
       <ellipse cx="820" cy="30" rx="240" ry="60" fill="url(#gd_sink_sky)"/>

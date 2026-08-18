@@ -128,7 +128,7 @@ export default {
         @keyframes ferry_fly2 { 0%,100% { transform: translate(0,0);} 50% { transform: translate(-22px,12px);} }
       </style>
 
-      <rect width="1600" height="520" fill="url(#gd_ferry_wall)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/ferrypool.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/ferrypool.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- roots + arch overhead -->
       <g stroke-linecap="round" fill="none">
@@ -146,7 +146,7 @@ export default {
       <polygon points="700,10 900,10 1030,540 560,540" fill="url(#gd_ferry_beam)" class="moonbeam"/>
 
       <!-- the black pool -->
-      <rect y="520" width="1600" height="380" fill="url(#gd_ferry_water)"/>
+      <!-- pool surface supplied by the plate -->
       <g stroke="#1c3a2c" stroke-width="2" fill="none" opacity="0.5">
         <path d="M200 600 Q800 576 1400 604" style="animation: ferry_shine 6s ease-in-out infinite"/>
         <path d="M120 680 Q800 654 1500 686" style="animation: ferry_shine 7s ease-in-out infinite; animation-delay:-2s"/>

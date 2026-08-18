@@ -141,8 +141,7 @@ export default {
         @keyframes morph_flap { 0%,100%{transform:scaleX(1);} 50%{transform:scaleX(0.72);} }
       </style>
 
-      <rect width="1600" height="660" fill="url(#gd_morph_air)"/>
-      <rect y="660" width="1600" height="240" fill="url(#gd_morph_floor)"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/morpho.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/morpho.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- the apse arch + its pale light -->
       <path d="M300 660 L300 300 Q800 60 1300 300 L1300 660 Z" fill="#16281a" opacity="0.6"/>

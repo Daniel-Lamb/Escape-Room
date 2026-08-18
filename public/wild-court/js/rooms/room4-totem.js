@@ -238,18 +238,7 @@ export default {
       </style>
 
       <!-- walls & floor -->
-      <rect width="1600" height="660" fill="url(#gd_totem_wall)"/>
-      <g stroke="#070d08" stroke-width="3" opacity="0.45">
-        <line x1="0" y1="170" x2="1600" y2="170"/><line x1="0" y1="330" x2="1600" y2="330"/>
-        <line x1="0" y1="490" x2="1600" y2="490"/><line x1="0" y1="640" x2="1600" y2="640"/>
-        <line x1="470" y1="170" x2="470" y2="330"/><line x1="1130" y1="330" x2="1130" y2="490"/>
-        <line x1="360" y1="490" x2="360" y2="640"/><line x1="920" y1="170" x2="920" y2="330"/>
-      </g>
-      <rect y="640" width="1600" height="260" fill="url(#gd_totem_floor)"/>
-      <g stroke="#070d08" stroke-width="3" opacity="0.6">
-        <line x1="0" y1="700" x2="1600" y2="700"/><line x1="0" y1="780" x2="1600" y2="780"/>
-        <line x1="0" y1="852" x2="1600" y2="852"/>
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/totem.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/totem.mp4" type="video/mp4"/></video></foreignObject>
       <ellipse cx="330" cy="700" rx="130" ry="18" fill="#223a26" opacity="0.5"/>
       <ellipse cx="1480" cy="800" rx="150" ry="22" fill="#223a26" opacity="0.4"/>
 

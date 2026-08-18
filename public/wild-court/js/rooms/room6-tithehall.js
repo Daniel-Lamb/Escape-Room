@@ -93,16 +93,7 @@ export default {
       </style>
 
       <!-- back wall and floor -->
-      <rect width="1600" height="660" fill="url(#gd_tithehall_wall)"/>
-      <g stroke="#0b140c" stroke-width="3" opacity="0.6">
-        ${[130, 270, 410, 550].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-        ${[160, 480, 800, 1140, 1500].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="660"/>`).join('')}
-      </g>
-      <rect y="660" width="1600" height="240" fill="url(#gd_tithehall_floor)"/>
-      <g stroke="#070d08" stroke-width="3" opacity="0.7">
-        ${[706, 770, 842].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-        <line x1="380" y1="706" x2="340" y2="900"/><line x1="900" y1="706" x2="940" y2="900"/><line x1="1300" y1="706" x2="1360" y2="900"/>
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/tithehall.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/tithehall.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- canopy breach, hanging roots -->
       <path d="M560 0 L1000 0 L952 44 L862 66 L742 74 L638 52 Z" fill="#070d08"/>
