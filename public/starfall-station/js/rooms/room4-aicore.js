@@ -28,11 +28,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_ac_wall)"/>
-      <rect y="640" width="1600" height="260" fill="#0c0f18"/>
-      <g stroke="#080a12" stroke-width="3" opacity="0.7">
-        ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/aicore.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/aicore.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- dead server racks, curving around -->
       ${[60, 260, 460, 1140, 1340].map((x, i) => `

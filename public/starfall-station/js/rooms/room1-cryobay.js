@@ -59,15 +59,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_cb_wall)"/>
-      <g stroke="#0c1420" stroke-width="4" opacity="0.8">
-        ${[110, 240, 380, 520].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-        ${[300, 640, 980, 1320].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="640"/>`).join('')}
-      </g>
-      <rect y="640" width="1600" height="260" fill="url(#gd_cb_floor)"/>
-      <g stroke="#0a0f18" stroke-width="3" opacity="0.7">
-        ${[690, 760, 835].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/cryobay.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/cryobay.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- viewport with the planet, too close -->
       <g>

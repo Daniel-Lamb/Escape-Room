@@ -51,11 +51,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_rx_wall)"/>
-      <rect y="640" width="1600" height="260" fill="#120d15"/>
-      <g stroke="#0b070d" stroke-width="3" opacity="0.7">
-        ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/reactor.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/reactor.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- the reactor torus -->
       <g>

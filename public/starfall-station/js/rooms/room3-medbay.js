@@ -50,12 +50,7 @@ export default {
         </radialGradient>
       </defs>
 
-      <rect width="1600" height="640" fill="url(#gd_md_wall)"/>
-      <rect y="640" width="1600" height="260" fill="#12131d"/>
-      <g stroke="#0b0c14" stroke-width="3" opacity="0.7">
-        ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      </g>
-      <line x1="800" y1="60" x2="800" y2="640" stroke="#0b0c14" stroke-width="14"/>
+      <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/medbay.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/medbay.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- QUARTERS side: bunks -->
       ${[[90, 200], [90, 400], [430, 200], [430, 400]].map(([x, y], i) => `

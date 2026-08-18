@@ -103,11 +103,7 @@ function podScene(state) {
       </radialGradient>
     </defs>
 
-    <rect width="1600" height="640" fill="url(#gd_pb_wall)"/>
-    <rect y="640" width="1600" height="260" fill="#0d1017"/>
-    <g stroke="#080a10" stroke-width="3" opacity="0.7">
-      ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-    </g>
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/podbay.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/podbay.mp4" type="video/mp4"/></video></foreignObject>
 
     <!-- launch doors / the burn beyond -->
     <g>
@@ -304,19 +300,12 @@ function arrayScene(state) {
     </defs>
 
     <!-- open to space through the array frame; re-entry glow rising -->
-    <rect width="1600" height="900" fill="url(#gd_ua_sky)"/>
-    <rect y="560" width="1600" height="340" fill="url(#gd_ua_burn)" class="flicker"/>
-    ${[[150, 80], [420, 50], [760, 100], [1040, 40], [1300, 90], [1500, 60]].map(([x, y], i) =>
-      `<circle cx="${x}" cy="${y}" r="${1 + (i % 3) * 0.6}" fill="#fff" opacity="${0.4 + (i % 4) * 0.15}"/>`).join('')}
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/uplink.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/uplink.mp4" type="video/mp4"/></video></foreignObject>
     <!-- RV-7, a patient chip of light -->
     <circle cx="1310" cy="180" r="4" fill="#8ff0ea" class="flicker"/>
     <text x="1310" y="158" text-anchor="middle" font-size="11" fill="#4fd8d0" font-family="Consolas, monospace">RV-7</text>
 
-    <!-- deck & framework -->
-    <rect y="640" width="1600" height="260" fill="#0d1017"/>
-    <g stroke="#080a10" stroke-width="3" opacity="0.7">
-      ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-    </g>
+    <!-- framework beams over the re-entry glow (deck now supplied by the plate) -->
     <g stroke="#1c2430" stroke-width="14" fill="none" opacity="0.9">
       <path d="M100 640 L260 120 M500 640 L420 120 M420 120 L260 120"/>
       <path d="M1500 640 L1380 200"/>

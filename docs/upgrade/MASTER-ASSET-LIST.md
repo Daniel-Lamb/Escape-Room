@@ -30,7 +30,7 @@ per-game element coordinates live in the per-game specs
 |---|---|---|---|
 | The Pilgrim's Road | ✅ 8/8 (animated video) | 🔵 3/7 rooms (1–3 fully done) | ☐ |
 | The Gate of Life | ✅ 7/7 (animated video) | ☐ | ☐ |
-| Starfall Station | ☐ 0/8 | ☐ | ☐ |
+| Starfall Station | ✅ 7/8 (animated video; room 5 Observation kept procedural — its view is a live tilt/attitude mechanic) | ☐ | ☐ |
 | The Wild Court | ☐ 0/7 | ☐ | ☐ |
 | Signal Towers (duo) | ☐ 0/14 | ☐ | ☐ |
 | The Looking Glass (duo) | ☐ 0/14 | ☐ | ☐ |
