@@ -6,6 +6,10 @@
 
 import { roleName, isHand } from './role.js';
 
+// Photoreal animated backdrops live in <game>/art/<slug>.{webp,mp4}; resolve
+// against this module's URL so they work on Pages/Vercel/localhost alike.
+const ART = new URL('../art/', import.meta.url).href;
+
 /** Common gradient + keyframe defs. Call once inside <defs>. */
 export function defs(slug) {
   return `
@@ -47,17 +51,9 @@ export function defs(slug) {
 /** Museum-interior backdrop (The Hand). */
 function hallBackdrop(slug) {
   return `
-    <rect x="0" y="0" width="1600" height="560" fill="url(#${slug}_hallSky)"/>
-    <rect x="0" y="540" width="1600" height="360" fill="url(#${slug}_marble)"/>
-    <!-- marble floor seams, receding -->
-    <g stroke="#26323f" stroke-width="2" opacity="0.5">
-      ${[600, 660, 730, 810].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
-      ${[300, 560, 800, 1040, 1300].map(x => `<line x1="${x}" y1="560" x2="${x + (x - 800) * 0.5} 900" y2="900"/>`).join('')}
-    </g>
-    <!-- cool wall wash + a couple of dim wall sconces -->
-    <rect x="0" y="0" width="1600" height="560" fill="rgba(87,214,230,0.04)"/>
-    <ellipse cx="250" cy="120" rx="120" ry="150" fill="url(#${slug}_spot)" opacity="0.5"/>
-    <ellipse cx="1350" cy="120" rx="120" ry="150" fill="url(#${slug}_spot)" opacity="0.5"/>`;
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="${ART}${slug}.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="${ART}${slug}.mp4" type="video/mp4"/></video></foreignObject>
+    <ellipse cx="250" cy="120" rx="120" ry="150" fill="url(#${slug}_spot)" opacity="0.4"/>
+    <ellipse cx="1350" cy="120" rx="120" ry="150" fill="url(#${slug}_spot)" opacity="0.4"/>`;
 }
 
 /** Van cabin + wall of green monitors (The Eye). */
