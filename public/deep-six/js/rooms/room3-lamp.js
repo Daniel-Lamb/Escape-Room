@@ -7,7 +7,7 @@
 // Diver recovers depth-mark C (11 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'lamp';
 const MYCODE = { p1: '374', p2: '195' };   // p1 = Diver mirrors, p2 = Tender bearing
@@ -60,6 +60,11 @@ export default {
         game.dialog({ title: forWhat, html });
       },
     });
+
+    if (isDiver()) {
+      spots.push(loreSpot({ id: 'lore_watch', x: 240, y: 410, w: 250, h: 190, label: 'A passenger cabin', title: 'The Stopped Watch',
+        html: `<div class="logbook"><div class="log-title">a cabin, mirror still whole</div><p>On the shelf, a gentleman's pocket-watch, stopped at <strong>3:14</strong> — the hour she struck. Someone wound it that morning, not knowing it would be the last turn of the key.</p></div>` }));
+    }
 
     if (isDiver() && !hasMark(state)) {
       spots.push({

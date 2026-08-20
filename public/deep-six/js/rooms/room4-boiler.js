@@ -6,7 +6,7 @@
 // Tender recovers depth-mark E (14 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'boiler';
 const GAUGES = { p1: [12, 5], p2: [9, 4] };
@@ -81,6 +81,11 @@ export default {
         game.say(`Your two gauges read ${g[0]} and ${g[1]}. The rule for combining them is on your partner's screen — read them these numbers and let them tell you the setting.`);
       },
     });
+
+    if (isDiver()) {
+      spots.push(loreSpot({ id: 'lore_stokers', x: 240, y: 410, w: 250, h: 190, label: "The stokers' post", title: 'They Never Left',
+        html: `<div class="logbook"><div class="log-title">the furnace doors, flung open</div><p>The stokers stayed at their posts to the end, fighting to reverse her — the engine telegraph above is frozen at <strong>FULL ASTERN</strong>. She tried to stop. She simply could not, in the time the dark gave her.</p></div>` }));
+    }
 
     if (isTender() && !hasMark(state)) {
       spots.push({

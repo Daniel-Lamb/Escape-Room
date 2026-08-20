@@ -40,10 +40,22 @@ three (Diver A/C/N in scenes 1/3/5; Tender S/E/D in scenes 2/4/6). At the surfac
 all six by fathom **shallowest first** — 5-A 8-S 11-C 14-E 17-N 20-D → **ASCEND** — and set
 it on the decompression wheel. Clean, single sorting rule, telegraphed in scene 1's mark.
 
-## Foreshadowing
-Light-touch, as befits a puzzle-first co-op: the wreck is the *Cormorant*, the ship the
-Signal Towers keepers failed to save — a quiet series thread, not a twist. No reveal beat
-to plant; the emotional turn is simply the two of you surfacing together.
+## Foreshadowing — "The Cormorant" thread
+The wreck is the *Cormorant*, the ship the Signal Towers keepers lost "the night the two
+lights disagreed." A foreshadowed narrative thread runs through the dive as non-gating
+`loreSpot` examine-beats (journaled to the Dive Slate), split by role — the **Diver**
+uncovers the human wreck, the **Tender** reads the records:
+- S1 hull nameplate `CORMORANT` (Diver) + the salvage brief (Tender)
+- S2 passengers' effects in the silt (Diver) + the 42-soul manifest, 11 struck through (Tender)
+- S3 a passenger's pocket-watch stopped at 3:14 (Diver)
+- S4 the stokers' post, telegraph frozen at FULL ASTERN (Diver)
+- S5 **the payoff beat** — her last wireless message, *"WHICH LIGHT IS TRUE? / no reply"* (Diver)
+- S6 the ship's bell, her name raised in bronze (Diver) + the captain's final log (Tender)
+
+The finale reframes the ascent: they surface with the *Cormorant*'s bell — the truth of
+her, not the strongbox the brief asked for. None of it gates escape; it rewards looking,
+and it ties Deep Six to Twin Signal Towers. The mechanical turn is still simply the two of
+you surfacing together on the ASCEND word.
 
 ## Hint ladder (all 7 scenes, nudge/method/answer)
 Every scene maps cleanly: nudge = "your answer is on your partner's screen, trade";

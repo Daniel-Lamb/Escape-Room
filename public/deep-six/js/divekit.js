@@ -136,6 +136,21 @@ export function lockPanel(x, y, open, label, contents) {
 }
 
 /**
+ * A non-gating "examine" hotspot that journals a bit of the Cormorant's story.
+ * opts: { id, x, y, w, h, label, title, html }. Optional `once` flag suppressed
+ * once journaled is handled by the room (this just adds + shows).
+ */
+export function loreSpot(opts) {
+  return {
+    id: opts.id, x: opts.x, y: opts.y, w: opts.w, h: opts.h, label: opts.label,
+    onInteract(game) {
+      game.journal.add(opts.id, { title: opts.title, category: 'note', html: opts.html });
+      game.dialog({ title: opts.title, html: opts.html });
+    },
+  };
+}
+
+/**
  * A K-slot combination lock (digits 0-9 or letters A-Z), the workhorse of this
  * game: your slot values must match the code your PARTNER reads off their screen.
  * opts: { id, title, desc, slots:[{type:'digit'|'letter', label?}], target:string,

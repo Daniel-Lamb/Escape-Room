@@ -40,11 +40,14 @@ const CONFIG = {
     title: 'Surfaced',
     heading: 'You Break the Surface Together',
     story: `The ballast blows in a roar of silver, the ascent word holds the decompression
-      valve open through every stop, and the black water pales to green, to grey, to the
-      raw bright air. The Diver comes up an arm's length from the Halcyon's rail; the Tender
-      is already leaning over it, line in hand. Between you, riding the swell as if he had
-      raised the wreck himself, a harbor seal rolls once and barks — the crossing he swam
-      all night, done. Two ends of one line. One word passed along it. Ascend.`,
+      valve open through every stop, and the black water pales to green, to grey, to the raw
+      bright air. You break the surface together an arm's length from the Halcyon's rail — and
+      between you, streaming water and forty years, the Cormorant's bell, her name raised green
+      in the bronze. Not the strongbox the brief asked for. The other thing. The truth of her,
+      back in the light at last: that she called into the dark for a bearing, and two lamps
+      argued while she struck. Riding the swell as if he had raised the whole wreck himself, a
+      harbor seal rolls once and barks — the crossing he has swum all night, and all the quiet
+      years before it. Two ends of one line. One word passed along it. Ascend.`,
   },
   defeat: {
     title: 'The Line Goes Slack',

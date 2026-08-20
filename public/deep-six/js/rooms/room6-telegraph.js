@@ -5,7 +5,7 @@
 // Tender recovers depth-mark D (20 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'telegraph';
 const TG_TARGET = [1, 2, 2, 1];              // the diver's coupled-pointer goal
@@ -62,6 +62,12 @@ export default {
         game.dialog({ title: forWhat, html });
       },
     });
+
+    spots.push(isDiver()
+      ? loreSpot({ id: 'lore_bell', x: 240, y: 410, w: 250, h: 190, label: "The ship's bell", title: "The Cormorant's Bell",
+          html: `<div class="logbook"><div class="log-title">still hung in the machinery space</div><p>Green with forty years, her name raised in the bronze: <strong>CORMORANT</strong>. You could bring her up — not the strongbox the brief wants, but this. The truth of her, back into the light. Gus noses at it, and for once the seal is still.</p></div>` })
+      : loreSpot({ id: 'lore_log', x: 1214, y: 470, w: 240, h: 150, label: "The captain's log", title: "The Last Entry",
+          html: `<div class="chartcard"><div class="chart-title">cormorant · master's log</div><p style="font-style:italic;">"Fog thick, both lights showing — and showing different. God help me choose the true one."</p><p style="opacity:0.8">The hand stops there. There is no next line.</p></div>` }));
 
     if (isTender() && !hasMark(state)) {
       spots.push({

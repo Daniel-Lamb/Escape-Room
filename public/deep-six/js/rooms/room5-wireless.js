@@ -6,7 +6,7 @@
 // Diver recovers depth-mark N (17 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'wireless';
 const FLASH = { p1: [3, 2, 1, 4], p2: [4, 1, 2, 3] };            // this role's own visible flashes
@@ -94,6 +94,11 @@ export default {
         game.say(`Your indicator flashes ${FLASH[role].join(' - ')}. You cannot read it — read those counts to your partner and let their codebook turn them into your word.`);
       },
     });
+
+    if (isDiver()) {
+      spots.push(loreSpot({ id: 'lore_lastmsg', x: 240, y: 410, w: 250, h: 190, label: 'The outgoing message pad', title: 'The Last Message',
+        html: `<div class="logbook"><div class="log-title">the wireless-man's hand, unfinished</div><p>The last message she ever sent still sits in the pad:</p><p style="text-align:center;font-size:17px;color:#eafffb;">"REQUEST BEARING —<br>WHICH LIGHT IS TRUE?"</p><p>And beneath it, in a fainter stroke, never sent: <em>no reply.</em></p><p style="opacity:0.85">Two lighthouses argued over her in the dark. By the time they agreed, the Cormorant was on the reef.</p></div>` }));
+    }
 
     if (isDiver() && !hasMark(state)) {
       spots.push({

@@ -5,7 +5,7 @@
 // Diver also recovers depth-mark A (5 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'descent';
 const MYCODE = { p1: '629', p2: '417' };   // p1 = Diver hatch, p2 = Tender winch
@@ -59,6 +59,12 @@ export default {
         game.dialog({ title: `The ${label} code`, html });
       },
     });
+
+    spots.push(isDiver()
+      ? loreSpot({ id: 'lore_hull', x: 240, y: 410, w: 250, h: 190, label: 'The hull nameplate', title: 'The Cormorant',
+          html: `<div class="logbook"><div class="log-title">the hull</div><p>The plating under your fins is lettered in flaking white: <strong>S.S. CORMORANT</strong>. You knew the name before you read it — every keeper on this coast does. She went down forty years back, the night the two lights could not agree on a bearing.</p></div>` })
+      : loreSpot({ id: 'lore_brief', x: 1214, y: 470, w: 240, h: 150, label: 'The salvage brief', title: 'The Salvage Brief',
+          html: `<div class="chartcard"><div class="chart-title">job order</div><p>Recover the strongbox from the wreck designated <strong>CORMORANT</strong> — lost off the Kestrel reefs, forty years gone.</p><p style="opacity:0.8">Nothing in it about the forty-two who went down with her. The old hands on the quay just call it "the night the lights disagreed."</p></div>` }));
 
     if (isDiver() && !hasMark(state)) {
       spots.push({

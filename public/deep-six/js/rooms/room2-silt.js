@@ -6,7 +6,7 @@
 // Tender recovers depth-mark S (8 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
 
 const SLUG = 'silt';
 const MYCODE = { p1: 'C4', p2: '088' };   // p1 = Diver cell, p2 = Tender gain
@@ -63,6 +63,12 @@ export default {
         game.dialog({ title: forWhat, html });
       },
     });
+
+    spots.push(isDiver()
+      ? loreSpot({ id: 'lore_effects', x: 240, y: 410, w: 250, h: 190, label: "Something in the silt", title: 'What the Silt Holds',
+          html: `<div class="logbook"><div class="log-title">the debris field</div><p>Half-buried where your lamp falls: a child's shoe, a cabin trunk sprung open, a comb still threaded with hair. Forty-two were aboard the Cormorant. The brief only wants the strongbox. It does not mention them.</p></div>` })
+      : loreSpot({ id: 'lore_manifest', x: 1214, y: 470, w: 240, h: 150, label: 'The passenger manifest', title: 'The Manifest',
+          html: `<div class="chartcard"><div class="chart-title">cormorant · souls aboard</div><p><strong>42</strong> listed — crew and passengers.</p><p style="opacity:0.8">Eleven names are struck through in a different ink, added later, by a hand that already knew.</p></div>` }));
 
     if (isTender() && !hasMark(state)) {
       spots.push({
