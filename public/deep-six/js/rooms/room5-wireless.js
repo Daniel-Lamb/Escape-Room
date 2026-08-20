@@ -43,7 +43,7 @@ function indicator(role) {
 
 export default {
   id: 'wireless',
-  get title() { return isDiver() ? 'The Wireless Room · The Key' : 'The Halcyon · The Radio'; },
+  get title() { return isDiver() ? 'The Wireless Key' : 'The Radio'; },
   get intro() {
     return isDiver()
       ? 'The flooded wireless room still has power in one dead-man\'s circuit: an indicator flashing a pattern you can count but cannot read. Your tender holds the codebook. Read your counts up; decode theirs down.'

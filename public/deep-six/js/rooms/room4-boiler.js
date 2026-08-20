@@ -17,7 +17,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_e');
 
 export default {
   id: 'boiler',
-  get title() { return isDiver() ? 'The Boiler Room · The Ballast' : 'The Halcyon · The Compressor'; },
+  get title() { return isDiver() ? 'The Ballast' : 'The Compressor'; },
   get intro() {
     return isDiver()
       ? 'The flooded boiler room. To lift the next bulkhead you must set the ballast to a figure worked from your two pressure gauges — but the RULE for working it (add them? their difference?) is stamped on your tender\'s panel, not yours.'
@@ -35,10 +35,10 @@ export default {
     // this role's own two gauges (visible)
     const gauges = `<g>
       ${[0, 1].map(i => `<g>
-        <circle cx="${1180 + i * 130}" cy="360" r="46" fill="#0c1a22" stroke="#3a4656" stroke-width="4"/>
-        <text x="${1180 + i * 130}" y="372" text-anchor="middle" font-size="34" fill="#eafffb" font-family="Consolas, monospace">${g[i]}</text>
+        <circle cx="${1170 + i * 130}" cy="556" r="44" fill="rgba(12,26,34,0.9)" stroke="#3a4656" stroke-width="4"/>
+        <text x="${1170 + i * 130}" y="568" text-anchor="middle" font-size="32" fill="#eafffb" font-family="Consolas, monospace">${g[i]}</text>
       </g>`).join('')}
-      <text x="1245" y="440" text-anchor="middle" font-size="13" fill="#8fa3b8" font-family="Consolas, monospace">YOUR GAUGES</text>
+      <text x="1235" y="620" text-anchor="middle" font-size="13" fill="#8fa3b8" font-family="Consolas, monospace">YOUR GAUGES</text>
     </g>`;
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -76,7 +76,7 @@ export default {
     });
 
     spots.push({
-      id: 'gauges', x: 1130, y: 314, w: 250, h: 140, label: 'Your two pressure gauges',
+      id: 'gauges', x: 1114, y: 508, w: 242, h: 116, label: 'Your two pressure gauges',
       onInteract(game) {
         game.say(`Your two gauges read ${g[0]} and ${g[1]}. The rule for combining them is on your partner's screen — read them these numbers and let them tell you the setting.`);
       },

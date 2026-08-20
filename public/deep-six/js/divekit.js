@@ -90,9 +90,9 @@ export function roleTag() {
   const col = isDiver() ? '#ffe6a6' : '#7cf0be';
   const sub = isDiver() ? 'THE WRECK OF THE CORMORANT' : 'TOPSIDE · THE HALCYON';
   return `
-    <g font-family="Consolas, monospace" text-anchor="middle">
-      <text x="800" y="46" font-size="24" fill="${col}" letter-spacing="6">${roleName().toUpperCase()}</text>
-      <text x="800" y="70" font-size="15" fill="#8fbfc4" letter-spacing="3" opacity="0.85">${sub}</text>
+    <g font-family="Consolas, monospace" text-anchor="middle" paint-order="stroke" stroke="#02080c" stroke-linejoin="round">
+      <text x="800" y="46" font-size="24" fill="${col}" letter-spacing="6" stroke-width="5">${roleName().toUpperCase()}</text>
+      <text x="800" y="70" font-size="15" fill="#8fbfc4" letter-spacing="3" opacity="0.9" stroke-width="4">${sub}</text>
     </g>`;
 }
 

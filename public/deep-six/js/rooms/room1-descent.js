@@ -14,7 +14,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_a');
 
 export default {
   id: 'descent',
-  get title() { return isDiver() ? 'Descent Line · The Deck Hatch' : 'The Halcyon · The Winch Brake'; },
+  get title() { return isDiver() ? 'The Deck Hatch' : 'The Winch Brake'; },
   get intro() {
     return isDiver()
       ? 'You touch down on the Cormorant\'s foredeck in a slow cloud of silt. The deck hatch to the wreck is dogged shut by a three-ring valve — and the release code is not stamped anywhere down here. Topside, your tender is reading it off the winch log right now.'

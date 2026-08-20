@@ -16,7 +16,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_c');
 
 export default {
   id: 'lamp',
-  get title() { return isDiver() ? 'The Flooded Corridor · The Mirrors' : 'The Halcyon · The Signal Lamp'; },
+  get title() { return isDiver() ? 'The Corridor Mirrors' : 'The Signal Lamp'; },
   get intro() {
     return isDiver()
       ? 'A black corridor, three cracked mirrors on swivels, and a dead photocell that latches the inner door. Your lamp is the only light — bounce it off the mirrors to wake the cell. The three angles are not written here; your tender has the optical plan.'

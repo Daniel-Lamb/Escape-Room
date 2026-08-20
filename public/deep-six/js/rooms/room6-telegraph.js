@@ -18,7 +18,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_d');
 
 export default {
   id: 'telegraph',
-  get title() { return isDiver() ? 'The Machinery Space · The Telegraph' : 'The Halcyon · The Winch'; },
+  get title() { return isDiver() ? 'The Engine Telegraph' : 'The Winch'; },
   get intro() {
     return isDiver()
       ? 'The engine-order-telegraph still turns — but its four pointers are geared in pairs, so no lever moves just one. Walk them to the setting on your tender\'s schematic; the levers fight you the way coupled things do.'

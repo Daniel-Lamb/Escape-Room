@@ -15,7 +15,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_s');
 
 export default {
   id: 'silt',
-  get title() { return isDiver() ? 'The Silt Field · The Buried Airlock' : 'The Halcyon · The Sonar'; },
+  get title() { return isDiver() ? 'The Buried Airlock' : 'The Sonar'; },
   get intro() {
     return isDiver()
       ? 'Beyond the hatch the deck falls away into a debris field of silt mounds, any one of which could hide the airlock into the hull. From down here they all look the same. Your tender\'s sonar can tell them apart.'

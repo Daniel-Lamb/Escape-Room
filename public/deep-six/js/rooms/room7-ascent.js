@@ -15,7 +15,7 @@ const MY_MARKS = {
 
 export default {
   id: 'ascent',
-  get title() { return isDiver() ? 'The Ascent Shaft · Decompression' : 'The Halcyon · Bring Them Up'; },
+  get title() { return isDiver() ? 'The Ascent' : 'Bring Them Up'; },
   get intro() {
     return isDiver()
       ? 'The shaft opens upward toward a far grey glow — the surface, and air. The decompression valve will only hold open for the ascent word: six letters, one per depth-mark, shallowest first. You hold three. Your tender holds the rest.'
@@ -38,7 +38,7 @@ export default {
       ${roleTag()}
       <!-- the rule plaque -->
       <g>
-        <rect x="500" y="132" width="600" height="150" rx="10" fill="rgba(5,18,24,0.86)" stroke="#7cf0be" stroke-width="3"/>
+        <rect x="524" y="132" width="552" height="150" rx="10" fill="rgba(5,18,24,0.9)" stroke="#7cf0be" stroke-width="3"/>
         <text x="800" y="176" text-anchor="middle" font-size="19" fill="#eafffb" font-family="Consolas, monospace" letter-spacing="2">SIX MARKS · THE ASCENT WORD</text>
         <text x="800" y="214" text-anchor="middle" font-size="15" fill="#9fc7dd" font-family="Consolas, monospace">one letter per depth-mark — the shallowest fathom speaks first</text>
         <text x="800" y="250" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">you hold three; your partner holds three</text>
