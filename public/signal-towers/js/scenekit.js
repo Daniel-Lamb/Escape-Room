@@ -4,6 +4,10 @@
 
 import { towerName, isWest } from './role.js';
 
+// Photoreal animated backdrops live in <game>/art/<slug>.{webp,mp4}; resolve
+// against this module's URL so they work on Pages/Vercel/localhost alike.
+const ART = new URL('../art/', import.meta.url).href;
+
 /** Common gradient defs. Call once inside <defs>. */
 export function defs(slug) {
   return `
@@ -34,13 +38,7 @@ export function defs(slug) {
 /** Storm sky + sea backdrop rect (full frame). */
 export function backdrop(slug) {
   return `
-    <rect x="0" y="0" width="1600" height="560" fill="url(#${slug}_sky)"/>
-    <rect x="0" y="540" width="1600" height="360" fill="url(#${slug}_sea)"/>
-    <!-- horizon whitecaps -->
-    <g stroke="#9fc7dd" stroke-width="2" opacity="0.25" stroke-linecap="round">
-      ${[560, 600, 650, 710, 780].map((y, i) =>
-        `<path d="M${(i * 260) % 1600} ${y} q60 -8 120 0 t120 0 t120 0 t120 0" fill="none"/>`).join('')}
-    </g>`;
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="${ART}${slug}.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="${ART}${slug}.mp4" type="video/mp4"/></video></foreignObject>`;
 }
 
 /** Diagonal rain streaks over the whole scene. */

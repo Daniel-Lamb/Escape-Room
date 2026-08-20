@@ -4,6 +4,10 @@
 
 import { sideName, isWaking } from './role.js';
 
+// Photoreal animated backdrops live in <game>/art/<slug>.{webp,mp4}; resolve
+// against this module's URL so they work on Pages/Vercel/localhost alike.
+const ART = new URL('../art/', import.meta.url).href;
+
 /** Role tint palette. */
 export function tint() {
   return isWaking()
@@ -28,12 +32,13 @@ export function defs(slug) {
 
 /** Manor-room backdrop (wall + floor + a wainscot line), role-tinted. */
 export function backdrop(slug) {
-  const t = tint();
+  // Same manor plate for both sides; the Glass side is desaturated + cool-washed,
+  // the Waking side warm-washed — the real-vs-mirror asymmetry, preserved.
+  const glass = !isWaking();
+  const vfilter = glass ? 'filter:grayscale(0.5) brightness(0.88);' : '';
   return `
-    <rect x="0" y="0" width="1600" height="620" fill="url(#${slug}_wall)"/>
-    <rect x="0" y="600" width="1600" height="300" fill="url(#${slug}_floor)"/>
-    <rect x="0" y="596" width="1600" height="10" fill="${t.accentDim}" opacity="0.25"/>
-    ${isWaking() ? '' : `<rect x="0" y="0" width="1600" height="900" fill="#7fb0b8" opacity="0.05"/>`}
+    <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="${ART}${slug}.webp" style="width:100%;height:100%;object-fit:cover;display:block;${vfilter}"><source src="${ART}${slug}.mp4" type="video/mp4"/></video></foreignObject>
+    <rect x="0" y="0" width="1600" height="900" fill="${glass ? '#123049' : '#3a220c'}" opacity="${glass ? 0.3 : 0.15}"/>
     <ellipse cx="800" cy="360" rx="620" ry="360" fill="url(#${slug}_light)"/>`;
 }
 
