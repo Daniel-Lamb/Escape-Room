@@ -7,7 +7,7 @@
 // Diver recovers depth-mark C (11 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART } from '../divekit.js';
 
 const SLUG = 'lamp';
 const MYCODE = { p1: '374', p2: '195' };   // p1 = Diver mirrors, p2 = Tender bearing
@@ -16,7 +16,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_c');
 
 export default {
   id: 'lamp',
-  get title() { return isDiver() ? 'The Corridor Mirrors' : 'The Signal Lamp'; },
+  get title() { return isDiver() ? 'The Mirrors' : 'The Signal Lamp'; },
   get intro() {
     return isDiver()
       ? 'A black corridor, three cracked mirrors on swivels, and a dead photocell that latches the inner door. Your lamp is the only light — bounce it off the mirrors to wake the cell. The three angles are not written here; your tender has the optical plan.'
@@ -38,6 +38,7 @@ export default {
       ${relayPlaque(relay, label)}
       ${lockPanel(620, 636, open, lockLabel, closed)}
       ${isDiver() && !hasMark(state) ? markBeckon(1108, 636, 11, 'C') : ''}
+      ${isDiver() ? `<ellipse cx="192" cy="706" rx="160" ry="130" fill="url(#${SLUG}_lamp)"/><image href="${ART}lamp.webp" x="88" y="612" width="208" height="188" preserveAspectRatio="xMidYMid meet"/>` : ''}
       ${ambient(SLUG)}
       <path d="M0 900 L0 862 Q800 905 1600 862 L1600 900 Z" fill="#02080c"/>
     </svg>`;

@@ -7,7 +7,7 @@ import { isDiver, roleName } from './role.js';
 
 // Photoreal diver backdrops live in <game>/art/<slug>.{webp,mp4}; resolve against
 // this module's URL so they work on Pages/Vercel/localhost alike.
-const ART = new URL('../art/', import.meta.url).href;
+export const ART = new URL('../art/', import.meta.url).href;
 
 /** Common gradient + keyframe defs. Call once inside <defs>. */
 export function defs(slug) {
@@ -109,17 +109,22 @@ export function relayPlaque(code, label) {
   </g>`;
 }
 
-/** A beckoning brass depth-mark waiting to be recovered. */
+/** A beckoning brass depth-mark waiting to be recovered — photoreal tag with the
+ *  fathom depth + letter stamped on (values kept as SVG, never baked into the art). */
 export function markBeckon(x, y, depth, letter) {
-  return `<g class="beckon">
-    <rect x="${x}" y="${y}" width="92" height="120" rx="8" fill="rgba(201,162,39,0.10)" stroke="#c9a227" stroke-width="3"/>
-    <circle cx="${x + 46}" cy="${y + 16}" r="4" fill="#0a0d11" stroke="#c9a227" stroke-width="1.2"/>
-    <text x="${x + 46}" y="${y + 58}" text-anchor="middle" font-size="26" fill="#e8c85a"
-      font-family="Consolas, monospace" font-weight="bold">${depth}</text>
-    <text x="${x + 46}" y="${y + 74}" text-anchor="middle" font-size="9" fill="#9fb0a8"
-      font-family="Consolas, monospace">FATHOMS</text>
-    <text x="${x + 46}" y="${y + 104}" text-anchor="middle" font-size="24" fill="#dfe9ec"
-      font-family="Georgia, serif">${letter}</text>
+  return depthTag(x, y, depth, letter, true);
+}
+
+/** The shared brass depth-tag renderer (used in-scene and on the finale row). */
+export function depthTag(x, y, depth, letter, beckon) {
+  return `<g class="${beckon ? 'beckon' : ''}">
+    <image href="${ART}mark-tag.webp" x="${x + 7}" y="${y}" width="78" height="120" preserveAspectRatio="xMidYMid meet"/>
+    <text x="${x + 46}" y="${y + 60}" text-anchor="middle" font-size="23" fill="#241c08"
+      font-family="Consolas, monospace" font-weight="bold" paint-order="stroke" stroke="#d8c98a" stroke-width="0.8">${depth}</text>
+    <text x="${x + 46}" y="${y + 73}" text-anchor="middle" font-size="8" fill="#3a2f12"
+      font-family="Consolas, monospace" letter-spacing="1">FATHOMS</text>
+    <text x="${x + 46}" y="${y + 101}" text-anchor="middle" font-size="22" fill="#241c08"
+      font-family="Georgia, serif" paint-order="stroke" stroke="#d8c98a" stroke-width="0.8">${letter}</text>
   </g>`;
 }
 

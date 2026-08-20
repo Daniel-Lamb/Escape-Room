@@ -5,7 +5,7 @@
 // Tender recovers depth-mark D (20 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART } from '../divekit.js';
 
 const SLUG = 'telegraph';
 const TG_TARGET = [1, 2, 2, 1];              // the diver's coupled-pointer goal
@@ -40,6 +40,7 @@ export default {
       ${relayPlaque(relayFor(), relayLabel())}
       ${lockPanel(620, 636, open, isDiver() ? 'TELEGRAPH' : 'WINCH', closed)}
       ${isTender() && !hasMark(state) ? markBeckon(1108, 636, 20, 'D') : ''}
+      ${isDiver() ? `<g class="beckon"><ellipse cx="350" cy="500" rx="120" ry="150" fill="url(#${SLUG}_lamp)" opacity="0.45"/><image href="${ART}bell.webp" x="286" y="372" width="130" height="228" preserveAspectRatio="xMidYMid meet"/></g>` : ''}
       ${ambient(SLUG)}
       <path d="M0 900 L0 862 Q800 905 1600 862 L1600 900 Z" fill="#02080c"/>
     </svg>`;

@@ -5,7 +5,7 @@
 // word on the decompression wheel and break the surface together.
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, comboLock } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, comboLock, depthTag } from '../divekit.js';
 
 const SLUG = 'ascent';
 const MY_MARKS = {
@@ -25,12 +25,7 @@ export default {
   scene(state) {
     const done = !!state.flags.ascent_open;
     const mine = MY_MARKS[getRole()];
-    const marksRow = mine.map((m, i) => `<g>
-      <rect x="${628 + i * 120}" y="432" width="96" height="118" rx="8" fill="rgba(201,162,39,0.10)" stroke="#c9a227" stroke-width="2.5"/>
-      <text x="${676 + i * 120}" y="480" text-anchor="middle" font-size="24" fill="#e8c85a" font-family="Consolas, monospace" font-weight="bold">${m[0]}</text>
-      <text x="${676 + i * 120}" y="496" text-anchor="middle" font-size="9" fill="#9fb0a8" font-family="Consolas, monospace">FM</text>
-      <text x="${676 + i * 120}" y="534" text-anchor="middle" font-size="24" fill="#dfe9ec" font-family="Georgia, serif">${m[1]}</text>
-    </g>`).join('');
+    const marksRow = mine.map((m, i) => depthTag(628 + i * 120, 432, m[0], m[1], false)).join('');
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>

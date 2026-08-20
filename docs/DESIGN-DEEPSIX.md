@@ -73,5 +73,10 @@ finale's method is the sorting rule, its answer the word ASCEND.
 
 ## Assets
 Higgsfield: 7 photoreal underwater plates (Seedance 2.0 boomerang loops + WebP posters)
-for the Diver; 1 harbor-seal Gus portrait (background-removed alpha WebP). Tender side is
-hand-authored SVG. All in `public/deep-six/art/`.
+for the Diver; 1 harbor-seal Gus portrait (background-removed alpha WebP). Plus 3
+photoreal cut-out props (background-removed alpha WebP): a **brass depth-mark tag**
+(`mark-tag.webp`, reused for all six in-scene marks + the finale row via `depthTag()`,
+with the fathom depth + letter stamped on as SVG — never baked), the **Cormorant's bell**
+(`bell.webp`, the machinery-space payoff prop), and the **dive lamp** (`lamp.webp`, the
+Diver's light-source accent in the corridor). Tender side is hand-authored SVG. All in
+`public/deep-six/art/`.
