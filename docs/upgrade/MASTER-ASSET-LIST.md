@@ -28,13 +28,13 @@ per-game element coordinates live in the per-game specs
 
 | Game | Backgrounds | Elements | Gus portrait |
 |---|---|---|---|
-| The Pilgrim's Road | ✅ 8/8 (animated video) | 🔵 3/7 rooms (1–3 fully done) | ☐ |
-| The Gate of Life | ✅ 7/7 (animated video) | ☐ | ☐ |
-| Starfall Station | ✅ 7/8 (animated video; room 5 Observation kept procedural — its view is a live tilt/attitude mechanic) | ☐ | ☐ |
-| The Wild Court | ✅ 7/7 (animated video) | ☐ | ☐ |
-| Signal Towers (duo) | ☐ 0/14 | ☐ | ☐ |
-| The Looking Glass (duo) | ☐ 0/14 | ☐ | ☐ |
-| Silent Alarm (duo) | ☐ 0/14 | ☐ | ☐ |
+| The Pilgrim's Road | ✅ 8/8 (animated video) | 🔵 3/7 rooms (1–3 fully done) | ✅ |
+| The Gate of Life | ✅ 7/7 (animated video) | ☐ | ✅ |
+| Starfall Station | ✅ 7/8 (animated video; room 5 Observation kept procedural — its view is a live tilt/attitude mechanic) | ☐ | ✅ |
+| The Wild Court | ✅ 7/7 (animated video) | ☐ | ✅ |
+| Signal Towers (duo) | ✅ 7/7 (animated video; shared per-SLUG storm backdrop, both towers) | ☐ | ✅ |
+| The Looking Glass (duo) | ✅ 7/7 (animated video; one manor plate per room, warm/cool wash + desaturate keeps the real-vs-mirror asymmetry) | ☐ | ✅ |
+| Silent Alarm (duo) | ✅ 7/7 (animated video; The Hand's museum interiors — The Eye's van stays procedural surveillance) | ☐ | ✅ |
 | Eden (3D) | — separate pipeline — | | |
 
 ---
