@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Six — A Two-Crew Salvage</title>
+  <meta name="description" content="A two-player co-op escape room in your browser. One diver on the wreck, one tender on the boat — and every lock's answer is on the other crew member's screen." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤿</text></svg>" />
+  <link rel="stylesheet" href="../shared/css/main.css" />
+  <link rel="stylesheet" href="../shared/css/animations.css" />
+  <link rel="stylesheet" href="skin.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="title-screen" class="screen">
+      <div id="title-bg"></div>
+      <div id="title-stars"></div>
+      <div class="title-content">
+        <p class="title-kicker">A two-crew co-op &middot; one hour of air</p>
+        <h1 id="game-title">Deep&nbsp;Six</h1>
+        <p class="title-sub" id="game-tagline">One diver on the wreck. One tender on the boat. Neither of you can see the whole of it.</p>
+        <div class="title-buttons">
+          <button class="btn btn-primary" id="btn-begin">Suit Up</button>
+          <button class="btn btn-ghost" id="btn-how">How to Play</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;">&#8962; All Rooms</a>
+        </div>
+        <p class="title-foot">Play on two devices &middot; talk to each other &middot; sound on</p>
+      </div>
+    </section>
+
+    <!-- ============ ROLE SELECT SCREEN ============ -->
+    <section id="role-screen" class="screen hidden">
+      <div id="title-bg"></div>
+      <div class="role-content">
+        <h2 class="role-heading">Which end of the line?</h2>
+        <p class="role-note">
+          This is a game for <strong>two players on two screens</strong>. One of you goes
+          down to the wreck; the other stays topside on the boat. All night, the answer to
+          <em>your</em> lock is shown on <em>your partner's</em> screen — so keep talking,
+          and tell each other what you see.
+        </p>
+        <div class="role-cards">
+          <button class="role-card" id="pick-diver">
+            <div class="role-card-badge">Player 1</div>
+            <div class="role-card-art">🤿🔦</div>
+            <div class="role-card-name">The Diver</div>
+            <div class="role-card-sub">on the wreck of the Cormorant</div>
+            <div class="role-card-resume hidden" data-resume="diver">Dive in progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-tender">
+            <div class="role-card-badge">Player 2</div>
+            <div class="role-card-art">🚤📡</div>
+            <div class="role-card-name">The Tender</div>
+            <div class="role-card-sub">topside · the Halcyon</div>
+            <div class="role-card-resume hidden" data-resume="tender">Watch in progress — resume</div>
+          </button>
+        </div>
+        <button class="btn btn-ghost" id="btn-role-back">&#8592; Back</button>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="game-screen" class="screen hidden">
+      <header id="hud">
+        <div class="hud-left">
+          <span id="room-badge"></span>
+          <h2 id="room-title"></h2>
+        </div>
+        <div class="hud-center">
+          <div id="timer" title="Air remaining">60:00</div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="btn-journal" title="Dive Slate — everything you've recorded">
+            <span class="hud-btn-icon">&#9998;</span> Dive Slate
+          </button>
+          <button class="hud-btn" id="btn-sound" title="Toggle sound">
+            <span class="hud-btn-icon" id="sound-icon">&#9834;</span>
+          </button>
+          <button class="hud-btn" id="btn-restart" title="Start this dive over">&#8635;</button>
+          <a class="hud-btn" href="../" title="Back to room select" style="text-decoration:none;">&#8962;</a>
+        </div>
+      </header>
+
+      <main id="stage">
+        <div id="scene-wrap">
+          <div id="scene" aria-label="wreck scene"></div>
+          <div id="hotspots"></div>
+          <div id="embers" aria-hidden="true"></div>
+          <div id="vignette" aria-hidden="true"></div>
+          <button id="gus-dock" aria-label="Ask Gus for help"></button>
+        </div>
+      </main>
+
+      <div id="narration-bar">
+        <div id="message-card" class="hidden">
+          <p id="message-text"></p>
+          <span id="message-more" aria-hidden="true">&#9660;</span>
+        </div>
+      </div>
+
+      <footer id="inventory">
+        <span id="inv-label">Dive Kit</span>
+        <div id="inv-slots"></div>
+      </footer>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <div id="modal-root"></div>
+    <div id="fader"></div>
+    <div id="fly-layer" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

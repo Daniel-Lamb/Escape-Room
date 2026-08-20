@@ -148,6 +148,22 @@ export const rooms: Room[] = [
     freshText: 'Unplayed — the vault is cold.',
   },
   {
+    id: 'deep-six',
+    mode: 'duo',
+    status: 'live',
+    kicker: 'Duo · Deep-sea salvage',
+    title: 'Deep Six',
+    blurb:
+      "One of you is down on the wreck of the Cormorant with a lamp and a dwindling line of air; the other is topside on the boat, at the sonar, the radio, and the winch. Every lock below is answered by an instrument above — and the tide is turning. Read the line, or the deep keeps you both.",
+    chips: ['2 players', '7 scenes', 'Two screens'],
+    gusChip: '🦭 Gus, harbor seal',
+    art: 'deep-six',
+    href: 'deep-six/',
+    cta: 'Suit Up',
+    saveKey: 'deep-six-p1-save-v1',
+    freshText: 'Unplayed — the line is coiled.',
+  },
+  {
     id: 'two-keys-one-door',
     mode: 'duo',
     status: 'concept',
@@ -206,8 +222,8 @@ export const sections: Section[] = [
   {
     mode: 'duo',
     title: 'For Duos',
-    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Three are live; more are coming.',
-    count: '3 live · more soon',
+    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Four are live; more are coming.',
+    count: '4 live · more soon',
   },
   {
     mode: 'group',

@@ -1,0 +1,229 @@
+/* ============================================================
+   Deep Six — abyssal-salvage skin over the shared engine CSS.
+   Cold deep-water blues and silt-green, a warm dive-lamp amber and
+   a sonar-green accent; found documents restyled as dive-slate pages
+   and sonar/instrument cards; a shaft of surface light on the title;
+   and the two-player role-select screen.
+   ============================================================ */
+
+:root {
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --bg-0: #02080c;
+  --bg-1: #06131b;
+  --bg-2: #0a2230;
+  --stone-1: #223440;
+  --stone-2: #10202a;
+  --torch: #ffe6a6;          /* dive-lamp warm */
+  --torch-deep: #ffcf6a;
+  --gold: #c9a227;
+  --gold-bright: #e8c85a;
+  --sonar: #7cf0be;          /* instrument green */
+  --parchment: #dfe9ec;
+  --ink: #08202b;
+}
+
+/* title screen: deep water with a single shaft of surface light */
+#title-screen {
+  background:
+    radial-gradient(1100px 900px at 50% -18%, #114a5a 0%, transparent 55%),
+    radial-gradient(700px 520px at 78% 120%, #06202c 0%, transparent 60%),
+    linear-gradient(180deg, #06131b 0%, #041019 55%, #02080c 100%);
+}
+#title-bg {
+  background:
+    /* the descending shaft of light */
+    conic-gradient(from 168deg at 50% -6%,
+      transparent 0deg, rgba(160,230,240,0.14) 10deg, transparent 26deg);
+}
+#title-bg::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 34vw;
+  height: 74vh;
+  transform: translateX(-50%);
+  clip-path: polygon(40% 0, 60% 0, 74% 100%, 26% 100%);
+  background: linear-gradient(180deg, rgba(190,233,255,0.28) 0%, rgba(120,240,190,0.06) 55%, transparent 100%);
+  filter: blur(6px);
+  opacity: 0.7;
+}
+
+#game-title {
+  background: linear-gradient(180deg, #eafffb 0%, #7cf0be 44%, #2f9e97 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  filter: drop-shadow(0 6px 30px rgba(124,240,190,0.28));
+}
+.title-kicker { letter-spacing: 0.34em; }
+.title-foot { letter-spacing: 0.2em; }
+
+/* embers become rising bubbles / drifting motes */
+.ember { background: radial-gradient(circle, #eafcff 0%, #bfe9ff 55%, transparent 75%); }
+
+/* HUD: instrument-ish */
+#room-title { letter-spacing: 0.14em; font-weight: 600; }
+#timer { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.05em; }
+#room-badge { font-family: Consolas, "Cascadia Mono", monospace; letter-spacing: 0.14em; }
+
+#message-text { font-style: normal; font-size: 15.5px; letter-spacing: 0.01em; }
+#message-card { border-color: rgba(124,240,190,0.28); }
+
+/* ---------- role select screen ---------- */
+.role-content {
+  position: relative;
+  z-index: 2;
+  max-width: 860px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 40px 24px;
+  text-align: center;
+}
+.role-heading {
+  font-size: clamp(26px, 4vw, 40px);
+  color: var(--parchment);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+.role-note {
+  max-width: 620px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.role-note strong { color: var(--sonar); }
+.role-note em { color: var(--parchment); font-style: italic; }
+.role-cards {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.role-card {
+  width: 250px;
+  padding: 26px 20px 22px;
+  background: linear-gradient(170deg, #0e283640 0%, #06141f 100%);
+  border: 1px solid rgba(124,240,190,0.26);
+  border-radius: 16px;
+  cursor: pointer;
+  color: var(--text);
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out), border-color 0.18s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.role-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--sonar);
+  box-shadow: 0 18px 46px rgba(0,0,0,0.55), 0 0 30px rgba(124,240,190,0.18);
+}
+.role-card#pick-diver:hover { border-color: var(--torch-deep); box-shadow: 0 18px 46px rgba(0,0,0,0.55), 0 0 30px rgba(255,207,106,0.18); }
+.role-card-badge {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sonar);
+}
+.role-card#pick-diver .role-card-badge { color: var(--torch-deep); }
+.role-card-art { font-size: 42px; line-height: 1; margin: 4px 0; }
+.role-card-name {
+  font-size: 22px;
+  color: var(--parchment);
+  letter-spacing: 0.05em;
+}
+.role-card-sub { font-size: 12.5px; color: var(--text-dim); letter-spacing: 0.08em; }
+.role-card-resume {
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--ok);
+  border: 1px solid rgba(123,196,127,0.4);
+  border-radius: 20px;
+  padding: 3px 12px;
+}
+
+/* ---------- documents ---------- */
+/* dive-slate page — the maritime note counterpart */
+.logbook {
+  position: relative;
+  margin: 6px auto;
+  padding: 20px 24px;
+  max-width: 520px;
+  background: linear-gradient(170deg, #17313a 0%, #0e232c 100%);
+  color: #d6e6e8;
+  border: 1px solid #2f5a5a;
+  border-left: 5px solid #2f9e97;
+  border-radius: 6px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+  font-size: 15px;
+  line-height: 1.75;
+  animation: fadeUp 0.5s var(--ease-out) both;
+}
+.logbook .log-title {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #7cf0be;
+}
+.logbook.aged { filter: brightness(0.97) saturate(0.9); }
+
+/* sonar / instrument card — dark console panel */
+.chartcard {
+  position: relative;
+  margin: 6px auto;
+  padding: 18px 22px;
+  max-width: 560px;
+  background: linear-gradient(170deg, #08222c 0%, #051720 100%);
+  color: #cfeee4;
+  border: 1px solid rgba(124,240,190,0.32);
+  border-radius: 8px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5), inset 0 0 30px rgba(124,240,190,0.05);
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.chartcard .chart-title {
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  margin-bottom: 10px;
+  color: #7cf0be;
+}
+.chartcard .warn { color: var(--torch-deep); }
+.chartcard .bad { color: #ff8f8f; }
+.chartcard .ok { color: #8fe0a0; }
+.chartcard b, .chartcard strong { color: #eafffb; }
+
+/* the cross-screen callout: emphasise a clue is FOR the partner */
+.relay {
+  margin: 10px auto;
+  max-width: 520px;
+  padding: 10px 16px;
+  border: 1px dashed rgba(124,240,190,0.5);
+  border-radius: 8px;
+  background: rgba(124,240,190,0.06);
+  color: var(--sonar);
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+}
+.relay::before { content: "\1F4E1  "; }
+
+/* puzzle dials read as brass instruments */
+.dial-face { font-family: Consolas, "Cascadia Mono", monospace; }
+
+/* Gus's dock glow: cold water-light */
+#gus-dock { filter: drop-shadow(0 0 14px rgba(124,240,190,0.4)); }
+#gus-dock:hover { filter: drop-shadow(0 0 24px rgba(124,240,190,0.7)); }
+#gus-dock::after { color: var(--parchment); border-color: rgba(124,240,190,0.45); }
+.gus-portrait { filter: drop-shadow(0 0 18px rgba(124,240,190,0.3)); }
+.gus-tier.next { border-color: rgba(124,240,190,0.4); }
