@@ -17,6 +17,18 @@ const svgModules = import.meta.glob("../svg/*.svg", {
   eager: true,
 }) as Record<string, string>
 
+// Photoreal cinematic key art for the live rooms (concepts fall back to SVG).
+// Vite returns the final hashed, base-prefixed URL, so it's deploy-safe.
+const coverModules = import.meta.glob("../covers/*.webp", {
+  query: "?url",
+  import: "default",
+  eager: true,
+}) as Record<string, string>
+
+function coverUrl(art: string): string | null {
+  return coverModules[`../covers/${art}.webp`] ?? null
+}
+
 // How many times each section's rooms repeat in the track. The track holds
 // LANES copies; the marquee shifts by exactly one copy (-100/LANES %) and loops
 // seamlessly. 5 keeps the viewport filled up to ~4x the room-set width.
@@ -101,7 +113,10 @@ function Placard({ room, url, index, setLen }: { room: Room; url: string; index:
 
 function Row({ mode, title, sub, count }: { mode: string; title: string; sub: string; count: string }) {
   const sectionRooms = useMemo(() => rooms.filter((r) => r.mode === mode), [mode])
-  const urls = useMemo(() => Object.fromEntries(sectionRooms.map((r) => [r.art, artDataUrl(r.art)])), [sectionRooms])
+  const urls = useMemo(
+    () => Object.fromEntries(sectionRooms.map((r) => [r.art, coverUrl(r.art) ?? artDataUrl(r.art)])),
+    [sectionRooms]
+  )
   const setLen = sectionRooms.length
 
   // Repeat the room set LANES times to form the seamless marquee track.

@@ -18,6 +18,17 @@ const svgModules = import.meta.glob("../../svg/*.svg", {
   eager: true,
 }) as Record<string, string>
 
+// Photoreal cinematic key art for live rooms (concepts fall back to SVG).
+const coverModules = import.meta.glob("../../covers/*.webp", {
+  query: "?url",
+  import: "default",
+  eager: true,
+}) as Record<string, string>
+
+function coverUrl(art: string): string | null {
+  return coverModules[`../../covers/${art}.webp`] ?? null
+}
+
 function artUrl(art: string): string {
   const svg = (svgModules[`../../svg/${art}.svg`] ?? "").trim()
   const vb = svg.match(/viewBox="([-\d.\s]+)"/)
@@ -55,7 +66,7 @@ function buildCards(): Card[] {
     const rr = rooms.filter((r) => r.mode === mode)
     for (let bi = 0; bi < PER_BAND; bi++) {
       const room = rr[bi % rr.length]
-      out.push({ url: artUrl(room.art), si, bi, i: out.length })
+      out.push({ url: coverUrl(room.art) ?? artUrl(room.art), si, bi, i: out.length })
     }
   })
   return out
@@ -113,14 +124,14 @@ export default function ScrollMorphHero() {
         opacity: 0,
       }))
     )
-    // Total ~11.4s (5s longer than before); most of the extra time lingers in
-    // the circle, where the "Escape Rooms" title sits centered inside the ring.
+    // Total ~7.4s — snappy and premium. The circle beat (title centered inside
+    // the ring of photoreal placards) still holds long enough to read.
     const timers = [
-      window.setTimeout(() => setPhase("line"), 900),
-      window.setTimeout(() => setPhase("circle"), 3100),
-      window.setTimeout(() => setPhase("rows"), 7500),
-      window.setTimeout(() => setFading(true), 10400),
-      window.setTimeout(() => setGone(true), 11400),
+      window.setTimeout(() => setPhase("line"), 700),
+      window.setTimeout(() => setPhase("circle"), 2200),
+      window.setTimeout(() => setPhase("rows"), 5000),
+      window.setTimeout(() => setFading(true), 6600),
+      window.setTimeout(() => setGone(true), 7400),
     ]
     return () => {
       window.removeEventListener("resize", onResize)

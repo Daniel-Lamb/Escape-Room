@@ -368,23 +368,49 @@
 
     .show-card {
       position: relative; display: block; overflow: hidden;
-      width: clamp(230px, 24vw, 340px); aspect-ratio: 16 / 9;
-      border-radius: 16px; background: #140b05; text-decoration: none;
-      border: 1px solid rgba(255, 150, 70, 0.18);
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
-      transition: transform 0.35s var(--ease-spring), box-shadow 0.35s, border-color 0.35s;
+      width: clamp(260px, 26vw, 380px); aspect-ratio: 16 / 9;
+      border-radius: 16px; background: #0b0602; text-decoration: none;
+      border: 1px solid rgba(255, 150, 70, 0.16);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+      transition: transform 0.4s var(--ease-spring), box-shadow 0.4s, border-color 0.4s;
     }
     .show-card:hover {
-      transform: scale(1.06); z-index: 5;
-      border-color: rgba(255, 138, 42, 0.55);
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.6), 0 0 42px rgba(255, 122, 24, 0.18);
+      transform: scale(1.055) translateY(-4px); z-index: 5;
+      border-color: rgba(255, 165, 90, 0.7);
+      box-shadow: 0 34px 84px rgba(0, 0, 0, 0.66), 0 0 54px rgba(255, 122, 24, 0.22);
     }
-    .show-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .show-card-grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 6, 3, 0) 38%, rgba(10, 6, 3, 0.9) 100%); }
-    .show-card-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 14px 13px; z-index: 2; }
-    .show-card-kicker { display: block; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--o-300); margin-bottom: 3px; }
-    .show-card-title { font-size: clamp(15px, 1.6vw, 19px); letter-spacing: 0.01em; color: var(--amber); }
-    .show-card-cta { display: inline-block; margin-top: 6px; font-size: 12.5px; color: var(--o-200); opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s; }
+    .show-card-img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.02); transition: transform 0.9s var(--ease-out), filter 0.5s;
+      filter: saturate(0.96) contrast(1.02);
+    }
+    .show-card:hover .show-card-img { transform: scale(1.1); filter: saturate(1.12) contrast(1.06) brightness(1.05); }
+    /* legibility scrim + a faint top edge-light for depth */
+    .show-card-grad {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(6, 3, 1, 0) 34%, rgba(6, 3, 1, 0.5) 62%, rgba(5, 3, 1, 0.94) 100%),
+        linear-gradient(180deg, rgba(255, 210, 150, 0.10), transparent 22%);
+    }
+    /* a thin inner hairline that lifts the art off the page */
+    .show-card::after {
+      content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 210, 160, 0.10);
+    }
+    .show-card-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 15px; z-index: 4; }
+    .show-card-kicker {
+      display: block; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--o-200); margin-bottom: 4px; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    }
+    .show-card-title {
+      font-size: clamp(16px, 1.7vw, 21px); letter-spacing: 0.01em; color: #fff4e6;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+    }
+    .show-card-cta {
+      display: inline-block; margin-top: 7px; font-size: 12.5px; letter-spacing: 0.04em; color: var(--o-200);
+      opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    }
     .show-card:hover .show-card-cta { opacity: 1; transform: none; }
     .show-card.concept { cursor: default; }
     .show-card.concept .show-card-img { filter: grayscale(0.35) brightness(0.78); }
