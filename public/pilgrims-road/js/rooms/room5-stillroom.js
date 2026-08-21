@@ -158,18 +158,16 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">an empty hook</text>
       </g>
 
-      <!-- hanging meat shank -->
+      <!-- hanging meat shank (photoreal, hook + twine included) -->
       ${meatTaken ? '' : `
       <g class="sway">
-        <line x1="1310" y1="60" x2="1310" y2="140" stroke="#565b6c" stroke-width="5"/>
-        <path d="M1310 140 q-8 -12 6 -14" fill="none" stroke="#9a9a8a" stroke-width="5"/>
-        <path d="M1290 190 Q1284 160 1306 148 Q1330 136 1338 156 Q1344 172 1322 180 Q1302 188 1302 200 Z" fill="#8a4a3c"/>
+        <image href="art/st-meat.webp" x="1266" y="52" width="92" height="246" preserveAspectRatio="xMidYMid meet"/>
       </g>`}
 
       <!-- hearth + kettle + bellows + mantel -->
       <g>
-        <rect x="360" y="560" width="560" height="30" rx="6" fill="#3a3e4f"/>
-        <path d="M400 590 L400 470 Q640 420 880 470 L880 590 Z" fill="#100d16"/>
+        <rect x="360" y="560" width="560" height="30" rx="6" fill="#2a2016"/>
+        <path d="M400 590 L400 470 Q640 420 880 470 L880 590 Z" fill="#0a0806"/>
         ${hearthLit ? `
           <ellipse cx="640" cy="560" rx="300" ry="160" fill="url(#gd_st_hearth)" class="glow"/>
           <g class="torch-flame">
@@ -179,22 +177,16 @@ export default {
           <g stroke="#2b2233" stroke-width="8" stroke-linecap="round">
             <line x1="580" y1="580" x2="700" y2="566"/><line x1="620" y1="566" x2="720" y2="582"/>
           </g>`}
-        <!-- kettle -->
-        <path d="M560 470 Q560 380 660 380 Q760 380 760 470 L744 520 L576 520 Z" fill="#7a5a3c" stroke="#4a3520" stroke-width="4"/>
-        <path d="M660 380 q0 -26 24 -30" fill="none" stroke="#4a3520" stroke-width="8" stroke-linecap="round"/>
-        <path d="M756 430 q36 -6 40 -34" fill="none" stroke="#7a5a3c" stroke-width="12" stroke-linecap="round"/>
+        <!-- kettle (photoreal cast-iron cauldron) -->
+        <image href="art/st-kettle.webp" x="550" y="296" width="212" height="266" preserveAspectRatio="xMidYMid meet"/>
         <!-- stir dial with sun-arrow (clockwise) -->
         <circle cx="660" cy="452" r="26" fill="#4a3520"/>
         <circle cx="660" cy="452" r="26" fill="none" stroke="#c9a227" stroke-width="3"/>
         <path d="M660 430 a22 22 0 1 1 -16 38" fill="none" stroke="#c9a227" stroke-width="3"/>
         <path d="M644 468 l-8 2 6 -8 z" fill="#c9a227"/>
         <circle cx="660" cy="452" r="5" fill="#c9a227"/>
-        <!-- bellows -->
-        <g transform="translate(880 520) rotate(-18)">
-          <path d="M0 0 L90 -14 L96 14 L10 24 Z" fill="#6b5330"/>
-          <path d="M90 -14 L130 -2 L96 14 Z" fill="#4a3520"/>
-          <line x1="10" y1="24" x2="-18" y2="42" stroke="#38290f" stroke-width="8" stroke-linecap="round"/>
-        </g>
+        <!-- bellows (photoreal) -->
+        <image href="art/st-bellows.webp" x="852" y="500" width="168" height="114" preserveAspectRatio="xMidYMid meet" transform="rotate(-8 936 557)"/>
         <!-- mantel beam with sun-mark #5 -->
         <rect x="380" y="420" width="520" height="30" rx="4" fill="#38290f"/>
         <g class="beckon">
@@ -212,18 +204,18 @@ export default {
 
       <!-- stair up to the great hall -->
       <g>
-        <path d="M1460 640 L1600 640 L1600 300 L1520 300 L1520 380 L1490 380 L1490 460 L1460 460 Z" fill="#0c0912"/>
-        <path d="M1460 640 L1460 460 L1490 460 L1490 380 L1520 380 L1520 300 L1600 300" fill="none" stroke="#3a3e4f" stroke-width="6"/>
+        <path d="M1460 640 L1600 640 L1600 300 L1520 300 L1520 380 L1490 380 L1490 460 L1460 460 Z" fill="#080604"/>
+        <path d="M1460 640 L1460 460 L1490 460 L1490 380 L1520 380 L1520 300 L1600 300" fill="none" stroke="#2a2118" stroke-width="6"/>
       </g>
 
       <path d="M0 900 L0 856 Q800 906 1600 856 L1600 900 Z" fill="#05070d"/>
     </svg>`;
 
     function jarSvg(x, shelfY, label) {
+      // Photoreal jar; the load-bearing label stays an SVG overlay.
       return `
       <g>
-        <path d="M${x} ${shelfY - 8} q-14 -10 -14 -34 q0 -30 32 -30 q32 0 32 30 q0 24 -14 34 z" fill="#8a7a5c"/>
-        <rect x="${x - 10}" y="${shelfY - 78}" width="56" height="12" rx="4" fill="#6b5c40"/>
+        <image href="art/st-jar.webp" x="${x - 16}" y="${shelfY - 80}" width="64" height="76" preserveAspectRatio="xMidYMid meet"/>
         <rect x="${x - 8}" y="${shelfY - 44}" width="52" height="18" rx="3" fill="#e8d9b0"/>
         <text x="${x + 18}" y="${shelfY - 31}" font-size="10.5" text-anchor="middle" fill="#4a3a1c"
           font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${label}</text>
