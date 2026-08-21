@@ -7,7 +7,7 @@
 import { configureSave, hasSave, loadState, resetState } from '../../shared/js/state.js';
 import { initEngine, startRun, teardown, retryCurrentRoom, game } from '../../shared/js/engine.js';
 import { GUS } from './gus.js';
-import { setRole, saveKeyForRole } from './role.js';
+import { setRole, saveKeyForRole, isDiver } from './role.js';
 import rooms from './rooms/index.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -36,6 +36,8 @@ const CONFIG = {
   collectiblesTitle: 'Depth-Marks',
   renderCollectible: depthCard,
   collectibleToast: (e) => `Depth-mark recovered: ${e.sun.rays} fathoms — "${e.sun.letter}"`,
+  // Two soundscapes: the Diver breathes on the wreck, the Tender listens topside.
+  ambience: () => (isDiver() ? 'deep-diver' : 'deep-tender'),
   victory: {
     title: 'Surfaced',
     heading: 'You Break the Surface Together',

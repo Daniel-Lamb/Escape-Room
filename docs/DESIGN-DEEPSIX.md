@@ -71,6 +71,20 @@ finale's method is the sorting rule, its answer the word ASCEND.
   `tenderBackdrop`. Shared cross-read lock helper `comboLock` (digits/letters); the
   telegraph is a bespoke coupled-lever puzzle.
 
+## Sound
+Two role-split soundscapes, synthesized in the shared Web Audio engine (no asset
+files), selected by `config.ambience` returning `deep-diver` or `deep-tender`:
+- **Diver:** a low submerged rumble bed, a slow regulator breath (a bandpass hiss
+  swelling ~0.22 Hz), exhaled bubbles, the wreck groaning, and a muffled sonar
+  return heard through the water.
+- **Tender:** an airy cabin tone, the console's sonar sweep ping ticking over about
+  every four seconds (matched to the scope animation on screen), the hull creaking
+  in the swell, and an occasional whisper of radio static.
+
+The engine gained a `config.ambience` hook (string or a per-role function, resolved
+at each start) so a game can pick its theme; omitting it keeps the original `cave`
+bed the single-player rooms use. Mute is unified across both worlds.
+
 ## Assets
 Higgsfield: 7 photoreal underwater plates (Seedance 2.0 boomerang loops + WebP posters)
 for the Diver; 1 harbor-seal Gus portrait (background-removed alpha WebP). Plus 3

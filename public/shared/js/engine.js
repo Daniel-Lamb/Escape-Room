@@ -74,6 +74,10 @@ import { initGus } from './gus-core.js';
  * @property {{ title: string, heading: string, story: string }} [victory]
  * @property {{ title: string, heading: string, story: string, retryLabel?: string, restartLabel?: string }} [defeat]
  * @property {string} [restartConfirm]
+ * @property {string} [assetBase] absolute base URL for resolving a scene's
+ *   relative `art/…` refs (deploy-proof across Pages/Vercel/localhost).
+ * @property {string | (() => string)} [ambience] audio.startAmbience() kind; a
+ *   function is evaluated at start (e.g. per-role). Omit for the default 'cave'.
  */
 
 /**
@@ -333,13 +337,20 @@ export function initEngine(roomModules, { onEnd, config }) {
   $('#btn-sound').addEventListener('click', () => {
     const muted = audio.toggleMute();
     $('#sound-icon').innerHTML = muted ? '&#215;' : '&#9834;';
-    if (!muted) audio.startAmbience();
+    if (!muted) audio.startAmbience(ambienceKind());
   });
   $('#btn-restart').addEventListener('click', confirmRestart);
   $('#message-card').addEventListener('click', () => {
     if (typing) skipTyping();
     else nextMessage();
   });
+}
+
+// The ambience theme for this game, resolved fresh each start so a per-role
+// function (e.g. Deep Six's diver/tender split) is re-evaluated on entry.
+function ambienceKind() {
+  const a = cfg.ambience;
+  return typeof a === 'function' ? a() : a;
 }
 
 /** @param {boolean} [resumed] */
@@ -351,7 +362,7 @@ export function startRun(resumed = false) {
     saveState();
   }
   audio.init();
-  audio.startAmbience();
+  audio.startAmbience(ambienceKind());
   renderInventory();
   startTimer();
   startEmbers();
@@ -835,7 +846,7 @@ export function retryCurrentRoom() {
   state.finished = false;
   state.timeLeft = 15 * 60;
   saveState();
-  audio.startAmbience();
+  audio.startAmbience(ambienceKind());
   startTimer();
   startEmbers();
   enterRoom(state.currentRoom, true);
