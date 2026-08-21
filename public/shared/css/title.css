@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ============================================================
+   Professional "entry screen" treatment — shared by every game.
+   Loaded LAST, so it re-skins the title + role-select screens over
+   whatever each game's skin.css set: a full-bleed cinematic cover
+   (set inline on #title-bg per game), a clean scrim, sans-serif type,
+   and Netflix-style buttons. The in-game UI is untouched.
+   ============================================================ */
+
+:root {
+  --entry-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --entry-ink: #f6f7f9;
+  --entry-dim: rgba(246, 247, 249, 0.72);
+  --entry-dim-2: rgba(246, 247, 249, 0.5);
+}
+
+#title-screen, #role-screen { background: #08090c; overflow: hidden; }
+
+/* the cover (its image is set inline on #title-bg per game) */
+#title-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  animation: entryKen 24s ease-in-out infinite alternate;
+}
+/* drop the old procedural decorations */
+#title-bg::after, #title-stars { display: none !important; }
+
+/* cinematic legibility scrim */
+#title-screen::after, #role-screen::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 7, 10, 0.5) 0%, rgba(6, 7, 10, 0.3) 40%, rgba(6, 7, 10, 0.58) 66%, rgba(6, 7, 10, 0.95) 100%),
+    radial-gradient(135% 100% at 50% 40%, transparent 34%, rgba(6, 7, 10, 0.55) 100%);
+}
+
+.title-content, .role-content { position: relative; z-index: 2; }
+
+/* ---- title screen ---- */
+.title-content { font-family: var(--entry-sans); animation: fadeUp 0.9s var(--ease-out) both; }
+.title-kicker {
+  font-family: var(--entry-sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--entry-dim); margin-bottom: 18px; animation: none;
+}
+#title-screen #game-title {
+  font-family: var(--entry-sans); font-weight: 800; letter-spacing: -0.02em; line-height: 1.0;
+  font-size: clamp(46px, 9vw, 100px);
+  background: none; -webkit-text-fill-color: var(--entry-ink); color: var(--entry-ink);
+  filter: drop-shadow(0 8px 44px rgba(0, 0, 0, 0.65));
+}
+.title-sub {
+  font-family: var(--entry-sans); font-style: normal; font-size: clamp(15px, 1.9vw, 20px);
+  color: var(--entry-dim); margin: 18px auto 0; max-width: 640px; line-height: 1.5;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+.title-foot {
+  font-family: var(--entry-sans); color: var(--entry-dim-2); letter-spacing: 0.16em; margin-top: 42px;
+}
+
+/* ---- buttons (Netflix white primary + glass ghost) ---- */
+#title-screen .btn, #role-screen .btn {
+  font-family: var(--entry-sans); font-weight: 700; letter-spacing: 0.01em;
+  font-size: 16px; padding: 13px 30px; border-radius: 6px;
+  color: var(--entry-ink); background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: none;
+  transition: transform 0.15s var(--ease-out), background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+#title-screen .btn:hover, #role-screen .btn:hover {
+  background: rgba(255, 255, 255, 0.2); color: #fff; border-color: rgba(255, 255, 255, 0.44);
+  transform: translateY(-1px); box-shadow: none;
+}
+#title-screen .btn-primary, #role-screen .btn-primary {
+  background: var(--entry-ink); color: #14161a; border: 1px solid var(--entry-ink); box-shadow: none;
+}
+#title-screen .btn-primary:hover, #role-screen .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.84); color: #14161a; border-color: rgba(255, 255, 255, 0.84);
+  transform: translateY(-1px); box-shadow: none;
+}
+#title-screen .btn-ghost, #role-screen .btn-ghost {
+  background: rgba(255, 255, 255, 0.06); color: var(--entry-dim); border: 1px solid rgba(255, 255, 255, 0.2);
+}
+#title-screen .btn-ghost:hover, #role-screen .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.14); color: #fff; border-color: rgba(255, 255, 255, 0.38); box-shadow: none;
+}
+#title-screen .btn:active, #role-screen .btn:active { transform: scale(0.98); }
+
+/* ---- role-select screen (duos) ---- */
+.role-content { font-family: var(--entry-sans); }
+.role-heading {
+  font-family: var(--entry-sans); font-weight: 800; letter-spacing: -0.01em; color: var(--entry-ink);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
+}
+.role-note { font-family: var(--entry-sans); font-style: normal; color: var(--entry-dim); }
+.role-note strong, .role-note em { color: var(--entry-ink); font-style: normal; }
+.role-card {
+  background: rgba(18, 20, 25, 0.6); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; color: var(--entry-ink);
+  transition: transform 0.2s var(--ease-out), border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.role-card:hover {
+  transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(28, 31, 37, 0.72); box-shadow: 0 20px 46px rgba(0, 0, 0, 0.5);
+}
+.role-card-badge { color: var(--entry-dim-2); }
+.role-card-name { color: var(--entry-ink); font-weight: 700; }
+.role-card-sub { color: var(--entry-dim); }
+
+@keyframes entryKen { from { transform: scale(1.02); } to { transform: scale(1.09); } }
+
+@media (prefers-reduced-motion: reduce) {
+  #title-bg { animation: none; }
+}
