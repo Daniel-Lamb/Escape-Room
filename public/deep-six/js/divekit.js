@@ -3,7 +3,7 @@
 // Tender sees the boat cabin — sonar scope, instrument panel, and a porthole with
 // the dive line dropping away. Every id/keyframe is prefixed by a per-scene slug.
 
-import { isDiver, roleName } from './role.js';
+import { isDiver, isTender, roleName } from './role.js';
 
 // Photoreal diver backdrops live in <game>/art/<slug>.{webp,mp4}; resolve against
 // this module's URL so they work on Pages/Vercel/localhost alike.
@@ -71,7 +71,15 @@ function tenderBackdrop(slug) {
     </g>
     <!-- console shelf -->
     <rect x="0" y="704" width="1600" height="196" fill="#060f14"/>
-    <rect x="0" y="704" width="1600" height="12" fill="#12303a"/>`;
+    <rect x="0" y="704" width="1600" height="12" fill="#12303a"/>
+    <!-- photoreal instruments on the bench: echo-sounder (left, under the PPI
+         scope) and the wireless set (far right, by the porthole). Both sit clear
+         of every tender hotspot: lock (620-980), mark (1108-1200), lore/gauges
+         (1214-1454, y<624). -->
+    <ellipse cx="205" cy="882" rx="140" ry="19" fill="#02080c" opacity="0.5"/>
+    <image href="${ART}sonar.webp" x="70" y="566" width="270" height="318" preserveAspectRatio="xMidYMid meet"/>
+    <ellipse cx="1440" cy="882" rx="122" ry="17" fill="#02080c" opacity="0.5"/>
+    <image href="${ART}radio.webp" x="1320" y="633" width="240" height="251" preserveAspectRatio="xMidYMid meet"/>`;
 }
 
 /** Ambient overlay: rising bubbles for the diver; the cabin stays still. */
@@ -199,7 +207,9 @@ export function comboLock(game, opts) {
       });
       body.querySelector('#cl-go').addEventListener('click', () => {
         if (current() === opts.target) {
-          game.playSfx('unlock');
+          // The Tender's instruments answer with a sonar chirp; the Diver's
+          // physical locks give the mechanical unlock.
+          game.playSfx(opts.solveSfx || (isTender() ? 'sonar' : 'unlock'));
           api.solved({ message: opts.solvedMsg });
           if (opts.onSolve) opts.onSolve(game);
         } else {

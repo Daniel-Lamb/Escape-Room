@@ -85,6 +85,12 @@ The engine gained a `config.ambience` hook (string or a per-role function, resol
 at each start) so a game can pick its theme; omitting it keeps the original `cave`
 bed the single-player rooms use. Mute is unified across both worlds.
 
+Two thematic action cues sit on top of the bed: the Tender's cross-read locks
+answer with a **sonar chirp** (the Diver's physical locks keep the mechanical
+unlock — routed by role in `comboLock`), and recovering a brass **depth-mark**
+plays a rising **bubble** swell (via the engine's new `config.collectibleSfx`
+hook, default still the paper `page`).
+
 ## Assets
 Higgsfield: 7 photoreal underwater plates (Seedance 2.0 boomerang loops + WebP posters)
 for the Diver; 1 harbor-seal Gus portrait (background-removed alpha WebP). Plus 3
@@ -92,5 +98,10 @@ photoreal cut-out props (background-removed alpha WebP): a **brass depth-mark ta
 (`mark-tag.webp`, reused for all six in-scene marks + the finale row via `depthTag()`,
 with the fathom depth + letter stamped on as SVG — never baked), the **Cormorant's bell**
 (`bell.webp`, the machinery-space payoff prop), and the **dive lamp** (`lamp.webp`, the
-Diver's light-source accent in the corridor). Tender side is hand-authored SVG. All in
-`public/deep-six/art/`.
+Diver's light-source accent in the corridor). The **Tender's bench** now carries two
+photoreal instrument cut-outs of its own — a period **marine wireless set**
+(`radio.webp`, far right by the porthole) and a brass **echo-sounder / fathometer**
+(`sonar.webp`, left under the live PPI scope; its green depth dial reads in fathoms,
+tying to the depth-mark meta) — grounded with contact shadows and composited into the
+shared `tenderBackdrop`, clear of every hotspot. The rest of the cabin stays
+hand-authored SVG. All in `public/deep-six/art/`.

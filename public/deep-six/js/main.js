@@ -36,6 +36,7 @@ const CONFIG = {
   collectiblesTitle: 'Depth-Marks',
   renderCollectible: depthCard,
   collectibleToast: (e) => `Depth-mark recovered: ${e.sun.rays} fathoms — "${e.sun.letter}"`,
+  collectibleSfx: 'bubble',
   // Two soundscapes: the Diver breathes on the wreck, the Tender listens topside.
   ambience: () => (isDiver() ? 'deep-diver' : 'deep-tender'),
   victory: {

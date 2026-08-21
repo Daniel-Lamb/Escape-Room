@@ -71,6 +71,7 @@ import { initGus } from './gus-core.js';
  * @property {string} [collectiblesTitle]
  * @property {(entry: import('./state.js').JournalEntry) => string} [renderCollectible]
  * @property {(entry: import('./state.js').JournalEntry) => string} [collectibleToast]
+ * @property {string} [collectibleSfx] playSfx name for a 'sun' collectible add (default 'page')
  * @property {{ title: string, heading: string, story: string }} [victory]
  * @property {{ title: string, heading: string, story: string, retryLabel?: string, restartLabel?: string }} [defeat]
  * @property {string} [restartConfirm]
@@ -204,7 +205,7 @@ export const game = {
       if (state.journal.some(e => e.id === id)) return;
       state.journal.push({ id, ...entry });
       saveState();
-      audio.playSfx('page');
+      audio.playSfx(entry.category === 'sun' && cfg.collectibleSfx ? cfg.collectibleSfx : 'page');
       const btn = $('#btn-journal');
       btn.classList.remove('badge-pulse');
       void btn.offsetWidth;

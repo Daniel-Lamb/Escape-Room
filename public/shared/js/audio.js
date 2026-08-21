@@ -148,6 +148,19 @@ const SFX = {
   page(t) {
     noiseBurst(t, 0.02, 0.09, 0.16, 'highpass', 1800, 0.8);
   },
+  sonar(t) {
+    // an affirmative sonar lock: a bright ping, a confirming tap, a watery return
+    tone(1046, 'sine', t, 0.005, 0.16, 0.5);
+    tone(1568, 'sine', t + 0.08, 0.005, 0.1, 0.4);
+    tone(784, 'sine', t + 0.34, 0.005, 0.07, 0.7);
+  },
+  bubble(t) {
+    // a rising run of bubbles breaking upward — something recovered from the deep
+    [520, 620, 740, 900, 1100].forEach((f, i) =>
+      tone(f, 'sine', t + i * 0.06, 0.004, 0.12, 0.16));
+    noiseBurst(t, 0.03, 0.06, 0.5, 'bandpass', 1000, 0.7);
+    tone(300, 'sine', t + 0.02, 0.01, 0.08, 0.4);
+  },
   stone(t) {
     noiseBurst(t, 0.02, 0.28, 0.5, 'lowpass', 160, 0.7);
     tone(55, 'sine', t, 0.02, 0.2, 0.5);
