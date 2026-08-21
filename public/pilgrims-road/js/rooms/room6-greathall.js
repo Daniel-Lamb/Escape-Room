@@ -76,8 +76,8 @@ export default {
       <!-- twin hearths -->
       ${[620, 1360].map(x => `
       <g>
-        <rect x="${x - 90}" y="480" width="180" height="180" rx="8" fill="#100d16"/>
-        <rect x="${x - 104}" y="470" width="208" height="18" rx="4" fill="#3a3e4f"/>
+        <rect x="${x - 90}" y="480" width="180" height="180" rx="8" fill="#0b0805"/>
+        <rect x="${x - 104}" y="470" width="208" height="18" rx="4" fill="#2a2016"/>
         <ellipse cx="${x}" cy="620" rx="140" ry="70" fill="url(#gd_gh_coals)" class="glow"/>
         ${[-40, -10, 24, 48].map((dx, i) => `<circle cx="${x + dx}" cy="${632 - (i % 2) * 10}" r="${7 + (i % 3)}" fill="#e07b2a" class="flicker" opacity="0.8"/>`).join('')}
       </g>`).join('')}
@@ -114,12 +114,7 @@ export default {
           </g>`}
           <rect x="1130" y="330" width="120" height="270" fill="#3f2a33"/>
           <path d="M1130 330 q60 20 120 0 l0 270 q-60 -20 -120 0 z" fill="#4a3340"/>`
-        : `
-          <rect x="1180" y="300" width="340" height="300" fill="#4a3340"/>
-          <path d="M1180 300 q170 30 340 0 l0 300 q-170 -30 -340 0 z" fill="#573a49" class="sway slow"/>
-          <g stroke="#3f2a33" stroke-width="4" opacity="0.8">
-            ${[340, 400, 460, 520].map(y => `<path d="M1190 ${y} q160 24 320 0"/>`).join('')}
-          </g>`}
+        : `<image href="art/gh-tapestry.webp" x="1176" y="292" width="348" height="288" preserveAspectRatio="xMidYMid meet" class="sway slow"/>`}
         <!-- the wheel above the dais -->
         <g transform="translate(1350 200)">
           ${[46, 66, 86].map((r, i) => `
@@ -151,22 +146,18 @@ export default {
         <text x="1126" y="750" font-size="19" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif">R</text>
       </g>
 
-      <!-- the mastiff -->
+      <!-- the mastiff (photoreal; the chain to the dais is kept) -->
       <g>
         ${dogAsleep ? `
-          <ellipse cx="880" cy="760" rx="120" ry="40" fill="#1c1824"/>
-          <path d="M790 750 Q800 710 860 712 Q930 714 960 740 Q980 756 950 764 Q870 780 800 766 Q784 762 790 750z" fill="#2e2637"/>
-          <ellipse cx="948" cy="736" rx="30" ry="22" fill="#2e2637"/>
+          <ellipse cx="884" cy="812" rx="132" ry="24" fill="rgba(6,7,13,0.5)"/>
+          <image href="art/gh-dog-asleep.webp" x="760" y="702" width="244" height="119" preserveAspectRatio="xMidYMid meet"/>
           <g font-family="Palatino Linotype, Georgia, serif" fill="#565b6c">
-            <text x="990" y="700" font-size="26" class="float">z</text>
-            <text x="1012" y="672" font-size="20" class="float" style="animation-delay:0.6s">z</text>
+            <text x="1006" y="704" font-size="26" class="float">z</text>
+            <text x="1028" y="676" font-size="20" class="float" style="animation-delay:0.6s">z</text>
           </g>`
         : `
-          <ellipse cx="880" cy="770" rx="110" ry="30" fill="#0c0912"/>
-          <path d="M800 760 Q796 690 852 668 Q900 650 940 672 Q986 656 990 626 Q1006 648 992 676 Q1006 690 1002 712 Q996 750 940 760 Q870 772 800 760z" fill="#231d2e"/>
-          <circle cx="964" cy="668" r="4" fill="#e05252" class="flicker"/>
-          <path d="M930 700 q20 10 40 4" stroke="#0c0912" stroke-width="4" fill="none"/>
-          <path d="M846 700 l-12 60 M906 706 l6 58" stroke="#231d2e" stroke-width="16" stroke-linecap="round"/>`}
+          <ellipse cx="888" cy="776" rx="122" ry="24" fill="rgba(6,7,13,0.5)"/>
+          <image href="art/gh-dog-awake.webp" x="756" y="606" width="266" height="170" preserveAspectRatio="xMidYMid meet"/>`}
         <path d="M${dogAsleep ? 940 : 986} ${dogAsleep ? 720 : 660} Q1060 640 1130 616" stroke="#565b6c" stroke-width="6" fill="none" opacity="0.8"/>
       </g>
 
