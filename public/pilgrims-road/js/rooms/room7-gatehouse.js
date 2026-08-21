@@ -71,21 +71,17 @@ function chamberScene(state) {
       <path class="torch-flame fast" d="M179 192 Q189 210 182 232 Q179 236 176 232 Q169 210 179 192Z" fill="#ffd9a0"/>
     </g>
 
-    <!-- the great windlass (main gate - the trap) -->
+    <!-- the great windlass (main gate - the trap; photoreal) -->
     <g>
-      <circle cx="620" cy="480" r="120" fill="#241f2d" stroke="#3a3e4f" stroke-width="10"/>
-      ${[0, 45, 90, 135].map(a => `<line x1="${620 - 110 * Math.cos(a * Math.PI / 180)}" y1="${480 - 110 * Math.sin(a * Math.PI / 180)}"
-        x2="${620 + 110 * Math.cos(a * Math.PI / 180)}" y2="${480 + 110 * Math.sin(a * Math.PI / 180)}" stroke="#3a3e4f" stroke-width="14"/>`).join('')}
-      <circle cx="620" cy="480" r="26" fill="#2a2d3a" stroke="#565b6c" stroke-width="6"/>
-      <path d="M620 360 L620 60 M700 400 L940 60" stroke="#565b6c" stroke-width="10" fill="none"/>
-      <rect x="540" y="620" width="160" height="40" rx="8" fill="#241f2d"/>
-      <text x="620" y="700" text-anchor="middle" font-size="15" fill="#7a1f2b" font-style="italic"
+      <path d="M620 360 L620 60 M700 400 L940 60" stroke="#565b6c" stroke-width="10" fill="none" opacity="0.7"/>
+      <image href="art/gt-windlass.webp" x="492" y="352" width="256" height="366" preserveAspectRatio="xMidYMid meet"/>
+      <text x="620" y="742" text-anchor="middle" font-size="15" fill="#7a1f2b" font-style="italic"
         font-family="Palatino Linotype, Georgia, serif">the main gate — watched</text>
     </g>
 
-    <!-- north door with sun relief and six dials -->
+    <!-- north door with sun relief and six dials (photoreal door; overlays kept) -->
     <g>
-      <path d="M1150 640 L1150 340 Q1270 250 1390 340 L1390 640 Z" fill="#1c1824" stroke="#3a3e4f" stroke-width="9"/>
+      <image href="art/gt-door.webp" x="1150" y="248" width="240" height="396" preserveAspectRatio="xMidYMid meet"/>
       <!-- sun relief -->
       <g class="beckon">
         <circle cx="1270" cy="310" r="26" fill="none" stroke="#c9a227" stroke-width="5"/>
