@@ -1,12 +1,23 @@
 ---
 import '../styles/global.css';
 import '../styles/dashboard.css';
-import { liveRooms } from '../data/rooms';
+import { liveRooms, rooms } from '../data/rooms';
 import RoomShowcase from '../components/RoomShowcase.tsx';
-import ScrollMorphHero from '../components/ui/scroll-morph-hero.tsx';
 
+const covers = import.meta.glob('../covers/*.webp', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+const cover = (art: string) => covers[`../covers/${art}.webp`];
+
+const base = import.meta.env.BASE_URL;
 const roomsLive = liveRooms.length;
 const puzzles = roomsLive * 7;
+
+// The featured "billboard" room — the sleek neon-heist cover sets the tone.
+const featured = rooms.find((r) => r.id === 'silent-alarm') ?? liveRooms[0];
+
 const favicon =
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>";
 ---
@@ -22,110 +33,51 @@ const favicon =
       content="A collection of hour-long browser escape rooms — solo, two-player, and group. Pick your room; Gus will meet you inside."
     />
     <link rel="icon" href={favicon} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div id="intro-cover"></div>
-    <ScrollMorphHero client:only="react" />
-
     <div class="bg"></div>
-    <div class="bg-vignette"></div>
-    <div id="embers" aria-hidden="true"></div>
 
-    <div class="wrap">
-      <header>
-        <p class="kicker">Choose your door</p>
-        <h1>Escape Rooms</h1>
-        <p class="sub">
-          One hour on the clock. One way out. And in every room, in every era — <b>Gus</b>.
-        </p>
-        <div class="stats" id="stats">
-          <div class="stat">
-            <span class="stat-num" data-to={roomsLive}>0</span>
-            <span class="stat-label">Rooms live</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" data-to={puzzles}>0</span>
-            <span class="stat-label">Puzzles</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" data-to="60" data-suffix="m">0</span>
-            <span class="stat-label">Each</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num" id="stat-escapes" data-to="0">0</span>
-            <span class="stat-label">Your escapes</span>
-          </div>
+    <header class="nav">
+      <a class="nav-brand" href={base}>Escape Rooms</a>
+      <nav class="nav-links">
+        <a href="#rooms">Browse</a>
+        <a href="https://github.com/Daniel-Lamb/Escape-Room">GitHub</a>
+      </nav>
+    </header>
+
+    <section class="billboard">
+      <img class="billboard-img" src={cover(featured.art)} alt="" />
+      <div class="billboard-scrim"></div>
+      <div class="billboard-content">
+        <p class="billboard-kicker">Featured &middot; {featured.kicker}</p>
+        <h1 class="billboard-title">{featured.title}</h1>
+        <div class="billboard-meta">
+          <span class="badge-live">&#9679; Live</span>
+          <span>{roomsLive} rooms</span><span class="dot">&middot;</span>
+          <span>{puzzles} puzzles</span><span class="dot">&middot;</span>
+          <span>~60 min each</span>
         </div>
-      </header>
+        <p class="billboard-blurb">{featured.blurb}</p>
+        <div class="billboard-actions">
+          <a class="btn-play" href={featured.href}>&#9654;&nbsp; {featured.cta ?? 'Enter'}</a>
+          <a class="btn-info" href="#rooms">&#9776;&nbsp; Browse all rooms</a>
+        </div>
+      </div>
+    </section>
 
+    <main id="rooms" class="rows">
       <RoomShowcase client:load />
+    </main>
 
-      <footer>
-        One companion across every era &middot;
-        <a href="https://github.com/Daniel-Lamb/Escape-Room">source on GitHub</a>
-      </footer>
-    </div>
-
-    <script>
-      import { rooms } from '../data/rooms';
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      /* ---------- total escapes across all rooms (from localStorage) ---------- */
-      let totalEscapes = 0;
-      for (const room of rooms) {
-        if (!room.saveKey) continue;
-        try {
-          const vic = JSON.parse(localStorage.getItem(`${room.saveKey}-victory`) || 'null');
-          if (vic && vic.completions) totalEscapes += vic.completions;
-        } catch {
-          /* storage unavailable */
-        }
-      }
-
-      /* ---------- animated stat counters ---------- */
-      (function counters() {
-        const escapesEl = document.getElementById('stat-escapes');
-        if (escapesEl) escapesEl.dataset.to = String(totalEscapes);
-        const nums = document.querySelectorAll<HTMLElement>('.stat-num');
-        const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-        nums.forEach((el) => {
-          const to = Number(el.dataset.to) || 0;
-          const suf = el.dataset.suffix ? `<span class="suf">${el.dataset.suffix}</span>` : '';
-          if (reduceMotion || to === 0) {
-            el.innerHTML = to + suf;
-            return;
-          }
-          const dur = 1100;
-          const start = performance.now();
-          const tick = (now: number) => {
-            const p = Math.min(1, (now - start) / dur);
-            el.innerHTML = Math.round(ease(p) * to) + suf;
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        });
-      })();
-
-      /* ---------- drifting embers ---------- */
-      (function embers() {
-        if (reduceMotion) return;
-        const layer = document.getElementById('embers');
-        if (!layer) return;
-        const N = window.innerWidth < 720 ? 10 : 18;
-        for (let i = 0; i < N; i++) {
-          const e = document.createElement('span');
-          e.className = 'ember';
-          e.style.left = Math.random() * 100 + '%';
-          e.style.setProperty('--sz', 2 + Math.random() * 4 + 'px');
-          e.style.setProperty('--dur', 7 + Math.random() * 9 + 's');
-          e.style.setProperty('--delay', -Math.random() * 12 + 's');
-          e.style.setProperty('--dx', -40 + Math.random() * 80 + 'px');
-          e.style.setProperty('--rise', 60 + Math.random() * 45 + 'vh');
-          e.style.setProperty('--peak', (0.35 + Math.random() * 0.5).toFixed(2));
-          layer.appendChild(e);
-        }
-      })();
-    </script>
+    <footer>
+      One companion across every era &middot;
+      <a href="https://github.com/Daniel-Lamb/Escape-Room">source on GitHub</a>
+    </footer>
   </body>
 </html>
