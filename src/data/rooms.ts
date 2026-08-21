@@ -29,6 +29,7 @@ export interface Section {
   mode: Mode;
   title: string;
   sub: string;
+  how: string; // brief "how it works" shown in the header's (?) tooltip
   count?: string; // omit to derive "<n> rooms · live" from the room list
 }
 
@@ -218,17 +219,20 @@ export const sections: Section[] = [
     mode: 'single',
     title: 'Single-player',
     sub: 'One player, one hour, one companion. Every room is hand-built, strictly fair, and playable start to finish today.',
+    how: 'Just you. Explore each scene, examine clues, and solve seven puzzles to escape before the hour runs out. Stuck? Gus, your companion, gives hints.',
   },
   {
     mode: 'duo',
     title: 'For Duos',
     sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Four are live; more are coming.',
+    how: 'Two players, on two separate screens. Each of you picks a different role and sees only half the room — the code that opens your lock is shown on your partner’s screen, so you solve it by talking to each other.',
     count: '4 live · more soon',
   },
   {
     mode: 'group',
     title: 'For Groups',
     sub: 'Party-sized rooms for three to six — roles, sabotage, and a verdict that needs a quorum.',
+    how: 'A party game for three to six. Everyone takes a role and pools what they alone can see to crack shared locks and reach a group verdict before time runs out.',
     count: 'In development',
   },
 ];

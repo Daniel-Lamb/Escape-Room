@@ -70,7 +70,19 @@ function Placard({ room }: { room: Room }) {
   )
 }
 
-function Row({ mode, title, sub, count }: { mode: string; title: string; sub: string; count?: string }) {
+function Row({
+  mode,
+  title,
+  sub,
+  how,
+  count,
+}: {
+  mode: string
+  title: string
+  sub: string
+  how: string
+  count?: string
+}) {
   const sectionRooms = useMemo(() => rooms.filter((r) => r.mode === mode), [mode])
   // Default to this section's own live count (e.g. "4 live"), not the site total.
   const label = count ?? `${sectionRooms.filter((r) => r.status === "live").length} live`
@@ -79,6 +91,12 @@ function Row({ mode, title, sub, count }: { mode: string; title: string; sub: st
     <section className="show-row" data-mode={mode}>
       <div className="show-row-head">
         <h2>{title}</h2>
+        <span className="row-help">
+          <button className="row-help-btn" aria-label={`How ${title} works`}>?</button>
+          <span className="row-help-tip" role="tooltip">
+            {how}
+          </span>
+        </span>
         <span className="show-row-count">{label}</span>
       </div>
       <p className="show-row-sub">{sub}</p>
@@ -95,7 +113,7 @@ export default function RoomShowcase() {
   return (
     <div className="showcase">
       {sections.map((sec) => (
-        <Row key={sec.mode} mode={sec.mode} title={sec.title} sub={sec.sub} count={sec.count} />
+        <Row key={sec.mode} mode={sec.mode} title={sec.title} sub={sec.sub} how={sec.how} count={sec.count} />
       ))}
     </div>
   )

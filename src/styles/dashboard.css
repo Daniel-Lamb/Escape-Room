@@ -108,6 +108,38 @@ a { color: inherit; }
 .show-row-head { display: flex; align-items: baseline; gap: 12px; padding: 0 clamp(18px, 5vw, 60px); }
 .show-row-head h2 { font-size: clamp(18px, 2.2vw, 24px); font-weight: 700; letter-spacing: -0.01em; color: #e5e5e5; }
 .show-row-count { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim-2); }
+
+/* ---------- "how it works" help tooltip on each row header ---------- */
+.row-help { position: relative; display: inline-flex; align-self: center; }
+.row-help-btn {
+  width: 19px; height: 19px; padding: 0; border-radius: 50%;
+  display: grid; place-items: center; line-height: 1;
+  font-family: var(--sans); font-size: 12px; font-weight: 700;
+  color: var(--dim-2); background: transparent; border: 1px solid var(--hairline);
+  cursor: help; transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.row-help-btn:hover, .row-help:focus-within .row-help-btn {
+  color: #fff; border-color: rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.08);
+}
+.row-help-tip {
+  position: absolute; left: 0; top: calc(100% + 9px); z-index: 45;
+  width: max-content; max-width: min(320px, 78vw);
+  padding: 11px 13px; border-radius: 9px;
+  background: #191919; border: 1px solid var(--hairline);
+  color: var(--dim); font-size: 13px; font-weight: 400; line-height: 1.5; letter-spacing: 0;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+  opacity: 0; visibility: hidden; transform: translateY(-5px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  pointer-events: none;
+}
+.row-help-tip::before {
+  content: ""; position: absolute; left: 6px; top: -5px; width: 9px; height: 9px;
+  background: #191919; border-left: 1px solid var(--hairline); border-top: 1px solid var(--hairline);
+  transform: rotate(45deg);
+}
+.row-help:hover .row-help-tip, .row-help:focus-within .row-help-tip {
+  opacity: 1; visibility: visible; transform: none;
+}
 .show-row-sub { padding: 0 clamp(18px, 5vw, 60px); margin-top: 5px; color: var(--dim-2); font-size: 13.5px; line-height: 1.4; max-width: 760px; }
 
 .row-track {
