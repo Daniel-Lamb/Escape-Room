@@ -115,11 +115,9 @@ export default {
       <text x="780" y="417" text-anchor="middle" font-size="17" fill="#2b1f08" font-weight="bold"
         font-family="Palatino Linotype, Georgia, serif" letter-spacing="1">LET THE SHEPHERD SING FIRST AND LAST.</text>
 
-      <!-- bell frame -->
+      <!-- bell frame (photoreal carillon beam) -->
       <g>
-        <rect x="380" y="470" width="800" height="18" rx="6" fill="#4a3520"/>
-        <rect x="380" y="470" width="18" height="180" fill="#4a3520"/>
-        <rect x="1162" y="470" width="18" height="180" fill="#4a3520"/>
+        <image href="art/ch-frame.webp" x="376" y="450" width="808" height="129" preserveAspectRatio="xMidYMid meet"/>
         ${BELLS.map((b, i) => {
           const x = 470 + i * 160;
           return `
@@ -133,26 +131,20 @@ export default {
         }).join('')}
       </g>
 
-      <!-- votive candles -->
+      <!-- votive candles (photoreal; procedural glow kept for flicker) -->
       <g>
-        <ellipse cx="180" cy="520" rx="150" ry="110" fill="url(#gd_ch_candle)" class="glow fast"/>
-        ${[[120, 560], [160, 545], [205, 558], [245, 548]].map(([x, y]) => `
-          <rect x="${x - 6}" y="${y}" width="12" height="26" rx="2" fill="#e8d9b0"/>
-          <path class="torch-flame fast" d="M${x} ${y - 16} q5 7 0 14 q-5 -7 0 -14z" fill="#ffd9a0"/>`).join('')}
-        <rect x="90" y="586" width="190" height="12" rx="4" fill="#3a2d1c"/>
+        <ellipse cx="176" cy="548" rx="150" ry="122" fill="url(#gd_ch_candle)" class="glow fast"/>
+        <image href="art/ch-candles.webp" x="86" y="440" width="182" height="282" preserveAspectRatio="xMidYMid meet"/>
       </g>
 
-      <!-- lectern with psalter -->
+      <!-- lectern with psalter (photoreal) -->
       <g>
-        <path d="M1300 640 l60 0 -8 -110 -44 0 z" fill="#4a3520"/>
-        <rect x="1272" y="512" width="116" height="24" rx="4" fill="#38290f" transform="rotate(-12 1330 524)"/>
-        <rect x="1280" y="496" width="100" height="18" rx="2" fill="#7a1f2b" transform="rotate(-12 1330 505)"/>
+        <image href="art/ch-lectern.webp" x="1252" y="450" width="156" height="290" preserveAspectRatio="xMidYMid meet"/>
       </g>
 
-      <!-- altar + reliquary -->
+      <!-- altar + reliquary (photoreal altar) -->
       <g>
-        <rect x="620" y="660" width="320" height="30" rx="6" fill="#3a3e4f"/>
-        <rect x="650" y="690" width="260" height="120" fill="#2a2d3a"/>
+        <image href="art/ch-altar.webp" x="592" y="644" width="376" height="180" preserveAspectRatio="xMidYMid meet"/>
         <g>
           ${solved ? `
             <image href="art/ch-reliquary-open.webp" x="705" y="614" width="150" height="178" preserveAspectRatio="xMidYMid meet"/>
@@ -166,9 +158,10 @@ export default {
         </g>
       </g>
 
-      <!-- crypt-stair arch with sun-mark #3 -->
+      <!-- crypt-stair arch with sun-mark #3 (photoreal descending stair) -->
       <g>
-        <path d="M60 640 L60 380 Q140 300 220 380 L220 640 Z" fill="#05070d"/>
+        <clipPath id="clip_ch_crypt"><path d="M60 640 L60 380 Q140 300 220 380 L220 640 Z"/></clipPath>
+        <image href="art/ch-crypt.webp" x="60" y="300" width="160" height="340" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_ch_crypt)"/>
         <path d="M60 640 L60 380 Q140 300 220 380 L220 640" fill="none" stroke="#3a3e4f" stroke-width="10"/>
         <g class="beckon">
           <image href="art/oub-sun.webp" x="108" y="322" width="64" height="66" preserveAspectRatio="xMidYMid meet"/>
