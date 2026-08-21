@@ -87,48 +87,11 @@ export default {
       <!-- background plate (generated, lit state); the darkness scrim below dims it until the candle is lit -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/scriptorium.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/scriptorium.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- high shelf of six tomes -->
-      <g>
-        <rect x="480" y="150" width="640" height="16" rx="4" fill="#3a2d1c"/>
-        ${TOMES.map((t, i) => {
-          const x = 500 + i * 102;
-          const h = 96 + (i % 3) * 8;
-          return `
-          <g>
-            <rect x="${x}" y="${150 - h}" width="72" height="${h}" rx="4"
-              fill="${['#4a3040', '#2e3e50', '#503a2a', '#5a4a20', '#33402e', '#40303a'][i]}"
-              stroke="#0c0912" stroke-width="3"/>
-            ${t.key === 'comet'
-              ? `<g stroke="#c9a227" stroke-width="3" fill="none">
-                   <rect x="${x + 24}" y="${150 - h + 46}" width="24" height="30"/>
-                   <path d="M${x + 24} ${150 - h + 46} l6 -8 12 0 6 8"/>
-                   <circle cx="${x + 50}" cy="${150 - h + 22}" r="5" fill="#c9a227"/>
-                   <line x1="${x + 44}" y1="${150 - h + 26}" x2="${x + 24}" y2="${150 - h + 38}"/>
-                 </g>`
-              : t.key === 'ship' ? `<path d="M${x + 20} ${150 - h + 60} q16 12 32 0 l-4 10 -24 0 z M${x + 36} ${150 - h + 58} l0 -26 14 16 z" fill="#8b8878"/>`
-              : t.key === 'grail' ? `<path d="M${x + 26} ${150 - h + 40} q10 22 20 0 l-6 22 -8 0 z M${x + 30} ${150 - h + 68} l12 0" stroke="#8b8878" stroke-width="3" fill="none"/>`
-              : t.key === 'boar' ? `<ellipse cx="${x + 36}" cy="${150 - h + 54}" rx="17" ry="10" fill="none" stroke="#8b8878" stroke-width="3"/><path d="M${x + 50} ${150 - h + 50} q5 -2 6 -7" stroke="#8b8878" stroke-width="3" fill="none"/>`
-              : t.key === 'harp' ? `<path d="M${x + 26} ${150 - h + 70} q-4 -28 12 -34 q14 -4 10 10 M${x + 30} ${150 - h + 66} l0 -20 M${x + 37} ${150 - h + 64} l0 -22" stroke="#8b8878" stroke-width="2.5" fill="none"/>`
-              : `<circle cx="${x + 36}" cy="${150 - h + 54}" r="14" fill="none" stroke="#8b8878" stroke-width="3"/><g stroke="#8b8878" stroke-width="2.5">${[0, 45, 90, 135].map(a => `<line x1="${x + 36 - 14 * Math.cos(a * Math.PI / 180)}" y1="${150 - h + 54 - 14 * Math.sin(a * Math.PI / 180)}" x2="${x + 36 + 14 * Math.cos(a * Math.PI / 180)}" y2="${150 - h + 54 + 14 * Math.sin(a * Math.PI / 180)}"/>`).join('')}</g>`}
-          </g>`;
-        }).join('')}
-      </g>
+      <!-- high shelf of six tomes (photoreal; tops run off the top edge of the frame) -->
+      <image href="art/sc-shelf.webp" x="474" y="-150" width="652" height="337" preserveAspectRatio="xMidYMid meet"/>
 
-      <!-- sloped writing desks -->
-      ${[[260, 480], [640, 500], [1020, 480]].map(([x, y]) => `
-      <g>
-        <path d="M${x} ${y} L${x + 260} ${y - 40} L${x + 260} ${y + 30} L${x} ${y + 70} Z" fill="url(#gd_sc_desk)"/>
-        <rect x="${x + 20}" y="${y + 60}" width="22" height="130" fill="#2e2417"/>
-        <rect x="${x + 210}" y="${y + 20}" width="22" height="130" fill="#2e2417"/>
-        <path d="M${x + 30} ${y - 2} L${x + 130} ${y - 18} L${x + 132} ${y + 14} L${x + 32} ${y + 30} Z" fill="#e8d9b0" opacity="0.9"/>
-      </g>`).join('')}
-
-      <!-- ink horns & quills on middle desk -->
-      <path d="M780 470 q6 -18 18 -20 l2 12 q-8 4 -10 14 z" fill="#1c1610"/>
-      <path d="M812 440 q22 -20 38 -22 q-10 16 -28 30z" fill="#cfd4de"/>
-
-      <!-- pen case -->
-      <rect x="900" y="455" width="90" height="26" rx="6" fill="#38290f" stroke="#1c1610" stroke-width="2" transform="rotate(-8 945 468)"/>
+      <!-- sloped writing desks (photoreal; each carries a vellum, inkhorn & quill) -->
+      ${[[150, 356], [560, 384], [980, 352]].map(([x, y]) => `<image href="art/sc-desk.webp" x="${x}" y="${y}" width="322" height="314" preserveAspectRatio="xMidYMid meet"/>`).join('')}
 
       <!-- desk sconce (candle target) -->
       <g>
@@ -142,9 +105,7 @@ export default {
 
       <!-- Edmund's chest with five letter dials -->
       <g>
-        <rect x="1250" y="560" width="270" height="170" rx="12" fill="#3a2d1c" stroke="#1c1610" stroke-width="5"/>
-        <path d="M1250 580 q135 -52 270 0 l0 -20 q-135 -46 -270 0 z" fill="#4a3a26"/>
-        ${[0, 1, 2].map(i => `<rect x="${1270 + i * 90}" y="560" width="16" height="170" fill="#57432a"/>`).join('')}
+        <image href="art/sc-chest.webp" x="1234" y="536" width="304" height="213" preserveAspectRatio="xMidYMid meet"/>
         ${chestOpen ? `
           <rect x="1262" y="574" width="246" height="30" fill="#0c0912"/>
           ${taken ? '' : `<g class="beckon">
@@ -159,11 +120,9 @@ export default {
           </g>`}
       </g>
 
-      <!-- stair door behind the desks -->
+      <!-- stair door behind the desks (photoreal arched door) -->
       <g>
-        <path d="M80 620 L80 330 Q170 250 260 330 L260 620 Z" fill="#241a10" stroke="#3a2d1c" stroke-width="8"/>
-        <circle cx="230" cy="480" r="9" fill="#c9a227"/>
-        <path d="M120 380 l100 0 M120 440 l100 0 M120 500 l100 0" stroke="#1c1610" stroke-width="5"/>
+        <image href="art/sc-door.webp" x="76" y="300" width="190" height="355" preserveAspectRatio="xMidYMid meet"/>
       </g>
 
       ${lit ? '' : `
