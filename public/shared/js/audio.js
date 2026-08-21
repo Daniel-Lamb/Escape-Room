@@ -412,11 +412,103 @@ function deepTenderAmbience() {
   every(15000, 28000, (t) => staticWhisper(t, 0.03), 9000);
 }
 
+/* --- extra one-shot voices for the series themes --- */
+
+/** A short digital data blip. @param {number} t @param {number} [freq] @param {number} [vol] */
+function beep(t, freq = 1400, vol = 0.05) {
+  tone(freq, 'square', t, 0.004, vol, 0.06);
+}
+
+/** A distant metal clank — inharmonic partials over a transient tick.
+ * @param {number} t @param {number} [vol] */
+function clank(t, vol = 0.05) {
+  [1, 1.48, 2.31].forEach((mlt, i) => tone(520 * mlt, 'sine', t, 0.003, vol / (i + 1), 0.5 - i * 0.12));
+  noiseBurst(t, 0.002, vol * 0.6, 0.16, 'bandpass', 1800, 3);
+}
+
+/** A pitch-bending cry — bird, gull, or siren depending on the sweep.
+ * @param {number} t @param {number} f0 @param {number} f1 @param {number} [vol] @param {number} [dur] @param {OscillatorType} [type] */
+function chirp(t, f0, f1, vol = 0.06, dur = 0.3, type = 'sine') {
+  const c = ensureCtx();
+  const m = /** @type {GainNode} */ (master);
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  env(g, t, Math.min(0.02, dur * 0.2), vol, dur);
+  o.connect(g).connect(m);
+  o.start(t); o.stop(t + dur + 0.1);
+}
+
+/** A soft clock tick. @param {number} t @param {number} [vol] */
+function tick(t, vol = 0.03) {
+  noiseBurst(t, 0.001, vol, 0.03, 'highpass', 2500, 1);
+}
+
+/* --- per-game beds for the rest of the series --- */
+
+// Starfall Station: a low reactor hum and HVAC air, data blips, distant hull clanks.
+function shipAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 90, gain: 0.06, lfoRate: 0.04, lfoDepth: 0.02, amp: 4 });
+  loopBed({ filterType: 'lowpass', freq: 520, gain: 0.02, lfoRate: 0.09, lfoDepth: 0.012, amp: 2 });
+  every(6000, 12000, (t) => { beep(t, 1500, 0.04); beep(t + 0.14, 1900, 0.03); }, 4000);
+  every(16000, 30000, (t) => clank(t, 0.05), 9000);
+}
+
+// Wild Court: humid forest air under a cicada shimmer, birdsong, canopy drips, a far animal.
+function jungleAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 300, gain: 0.035, lfoRate: 0.06, lfoDepth: 0.015, amp: 3 });
+  loopBed({ filterType: 'bandpass', freq: 4200, gain: 0.012, q: 0.9, lfoRate: 0.5, lfoDepth: 0.006, amp: 1, roughness: 0.6 });
+  every(5000, 11000, (t) => { chirp(t, 2200, 3000, 0.05, 0.14); chirp(t + 0.2, 2600, 1900, 0.04, 0.18); }, 3500);
+  every(7000, 15000, (t) => { const f = 1400 + Math.random() * 1400; tone(f, 'sine', t, 0.002, 0.045, 0.22); tone(f * 0.6, 'sine', t + 0.16, 0.002, 0.02, 0.4); }, 5000);
+  every(22000, 42000, (t) => chirp(t, 320, 180, 0.06, 0.9, 'sawtooth'), 14000);
+}
+
+// Gate of Life: stone air deep under the arena, with a distant crowd swell, drips, a far iron gate.
+function cryptAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 200, gain: 0.05, lfoRate: 0.05, lfoDepth: 0.025, amp: 4 });
+  every(18000, 34000, (t) => noiseBurst(t, 1.4, 0.05, 1.8, 'bandpass', 300, 0.6), 8000);
+  every(10000, 20000, (t) => { const f = 1500 + Math.random() * 1200; tone(f, 'sine', t, 0.002, 0.045, 0.22); tone(f * 0.6, 'sine', t + 0.18, 0.002, 0.02, 0.4); }, 6000);
+  every(20000, 40000, (t) => clank(t, 0.05), 15000);
+}
+
+// Signal Towers: sea wash and coastal wind, gull cries, a distant foghorn.
+function coastAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 480, gain: 0.05, lfoRate: 0.12, lfoDepth: 0.03, amp: 3.5 });
+  loopBed({ filterType: 'lowpass', freq: 300, gain: 0.03, lfoRate: 0.06, lfoDepth: 0.02, amp: 3 });
+  every(8000, 16000, (t) => { chirp(t, 1500, 900, 0.05, 0.35); chirp(t + 0.45, 1400, 850, 0.04, 0.3); }, 5000);
+  every(22000, 40000, (t) => { tone(150, 'sine', t, 0.15, 0.09, 1.6); tone(151, 'sine', t, 0.15, 0.06, 1.6, 6); }, 12000);
+}
+
+// The Looking Glass: a hushed room tone, a pendulum clock, house creaks, a faint music box.
+function manorAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 240, gain: 0.028, lfoRate: 0.05, lfoDepth: 0.012, amp: 3 });
+  every(1900, 2100, (t) => tick(t, 0.025), 1900);
+  every(12000, 24000, (t) => creakSoft(t, 0.04), 7000);
+  every(25000, 45000, (t) => [1319, 1568, 2093].forEach((f, i) => tone(f, 'sine', t + i * 0.18, 0.005, 0.03, 0.5)), 16000);
+}
+
+// Silent Alarm: a low HVAC hum and mains buzz, fluorescent ticks, distant city, a far siren.
+function heistAmbience() {
+  loopBed({ filterType: 'lowpass', freq: 110, gain: 0.055, lfoRate: 0.03, lfoDepth: 0.02, amp: 4 });
+  loopBed({ filterType: 'bandpass', freq: 120, gain: 0.015, q: 4, amp: 2 });
+  every(9000, 16000, (t) => noiseBurst(t, 0.02, 0.03, 0.5, 'bandpass', 2600, 6), 5000);
+  every(12000, 22000, (t) => noiseBurst(t, 1.0, 0.035, 1.4, 'bandpass', 240, 0.5), 8000);
+  every(30000, 52000, (t) => { chirp(t, 700, 900, 0.04, 0.5); chirp(t + 0.55, 900, 700, 0.04, 0.5); }, 20000);
+}
+
 /** @type {Record<string, () => void>} */
 const AMBIENCE = {
   cave: caveAmbience,
   'deep-diver': deepDiverAmbience,
   'deep-tender': deepTenderAmbience,
+  ship: shipAmbience,
+  jungle: jungleAmbience,
+  crypt: cryptAmbience,
+  coast: coastAmbience,
+  manor: manorAmbience,
+  heist: heistAmbience,
 };
 
 /** @param {string} [kind] */

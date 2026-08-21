@@ -37,6 +37,7 @@ function pinCard(e) {
 const CONFIG = {
   gusForm: GUS,
   journalTitle: 'The Job File',
+  ambience: 'heist',
   journalEmpty: "The file is thin so far. Every code, schematic, feed, and note you examine is copied here — and the steel vault-pins you lift. You will each hold only three pins: to set the master combination at the vault, you must read yours to your partner and theirs to you.",
   collectiblesTitle: 'Vault-Pins',
   renderCollectible: pinCard,

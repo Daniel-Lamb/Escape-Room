@@ -32,6 +32,7 @@ const CONFIG = {
   assetBase: new URL('../', import.meta.url).href,   // <game>/ — makes art/ refs deploy-base-proof
   gusForm: GUS,
   journalTitle: 'Suit Log',
+  ambience: 'ship',
   journalEmpty: 'Log empty. Every readout, manifest, schematic, and memory shard you examine is recorded here automatically. Memory shards matter more than you currently understand.',
   collectiblesTitle: 'Memory Shards',
   renderCollectible: shardCard,

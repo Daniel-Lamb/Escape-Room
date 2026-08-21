@@ -31,6 +31,7 @@ function shardCard(e) {
 const CONFIG = {
   gusForm: GUS,
   journalTitle: 'Reflections',
+  ambience: 'manor',
   journalEmpty: "Nothing recorded yet. Every note, cipher, and reading you examine is copied here — and the mirror-shards you find. You will each hold only three shards: the glass keeps its true name reversed, so at the last you must pool all six, set them in order, and turn the word about.",
   collectiblesTitle: 'Mirror-Shards',
   renderCollectible: shardCard,

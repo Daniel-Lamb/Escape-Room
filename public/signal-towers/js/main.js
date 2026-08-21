@@ -40,6 +40,7 @@ function bearingCard(e) {
 const CONFIG = {
   gusForm: GUS,
   journalTitle: "Keeper's Log",
+  ambience: 'coast',
   journalEmpty: "The log is dry so far. Every reading, chart, and codebook page you examine is copied here — and the brass bearing-marks you find. You will each hold only half the marks: to spell the harbour word at the crown, you must read yours to your partner and theirs to you.",
   collectiblesTitle: 'Bearing-Marks',
   renderCollectible: bearingCard,
