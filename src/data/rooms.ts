@@ -98,8 +98,6 @@ export const rooms: Room[] = [
     saveKey: 'gate-of-life-save-v1',
     freshText: 'Unplayed — the carcer waits.',
   },
-  // Room V (EDEN: The Four Rivers) is live at /eden/ but unlisted while the
-  // greybox is playtested — restore its card here when it's ready to show.
   {
     id: 'signal-towers',
     mode: 'duo',

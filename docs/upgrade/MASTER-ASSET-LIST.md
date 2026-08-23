@@ -35,7 +35,6 @@ per-game element coordinates live in the per-game specs
 | Signal Towers (duo) | ✅ 7/7 (animated video; shared per-SLUG storm backdrop, both towers) | ☐ | ✅ |
 | The Looking Glass (duo) | ✅ 7/7 (animated video; one manor plate per room, warm/cool wash + desaturate keeps the real-vs-mirror asymmetry) | ☐ | ✅ |
 | Silent Alarm (duo) | ✅ 7/7 (animated video; The Hand's museum interiors — The Eye's van stays procedural surveillance) | ☐ | ✅ |
-| Eden (3D) | — separate pipeline — | | |
 
 ---
 
@@ -52,7 +51,7 @@ Work **game by game, room by room**, backgrounds already done first where possib
 
 Also per game: upgrade **Gus's portrait** (`js/gus.js`) to match the new fidelity, and generate any **collectible** art once and reuse (sun-marks, shards, tesserae, tokens).
 
-Sequencing: **Pilgrim's Road** (finish 3–7) → **Gate of Life** → **Starfall** → **Wild Court** → **duos** → Eden last (3D, different tooling).
+Sequencing: **Pilgrim's Road** (finish 3–7) → **Gate of Life** → **Starfall** → **Wild Court** → **duos**.
 
 ---
 
@@ -344,10 +343,6 @@ No per-element spec yet — enumerate each from its room files when reached. Bas
 ## 6 · Shared — Gus portraits (per game, in `js/gus.js`)
 
 `[ ]` Pilgrim's Road — (medieval companion) · `[ ]` Gate of Life — old Colosseum lion "Gustus" · `[ ]` Starfall — GS-1 drone · `[ ]` Wild Court — golden tamarin · `[ ]` Signal Towers — storm petrel · `[ ]` Looking Glass — black cat · `[ ]` Silent Alarm — museum rat. Each: one portrait sprite (dock reads at ~64 px), matching the game palette.
-
-## 7 · Eden (3D)
-
-React Three Fiber greybox — **different pipeline** (models/textures, not 2D plates). Out of scope for this 2D-sprite pass; handle separately if/when the greybox graduates to a real art pass.
 
 ---
 

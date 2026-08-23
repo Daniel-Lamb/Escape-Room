@@ -115,7 +115,6 @@ Then, per game: upgrade Gus's portrait, run a full build, spot-check in-browser,
 4. **The Wild Court** — greens, most bespoke.
 5. **Duo games** (Signal Towers, Looking Glass, Silent Alarm) — two role-variant scenes
    each.
-6. **Eden** — 3D (React Three Fiber); different pipeline, handled separately.
 
 Backgrounds-first within each game (biggest jump for least effort), then interactive
 elements, then the peak-room modal chrome.
