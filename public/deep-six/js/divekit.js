@@ -1,7 +1,7 @@
 // Shared SVG fragments + puzzle helpers for DEEP SIX. Two visual worlds keyed to
 // the role: The Diver sees the photoreal flooded wreck (video backdrop); The
-// Tender sees the boat cabin — sonar scope, instrument panel, and a porthole with
-// the dive line dropping away. Every id/keyframe is prefixed by a per-scene slug.
+// Tender sees the photoreal boat cabin — sonar scope, instrument shelf, and a
+// porthole onto the night sea. Every id/keyframe is prefixed by a per-scene slug.
 
 import { isDiver, isTender, roleName } from './role.js';
 
@@ -44,42 +44,23 @@ function diverBackdrop(slug) {
   return `<foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="${ART}${slug}.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="${ART}${slug}.mp4" type="video/mp4"/></video></foreignObject>`;
 }
 
-/** The Tender's boat-cabin instrument backdrop (procedural, shared by all scenes). */
+/** The Tender's boat-cabin backdrop: a photoreal salvage-cabin plate (riveted
+ *  bulkhead, brass pipes, a dressed instrument shelf), with the PPI sonar scope
+ *  and the night-sea porthole dropped in as photoreal cut-outs. The scope keeps
+ *  its live sweep + glow as an SVG overlay so it still reads as a running set.
+ *  Shared by all tender scenes; every element sits clear of the tender hotspots
+ *  (relay 556-1044/y138-322, lock 620-980, gauges/mark/lore 1108-1454). */
 function tenderBackdrop(slug) {
   return `
-    <rect x="0" y="0" width="1600" height="900" fill="url(#${slug}_deck)"/>
-    <g stroke="#0a1620" stroke-width="6" opacity="0.6">
-      <line x1="0" y1="150" x2="1600" y2="150"/><line x1="0" y1="660" x2="1600" y2="660"/>
-      <line x1="540" y1="0" x2="540" y2="660"/><line x1="1080" y1="0" x2="1080" y2="660"/>
-    </g>
-    <!-- porthole to the night sea; the dive line drops away -->
+    <image href="${ART}tender-cabin.webp" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
+    <!-- the sonar scope: photoreal bezel, with the live sweep + glow on top -->
     <g>
-      <circle cx="1330" cy="300" r="150" fill="#03121a" stroke="#20323f" stroke-width="12"/>
-      <circle cx="1330" cy="300" r="150" fill="none" stroke="rgba(120,240,190,0.15)" stroke-width="3"/>
-      <line x1="1330" y1="170" x2="1330" y2="450" stroke="#3a4a52" stroke-width="4" stroke-dasharray="2 11" opacity="0.7"/>
-      ${[210, 258, 312, 372].map((y, i) => `<circle cx="${1322 + (i % 2) * 14}" cy="${y}" r="2.6" fill="#7cf0be" class="${slug}_bub" style="animation-delay:-${i}s"/>`).join('')}
+      <image href="${ART}ppi.webp" x="190" y="219" width="340" height="321" preserveAspectRatio="xMidYMid meet"/>
+      <circle cx="360" cy="380" r="116" fill="url(#${slug}_sonar)"/>
+      <line x1="360" y1="380" x2="360" y2="270" stroke="#7cf0be" stroke-width="2.5" opacity="0.5" class="${slug}_sw"/>
     </g>
-    <!-- the sonar scope -->
-    <g>
-      <circle cx="360" cy="380" r="150" fill="#031712" stroke="#123a2c" stroke-width="10"/>
-      <circle cx="360" cy="380" r="150" fill="url(#${slug}_sonar)"/>
-      <g stroke="#1c5a44" stroke-width="1.5" opacity="0.55" fill="none">
-        <circle cx="360" cy="380" r="52"/><circle cx="360" cy="380" r="102"/>
-        <line x1="210" y1="380" x2="510" y2="380"/><line x1="360" y1="230" x2="360" y2="530"/>
-      </g>
-      <line x1="360" y1="380" x2="360" y2="238" stroke="#7cf0be" stroke-width="2.5" opacity="0.5" class="${slug}_sw"/>
-    </g>
-    <!-- console shelf -->
-    <rect x="0" y="704" width="1600" height="196" fill="#060f14"/>
-    <rect x="0" y="704" width="1600" height="12" fill="#12303a"/>
-    <!-- photoreal instruments on the bench: echo-sounder (left, under the PPI
-         scope) and the wireless set (far right, by the porthole). Both sit clear
-         of every tender hotspot: lock (620-980), mark (1108-1200), lore/gauges
-         (1214-1454, y<624). -->
-    <ellipse cx="205" cy="882" rx="140" ry="19" fill="#02080c" opacity="0.5"/>
-    <image href="${ART}sonar.webp" x="70" y="566" width="270" height="318" preserveAspectRatio="xMidYMid meet"/>
-    <ellipse cx="1440" cy="882" rx="122" ry="17" fill="#02080c" opacity="0.5"/>
-    <image href="${ART}radio.webp" x="1320" y="633" width="240" height="251" preserveAspectRatio="xMidYMid meet"/>`;
+    <!-- porthole onto the black night sea, upper right -->
+    <image href="${ART}porthole.webp" x="1165" y="132" width="330" height="336" preserveAspectRatio="xMidYMid meet"/>`;
 }
 
 /** Ambient overlay: rising bubbles for the diver; the cabin stays still. */
