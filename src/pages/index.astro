@@ -15,8 +15,9 @@ const base = import.meta.env.BASE_URL;
 const roomsLive = liveRooms.length;
 const puzzles = roomsLive * 7;
 
-// The featured "billboard" room — the sleek neon-heist cover sets the tone.
-const featured = rooms.find((r) => r.id === 'silent-alarm') ?? liveRooms[0];
+// The featured "billboard" room — the torch-lit Colosseum cover sets the warm,
+// amber-gold tone the whole dashboard is keyed to.
+const featured = rooms.find((r) => r.id === 'gate-of-life') ?? liveRooms[0];
 
 const favicon =
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>";
