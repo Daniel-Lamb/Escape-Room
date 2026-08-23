@@ -41,7 +41,7 @@ export const rooms: Room[] = [
     kicker: 'Room I · Medieval',
     title: "The Pilgrim's Road",
     blurb:
-      "Condemned at dawn in Vayne Keep, you find a dead monk's trail of carved suns — and one hour to finish the road he died building.",
+      "You're locked in Vayne Keep with an hour until dawn. A dead monk left a trail of carved suns through the chambers; follow it to the way out.",
     chips: ['1 player', '7 chambers', '~60 min'],
     gusChip: '👻 Sir Gus, ghost-knight',
     art: 'pilgrims-road',
@@ -57,7 +57,7 @@ export const rooms: Room[] = [
     kicker: 'Room II · Futurist',
     title: 'Starfall Station',
     blurb:
-      'You wake alone on a dying orbital station, sixty minutes from re-entry. The crew is gone, the AI core is empty, and something about your own reflection is... unavailable.',
+      "You wake alone on a failing orbital station, sixty minutes from re-entry. The crew is gone, the AI core is wiped, and your own reflection doesn't add up.",
     chips: ['1 player', '7 decks', 'Twist ending'],
     gusChip: '🤖 GS-1 "Gus", drone',
     art: 'starfall-station',
@@ -73,7 +73,7 @@ export const rooms: Room[] = [
     kicker: 'Room III · Animal Kingdom',
     title: 'The Wild Court',
     blurb:
-      'You fell into a jungle that appears on no map — because the tribunal that lives there summons its own witnesses. Seven trials to nightfall, and your advocate has a tail.',
+      "You've fallen into a jungle that's on no map, where the animals hold court and you're the one on trial. Seven cases to clear before nightfall.",
     chips: ['1 player', '7 trials', 'Verdict twist'],
     gusChip: '🐒 Gus, tamarin advocate',
     art: 'wild-court',
@@ -89,7 +89,7 @@ export const rooms: Room[] = [
     kicker: 'Room IV · Ancient Rome',
     title: 'The Gate of Life',
     blurb:
-      'Condemned to the midday games beneath the Colosseum, you find six bone tokens left by a man the guards say a lion ate. The lion disagrees.',
+      "Condemned to the midday games beneath the Colosseum, you pick up the trail of a man who vanished down here — six bone tokens, and a guard's story that a lion got him.",
     chips: ['1 player', '7 chambers', 'Hard but fair'],
     gusChip: '🦁 Gus, the Emperor’s lion',
     art: 'gate-of-life',
@@ -105,7 +105,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Asymmetric co-op',
     title: 'Twin Signal Towers',
     blurb:
-      "Two keepers, two lighthouses, one sinking ship. Each of you sees only half the coast — and every lock you face is answered on your partner's screen. Talk to each other, or the tide takes her.",
+      "Two keepers, two lighthouses, one ship going down offshore. You each see only half the coast, and every lock is answered on your partner's screen — so keep talking.",
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🐦 Gus, storm petrel',
     art: 'signal-towers',
@@ -121,7 +121,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Through the glass',
     title: 'The Looking Glass',
     blurb:
-      'One of you is in the manor; the other is trapped inside the mirror, where every room hangs reversed. Each side sees clues the other cannot — trade them before the glass breaks at dawn.',
+      "One of you is in the manor; the other is inside the mirror, where every room hangs reversed. Each side sees clues the other can't — trade them before dawn.",
     chips: ['2 players', '7 rooms', 'Reversed world'],
     gusChip: '🐈‍⬛ Gus, the manor cat',
     art: 'looking-glass',
@@ -137,7 +137,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Two-screen heist',
     title: 'Silent Alarm',
     blurb:
-      "One of you is inside the museum with your hands on the locks; the other is in the van with the schematics, the cameras, and the whole building on a green screen. Every code you need is on your partner's screen — and the alarm is listening.",
+      "One of you is inside the museum, hands on the locks; the other runs overwatch from the van with the schematics and the camera feeds. Every code is on your partner's screen, and you're on the clock before the alarm trips.",
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🐀 Gus, museum rat',
     art: 'silent-alarm',
@@ -153,7 +153,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Deep-sea salvage',
     title: 'Deep Six',
     blurb:
-      "One of you is down on the wreck of the Cormorant with a lamp and a dwindling line of air; the other is topside on the boat, at the sonar, the radio, and the winch. Every lock below is answered by an instrument above — and the tide is turning. Read the line, or the deep keeps you both.",
+      "One of you is down on the wreck of the Cormorant with a lamp and a shrinking supply of air; the other works the sonar, radio, and winch topside. Every lock below is answered by an instrument above, and the air won't last.",
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🦭 Gus, harbor seal',
     art: 'deep-six',
@@ -169,7 +169,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Asymmetric',
     title: 'Two Keys, One Door',
     blurb:
-      'Two players, two screens, one lock. Each of you sees half the truth — and the door opens only when you trust the half you cannot see.',
+      'Two players, two screens, one lock. Each of you sees half of it, and the door opens only when you put both halves together.',
     chips: ['2 players', 'Split screen'],
     gusChip: 'Gus, referee',
     art: 'two-keys-one-door',
@@ -181,7 +181,7 @@ export const rooms: Room[] = [
     kicker: 'Duo · Guide & Ghost',
     title: 'The Blind Cartographer',
     blurb:
-      'One of you holds the only map. The other walks the dark and never sees it. Nightfall comes for whoever stops talking first.',
+      'One of you holds the only map; the other walks the dark and never sees it. The only way out is to talk each other through it.',
     chips: ['2 players', 'Voice co-op'],
     gusChip: 'Gus, unreliable narrator',
     art: 'blind-cartographer',
@@ -193,7 +193,7 @@ export const rooms: Room[] = [
     kicker: 'Group · 3–6 players',
     title: 'The Vault',
     blurb:
-      "Six pairs of hands, one time-locked vault, and exactly enough rope for everyone to hang the plan. Split the roles. Don't split the party.",
+      'Three to six of you, one time-locked vault, and a lot of moving parts. Split the roles, share what only you can see, and crack it before the clock runs out.',
     chips: ['3–6 players', 'Roles'],
     gusChip: 'Gus, quartermaster',
     art: 'the-vault',
@@ -205,7 +205,7 @@ export const rooms: Room[] = [
     kicker: 'Group · Social deduction',
     title: 'Trial by Jury',
     blurb:
-      'The Wild Court reconvenes — and this time the jury is you. One of you is lying to the bench. The verdict escapes the room; the wrong verdict keeps it.',
+      'The Wild Court reconvenes, and this time the jury is you — but one of you is lying to the bench. The right verdict gets everyone out; the wrong one keeps you in.',
     chips: ['4–8 players', 'Hidden roles'],
     gusChip: '🐒 Gus, presiding',
     art: 'trial-by-jury',
@@ -216,20 +216,20 @@ export const sections: Section[] = [
   {
     mode: 'single',
     title: 'Single-player',
-    sub: 'One player, one hour, one companion. Every room is hand-built, strictly fair, and playable start to finish today.',
+    sub: 'A single player and about an hour per room. Each one is hand-built, fair, and playable start to finish today.',
     how: 'Just you. Explore each scene, examine clues, and solve seven puzzles to escape before the hour runs out. Stuck? Gus, your companion, gives hints.',
   },
   {
     mode: 'duo',
     title: 'For Duos',
-    sub: 'Co-op rooms built for two — asymmetric information, shared locks, and a companion who plays favourites. Four are live; more are coming.',
+    sub: 'Co-op rooms for two: you each see half the room and talk each other through the locks. Four are live, with more on the way.',
     how: 'Two players, on two separate screens. Each of you picks a different role and sees only half the room — the code that opens your lock is shown on your partner’s screen, so you solve it by talking to each other.',
     count: '4 live · more soon',
   },
   {
     mode: 'group',
     title: 'For Groups',
-    sub: 'Party-sized rooms for three to six — roles, sabotage, and a verdict that needs a quorum.',
+    sub: 'Party rooms for three to six players. Everyone takes a role and pools what only they can see.',
     how: 'A party game for three to six. Everyone takes a role and pools what they alone can see to crack shared locks and reach a group verdict before time runs out.',
     count: 'In development',
   },
