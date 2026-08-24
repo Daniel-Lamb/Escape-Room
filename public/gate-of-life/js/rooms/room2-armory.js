@@ -29,23 +29,26 @@ registerItems({
 });
 
 const HELMS = [
-  { id: 'fish', label: 'Fish-crested bronze' },
-  { id: 'griffin', label: 'Griffin-crested' },
-  { id: 'smooth', label: 'Smooth rounded, small eyeholes' },
-  { id: 'visor', label: 'Broad-brimmed, visored' },
+  { id: 'fish', label: 'Fish-crested bronze', art: 'art/arm-helm-fish.webp' },
+  { id: 'griffin', label: 'Griffin-crested', art: 'art/arm-helm-griffin.webp' },
+  { id: 'smooth', label: 'Smooth rounded, small eyeholes', art: 'art/arm-helm-smooth.webp' },
+  { id: 'visor', label: 'Broad-brimmed, visored', art: 'art/arm-helm-visor.webp' },
 ];
 const SHIELDS = [
-  { id: 'scutum', label: 'Tall curved scutum' },
-  { id: 'square', label: 'Small square shield' },
-  { id: 'buckler', label: 'Round buckler' },
-  { id: 'net', label: 'Weighted net' },
+  { id: 'scutum', label: 'Tall curved scutum', art: 'art/arm-shield-scutum.webp' },
+  { id: 'square', label: 'Small square shield', art: 'art/arm-shield-square.webp' },
+  { id: 'buckler', label: 'Round buckler', art: 'art/arm-shield-buckler.webp' },
+  { id: 'net', label: 'Weighted net', art: 'art/arm-shield-net.webp' },
 ];
 const WEAPONS = [
-  { id: 'gladius', label: 'Straight short sword' },
-  { id: 'sica', label: 'Curved blade' },
-  { id: 'trident', label: 'Trident' },
-  { id: 'spear', label: 'Long spear' },
+  { id: 'gladius', label: 'Straight short sword', art: 'art/arm-weap-gladius.webp' },
+  { id: 'sica', label: 'Curved blade', art: 'art/arm-weap-sica.webp' },
+  { id: 'trident', label: 'Trident', art: 'art/arm-weap-trident.webp' },
+  { id: 'spear', label: 'Long spear', art: 'art/arm-weap-spear.webp' },
 ];
+
+// id -> sprite, for the in-scene racks and the dressed dummy.
+const KIT_ART = Object.fromEntries([...HELMS, ...SHIELDS, ...WEAPONS].map(k => [k.id, k.art]));
 
 export default {
   id: 'armory',
@@ -108,42 +111,22 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">QVATTVOR FRATRES HARENAE</text>
       </g>
 
-      <!-- helmet rack, left -->
+      <!-- helmet rack, left (photoreal kit sprites) -->
       <g>
-        <rect x="260" y="310" width="300" height="16" rx="6" fill="#453a2e"/>
-        ${[0, 1, 2, 3].map(i => {
-          const x = 290 + i * 72;
-          return `
-          <g>
-            <path d="M${x} 386 v-16 a20 22 0 0 1 40 0 v16 z" fill="#8a8f96" stroke="#3a3e44" stroke-width="3"/>
-            ${i === 0 ? `<path d="M${x + 2} 356 q18 -22 36 0" stroke="#c9a227" stroke-width="5" fill="none"/>` : ''}
-            ${i === 1 ? `<path d="M${x + 6} 354 q8 -18 28 -10 l-8 10" stroke="#c9a227" stroke-width="4" fill="none"/>` : ''}
-            ${i === 2 ? `<circle cx="${x + 13}" cy="372" r="3" fill="#241f1a"/><circle cx="${x + 27}" cy="372" r="3" fill="#241f1a"/>` : ''}
-            ${i === 3 ? `<path d="M${x - 6} 366 h52" stroke="#8a8f96" stroke-width="5"/><rect x="${x + 8}" y="366" width="24" height="12" rx="3" fill="#5c6068"/>` : ''}
-          </g>`;
-        }).join('')}
+        <rect x="260" y="384" width="300" height="13" rx="6" fill="#3a3025"/>
+        ${HELMS.map((h, i) => `<image href="${h.art}" x="${272 + i * 74}" y="298" width="66" height="92" preserveAspectRatio="xMidYMax meet"/>`).join('')}
       </g>
 
-      <!-- shield rack, right -->
+      <!-- shield rack, right (photoreal kit sprites) -->
       <g>
-        <rect x="1090" y="300" width="340" height="16" rx="6" fill="#453a2e"/>
-        <rect x="1104" y="326" width="64" height="150" rx="16" fill="#8e2f35" stroke="#3a1215" stroke-width="4"/>
-        <line x1="1136" y1="326" x2="1136" y2="476" stroke="#c9a227" stroke-width="4"/>
-        <rect x="1194" y="342" width="66" height="66" rx="8" fill="#5a4426" stroke="#2b2015" stroke-width="4"/>
-        <circle cx="1318" cy="380" r="38" fill="#6b5a3a" stroke="#2b2015" stroke-width="4"/>
-        <circle cx="1318" cy="380" r="9" fill="#c9a227"/>
-        <path d="M1370 330 q40 30 22 92 q-30 10 -44 -14 q-12 -40 6 -74 z" fill="none" stroke="#8a7f6a" stroke-width="3" stroke-dasharray="6 5"/>
+        <rect x="1090" y="300" width="340" height="13" rx="6" fill="#3a3025"/>
+        ${SHIELDS.map((s, i) => `<image href="${s.art}" x="${1100 + i * 86}" y="314" width="80" height="152" preserveAspectRatio="xMidYMin meet"/>`).join('')}
       </g>
 
-      <!-- weapon rack, left lower -->
+      <!-- weapon rack, left lower (photoreal kit sprites) -->
       <g>
-        <rect x="260" y="470" width="300" height="14" rx="6" fill="#453a2e"/>
-        <path d="M300 484 l0 96" stroke="#8a8f96" stroke-width="8"/>
-        <path d="M292 484 h16 l-8 -18 z" fill="#8a8f96"/>
-        <path d="M370 484 q18 40 -4 92" stroke="#8a8f96" stroke-width="7" fill="none"/>
-        <path d="M448 484 v96 M436 484 l12 -20 l12 20 M424 492 h48" stroke="#8a8f96" stroke-width="5" fill="none"/>
-        <path d="M522 484 v110" stroke="#6b4f2c" stroke-width="6"/>
-        <path d="M516 484 h12 l-6 -26 z" fill="#8a8f96"/>
+        <rect x="260" y="470" width="300" height="13" rx="6" fill="#3a3025"/>
+        ${WEAPONS.map((w, i) => `<image href="${w.art}" x="${282 + i * 74}" y="484" width="58" height="150" preserveAspectRatio="xMidYMin meet"/>`).join('')}
       </g>
 
       <!-- the dummy, center -->
@@ -151,12 +134,9 @@ export default {
         <rect x="770" y="420" width="20" height="260" rx="8" fill="#6b4f2c"/>
         <rect x="700" y="470" width="160" height="18" rx="8" fill="#6b4f2c"/>
         ${dressed
-          ? `<path d="M756 420 v-14 a24 26 0 0 1 48 0 v14 z" fill="#8a8f96" stroke="#3a3e44" stroke-width="3"/>
-             <circle cx="772" cy="404" r="3" fill="#241f1a"/><circle cx="788" cy="404" r="3" fill="#241f1a"/>
-             <rect x="690" y="440" width="58" height="140" rx="14" fill="#8e2f35" stroke="#3a1215" stroke-width="4"/>
-             <line x1="719" y1="440" x2="719" y2="580" stroke="#c9a227" stroke-width="3"/>
-             <path d="M846 480 l30 60" stroke="#8a8f96" stroke-width="7" stroke-linecap="round"/>
-             <path d="M840 472 h16 l-8 -18 z" fill="#8a8f96"/>`
+          ? `<image href="${KIT_ART.scutum}" x="688" y="430" width="104" height="182" preserveAspectRatio="xMidYMin meet"/>
+             <image href="${KIT_ART.gladius}" x="826" y="470" width="46" height="150" preserveAspectRatio="xMidYMin meet"/>
+             <image href="${KIT_ART.smooth}" x="740" y="352" width="80" height="90" preserveAspectRatio="xMidYMax meet"/>`
           : `<circle cx="780" cy="398" r="24" fill="#8a7f6a"/>
              <rect x="742" y="500" width="76" height="34" rx="6" fill="#e8dcc0" class="beckon"/>
              <text x="780" y="522" text-anchor="middle" font-size="15" fill="#5a4218"
@@ -389,7 +369,7 @@ function openDressing(game) {
         for (const opt of g.opts) {
           const el = document.createElement('button');
           el.className = 'kit-opt';
-          el.textContent = opt.label;
+          el.innerHTML = `<img class="kit-opt-img" src="${opt.art}" alt="" draggable="false"><span>${opt.label}</span>`;
           el.addEventListener('click', () => {
             pick[g.key] = opt.id;
             col.querySelectorAll('.kit-opt').forEach(b => b.classList.remove('on'));
