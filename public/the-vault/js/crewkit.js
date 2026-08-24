@@ -7,6 +7,10 @@
 
 import { getRole, roleName, nextName, ROLES, NEXT, PREV } from './role.js';
 
+// Photoreal plates live in <game>/art/<slug>.webp; resolve against this
+// module's URL so they load under Pages/Vercel/localhost alike.
+const ART = new URL('../art/', import.meta.url).href;
+
 /* ---------- palette / defs ---------- */
 export function defs(slug) {
   return `
@@ -27,19 +31,11 @@ export function defs(slug) {
     </radialGradient>`;
 }
 
-/** Full-frame procedural backdrop: dim vault interior with a work-lamp pool. */
+/** Full-frame photoreal plate + a soft work-lamp bloom (kept for warmth). */
 export function backdrop(slug) {
   return `
-    <rect x="0" y="0" width="1600" height="640" fill="url(#${slug}_wall)"/>
-    <rect x="0" y="600" width="1600" height="300" fill="url(#${slug}_floor)"/>
-    <g stroke="#0a0e14" stroke-width="4" opacity="0.5">
-      ${[220, 470, 720, 970, 1220, 1470].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="600"/>`).join('')}
-      <line x1="0" y1="300" x2="1600" y2="300"/>
-    </g>
-    <g stroke="#1b2330" stroke-width="2" opacity="0.6">
-      ${[80, 260, 440].map(y => `<line x1="0" y1="${640 + y * 0.14}" x2="1600" y2="${620 + y * 0.14}"/>`).join('')}
-    </g>
-    <ellipse cx="800" cy="150" rx="520" ry="150" fill="url(#${slug}_amber)"/>`;
+    <image href="${ART}${slug}.webp" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
+    <ellipse cx="800" cy="150" rx="520" ry="150" fill="url(#${slug}_amber)" opacity="0.3"/>`;
 }
 
 /** Role-identity tag, top-centre (clear of the top-left Gus reserve). */

@@ -7,6 +7,10 @@
 
 import { getRole, roleName, nextName, ROLES, NEXT, PREV } from './role.js';
 
+// Photoreal plates live in <game>/art/<slug>.webp; resolve against this
+// module's URL so they load under Pages/Vercel/localhost alike.
+const ART = new URL('../art/', import.meta.url).href;
+
 /* ---------- palette / defs ---------- */
 export function defs(slug) {
   return `
@@ -27,24 +31,13 @@ export function defs(slug) {
     </radialGradient>`;
 }
 
-/** Full-frame procedural backdrop: an overgrown jungle court in green light. */
+/** Full-frame photoreal plate + signature canopy light-shafts (kept). */
 export function backdrop(slug) {
   return `
-    <rect x="0" y="0" width="1600" height="640" fill="url(#${slug}_canopy)"/>
-    <rect x="0" y="600" width="1600" height="300" fill="url(#${slug}_ground)"/>
-    <!-- light shafts through the canopy -->
+    <image href="${ART}${slug}.webp" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
     <polygon points="520,0 640,0 470,600 300,600" fill="url(#${slug}_shaft)"/>
     <polygon points="1000,0 1120,0 1260,600 1080,600" fill="url(#${slug}_shaft)"/>
-    <!-- vine-wrapped stone pillars flanking the court -->
-    <g fill="url(#${slug}_stone)" stroke="#0a1408" stroke-width="4">
-      <rect x="70" y="120" width="90" height="500" rx="8"/>
-      <rect x="1440" y="120" width="90" height="500" rx="8"/>
-    </g>
-    <g stroke="#2f5a2a" stroke-width="6" fill="none" opacity="0.6" stroke-linecap="round">
-      <path d="M115 130 q-30 90 6 180 q30 80 -6 170"/>
-      <path d="M1485 130 q30 90 -6 180 q-30 80 6 170"/>
-    </g>
-    <ellipse cx="800" cy="150" rx="520" ry="150" fill="url(#${slug}_glow)" opacity="0.5"/>`;
+    <ellipse cx="800" cy="150" rx="520" ry="150" fill="url(#${slug}_glow)" opacity="0.35"/>`;
 }
 
 /** Witness-identity tag, top-centre (clear of the top-left Gus reserve). */
