@@ -189,26 +189,34 @@ export const rooms: Room[] = [
   {
     id: 'the-vault',
     mode: 'group',
-    status: 'concept',
+    status: 'live',
     kicker: 'Group · 3–6 players',
     title: 'The Vault',
     blurb:
       'Three to six of you, one time-locked vault, and a lot of moving parts. Split the roles, share what only you can see, and crack it before the clock runs out.',
-    chips: ['3–6 players', 'Roles'],
-    gusChip: 'Gus, quartermaster',
+    chips: ['3–6 players', '5 scenes', 'Roles'],
+    gusChip: '🦡 Gus, crew ferret',
     art: 'the-vault',
+    href: 'the-vault/',
+    cta: 'Pick a Station',
+    saveKey: 'the-vault-p1-save-v1',
+    freshText: 'Unplayed — the time-lock is armed.',
   },
   {
     id: 'trial-by-jury',
     mode: 'group',
-    status: 'concept',
+    status: 'live',
     kicker: 'Group · Social deduction',
     title: 'Trial by Jury',
     blurb:
       'The Wild Court reconvenes, and this time the jury is you — but one of you is lying to the bench. The right verdict gets everyone out; the wrong one keeps you in.',
-    chips: ['4–8 players', 'Hidden roles'],
-    gusChip: '🐒 Gus, presiding',
+    chips: ['4–8 players', '5 scenes', 'Hidden roles'],
+    gusChip: '🐒 Gus, court clerk',
     art: 'trial-by-jury',
+    href: 'trial-by-jury/',
+    cta: 'Take the Stand',
+    saveKey: 'trial-by-jury-p1-save-v1',
+    freshText: 'Unplayed — the court is in session.',
   },
 ];
 
@@ -229,9 +237,9 @@ export const sections: Section[] = [
   {
     mode: 'group',
     title: 'For Groups',
-    sub: 'Party rooms for three to six players. Everyone takes a role and pools what only they can see.',
-    how: 'A party game for three to six. Everyone takes a role and pools what they alone can see to crack shared locks and reach a group verdict before time runs out.',
-    count: 'In development',
+    sub: 'Party rooms for three to eight players. Everyone takes a role and pools what only they can see. Two are live.',
+    how: 'A party game for three to eight. Everyone takes a role and pools what they alone can see to crack shared locks and reach a group verdict before time runs out.',
+    count: '2 live',
   },
 ];
 
