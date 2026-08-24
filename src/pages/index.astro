@@ -19,8 +19,14 @@ const puzzles = roomsLive * 7;
 // amber-gold tone the whole dashboard is keyed to.
 const featured = rooms.find((r) => r.id === 'gate-of-life') ?? liveRooms[0];
 
-const favicon =
-  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>";
+// Canonical home is the GitHub Pages deployment (matches `site` in astro.config).
+// Absolute URLs here so social/link previews resolve regardless of which host
+// serves the HTML (Pages or Vercel).
+const SITE = 'https://daniel-lamb.github.io/Escape-Room';
+const pageUrl = `${SITE}/`;
+const ogImage = `${SITE}/og-cover.webp`;
+const ogDescription =
+  'A collection of hour-long browser escape rooms — solo, two-player, and group. Hand-built, fair, and playable start to finish. Pick your door; Gus will meet you inside.';
 ---
 
 <!doctype html>
@@ -29,11 +35,27 @@ const favicon =
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Escape Rooms — Choose Your Door</title>
-    <meta
-      name="description"
-      content="A collection of hour-long browser escape rooms — solo, two-player, and group. Pick your room; Gus will meet you inside."
-    />
-    <link rel="icon" href={favicon} />
+    <meta name="description" content={ogDescription} />
+    <link rel="canonical" href={pageUrl} />
+    <meta name="theme-color" content="#0a0b10" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Open Graph / social share -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Escape Rooms" />
+    <meta property="og:title" content="Escape Rooms — Choose Your Door" />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="671" />
+    <meta property="og:image:alt" content="Torch-lit hypogeum beneath the Colosseum" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Escape Rooms — Choose Your Door" />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Escape Rooms">
+  <rect width="100" height="100" rx="24" fill="#12141c"/>
+  <rect x="3" y="3" width="94" height="94" rx="21" fill="none" stroke="#f0b429" stroke-opacity="0.35" stroke-width="2"/>
+  <!-- keyhole: bit ring + tapered stem, in the signature amber-gold -->
+  <circle cx="50" cy="41" r="16" fill="#f0b429"/>
+  <path d="M41 52 L37 79 Q37 82 40 82 L60 82 Q63 82 63 79 L59 52 Z" fill="#f0b429"/>
+  <circle cx="50" cy="40" r="6.5" fill="#12141c"/>
+</svg>
