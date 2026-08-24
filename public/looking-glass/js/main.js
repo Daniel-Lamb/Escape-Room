@@ -68,7 +68,7 @@ function enterSide(role) {
   setRole(role);
   configureSave(saveKeyForRole());
   showScreen('#game-screen');
-  if (hasSave()) startRun(true);
+  if (hasSave()) { loadState(); startRun(true); }
   else { resetState(); startRun(false); }
 }
 
@@ -138,6 +138,6 @@ $('#btn-how').addEventListener('click', () => {
       doors. Three hints per room: a slow blink (&minus;1:00), the scent of the path
       (&minus;2:00), the whole way through (&minus;4:00). Paid hints stay readable free.</p>
       <p><strong>Progress saves automatically</strong>, separately for each side.</p>`,
-    buttons: [{ label: 'Step to the Glass', class: 'btn-primary', onClick: showRoleScreen }],
+    buttons: [{ label: 'Back', class: 'btn-ghost' }, { label: 'Step to the Glass', class: 'btn-primary', onClick: showRoleScreen }],
   });
 });

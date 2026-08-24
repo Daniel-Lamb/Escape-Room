@@ -145,6 +145,6 @@ $('#btn-how').addEventListener('click', () => {
       hints per scene: a nudge (&minus;1:00), the bearing (&minus;2:00), the whole course
       (&minus;4:00). Paid hints stay readable free.</p>
       <p><strong>Progress saves automatically</strong>, separately for each end of the line.</p>`,
-    buttons: [{ label: 'Suit Up', class: 'btn-primary', onClick: showRoleScreen }],
+    buttons: [{ label: 'Back', class: 'btn-ghost' }, { label: 'Suit Up', class: 'btn-primary', onClick: showRoleScreen }],
   });
 });

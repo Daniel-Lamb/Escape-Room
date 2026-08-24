@@ -126,6 +126,6 @@ $('#btn-how').addEventListener('click', () => {
       <p><strong>Gus</strong> is the crew's ferret, in the corner. Three hints per scene: a
       chitter (&minus;1:00), the tip-off (&minus;2:00), the whole score (&minus;4:00).</p>
       <p><strong>Progress saves automatically</strong>, separately for each station.</p>`,
-    buttons: [{ label: 'Pick a Station', class: 'btn-primary', onClick: showRoleScreen }],
+    buttons: [{ label: 'Back', class: 'btn-ghost' }, { label: 'Pick a Station', class: 'btn-primary', onClick: showRoleScreen }],
   });
 });

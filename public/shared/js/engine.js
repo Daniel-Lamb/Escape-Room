@@ -619,11 +619,14 @@ function openModal({ title, html, wide, buttons, onClose }) {
   function close() {
     if (closed) return;
     closed = true;
+    document.removeEventListener('keydown', onKey);
     backdrop.classList.remove('show');
     card.classList.remove('show');
     setTimeout(() => { backdrop.remove(); card.remove(); }, 350);
     if (onClose) onClose();
   }
+  function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }
+  document.addEventListener('keydown', onKey);
   backdrop.addEventListener('click', close);
   /** @type {HTMLElement} */ (card.querySelector('.modal-close')).addEventListener('click', close);
 

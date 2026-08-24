@@ -79,7 +79,7 @@ function enterTower(role) {
   setRole(role);
   configureSave(saveKeyForRole());
   showScreen('#game-screen');
-  if (hasSave()) startRun(true);
+  if (hasSave()) { loadState(); startRun(true); }
   else { resetState(); startRun(false); }
 }
 
@@ -152,6 +152,6 @@ $('#btn-how').addEventListener('click', () => {
       hints per scene: a flutter (&minus;1:00), the bearing (&minus;2:00), the whole course
       (&minus;4:00). Paid hints stay readable free.</p>
       <p><strong>Progress saves automatically</strong>, separately for each tower.</p>`,
-    buttons: [{ label: 'Take a Watch', class: 'btn-primary', onClick: showRoleScreen }],
+    buttons: [{ label: 'Back', class: 'btn-ghost' }, { label: 'Take a Watch', class: 'btn-primary', onClick: showRoleScreen }],
   });
 });

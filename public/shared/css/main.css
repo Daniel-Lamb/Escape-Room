@@ -552,16 +552,17 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 500;
 }
 .modal-close {
-  width: 34px; height: 34px;
+  width: 38px; height: 38px;
   display: grid; place-items: center;
-  font-size: 17px;
-  color: var(--text-dim);
-  background: transparent;
-  border: 1px solid rgba(216, 211, 200, 0.15);
+  font-size: 18px;
+  color: var(--text);
+  background: rgba(216, 211, 200, 0.06);
+  border: 1px solid rgba(216, 211, 200, 0.28);
   border-radius: 9px;
-  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.modal-close:hover { color: var(--danger); border-color: rgba(224, 82, 82, 0.5); transform: rotate(90deg); }
+.modal-close:hover { color: #fff; background: rgba(224, 82, 82, 0.16); border-color: rgba(224, 82, 82, 0.6); transform: rotate(90deg); }
 
 .modal-body {
   flex: 1 1 auto;

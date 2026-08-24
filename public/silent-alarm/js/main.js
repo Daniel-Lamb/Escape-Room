@@ -146,6 +146,6 @@ $('#btn-how').addEventListener('click', () => {
       per scene: a twitch of the whiskers (&minus;1:00), the wire to pull (&minus;2:00), the
       whole score (&minus;4:00). Paid hints stay readable free.</p>
       <p><strong>Progress saves automatically</strong>, separately for each side.</p>`,
-    buttons: [{ label: 'Take the Job', class: 'btn-primary', onClick: showRoleScreen }],
+    buttons: [{ label: 'Back', class: 'btn-ghost' }, { label: 'Take the Job', class: 'btn-primary', onClick: showRoleScreen }],
   });
 });
