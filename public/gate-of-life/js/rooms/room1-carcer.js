@@ -54,13 +54,9 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/carcer.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/carcer.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- barred slit window, upper right: the day is out there -->
-      <g>
-        <rect x="1180" y="70" width="220" height="130" rx="8" fill="#0f0c08"/>
-        <rect x="1188" y="78" width="204" height="114" rx="6" fill="#e8cf96" opacity="0.85" class="flicker"/>
-        ${[1224, 1268, 1312, 1356].map(x => `<rect x="${x}" y="70" width="12" height="130" fill="#171209"/>`).join('')}
-        <polygon points="1200,200 1392,200 1300,560 1120,560" fill="url(#gd_car_shaft)" class="moonbeam"/>
-      </g>
+      <!-- barred slit window + daylight shaft are painted into the plate (upper right);
+           the window hotspot below points at it. -->
+
 
       <!-- torch beside the door -->
       <g>
@@ -89,48 +85,29 @@ export default {
         <circle cx="848" cy="386" r="17"/>
       </g>
 
-      <!-- the door: iron-strapped oak, chained with the letter-lock -->
+      <!-- the door: iron-strapped oak with the merchant's letter-lock (photoreal sprite) -->
       <g>
-        <path d="M1180 660 L1180 300 Q1290 240 1400 300 L1400 660 Z" fill="${lockOpen ? '#0f0c08' : '#3a2d1c'}" stroke="#241f1a" stroke-width="8"/>
         ${lockOpen
-          ? `<path d="M1200 660 L1200 320 Q1290 268 1380 320 L1380 660" fill="none" stroke="rgba(232,207,150,0.3)" stroke-width="3"/>
-             <text x="1290" y="480" text-anchor="middle" font-size="15" fill="#e8cf96" class="flicker"
+          ? `<path d="M1180 662 L1180 300 Q1290 244 1400 300 L1400 662 Z" fill="#0b0906" stroke="#241f1a" stroke-width="6"/>
+             <path d="M1202 662 L1202 322 Q1290 272 1378 322 L1378 662" fill="none" stroke="rgba(232,207,150,0.28)" stroke-width="3"/>
+             <text x="1290" y="486" text-anchor="middle" font-size="15" fill="#e8cf96" class="flicker"
                font-family="Palatino Linotype, Georgia, serif">ajar</text>`
-          : `<g stroke="#171209" stroke-width="5">
-               <line x1="1180" y1="380" x2="1400" y2="380"/><line x1="1180" y1="500" x2="1400" y2="500"/>
-             </g>
-             <path d="M1160 430 Q1290 380 1420 430" stroke="#5c5546" stroke-width="13" fill="none"/>
-             <path d="M1160 450 Q1290 400 1420 450" stroke="#453a2e" stroke-width="13" fill="none"/>
-             <g class="beckon">
-               <rect x="1252" y="408" width="76" height="52" rx="8" fill="#6b4f2c" stroke="#2b2015" stroke-width="3"/>
-               ${[1262, 1276, 1290, 1304, 1318].map(x => `<rect x="${x}" y="418" width="10" height="32" rx="2" fill="#e8dcc0" opacity="0.85"/>`).join('')}
-             </g>`}
+          : `<image href="art/car-door.webp" x="1174" y="284" width="246" height="382" preserveAspectRatio="xMidYMid meet"/>
+             <g class="beckon"><ellipse cx="1298" cy="474" rx="40" ry="40" fill="url(#gd_car_torch)"/></g>`}
       </g>
 
-      <!-- straw pallet, lower left -->
+      <!-- straw pallet, lower left (photoreal sprite) -->
       <g>
-        <ellipse cx="290" cy="760" rx="200" ry="52" fill="#4a3a1e"/>
-        <ellipse cx="290" cy="748" rx="185" ry="42" fill="#6b5527"/>
-        <g stroke="#8a6d34" stroke-width="3" stroke-linecap="round">
-          <path d="M160 740 l60 -14 M240 752 l70 -10 M330 738 l60 8 M200 764 l80 4"/>
-        </g>
-        ${strigilHere ? `<g class="beckon"><path d="M352 742 L380 720 Q386 712 392 714" stroke="#b8893a" stroke-width="5" fill="none" stroke-linecap="round"/></g>` : ''}
+        <image href="art/car-pallet.webp" x="108" y="694" width="360" height="150" preserveAspectRatio="xMidYMid meet"/>
+        ${strigilHere ? `<g class="beckon"><path d="M300 742 L332 720 Q340 714 346 716" stroke="#d8b46a" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="300" cy="744" r="5" fill="#e8d0a0"/></g>` : ''}
       </g>
 
-      <!-- drain grate, lower middle-right -->
+      <!-- drain grate, lower middle-right (photoreal sprite) -->
       <g>
-        <ellipse cx="915" cy="770" rx="95" ry="34" fill="#0f0c08"/>
         ${grateOpen
-          ? `<ellipse cx="915" cy="770" rx="78" ry="26" fill="#050302"/>
-             <g transform="rotate(-24 990 742)"><g stroke="#453a2e" stroke-width="5">
-               <ellipse cx="990" cy="742" rx="78" ry="24" fill="#2b2318"/>
-               <line x1="920" y1="742" x2="1060" y2="742"/><line x1="990" y1="720" x2="990" y2="764"/>
-             </g></g>`
-          : `<g stroke="#453a2e" stroke-width="6">
-               <ellipse cx="915" cy="770" rx="78" ry="26" fill="#2b2318"/>
-               <line x1="845" y1="770" x2="985" y2="770"/>
-               <line x1="875" y1="754" x2="955" y2="786"/><line x1="955" y1="754" x2="875" y2="786"/>
-             </g>`}
+          ? `<ellipse cx="915" cy="774" rx="86" ry="30" fill="#050302"/>
+             <image href="art/car-grate.webp" x="948" y="700" width="150" height="120" transform="rotate(-22 1023 760)" preserveAspectRatio="xMidYMid meet"/>`
+          : `<image href="art/car-grate.webp" x="812" y="712" width="206" height="122" preserveAspectRatio="xMidYMid meet"/>`}
       </g>
 
       <!-- old small bones in the far corner -->
