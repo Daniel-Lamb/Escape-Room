@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trial by Jury — A Social-Deduction Escape</title>
+  <meta name="description" content="A co-op social-deduction escape room in your browser for four to eight players. Four animal witnesses, one liar, one thief — cross-examine, catch the lie, and name the culprit before the court adjourns." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>" />
+  <link rel="stylesheet" href="../shared/css/main.css" />
+  <link rel="stylesheet" href="../shared/css/animations.css" />
+  <link rel="stylesheet" href="skin.css" />
+  <link rel="stylesheet" href="../shared/css/title.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="title-screen" class="screen">
+      <div id="title-bg" style="background-image:url('art/cover.webp')"></div>
+      <div id="title-stars"></div>
+      <div class="title-content">
+        <p class="title-kicker">A social-deduction co-op &middot; four to eight jurors &middot; one lie to catch</p>
+        <h1 id="game-title">Trial&nbsp;by&nbsp;Jury</h1>
+        <p class="title-sub" id="game-tagline">Four witnesses, one liar, one thief. You each saw only your own night — put them together and catch the lie.</p>
+        <div class="title-buttons">
+          <button class="btn btn-primary" id="btn-begin">Take the Stand</button>
+          <button class="btn btn-ghost" id="btn-how">How to Play</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;">&#8962; All Rooms</a>
+        </div>
+        <p class="title-foot">Play on separate devices &middot; talk to each other &middot; sound on</p>
+      </div>
+    </section>
+
+    <!-- ============ ROLE SELECT SCREEN ============ -->
+    <section id="role-screen" class="screen hidden">
+      <div id="title-bg" style="background-image:url('art/cover.webp')"></div>
+      <div class="role-content">
+        <h2 class="role-heading">Which witness will you be?</h2>
+        <p class="role-note">
+          This is a game for <strong>a jury on separate screens</strong>. Each of you takes one
+          witness. Every scene, the figure <em>your</em> account is missing is on the screen of
+          the witness who spoke before you — so cross-examine, read each other your figures, and
+          watch for the one whose story stops fitting. Cover all four witnesses.
+        </p>
+        <div class="role-cards role-cards-4">
+          <button class="role-card" id="pick-p1">
+            <div class="role-card-badge">Player 1</div>
+            <div class="role-card-art">🐦</div>
+            <div class="role-card-name">The Heron</div>
+            <div class="role-card-sub">watched from the river</div>
+            <div class="role-card-resume hidden" data-resume="p1">Testimony in progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-p2">
+            <div class="role-card-badge">Player 2</div>
+            <div class="role-card-art">🦎</div>
+            <div class="role-card-name">The Gecko</div>
+            <div class="role-card-sub">clung to the wall</div>
+            <div class="role-card-resume hidden" data-resume="p2">Testimony in progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-p3">
+            <div class="role-card-badge">Player 3</div>
+            <div class="role-card-art">🐗</div>
+            <div class="role-card-name">The Boar</div>
+            <div class="role-card-sub">rooted below the tree</div>
+            <div class="role-card-resume hidden" data-resume="p3">Testimony in progress — resume</div>
+          </button>
+          <button class="role-card" id="pick-p4">
+            <div class="role-card-badge">Player 4</div>
+            <div class="role-card-art">🦜</div>
+            <div class="role-card-name">The Parrot</div>
+            <div class="role-card-sub">repeats all it hears</div>
+            <div class="role-card-resume hidden" data-resume="p4">Testimony in progress — resume</div>
+          </button>
+        </div>
+        <button class="btn btn-ghost" id="btn-role-back">&#8592; Back</button>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="game-screen" class="screen hidden">
+      <header id="hud">
+        <div class="hud-left">
+          <span id="room-badge"></span>
+          <h2 id="room-title"></h2>
+        </div>
+        <div class="hud-center">
+          <div id="timer" title="Time until the court must adjourn">60:00</div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="btn-journal" title="The Court Record — everything you've recorded">
+            <span class="hud-btn-icon">&#9998;</span> Record
+          </button>
+          <button class="hud-btn" id="btn-sound" title="Toggle sound">
+            <span class="hud-btn-icon" id="sound-icon">&#9834;</span>
+          </button>
+          <button class="hud-btn" id="btn-restart" title="Call the trial anew">&#8635;</button>
+          <a class="hud-btn" href="../" title="Back to room select" style="text-decoration:none;">&#8962;</a>
+        </div>
+      </header>
+
+      <main id="stage">
+        <div id="scene-wrap">
+          <div id="scene" aria-label="court scene"></div>
+          <div id="hotspots"></div>
+          <div id="embers" aria-hidden="true"></div>
+          <div id="vignette" aria-hidden="true"></div>
+          <button id="gus-dock" aria-label="Ask Gus for help"></button>
+        </div>
+      </main>
+
+      <div id="narration-bar">
+        <div id="message-card" class="hidden">
+          <p id="message-text"></p>
+          <span id="message-more" aria-hidden="true">&#9660;</span>
+        </div>
+      </div>
+
+      <footer id="inventory">
+        <span id="inv-label">Record</span>
+        <div id="inv-slots"></div>
+      </footer>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <div id="modal-root"></div>
+    <div id="fader"></div>
+    <div id="fly-layer" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
