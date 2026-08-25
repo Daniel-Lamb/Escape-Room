@@ -59,10 +59,9 @@ export default {
         <!-- mounted geared drum -->
         ${drum
           ? `<g class="${raised ? 'spin slow' : ''}" style="transform-origin: 777px 420px;">
-               <circle cx="777" cy="420" r="${52 + drum * 8}" fill="#6b4f2c" stroke="#241c12" stroke-width="6"/>
-               ${[0, 60, 120].map(a => `<line x1="777" y1="${420 - 52 - drum * 8}" x2="777" y2="${420 + 52 + drum * 8}" stroke="#453a2e" stroke-width="8" transform="rotate(${a} 777 420)"/>`).join('')}
+               <image href="art/win-drum.webp" x="${777 - (58 + drum * 8)}" y="${420 - (58 + drum * 8)}" width="${(58 + drum * 8) * 2}" height="${(58 + drum * 8) * 2}" preserveAspectRatio="xMidYMid meet"/>
              </g>
-             <text x="777" y="428" text-anchor="middle" font-size="22" fill="#e8dcc0"
+             <text x="777" y="428" text-anchor="middle" font-size="22" fill="#f7ecd0" paint-order="stroke" stroke="#2b1c08" stroke-width="4"
                font-family="Palatino Linotype, Georgia, serif">${'I'.repeat(drum === 5 ? 0 : drum)}${drum === 5 ? 'V' : ''}</text>`
           : `<circle cx="777" cy="420" r="30" fill="#241c12" stroke="#453a2e" stroke-width="5" stroke-dasharray="8 6"/>`}
         <!-- crank socket -->
@@ -86,37 +85,35 @@ export default {
           : `<line x1="777" y1="120" x2="777" y2="330" stroke="#3a2d1c" stroke-width="4" stroke-dasharray="10 8"/>`}
       </g>
 
-      <!-- drum shelf -->
-      <g>
-        <rect x="300" y="640" width="330" height="18" rx="6" fill="#453a2e"/>
+      <!-- drum shelf (photoreal geared drums; marks kept legible) -->
+      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
+        <rect x="300" y="642" width="330" height="16" rx="6" fill="#3a3025" stroke="none"/>
         ${[2, 3, 5].map((mark, i) => {
           const x = 350 + i * 105;
           const mounted = drum === mark;
+          const sz = 66 + mark * 6;
           return mounted ? '' : `
           <g>
-            <circle cx="${x}" cy="600" r="${26 + mark * 4}" fill="#6b4f2c" stroke="#241c12" stroke-width="5"/>
-            <text x="${x}" y="${608}" text-anchor="middle" font-size="18" fill="#e8dcc0"
-              font-family="Palatino Linotype, Georgia, serif">${mark === 5 ? 'V' : 'I'.repeat(mark)}</text>
+            <image href="art/win-drum.webp" x="${x - sz / 2}" y="${606 - sz / 2}" width="${sz}" height="${sz}" preserveAspectRatio="xMidYMid meet"/>
+            <text x="${x}" y="613" text-anchor="middle" font-size="19" fill="#f7ecd0" stroke-width="3.5">${mark === 5 ? 'V' : 'I'.repeat(mark)}</text>
           </g>`;
         }).join('')}
-        <text x="465" y="690" text-anchor="middle" font-size="12" letter-spacing="3" fill="#8a7f6a"
-          font-family="Palatino Linotype, Georgia, serif">TYMPANA</text>
+        <text x="465" y="692" text-anchor="middle" font-size="12" letter-spacing="3" fill="#c9b98f" stroke-width="2.5">TYMPANA</text>
       </g>
 
-      <!-- block chest -->
-      <g>
+      <!-- block chest (photoreal pulley blocks; sheave counts kept countable) -->
+      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
         <rect x="1130" y="620" width="310" height="120" rx="10" fill="#3a2d1c" stroke="#241c12" stroke-width="5"/>
         ${[1, 2, 4].map((sheaves, i) => {
-          const x = 1170 + i * 95;
+          const x = 1180 + i * 90;
           const mounted = block === sheaves;
           return mounted ? '' : `
           <g>
-            <rect x="${x}" y="650" width="${26 + sheaves * 10}" height="52" rx="8" fill="#453a2e" stroke="#241c12" stroke-width="3"/>
-            ${Array.from({ length: sheaves }, (_, k) => `<circle cx="${x + 16 + k * 11}" cy="676" r="5" fill="#8a7f6a"/>`).join('')}
+            <image href="art/win-block.webp" x="${x - 27}" y="630" width="54" height="104" preserveAspectRatio="xMidYMid meet"/>
+            ${Array.from({ length: sheaves }, (_, k) => `<circle cx="${x - 5.5 * (sheaves - 1) + k * 11}" cy="683" r="4.5" fill="#e8dcc0" stroke-width="1.5"/>`).join('')}
           </g>`;
         }).join('')}
-        <text x="1285" y="770" text-anchor="middle" font-size="12" letter-spacing="3" fill="#8a7f6a"
-          font-family="Palatino Linotype, Georgia, serif">TROCHLEAE</text>
+        <text x="1285" y="770" text-anchor="middle" font-size="12" letter-spacing="3" fill="#c9b98f" stroke-width="2.5">TROCHLEAE</text>
       </g>
 
       <!-- the cage-lift platform -->
@@ -353,7 +350,7 @@ function openRigging(game) {
         for (const o of opts) {
           const el = document.createElement('button');
           el.className = 'kit-opt' + (cur === o.v ? ' on' : '');
-          el.textContent = o.label;
+          el.innerHTML = `<img class="kit-opt-img" src="${o.art}" alt="" draggable="false"><span>${o.label}</span>`;
           el.addEventListener('click', () => {
             set(o.v);
             col.querySelectorAll('.kit-opt').forEach(b => b.classList.remove('on'));
@@ -364,14 +361,14 @@ function openRigging(game) {
         }
       };
       mk('#win-drums', [
-        { v: 2, label: 'Drum II — two' },
-        { v: 3, label: 'Drum III — three' },
-        { v: 5, label: 'Drum V — five' },
+        { v: 2, label: 'Drum II — two', art: 'art/win-drum.webp' },
+        { v: 3, label: 'Drum III — three', art: 'art/win-drum.webp' },
+        { v: 5, label: 'Drum V — five', art: 'art/win-drum.webp' },
       ], drum, v => { drum = v; game.setFlag('winch_drum', v); game.refreshScene(); });
       mk('#win-blocks', [
-        { v: 1, label: 'Single sheave — I' },
-        { v: 2, label: 'Double sheave — II' },
-        { v: 4, label: 'Four sheaves — IIII' },
+        { v: 1, label: 'Single sheave — I', art: 'art/win-block.webp' },
+        { v: 2, label: 'Double sheave — II', art: 'art/win-block.webp' },
+        { v: 4, label: 'Four sheaves — IIII', art: 'art/win-block.webp' },
       ], block, v => { block = v; game.setFlag('winch_block', v); game.refreshScene(); });
 
       body.querySelector('#win-heave').addEventListener('click', () => {
