@@ -196,11 +196,17 @@ a { color: inherit; }
   outline: none; z-index: 5; transform: scale(1.04);
   box-shadow: 0 20px 46px rgba(0, 0, 0, 0.7), 0 0 0 3px var(--accent);
 }
-.show-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-out); }
-.show-card:hover .show-card-img { transform: scale(1.05); }
+.show-card-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  /* the covers are moody night scenes — lift them so the art actually reads */
+  filter: brightness(1.18) saturate(1.1) contrast(1.03);
+  transition: transform 0.5s var(--ease-out);
+}
+.show-card:hover .show-card-img { transform: scale(1.05); filter: brightness(1.24) saturate(1.14) contrast(1.04); }
 .show-card-grad {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 28%, rgba(8, 8, 10, 0.55) 60%, rgba(5, 5, 8, 0.95) 100%);
+  /* keep the image clear up top; only a soft foot of shade behind the title */
+  background: linear-gradient(180deg, rgba(4, 5, 8, 0) 44%, rgba(4, 5, 8, 0.3) 70%, rgba(3, 4, 7, 0.8) 100%);
 }
 .show-card-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 18px; z-index: 2; }
 .show-card-kicker {
@@ -218,7 +224,7 @@ a { color: inherit; }
 }
 .show-card:hover .show-card-cta { opacity: 0.95; transform: none; }
 .show-card.concept { cursor: default; }
-.show-card.concept .show-card-img { filter: grayscale(0.55) brightness(0.6); }
+.show-card.concept .show-card-img { filter: grayscale(0.5) brightness(0.78) saturate(1.05); }
 .show-card.concept:hover { transform: none; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
 .show-card-soon {
   display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em;
