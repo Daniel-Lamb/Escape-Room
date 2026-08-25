@@ -134,25 +134,22 @@ export default {
           : ''}
       </g>
 
-      <!-- the half-buried machete, glinting in the mud -->
+      <!-- the half-buried machete, glinting in the mud (photoreal) -->
       ${macheteHere
         ? `<g class="beckon">
-            <path d="M980 800 L1010 772 L1096 700 Q1104 696 1102 706 L1024 776 L998 804 Z"
-              fill="#c9d2b0" stroke="#3a4632" stroke-width="2"/>
-            <rect x="968" y="792" width="26" height="15" rx="5" transform="rotate(-42 981 800)" fill="#e4dcc0" stroke="#8a7a52" stroke-width="2"/>
-            <ellipse cx="1030" cy="792" rx="70" ry="12" fill="#0b120a" opacity="0.4"/>
+            <ellipse cx="1030" cy="806" rx="78" ry="13" fill="#0b120a" opacity="0.45"/>
+            <image href="art/sink-machete.webp" x="972" y="648" width="116" height="176" preserveAspectRatio="xMidYMax meet"/>
           </g>`
         : ''}
 
-      <!-- the root-gate, east wall, with three trace-sockets -->
+      <!-- the root-gate, east wall, with three trace-sockets (photoreal) -->
       <g>
-        <path d="M1300 700 L1300 300 Q1420 236 1560 300 L1560 700 Z" fill="url(#gd_sink_gate)" stroke="#070d08" stroke-width="6"/>
         ${open
-          ? `<path d="M1320 700 L1320 320 Q1430 264 1540 320 L1540 700" fill="#070d08"/>
+          ? `<path d="M1300 700 L1300 300 Q1420 236 1560 300 L1560 700 Z" fill="#070d08" stroke="#0e1c12" stroke-width="5"/>
              <ellipse cx="1430" cy="520" rx="90" ry="150" fill="url(#gd_sink_sky)" opacity="0.4" class="glow"/>
              <text x="1430" y="300" text-anchor="middle" font-size="16" fill="#9ce08a" class="flicker"
                font-family="Palatino Linotype, Georgia, serif">the gate stands open</text>`
-          : `<line x1="1430" y1="300" x2="1430" y2="700" stroke="#070d08" stroke-width="4" opacity="0.6"/>
+          : `<image href="art/sink-rootgate.webp" x="1286" y="286" width="288" height="426" preserveAspectRatio="xMidYMax meet"/>
              ${socks.map((g, i) => {
                const x = 1360 + i * 70;
                return `
