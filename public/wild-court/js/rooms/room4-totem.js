@@ -118,14 +118,10 @@ export default {
       const lashed = i === 2 && !cut;
       return `
       <g>
-        <rect x="615" y="${yt}" width="230" height="94" rx="10" fill="url(#gd_totem_wood)" stroke="#2c2014" stroke-width="4"/>
-        <path d="M615 ${yt + 12} Q730 ${yt - 2} 845 ${yt + 12}" fill="none" stroke="#2c2014" stroke-width="3" opacity="0.6"/>
-        ${[0, 1, 2, 3, 4, 5, 6].map(t =>
-          `<path d="M${642 + t * 28} ${yt + 5} l7 11 l7 -11" fill="none" stroke="#e4f0d0" stroke-width="2" opacity="0.45"/>`).join('')}
-        <text x="642" y="${yt + 30}" text-anchor="middle" font-size="17" fill="#9fb37e" opacity="0.75"
-          font-family="Palatino Linotype, Georgia, serif">${ROMAN[i]}</text>
-        <circle cx="655" cy="${cy + 14}" r="14" fill="#241a10" stroke="#2c2014" stroke-width="2" opacity="0.8"/>
-        <circle cx="765" cy="${cy}" r="36" fill="#241a10" stroke="#e4f0d0" stroke-width="2" opacity="0.95"/>
+        <image href="art/totem-drum.webp" x="613" y="${yt - 4}" width="234" height="104" preserveAspectRatio="xMidYMid slice"/>
+        <text x="646" y="${yt + 32}" text-anchor="middle" font-size="17" fill="#f0f6dc" opacity="0.9"
+          font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#1a130a" stroke-width="3">${ROMAN[i]}</text>
+        <circle cx="765" cy="${cy}" r="36" fill="#1c150c" stroke="#e4f0d0" stroke-width="2" opacity="0.92"/>
         <g transform="translate(737, ${cy - 28}) scale(0.78)" opacity="${lashed ? 0.55 : 1}">${creatureGlyph(CREATURES[face].key)}</g>
       </g>`;
     }).join('');
