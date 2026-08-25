@@ -206,14 +206,9 @@ export default {
              <rect x="470" y="680" width="70" height="14" rx="4" fill="#6b4f2c"/>
              ${rudisTaken ? '' : `<g class="beckon"><path d="M492 640 L530 596" stroke="#b8893a" stroke-width="7" stroke-linecap="round"/><path d="M500 620 l14 14" stroke="#6b4f2c" stroke-width="5" stroke-linecap="round"/></g>`}
              <rect x="404" y="700" width="80" height="42" rx="4" fill="#6b4f2c" transform="rotate(-6 444 721)"/>`
-          : `<g>
-             ${[0, 1, 2, 3, 4, 5].map(r => [0, 1, 2].map(c => {
-              const bx = 380 + c * 62 + (r % 2) * 30, by = 430 + r * 52;
-              return bx < 540 ? `<rect x="${bx}" y="${by}" width="58" height="46" rx="3" fill="#5a4426" stroke="#2b2015" stroke-width="3"/>` : '';
-            }).join('')).join('')}
-             <text x="460" y="412" text-anchor="middle" font-size="11" fill="#8a7f6a" font-style="italic"
-               font-family="Palatino Linotype, Georgia, serif">bricked in a hurry, a generation ago</text>
-             </g>`}
+          : `<image href="art/por-arch.webp" x="356" y="398" width="210" height="364" preserveAspectRatio="xMidYMax meet"/>
+             <text x="460" y="412" text-anchor="middle" font-size="11" fill="#e8dcc0" font-style="italic"
+               font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#171209" stroke-width="2.5">bricked in a hurry, a generation ago</text>`}
       </g>
 
       <!-- spy-slit (flavor) -->
