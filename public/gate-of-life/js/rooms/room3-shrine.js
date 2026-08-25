@@ -84,21 +84,11 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/shrine.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/shrine.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- Nemesis -->
-      <g>
-        <ellipse cx="800" cy="640" rx="150" ry="20" fill="#171209"/>
-        <rect x="740" y="560" width="120" height="80" rx="8" fill="#5c5546"/>
-        <path d="M760 560 q40 -220 40 -280 q0 -40 40 -40 q30 0 30 36 q0 70 30 284 z" fill="url(#gd_shr_statue)"/>
-        <circle cx="822" cy="230" r="34" fill="url(#gd_shr_statue)"/>
-        <path d="M792 216 q-8 -26 14 -38 M852 216 q8 -26 -14 -38" stroke="#8a7f6a" stroke-width="6" fill="none"/>
-        <!-- folded wings -->
-        <path d="M760 300 q-70 30 -60 160 q40 -20 62 -60 z" fill="#a8a08c"/>
-        <path d="M884 300 q70 30 60 160 q-40 -20 -62 -60 z" fill="#a8a08c"/>
-        <!-- the wheel at her sandal: turns when the rite is done -->
-        <g class="${done ? 'spin slow' : ''}" style="transform-origin: 742px 610px; transform-box: initial;">
-          <circle cx="742" cy="610" r="34" fill="none" stroke="#c9a227" stroke-width="6"/>
-          ${[0, 45, 90, 135].map(a => `<line x1="742" y1="576" x2="742" y2="644" stroke="#c9a227" stroke-width="4" transform="rotate(${a} 742 610)"/>`).join('')}
-        </g>
+      <!-- Nemesis herself is painted into the plate; keep only the state-driven
+           wheel at her sandal (turns once the rite is done) -->
+      <g class="${done ? 'spin slow' : ''}" style="transform-origin: 742px 610px; transform-box: initial;">
+        <circle cx="742" cy="610" r="30" fill="rgba(18,12,6,0.4)" stroke="#c9a227" stroke-width="6"/>
+        ${[0, 45, 90, 135].map(a => `<line x1="742" y1="582" x2="742" y2="638" stroke="#c9a227" stroke-width="4" transform="rotate(${a} 742 610)"/>`).join('')}
       </g>
 
       <!-- the great lamp -->
@@ -123,14 +113,13 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">IIII HEMINAE · VNO SPIRITV</text>
       </g>
 
-      <!-- vessels: amphora + jugs -->
-      <g>
-        <path d="M400 560 q-24 60 0 130 q14 34 46 34 q32 0 46 -34 q24 -70 0 -130 q-10 -26 -46 -26 q-36 0 -46 26z" fill="#8e5a2a" stroke="#3a2412" stroke-width="4"/>
-        <path d="M414 548 q-10 -22 10 -28 M478 548 q10 -22 -10 -28" stroke="#3a2412" stroke-width="6" fill="none"/>
-        <rect x="530" y="640" width="52" height="76" rx="10" fill="#a97a28" stroke="#4a3210" stroke-width="4"/>
-        <text x="556" y="686" text-anchor="middle" font-size="20" fill="#f0dfae" font-family="Palatino Linotype, Georgia, serif">V</text>
-        <rect x="300" y="656" width="44" height="60" rx="9" fill="#8e5a2a" stroke="#3a2412" stroke-width="4"/>
-        <text x="322" y="694" text-anchor="middle" font-size="17" fill="#f0dfae" font-family="Palatino Linotype, Georgia, serif">III</text>
+      <!-- vessels: amphora + jugs (photoreal sprites; V/III labels kept legible) -->
+      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
+        <image href="art/shr-amphora.webp" x="384" y="518" width="122" height="212" preserveAspectRatio="xMidYMax meet"/>
+        <image href="art/shr-jug5.webp" x="514" y="626" width="88" height="92" preserveAspectRatio="xMidYMax meet"/>
+        <text x="558" y="702" text-anchor="middle" font-size="21" fill="#f7ecd0" stroke-width="3.5">V</text>
+        <image href="art/shr-jug3.webp" x="290" y="652" width="66" height="66" preserveAspectRatio="xMidYMax meet"/>
+        <text x="322" y="704" text-anchor="middle" font-size="17" fill="#f7ecd0" stroke-width="3">III</text>
       </g>
 
       <!-- votive pile with the mirror -->
