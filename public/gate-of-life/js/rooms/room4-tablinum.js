@@ -49,18 +49,8 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/tablinum.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/tablinum.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- fresco: the amphitheatre in cutaway (your drawings, stolen) -->
-      <g>
-        <rect x="620" y="80" width="420" height="170" rx="8" fill="#3a3126" stroke="#453a2e" stroke-width="4"/>
-        <path d="M660 220 q170 -120 340 0" fill="none" stroke="#c9b98f" stroke-width="3"/>
-        <path d="M690 220 q140 -95 280 0 M720 220 q110 -70 220 0" fill="none" stroke="#8a7f6a" stroke-width="2"/>
-        <g stroke="#8a7f6a" stroke-width="2">
-          <line x1="770" y1="220" x2="770" y2="196"/><line x1="830" y1="220" x2="830" y2="182"/>
-          <line x1="890" y1="220" x2="890" y2="182"/><line x1="950" y1="220" x2="950" y2="196"/>
-        </g>
-        <text x="830" y="112" text-anchor="middle" font-size="13" fill="#c9b98f" letter-spacing="3"
-          font-family="Palatino Linotype, Georgia, serif">SVBTERRANEA AMPHITHEATRI</text>
-      </g>
+      <!-- the amphitheatre fresco is painted into the plate (back wall);
+           the fresco hotspot points at it. -->
 
       <!-- oil lamp on the desk -->
       <ellipse cx="480" cy="520" rx="60" ry="46" fill="url(#gd_tab_lamp)" class="glow"/>
@@ -88,13 +78,8 @@ export default {
         </g>
       </g>
 
-      <!-- scroll shelves -->
-      <g>
-        <rect x="240" y="220" width="300" height="200" rx="6" fill="#3a2d1c" stroke="#241f1a" stroke-width="5"/>
-        ${[250, 320, 390, 460].map(x => [250, 310, 370].map(y =>
-          `<circle cx="${x + 24}" cy="${y + 22}" r="17" fill="#1d1812" stroke="#6b5a3a" stroke-width="3"/>
-           <circle cx="${x + 24}" cy="${y + 22}" r="5" fill="#8a7f6a"/>`).join('')).join('')}
-      </g>
+      <!-- scroll shelves are painted into the plate (left wall); the scrolls
+           hotspot points at them. -->
 
       <!-- strongroom door with the letter frame -->
       <g>
