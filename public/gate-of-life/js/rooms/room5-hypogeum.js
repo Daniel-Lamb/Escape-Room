@@ -90,12 +90,11 @@ export default {
         <path class="torch-flame" d="M314 330 q11 -19 0 -34 q-11 15 0 34z" fill="#ffa94d"/>
       </g>
 
-      <!-- the Lion Gate: mouth of the maze -->
+      <!-- the Lion Gate: mouth of the maze (photoreal barred gate) -->
       <g>
-        <path d="M360 760 L360 430 Q460 370 560 430 L560 760 Z" fill="#0f0c08" stroke="#453a2e" stroke-width="8"/>
-        ${[395, 430, 465, 500, 525].map(x => `<line x1="${x}" y1="${x === 395 || x === 525 ? 448 : 415}" x2="${x}" y2="760" stroke="#453a2e" stroke-width="9"/>`).join('')}
-        <text x="460" y="408" text-anchor="middle" font-size="14" letter-spacing="3" fill="#8a7f6a"
-          font-family="Palatino Linotype, Georgia, serif">PORTA LEONVM</text>
+        <image href="art/hyp-gate.webp" x="346" y="438" width="236" height="322" preserveAspectRatio="xMidYMax meet"/>
+        <text x="464" y="424" text-anchor="middle" font-size="14" letter-spacing="3" fill="#c9b98f"
+          font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#0f0c08" stroke-width="3">PORTA LEONVM</text>
       </g>
 
       <!-- the niche with Felix's chalk plan -->
@@ -113,18 +112,12 @@ export default {
           : `<path d="M620 470 q40 -12 80 4 M615 520 q50 -8 100 6 M625 570 q40 -6 84 4" stroke="#3a3126" stroke-width="7" fill="none" opacity="0.8"/>`}
       </g>
 
-      <!-- Gus's old cage -->
+      <!-- Gus's old cage: the barred gate is painted into the plate (right);
+           keep the name board, the kindly-built shelf + trough, and token 5 -->
       <g>
-        <path d="M1040 760 L1040 400 L1360 400 L1360 760 Z" fill="#14100a" stroke="#453a2e" stroke-width="7"/>
-        <path d="M1052 400 L1120 348 L1290 348 L1360 400" fill="#241c12" stroke="#453a2e" stroke-width="5"/>
-        ${[1080, 1130, 1180, 1230, 1280, 1330].map(x => `<line x1="${x}" y1="404" x2="${x}" y2="760" stroke="#453a2e" stroke-width="8"/>`).join('')}
-        <!-- cage gate rusted open -->
-        <path d="M1040 760 L980 700 L980 460 L1040 410" fill="none" stroke="#5c4a2e" stroke-width="8"/>
-        <!-- name board -->
-        <rect x="1140" y="368" width="120" height="30" rx="4" fill="#6b4f2c"/>
+        <rect x="1140" y="368" width="120" height="30" rx="4" fill="#6b4f2c" stroke="#2b2015" stroke-width="2"/>
         <text x="1200" y="389" text-anchor="middle" font-size="16" letter-spacing="3" fill="#e8dcc0"
           font-family="Palatino Linotype, Georgia, serif">GVSTVS</text>
-        <!-- kindly-built sleeping shelf, water trough -->
         <rect x="1090" y="640" width="180" height="20" rx="6" fill="#6b4f2c"/>
         <rect x="1100" y="660" width="16" height="100" fill="#453a2e"/>
         <rect x="1244" y="660" width="16" height="100" fill="#453a2e"/>
@@ -132,12 +125,10 @@ export default {
         ${!state.journal.some(e => e.id === 'token5') ? `<circle cx="1332" cy="732" r="5" fill="#e8dcc0" class="beckon"/>` : ''}
       </g>
 
-      <!-- broken capstan -->
+      <!-- broken capstan (photoreal) -->
       <g>
-        <circle cx="850" cy="720" r="52" fill="#3a2d1c" stroke="#241c12" stroke-width="6"/>
-        <circle cx="850" cy="720" r="12" fill="#171209"/>
-        <path d="M810 690 l-40 -34 M886 688 l36 -40" stroke="#453a2e" stroke-width="10" stroke-linecap="round"/>
-        ${crankHere ? `<g class="beckon"><path d="M900 740 L950 706 L950 680" fill="none" stroke="#6b4f2c" stroke-width="9" stroke-linecap="round"/></g>` : ''}
+        <image href="art/hyp-capstan.webp" x="788" y="662" width="128" height="96" preserveAspectRatio="xMidYMax meet"/>
+        ${crankHere ? `<g class="beckon"><path d="M905 736 L952 704 L952 678" fill="none" stroke="#c9a227" stroke-width="9" stroke-linecap="round"/></g>` : ''}
       </g>
 
       <!-- claw-grooved post (flavor) -->
