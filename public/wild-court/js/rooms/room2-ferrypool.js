@@ -186,15 +186,10 @@ export default {
         </g>` : ''}
       </g>
 
-      <!-- the coracle -->
+      <!-- the coracle (photoreal reed boat) -->
       <g>
-        <ellipse cx="${coracleCenter[0]}" cy="${coracleCenter[1] + 8}" rx="86" ry="20" fill="#0a1a12" opacity="0.6"/>
-        <path d="M${coracleCenter[0] - 82} ${coracleCenter[1]} Q${coracleCenter[0]} ${coracleCenter[1] + 40} ${coracleCenter[0] + 82} ${coracleCenter[1]}
-          Q${coracleCenter[0] + 60} ${coracleCenter[1] - 16} ${coracleCenter[0]} ${coracleCenter[1] - 14}
-          Q${coracleCenter[0] - 60} ${coracleCenter[1] - 16} ${coracleCenter[0] - 82} ${coracleCenter[1]} Z"
-          fill="url(#gd_ferry_reed)" stroke="#3a3018" stroke-width="3"/>
-        <path d="M${coracleCenter[0] - 66} ${coracleCenter[1] - 2} Q${coracleCenter[0]} ${coracleCenter[1] + 24} ${coracleCenter[0] + 66} ${coracleCenter[1] - 2}"
-          fill="none" stroke="#3a3018" stroke-width="2" opacity="0.7"/>
+        <ellipse cx="${coracleCenter[0]}" cy="${coracleCenter[1] + 10}" rx="86" ry="18" fill="#0a1a12" opacity="0.6"/>
+        <image href="art/ferry-coracle.webp" x="${coracleCenter[0] - 92}" y="${coracleCenter[1] - 46}" width="184" height="127" preserveAspectRatio="xMidYMid meet"/>
         <line x1="${coracleCenter[0]}" y1="${coracleCenter[1] - 14}" x2="${pFar ? 1210 : 462}" y2="${pFar ? 476 : 554}" stroke="#5aa552" stroke-width="2"/>
         <!-- the ferryman marker (you) -->
         <circle cx="${coracleCenter[0] + (pFar ? 40 : -40)}" cy="${coracleCenter[1] - 18}" r="7" fill="#9ce08a" opacity="0.9" class="glow"/>
