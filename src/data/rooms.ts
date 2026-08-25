@@ -14,6 +14,7 @@ export interface Room {
   kicker: string; // the card-num line, e.g. "Room I · Medieval"
   title: string;
   blurb: string;
+  teaser: string; // short, enticing one-liner revealed on card hover
   chips: string[]; // plain chips (the Gus companion chip is separate)
   gusChip: string; // rendered with the highlighted .gus treatment
   art: string; // src/svg/<art>.svg
@@ -42,6 +43,7 @@ export const rooms: Room[] = [
     title: "The Pilgrim's Road",
     blurb:
       "You're locked in Vayne Keep with an hour until dawn. A dead monk left a trail of carved suns through the chambers; follow it to the way out.",
+    teaser: 'A dead monk carved a trail of suns. Follow it out before dawn.',
     chips: ['1 player', '7 chambers', '~60 min'],
     gusChip: '👻 Sir Gus, ghost-knight',
     art: 'pilgrims-road',
@@ -58,6 +60,7 @@ export const rooms: Room[] = [
     title: 'Starfall Station',
     blurb:
       "You wake alone on a failing orbital station, sixty minutes from re-entry. The crew is gone, the AI core is wiped, and your own reflection doesn't add up.",
+    teaser: "The crew is gone, the AI is wiped, and your reflection is lying.",
     chips: ['1 player', '7 decks', 'Twist ending'],
     gusChip: '🤖 GS-1 "Gus", drone',
     art: 'starfall-station',
@@ -74,6 +77,7 @@ export const rooms: Room[] = [
     title: 'The Wild Court',
     blurb:
       "You've fallen into a jungle that's on no map, where the animals hold court and you're the one on trial. Seven cases to clear before nightfall.",
+    teaser: 'The beasts hold court, and you are the one on trial.',
     chips: ['1 player', '7 trials', 'Verdict twist'],
     gusChip: '🐒 Gus, tamarin advocate',
     art: 'wild-court',
@@ -90,6 +94,7 @@ export const rooms: Room[] = [
     title: 'The Gate of Life',
     blurb:
       "Condemned to the midday games beneath the Colosseum, you pick up the trail of a man who vanished down here — six bone tokens, and a guard's story that a lion got him.",
+    teaser: "Six bone tokens, a vanished man, and a guard's story about a lion.",
     chips: ['1 player', '7 chambers', 'Hard but fair'],
     gusChip: '🦁 Gus, the Emperor’s lion',
     art: 'gate-of-life',
@@ -106,6 +111,7 @@ export const rooms: Room[] = [
     title: 'Twin Signal Towers',
     blurb:
       "Two keepers, two lighthouses, one ship going down offshore. You each see only half the coast, and every lock is answered on your partner's screen — so keep talking.",
+    teaser: 'Two lighthouses, one sinking ship, and only half the coast each.',
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🐦 Gus, storm petrel',
     art: 'signal-towers',
@@ -122,6 +128,7 @@ export const rooms: Room[] = [
     title: 'The Looking Glass',
     blurb:
       "One of you is in the manor; the other is inside the mirror, where every room hangs reversed. Each side sees clues the other can't — trade them before dawn.",
+    teaser: 'One of you is in the manor. The other is inside the mirror.',
     chips: ['2 players', '7 rooms', 'Reversed world'],
     gusChip: '🐈‍⬛ Gus, the manor cat',
     art: 'looking-glass',
@@ -138,6 +145,7 @@ export const rooms: Room[] = [
     title: 'Silent Alarm',
     blurb:
       "One of you is inside the museum, hands on the locks; the other runs overwatch from the van with the schematics and the camera feeds. Every code is on your partner's screen, and you're on the clock before the alarm trips.",
+    teaser: 'Inside man and overwatch — every code is on the other screen.',
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🐀 Gus, museum rat',
     art: 'silent-alarm',
@@ -154,6 +162,7 @@ export const rooms: Room[] = [
     title: 'Deep Six',
     blurb:
       "One of you is down on the wreck of the Cormorant with a lamp and a shrinking supply of air; the other works the sonar, radio, and winch topside. Every lock below is answered by an instrument above, and the air won't last.",
+    teaser: 'One diver below, one lifeline above, and the air running out.',
     chips: ['2 players', '7 scenes', 'Two screens'],
     gusChip: '🦭 Gus, harbor seal',
     art: 'deep-six',
@@ -170,6 +179,7 @@ export const rooms: Room[] = [
     title: 'Two Keys, One Door',
     blurb:
       'Two players, two screens, one lock. Each of you sees half of it, and the door opens only when you put both halves together.',
+    teaser: 'One lock split across two screens. Open it together or not at all.',
     chips: ['2 players', 'Split screen'],
     gusChip: 'Gus, referee',
     art: 'two-keys-one-door',
@@ -182,6 +192,7 @@ export const rooms: Room[] = [
     title: 'The Blind Cartographer',
     blurb:
       'One of you holds the only map; the other walks the dark and never sees it. The only way out is to talk each other through it.',
+    teaser: 'One holds the only map. The other walks the dark.',
     chips: ['2 players', 'Voice co-op'],
     gusChip: 'Gus, unreliable narrator',
     art: 'blind-cartographer',
@@ -194,6 +205,7 @@ export const rooms: Room[] = [
     title: 'The Vault',
     blurb:
       'Three to six of you, one time-locked vault, and a lot of moving parts. Split the roles, share what only you can see, and crack it before the clock runs out.',
+    teaser: 'Split the roles and crack the time-lock before it seals for good.',
     chips: ['3–6 players', '5 scenes', 'Roles'],
     gusChip: '🦡 Gus, crew ferret',
     art: 'the-vault',
@@ -210,6 +222,7 @@ export const rooms: Room[] = [
     title: 'Trial by Jury',
     blurb:
       'The Wild Court reconvenes, and this time the jury is you — but one of you is lying to the bench. The right verdict gets everyone out; the wrong one keeps you in.',
+    teaser: 'You are the jury — and one of you is lying to the bench.',
     chips: ['4–8 players', '5 scenes', 'Hidden roles'],
     gusChip: '🐒 Gus, court clerk',
     art: 'trial-by-jury',

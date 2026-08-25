@@ -55,6 +55,7 @@ function Placard({ room, clone }: { room: Room; clone?: boolean }) {
       <div className="show-card-meta">
         <span className="show-card-kicker">{room.kicker}</span>
         <h3 className="show-card-title">{room.title}</h3>
+        {room.teaser ? <p className="show-card-desc">{room.teaser}</p> : null}
         {concept ? (
           <span className="show-card-soon">Coming soon</span>
         ) : (

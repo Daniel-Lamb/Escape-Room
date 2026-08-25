@@ -1,23 +1,12 @@
 ---
 import '../styles/global.css';
 import '../styles/dashboard.css';
-import { liveRooms, rooms } from '../data/rooms';
+import { rooms, sections } from '../data/rooms';
 import RoomShowcase from '../components/RoomShowcase.tsx';
-
-const covers = import.meta.glob('../covers/*.webp', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>;
-const cover = (art: string) => covers[`../covers/${art}.webp`];
+import Billboard from '../components/Billboard.tsx';
 
 const base = import.meta.env.BASE_URL;
-const roomsLive = liveRooms.length;
-const puzzles = roomsLive * 7;
-
-// The featured "billboard" room — the torch-lit Colosseum cover sets the warm,
-// amber-gold tone the whole dashboard is keyed to.
-const featured = rooms.find((r) => r.id === 'gate-of-life') ?? liveRooms[0];
+const year = new Date().getFullYear();
 
 // Canonical home is the GitHub Pages deployment (matches `site` in astro.config).
 // Absolute URLs here so social/link previews resolve regardless of which host
@@ -74,33 +63,57 @@ const ogDescription =
       </nav>
     </header>
 
-    <section class="billboard">
-      <img class="billboard-img" src={cover(featured.art)} alt="" />
-      <div class="billboard-scrim"></div>
-      <div class="billboard-content">
-        <p class="billboard-kicker">Featured &middot; {featured.kicker}</p>
-        <h1 class="billboard-title">{featured.title}</h1>
-        <div class="billboard-meta">
-          <span class="badge-live">&#9679; Live</span>
-          <span>{roomsLive} rooms</span><span class="dot">&middot;</span>
-          <span>{puzzles} puzzles</span><span class="dot">&middot;</span>
-          <span>~60 min each</span>
-        </div>
-        <p class="billboard-blurb">{featured.blurb}</p>
-        <div class="billboard-actions">
-          <a class="btn-play" href={featured.href}>&#9654;&nbsp; {featured.cta ?? 'Enter'}</a>
-          <a class="btn-info" href="#rooms">&#9776;&nbsp; Browse all rooms</a>
-        </div>
-      </div>
-    </section>
+    <Billboard client:load />
 
     <main id="rooms" class="rows">
       <RoomShowcase client:load />
     </main>
 
-    <footer>
-      One companion across every era &middot;
-      <a href="https://github.com/Daniel-Lamb/Escape-Room">source on GitHub</a>
+    <footer class="site-footer">
+      <div class="foot-inner">
+        <div class="foot-brand">
+          <a class="foot-word" href={base}>Escape Rooms</a>
+          <p class="foot-tagline">
+            Hour-long escape rooms that run right in your browser — solo,
+            two-player, and group. Every one is hand-built, fair, and playable
+            start to finish.
+          </p>
+          <ul class="foot-facts">
+            <li>Free to play</li>
+            <li>No sign-up</li>
+            <li>Plays in your browser</li>
+            <li>Progress saved on your device</li>
+          </ul>
+        </div>
+
+        {
+          sections.map((sec) => (
+            <nav class="foot-col" aria-label={sec.title}>
+              <h3>{sec.title}</h3>
+              <ul>
+                {rooms
+                  .filter((r) => r.mode === sec.mode && r.status === 'live')
+                  .map((r) => (
+                    <li>
+                      <a href={r.href}>{r.title}</a>
+                    </li>
+                  ))}
+                {rooms.some((r) => r.mode === sec.mode && r.status === 'concept') && (
+                  <li class="foot-soon">More soon</li>
+                )}
+              </ul>
+            </nav>
+          ))
+        }
+      </div>
+
+      <div class="foot-bar">
+        <span>&copy; {year} Daniel Lamb</span>
+        <span class="foot-sep">&middot;</span>
+        <a href="https://github.com/Daniel-Lamb/Escape-Room">Source on GitHub</a>
+        <span class="foot-sep">&middot;</span>
+        <span class="foot-note">Open source &middot; zero dependencies &middot; built with Astro</span>
+      </div>
     </footer>
   </body>
 </html>
