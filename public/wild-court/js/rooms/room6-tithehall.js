@@ -191,13 +191,7 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">${ROMAN[i]}</text>`).join('')}
         ${solved
           ? PODX.map(x => `<ellipse cx="${x}" cy="637" rx="20" ry="8" fill="#0b140c" stroke="#2a1e14" stroke-width="2"/>`).join('')
-          : PODX.map(x => `
-          <g>
-            <ellipse cx="${x}" cy="602" rx="19" ry="25" fill="url(#gd_tithehall_pod)" stroke="#8a6a24" stroke-width="2"/>
-            <path d="M${x - 8} 584 Q${x - 13} 602 ${x - 8} 620 M${x + 8} 584 Q${x + 13} 602 ${x + 8} 620" stroke="#8a6a24" stroke-width="1.5" fill="none" opacity="0.8"/>
-            <ellipse cx="${x - 6}" cy="590" rx="3" ry="6" fill="#ffe08a" opacity="0.5"/>
-            <circle cx="${x}" cy="576" r="2.5" fill="#5aa552"/>
-          </g>`).join('')}
+          : PODX.map(x => `<image href="art/tithe-pod.webp" x="${x - 21}" y="560" width="42" height="86" preserveAspectRatio="xMidYMax meet"/>`).join('')}
         ${tokenHere ? `
         <g class="beckon">
           <circle cx="865" cy="608" r="17" fill="#6b4f37" stroke="#d1a53f" stroke-width="2.5"/>
