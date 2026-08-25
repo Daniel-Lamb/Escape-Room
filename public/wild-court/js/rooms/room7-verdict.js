@@ -295,8 +295,7 @@ export default {
       <ellipse cx="830" cy="690" rx="270" ry="50" fill="#2e3a2c" stroke="#202b1e" stroke-width="4"/>
       <ellipse cx="830" cy="684" rx="224" ry="38" fill="#38473a" opacity="0.7"/>
       ${revealed ? `<ellipse cx="835" cy="560" rx="200" ry="130" fill="url(#gd_verdict_stoneglow)" class="glow"/>` : ''}
-      <ellipse cx="836" cy="512" rx="112" ry="26" fill="#4d5f49"/>
-      <path d="M724 512 L730 640 Q836 668 942 640 L948 512 Q836 540 724 512 Z" fill="url(#gd_verdict_stone)" stroke="#25301f" stroke-width="3"/>
+      <image href="art/verdict-stone.webp" x="712" y="474" width="248" height="182" preserveAspectRatio="xMidYMax meet"/>
       ${[560, 585, 610].map(y => `
         <path d="M752 ${y} q11 -6 22 0 t22 0 t22 0 t22 0 t22 0 t22 0 t22 0"
           fill="none" stroke-width="2.6" stroke-linecap="round"
