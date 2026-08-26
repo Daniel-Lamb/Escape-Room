@@ -292,6 +292,7 @@ function openGratePuzzle(game) {
     title: 'The Verse Grate',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-rings.webp)"></div>
         <p class="puzzle-desc">Three brass rings, each engraved I through IX, ringing the drain.
         Above them, Edmund's verse waits like a key without a lock:
         <em>crows... rats... chains... turn them so.</em></p>

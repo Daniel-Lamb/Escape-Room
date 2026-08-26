@@ -314,6 +314,7 @@ function openWheelPuzzle(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-marble.webp)"></div>
         <p class="puzzle-desc">Four marble rings, each carrying a quarter of the arms of Vayne.
         Aligned, every keystone points up and the fresco's arms assemble.
         Three bronze handles below — and <em>no hand turns one wheel alone</em>.</p>

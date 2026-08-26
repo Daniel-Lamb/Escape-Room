@@ -321,6 +321,7 @@ function openChestPuzzle(game) {
     title: "Edmund's Chest",
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-dials.webp)"></div>
         <p class="puzzle-desc">Five brass letter dials, A to Z, set into iron banding.
         Dials read left to right, as all honest writing does.</p>
         <div class="puzzle-row" id="sc-dials"></div>

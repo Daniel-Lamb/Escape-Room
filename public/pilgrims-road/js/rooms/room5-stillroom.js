@@ -377,6 +377,7 @@ function openBrewPuzzle(game) {
 
       function draw() {
         body.innerHTML = `
+          <div class="puzzle-hero" style="background-image:url(art/pz-alchemy.webp)"></div>
           <p class="puzzle-desc">${stage === 'mix'
             ? 'The recipe wants three ingredients in exact measure. Choose a jar, then a spoon. The jars are plentiful — a ruined mix costs only pride.'
             : stage === 'stir'

@@ -161,6 +161,7 @@ function openDoorPuzzle(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-gate.webp)"></div>
         <p class="puzzle-desc">Six brass letter dials ring the low north door.
         <em>"Six suns light the pilgrim's road. The fewest rays speak first."</em>
         ${sunsFound < 6

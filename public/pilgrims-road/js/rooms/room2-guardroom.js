@@ -353,6 +353,7 @@ function openBoltPuzzle(game) {
     title: 'The Watch-Order Bolts',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-bolts.webp)"></div>
         <p class="puzzle-desc">Five sliding bolts, each stamped with a company's beast.
         The roster says it plainly: <em>"bolts drawn as the watches pass."</em>
         Draw them in the order the five companies stand watch — one mistake and they all spring back.</p>
