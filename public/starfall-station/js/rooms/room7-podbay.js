@@ -107,24 +107,18 @@ function podScene(state) {
 
     <!-- launch doors / the burn beyond -->
     <g>
-      <rect x="500" y="90" width="620" height="420" rx="16" fill="#04070d" stroke="#26313f" stroke-width="10"/>
+      <rect x="500" y="90" width="620" height="420" rx="16" fill="rgba(4,7,13,0.35)" stroke="rgba(79,216,208,0.28)" stroke-width="6"/>
       <rect x="500" y="90" width="620" height="420" rx="16" fill="url(#gd_pb_burn)" class="flicker"/>
       ${gone ? `<path d="M700 380 Q900 260 1080 160" stroke="rgba(255,180,94,0.7)" stroke-width="5" fill="none" stroke-dasharray="6 14"/>
         <text x="810" y="470" text-anchor="middle" font-size="13" fill="#5d7080" font-family="Consolas, monospace">POD AWAY — UNOCCUPIED</text>` : ''}
     </g>
 
-    <!-- the pod (until it saves itself) -->
+    <!-- the escape pod (photoreal) until it saves itself -->
     ${gone ? '' : `
     <g>
-      <ellipse cx="810" cy="600" rx="180" ry="26" fill="#0a0d13"/>
-      <path d="M680 590 Q680 440 810 430 Q940 440 940 590 Q875 620 810 620 Q745 620 680 590 Z"
-        fill="#2b3547" stroke="#39485a" stroke-width="5"/>
-      <ellipse cx="810" cy="500" rx="52" ry="64" fill="#101b28" stroke="#4fd8d0" stroke-width="2.5"/>
-      <g class="flicker">
-        <circle cx="700" cy="575" r="5" fill="#7bc47f"/>
-        <circle cx="920" cy="575" r="5" fill="#7bc47f"/>
-      </g>
-      <text x="810" y="655" text-anchor="middle" font-size="12" fill="#5d7080" font-family="Consolas, monospace">POD 1 — PREFLIGHT COMPLETE · AWAITING OCCUPANT</text>
+      <ellipse cx="810" cy="620" rx="182" ry="24" fill="rgba(10,13,19,0.55)"/>
+      <image href="art/escape-pod.webp" x="645" y="352" width="336" height="284" preserveAspectRatio="xMidYMax meet"/>
+      <text x="810" y="658" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="3.5">POD 1 — PREFLIGHT COMPLETE · AWAITING OCCUPANT</text>
     </g>`}
 
     <!-- biometric arch -->
@@ -152,7 +146,7 @@ function podScene(state) {
 
     <!-- rear bulkhead to the array -->
     <g>
-      <path d="M1400 640 L1400 330 Q1470 280 1540 330 L1540 640 Z" fill="${revealed ? '#0b131e' : '#161a24'}" stroke="#26313f" stroke-width="8"/>
+      <path d="M1400 640 L1400 330 Q1470 280 1540 330 L1540 640 Z" fill="${revealed ? 'rgba(11,19,30,0.32)' : 'rgba(22,26,36,0.5)'}" stroke="rgba(79,216,208,0.35)" stroke-width="5"/>
       ${revealed
         ? `<text x="1470" y="480" text-anchor="middle" font-size="12" fill="#4fd8d0" font-family="Consolas, monospace" class="flicker">UPLINK ARRAY →</text>`
         : `<text x="1470" y="480" text-anchor="middle" font-size="11" fill="#3a4556" font-family="Consolas, monospace">MAINTENANCE ONLY</text>`}
