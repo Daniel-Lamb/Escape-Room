@@ -61,45 +61,42 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/cryobay.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/cryobay.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- viewport with the planet, too close -->
-      <g>
-        <ellipse cx="1310" cy="250" rx="200" ry="150" fill="#04070d"/>
-        <circle cx="1310" cy="420" r="260" fill="url(#gd_cb_planet)"/>
-        <path d="M1130 330 Q1310 260 1490 330" stroke="rgba(255,180,94,0.5)" stroke-width="3" fill="none" class="flicker"/>
-        <ellipse cx="1310" cy="250" rx="200" ry="150" fill="none" stroke="#2b3547" stroke-width="14"/>
-        <ellipse cx="1310" cy="250" rx="200" ry="150" fill="none" stroke="rgba(79,216,208,0.25)" stroke-width="3"/>
+      <!-- viewport: the planet lives in the footage; a faint HUD bracket marks the pane -->
+      <g opacity="0.5">
+        <path d="M1168 150 h-18 v26 M1150 344 v26 h18 M1462 150 h18 v26 M1480 344 v26 h-18"
+          stroke="rgba(79,216,208,0.55)" stroke-width="3" fill="none"/>
+        <text x="1150" y="140" font-size="11" fill="rgba(139,163,184,0.85)"
+          font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="3">VIEWPORT · ORBIT DECAY</text>
       </g>
 
-      <!-- row of open, empty pods -->
+      <!-- crew pods: photoreal stasis pods + nameplate/EVACUATED overlays -->
       ${[120, 340, 560].map((x, i) => `
-      <g opacity="0.9">
-        <path d="M${x} 600 L${x} 300 Q${x + 80} 250 ${x + 160} 300 L${x + 160} 600 Z" fill="url(#gd_cb_pod)" stroke="#141c26" stroke-width="4"/>
-        <path d="M${x + 18} 580 L${x + 18} 320 Q${x + 80} 282 ${x + 142} 320 L${x + 142} 580 Z" fill="#0d141f"/>
-        <rect x="${x + 30}" y="608" width="100" height="20" rx="4" fill="#22303f"/>
-        <text x="${x + 80}" y="623" text-anchor="middle" font-size="13" fill="#8fa3b8"
+      <g opacity="0.96">
+        <image href="art/cryo-pod.webp" x="${x - 6}" y="214" width="176" height="432" preserveAspectRatio="xMidYMax meet"/>
+        <rect x="${x + 34}" y="602" width="96" height="22" rx="5" fill="rgba(13,20,28,0.86)" stroke="rgba(79,216,208,0.3)" stroke-width="1"/>
+        <text x="${x + 82}" y="617" text-anchor="middle" font-size="13" fill="#c3d2e0"
           font-family="Consolas, monospace">${['OKAFOR, J.', 'IBARRA, M.', 'CHEN, R.'][i]}</text>
-        <text x="${x + 80}" y="360" text-anchor="middle" font-size="12" fill="#4fd8d0" opacity="0.65"
-          font-family="Consolas, monospace">EVACUATED</text>
+        <text x="${x + 82}" y="348" text-anchor="middle" font-size="12" fill="#8ff0ea" opacity="0.92"
+          font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="4">EVACUATED</text>
       </g>`).join('')}
 
-      <!-- YOUR pod: glass fogged, plate blank -->
+      <!-- YOUR pod: highlighted photoreal pod, fogged glass, plate blank -->
       <g>
-        <ellipse cx="880" cy="600" rx="120" ry="20" fill="url(#gd_cb_cool)" class="glow"/>
-        <path d="M790 600 L790 280 Q880 220 970 280 L970 600 Z" fill="url(#gd_cb_pod)" stroke="#141c26" stroke-width="5"/>
-        <path d="M808 580 L808 300 Q880 250 952 300 L952 580 Z" fill="#101b28"/>
-        <path d="M812 320 Q860 280 948 340 L948 560 L900 580 Z" fill="rgba(215,232,255,0.09)"/>
-        <rect x="830" y="608" width="100" height="20" rx="4" fill="#22303f"/>
-        <text x="880" y="623" text-anchor="middle" font-size="13" fill="#5d7080"
+        <ellipse cx="880" cy="622" rx="132" ry="22" fill="url(#gd_cb_cool)" class="glow"/>
+        <image href="art/cryo-pod.webp" x="776" y="150" width="208" height="500" preserveAspectRatio="xMidYMax meet"/>
+        <rect x="808" y="214" width="150" height="378" rx="34" fill="rgba(221,236,255,0.17)"/>
+        <rect x="808" y="214" width="150" height="378" rx="34" fill="none" stroke="rgba(143,240,234,0.4)" stroke-width="2"/>
+        <rect x="830" y="604" width="100" height="22" rx="5" fill="rgba(13,20,28,0.9)" stroke="rgba(79,216,208,0.35)" stroke-width="1.2"/>
+        <text x="880" y="619" text-anchor="middle" font-size="14" fill="#8399a8"
           font-family="Consolas, monospace">———</text>
         <!-- data slot with shard -->
-        ${state.journal && state.journal.some ? '' : ''}
-        <rect x="955" y="420" width="26" height="46" rx="4" fill="#141c26" stroke="#2f9e97" stroke-width="2" class="${'beckon'}"/>
-        <text x="968" y="450" text-anchor="middle" font-size="16" fill="#4fd8d0">▮</text>
+        <rect x="952" y="418" width="26" height="46" rx="4" fill="rgba(13,23,32,0.92)" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="965" y="448" text-anchor="middle" font-size="16" fill="#4fd8d0">▮</text>
       </g>
 
       <!-- coolant gauges + manifold -->
       <g>
-        <rect x="1080" y="470" width="360" height="150" rx="10" fill="#16222f" stroke="#2b3547" stroke-width="4"/>
+        <rect x="1080" y="470" width="360" height="150" rx="10" fill="rgba(16,26,36,0.85)" stroke="rgba(79,216,208,0.32)" stroke-width="3"/>
         <text x="1260" y="497" text-anchor="middle" font-size="15" fill="#8fa3b8" letter-spacing="2"
           font-family="Consolas, monospace">COOLANT MANIFOLD</text>
         <text x="1260" y="518" text-anchor="middle" font-size="13" fill="#4fd8d0"
@@ -125,15 +122,15 @@ export default {
 
       <!-- tool drawer -->
       <g>
-        <rect x="70" y="690" width="180" height="80" rx="8" fill="#1c2734" stroke="#2b3547" stroke-width="3"/>
-        <rect x="90" y="710" width="140" height="16" rx="4" fill="#101a26"/>
-        <rect x="90" y="736" width="140" height="16" rx="4" fill="#101a26"/>
+        <rect x="70" y="690" width="180" height="80" rx="8" fill="rgba(28,39,52,0.55)" stroke="rgba(79,216,208,0.28)" stroke-width="2"/>
+        <rect x="90" y="710" width="140" height="16" rx="4" fill="rgba(16,26,38,0.6)"/>
+        <rect x="90" y="736" width="140" height="16" rx="4" fill="rgba(16,26,38,0.6)"/>
         ${stylusHere ? `<g class="beckon"><path d="M120 744 L156 736" stroke="#8fa3b8" stroke-width="3" stroke-linecap="round"/><rect x="152" y="731" width="9" height="9" rx="2" fill="#e05252"/></g>` : ''}
       </g>
 
       <!-- bulkhead door with thaw-lock keypad -->
       <g>
-        <path d="M400 640 L400 330 Q480 270 560 330 L560 640 Z" fill="${unlocked ? '#0b131e' : '#1a2431'}" stroke="#2b3547" stroke-width="8"/>
+        <path d="M400 640 L400 330 Q480 270 560 330 L560 640 Z" fill="${unlocked ? 'rgba(11,19,30,0.32)' : 'rgba(26,36,49,0.5)'}" stroke="rgba(79,216,208,0.38)" stroke-width="4"/>
         ${unlocked
           ? `<path d="M420 640 L420 350 Q480 305 540 350 L540 640" fill="none" stroke="rgba(79,216,208,0.35)" stroke-width="3"/>
              <text x="480" y="480" text-anchor="middle" font-size="14" fill="#4fd8d0" font-family="Consolas, monospace" class="flicker">OPEN</text>`
@@ -143,8 +140,8 @@ export default {
              <text x="480" y="530" text-anchor="middle" font-size="11" fill="#8fa3b8" font-family="Consolas, monospace">CODE = A·B·C·D</text>`}
       </g>
 
-      <!-- emergency strip lighting -->
-      <rect x="0" y="632" width="1600" height="6" fill="#e05252" opacity="0.5" class="flicker"/>
+      <!-- emergency strip lighting (subtle accent over the footage) -->
+      <rect x="0" y="634" width="1600" height="3" fill="#e05252" opacity="0.32" class="flicker"/>
 
       <path d="M0 900 L0 860 Q800 905 1600 860 L1600 900 Z" fill="#04070d"/>
     </svg>`;
