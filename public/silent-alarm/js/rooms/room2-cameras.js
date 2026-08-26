@@ -158,6 +158,7 @@ function openDials(game) {
     title: isHand() ? 'Aim the Gallery Cameras' : 'Route the Feed Channels',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-cameras"></div>
         <p class="puzzle-desc">Cycle each of the four to the compass bearing your partner reads
         you (their card shows your four, in order). N · NE · E · SE · S · SW · W · NW.</p>
         <div class="puzzle-row" id="cam-dials"></div>

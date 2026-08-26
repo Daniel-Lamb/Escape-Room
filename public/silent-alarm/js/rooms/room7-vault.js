@@ -141,6 +141,7 @@ function openVault(game) {
     title: 'The Master Timelock',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-timelock"></div>
         <p class="puzzle-desc">Pool all six pins — your three and your partner's — in order by
         position, one first. Enter the six-digit master. (Not the Client's code.)</p>
         <div class="puzzle-row">

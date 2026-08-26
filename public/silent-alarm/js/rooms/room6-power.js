@@ -148,6 +148,7 @@ function openBreakers(game) {
     title: 'Set the Breakers',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-breakers"></div>
         <p class="puzzle-desc">Throw each of the five breakers UP or DOWN to match your pattern —
         which is drawn on your partner's schematic. Click a breaker to flip it.</p>
         <div class="puzzle-row" id="pow-levers"></div>

@@ -179,6 +179,7 @@ function openLock(game) {
     title: isHand() ? 'The Service Keypad' : 'The Feed Uplink',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-keypad"></div>
         <p class="puzzle-desc">Four dials, 0–9. Your code is <em>not</em> on your screen —
         it is on your partner's. Ask them what ${isHand() ? 'the alley box says about the service door' : 'the schematic says about the feed uplink'}.</p>
         <div class="puzzle-row" id="svc-dials"></div>

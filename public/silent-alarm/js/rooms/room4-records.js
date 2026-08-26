@@ -156,6 +156,7 @@ function openBoxes(game) {
     title: 'Which Box Holds the Key?',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-deposit"></div>
         <p class="puzzle-desc">Cross your ruled-out boxes with your partner's. Choose the one
         box neither of you ruled out, and open it.</p>
         <div class="puzzle-row" id="rec-opts"></div>

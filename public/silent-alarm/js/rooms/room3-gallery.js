@@ -178,6 +178,7 @@ function openDecode(game) {
     title: isHand() ? 'The Safe-Path Panel' : 'The Alarm Console',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-terminal"></div>
         <p class="puzzle-desc">Read your four burst-counts to your partner. They decode them on
         their page and read you a four-letter word. Enter it.</p>
         <div class="puzzle-row">

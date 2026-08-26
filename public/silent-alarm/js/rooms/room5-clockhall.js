@@ -167,6 +167,7 @@ function openValue(game) {
     title: isHand() ? 'The Pendulum Lock' : 'The Damper',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero pz-clockdial"></div>
         <p class="puzzle-desc">Set the dial (0–12). Your two numbers are on your screen; the rule
         for them is on your partner's plate. Ask them, then set the result.</p>
         <div class="puzzle-row"><div class="dial">
