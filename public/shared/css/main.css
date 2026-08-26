@@ -956,3 +956,28 @@ button { font-family: inherit; cursor: pointer; }
   #stage { padding: 10px; }
   .title-buttons { flex-direction: column; align-items: center; }
 }
+
+/* ============ DEV ROOM-JUMPER (inspection tool, all games) ============ */
+#dev-skip {
+  position: fixed; left: 10px; bottom: 10px; z-index: 99999;
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 8px; border-radius: 9px;
+  background: rgba(10, 12, 18, 0.72); border: 1px dashed rgba(255, 255, 255, 0.38);
+  font: 600 11px/1 ui-monospace, "Consolas", monospace; color: #cfd6e0;
+  opacity: 0.42; transition: opacity 0.2s; backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+#dev-skip:hover, #dev-skip:focus-within { opacity: 1; }
+#dev-skip .dev-tag { color: #ffb45e; letter-spacing: 0.1em; }
+#dev-skip .dev-btn {
+  cursor: pointer; width: 24px; height: 22px; padding: 0; font-size: 12px; line-height: 1;
+  color: #fff; background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 5px;
+}
+#dev-skip .dev-btn:hover { background: rgba(255, 255, 255, 0.22); }
+#dev-skip select {
+  max-width: 168px; padding: 3px 5px; font: inherit; color: #fff;
+  background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 5px; cursor: pointer;
+}
+@media (max-width: 860px) { #dev-skip select { max-width: 110px; } }

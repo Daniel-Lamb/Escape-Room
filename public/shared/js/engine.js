@@ -345,6 +345,64 @@ export function initEngine(roomModules, { onEnd, config }) {
     if (typing) skipTyping();
     else nextMessage();
   });
+  mountDevSkip();
+}
+
+/* ============================================================
+   DEV: room jumper (inspect any room without solving)
+   A floating panel injected into every game. Prev / room-select /
+   next jump straight to a room, bypassing the puzzles; from the
+   title/role screen the first jump also boots the game.
+   ============================================================ */
+
+function mountDevSkip() {
+  if (document.getElementById('dev-skip')) return;
+  const bar = document.createElement('div');
+  bar.id = 'dev-skip';
+  bar.title = 'Dev tool: jump to any room without solving (inspection only)';
+  bar.innerHTML = `
+    <span class="dev-tag">DEV</span>
+    <button class="dev-btn" data-dev="-1" aria-label="Previous room" title="Previous room">&#9664;</button>
+    <select id="dev-room" aria-label="Jump to room"></select>
+    <button class="dev-btn" data-dev="1" aria-label="Next room" title="Next room">&#9654;</button>`;
+  document.body.appendChild(bar);
+
+  const sel = /** @type {HTMLSelectElement} */ (bar.querySelector('#dev-room'));
+  rooms.forEach((r, i) => {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = `${i + 1}/${rooms.length} · ${r.title}`;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', () => devGoToRoom(Number(sel.value)));
+  /** @type {NodeListOf<HTMLElement>} */
+  (bar.querySelectorAll('[data-dev]')).forEach(btn => btn.addEventListener('click', () => {
+    devGoToRoom((state.currentRoom || 0) + Number(btn.dataset.dev));
+  }));
+  syncDevSkip();
+}
+
+/** @param {number} idx target room index (wraps) */
+function devGoToRoom(idx) {
+  const N = rooms.length;
+  if (!N) return;
+  idx = ((idx % N) + N) % N;
+  if (!state.started) {
+    // reveal the in-game screen generically, then boot a fresh run
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    const gs = document.getElementById('game-screen');
+    if (gs) gs.classList.remove('hidden');
+    startRun(false);
+  }
+  state.timeLeft = TOTAL_SECONDS;   // don't let the clock end an inspection pass
+  updateTimerDisplay();
+  if (state.currentRoom !== idx) enterRoom(idx);
+  else syncDevSkip();
+}
+
+function syncDevSkip() {
+  const sel = /** @type {HTMLSelectElement | null} */ (document.getElementById('dev-room'));
+  if (sel) sel.value = String(state.currentRoom);
 }
 
 // The ambience theme for this game, resolved fresh each start so a per-role
@@ -391,6 +449,7 @@ function enterRoom(idx, immediate = false) {
     game.say(currentRoom.intro);
   }
   if (currentRoom.onEnter) currentRoom.onEnter(game);
+  syncDevSkip();
 }
 
 /** @param {number} idx */
@@ -625,6 +684,7 @@ function openModal({ title, html, wide, buttons, onClose }) {
     setTimeout(() => { backdrop.remove(); card.remove(); }, 350);
     if (onClose) onClose();
   }
+  /** @param {KeyboardEvent} e */
   function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }
   document.addEventListener('keydown', onKey);
   backdrop.addEventListener('click', close);
