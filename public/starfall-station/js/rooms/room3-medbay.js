@@ -88,7 +88,7 @@ export default {
       <!-- MED BAY side -->
       <!-- manifest screen -->
       <g>
-        <rect x="860" y="140" width="300" height="200" rx="10" fill="#0d1a26" stroke="#2b3547" stroke-width="4"/>
+        <rect x="860" y="140" width="300" height="200" rx="10" fill="rgba(13,26,38,0.85)" stroke="rgba(79,216,208,0.3)" stroke-width="2"/>
         <text x="1010" y="170" text-anchor="middle" font-size="14" fill="#4fd8d0" font-family="Consolas, monospace">CREW MANIFEST</text>
         ${['OKAFOR — EVAC ✓', 'IBARRA — EVAC ✓', 'CHEN — EVAC ✓', 'DELACROIX — EVAC ✓', 'SANDOVAL — EVAC ✓'].map((t, i) =>
           `<text x="880" y="${196 + i * 20}" font-size="11.5" fill="#7bc47f" font-family="Consolas, monospace">${t}</text>`).join('')}
@@ -111,11 +111,11 @@ export default {
         <text x="1190" y="600" text-anchor="middle" font-size="11" fill="#5d7080" font-family="Consolas, monospace">NEURAL LAB — SEALED</text>
       </g>
 
-      <!-- med locker -->
+      <!-- med locker (photoreal cabinet) -->
       <g>
-        <rect x="1330" y="240" width="200" height="380" rx="10" fill="#1c2734" stroke="#2b3547" stroke-width="5"/>
+        <image href="art/med-locker.webp" x="1338" y="238" width="184" height="404" preserveAspectRatio="xMidYMax slice"/>
         ${open ? `
-          <rect x="1346" y="256" width="168" height="348" fill="#0b121c"/>
+          <rect x="1352" y="258" width="158" height="360" rx="6" fill="rgba(6,10,16,0.82)"/>
           ${taken ? '' : `<g class="beckon">
             <rect x="1380" y="330" width="34" height="52" rx="6" fill="none" stroke="#7bc47f" stroke-width="3"/>
             <rect x="1440" y="336" width="48" height="30" rx="4" fill="#1d3a63" stroke="#4a7cb5" stroke-width="2"/>

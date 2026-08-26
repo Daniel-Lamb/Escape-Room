@@ -89,35 +89,30 @@ export default {
       <!-- grow racks, dead or blooming -->
       ${[80, 420, 1180].map((x, i) => `
       <g>
-        <rect x="${x}" y="200" width="300" height="420" rx="10" fill="#141f18" stroke="#22332a" stroke-width="4"/>
-        ${[250, 340, 430, 520].map(y => `
-          <rect x="${x + 18}" y="${y}" width="264" height="14" rx="4" fill="#1c2a21"/>
-          ${flow
+        <image href="art/hydro-rack.webp" x="${x - 6}" y="186" width="312" height="464" preserveAspectRatio="xMidYMax meet"/>
+        ${[250, 340, 430, 520].map(y => flow
             ? `<g>${[0, 1, 2, 3, 4].map(k => `<path d="M${x + 40 + k * 55} ${y} q6 -22 0 -30 M${x + 40 + k * 55} ${y} q-8 -16 2 -26" stroke="#7bc47f" stroke-width="3.5" fill="none" stroke-linecap="round" class="beckon"/>`).join('')}</g>`
-            : `<g>${[0, 1, 2, 3, 4].map(k => `<path d="M${x + 40 + k * 55} ${y} q4 -12 0 -18" stroke="#4a4434" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')}</g>`}
-        `).join('')}
+            : `<g>${[0, 1, 2, 3, 4].map(k => `<path d="M${x + 40 + k * 55} ${y} q4 -12 0 -18" stroke="#4a4434" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')}</g>`
+        ).join('')}
         ${flow ? `<ellipse cx="${x + 150}" cy="400" rx="180" ry="200" fill="url(#gd_hy_bloom)" class="glow"/>` : ''}
-        <!-- grow light tube -->
         ${i === 1 && lampHere ? `
           <g class="beckon">
             <rect x="${x + 60}" y="216" width="180" height="12" rx="6" fill="#3a2a5f" stroke="#7a5fd0" stroke-width="2.5"/>
             <ellipse cx="${x + 150}" cy="222" rx="120" ry="30" fill="url(#gd_hy_glow)"/>
-          </g>` : i === 1 ? '' : `
-          <rect x="${x + 60}" y="216" width="180" height="12" rx="6" fill="#26313f"/>`}
+          </g>` : ''}
       </g>`).join('')}
 
-      <!-- nutrient tank with shard 2 -->
+      <!-- nutrient tank (photoreal) with shard 2 -->
       <g>
-        <path d="M840 340 L840 600 Q900 630 960 600 L960 340 Q900 310 840 340 Z" fill="#16222c" stroke="#2b3f4a" stroke-width="5"/>
-        <path d="M848 ${flow ? 420 : 520} L952 ${flow ? 420 : 520} L952 596 Q900 622 848 596 Z" fill="${flow ? 'rgba(79,216,208,0.35)' : 'rgba(79,216,208,0.12)'}" class="shimmer"/>
-        <rect x="884" y="300" width="32" height="44" rx="6" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <image href="art/hydro-tank.webp" x="836" y="322" width="128" height="308" preserveAspectRatio="xMidYMax meet"/>
+        <rect x="884" y="300" width="32" height="44" rx="6" fill="rgba(16,26,38,0.9)" stroke="#2f9e97" stroke-width="2" class="beckon"/>
         <text x="900" y="330" text-anchor="middle" font-size="16" fill="#4fd8d0">▮</text>
-        <text x="900" y="660" text-anchor="middle" font-size="12" fill="#5d7080" font-family="Consolas, monospace">NUTRIENT RESERVE</text>
+        <text x="900" y="656" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="3">NUTRIENT RESERVE</text>
       </g>
 
       <!-- pipe access panel (the puzzle) -->
       <g>
-        <rect x="1000" y="380" width="150" height="220" rx="10" fill="#141f18" stroke="${flow ? '#7bc47f' : '#ffb45e'}" stroke-width="4" class="${flow ? '' : 'beckon'}"/>
+        <rect x="1000" y="380" width="150" height="220" rx="10" fill="rgba(20,31,24,0.85)" stroke="${flow ? '#7bc47f' : '#ffb45e'}" stroke-width="4" class="${flow ? '' : 'beckon'}"/>
         <g stroke="${flow ? '#7bc47f' : '#39485a'}" stroke-width="9" fill="none">
           <path d="M1015 420 L1075 420 L1075 480 L1135 480"/>
           <path d="M1015 540 L1055 540 L1055 500"/>
@@ -128,7 +123,7 @@ export default {
 
       <!-- exit iris -->
       <g>
-        <circle cx="1490" cy="440" r="120" fill="#0b131e" stroke="#22332a" stroke-width="10"/>
+        <circle cx="1490" cy="440" r="120" fill="rgba(11,19,30,0.3)" stroke="rgba(79,216,208,0.35)" stroke-width="6"/>
         ${flow
           ? `<circle cx="1490" cy="440" r="60" fill="#04070d" stroke="rgba(79,216,208,0.4)" stroke-width="3"/>`
           : `${[0, 60, 120, 180, 240, 300].map(a => `<path d="M1490 440 L${1490 + 115 * Math.cos(a * Math.PI / 180)} ${440 + 115 * Math.sin(a * Math.PI / 180)}" stroke="#1a2a20" stroke-width="26"/>`).join('')}`}

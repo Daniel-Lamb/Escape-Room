@@ -311,18 +311,16 @@ function arrayScene(state) {
       <path d="M1500 640 L1380 200"/>
     </g>
 
-    <!-- the dish -->
-    <g style="transform: rotate(${aligned ? -24 : -6}deg); transform-origin: 780px 420px; transition: transform 1.2s cubic-bezier(0.22,1,0.36,1);">
-      <ellipse cx="780" cy="380" rx="240" ry="90" fill="#141c26" stroke="#39485a" stroke-width="8"/>
-      <ellipse cx="780" cy="380" rx="240" ry="90" fill="none" stroke="rgba(79,216,208,${aligned ? 0.6 : 0.15})" stroke-width="3"/>
-      <line x1="780" y1="380" x2="780" y2="250" stroke="#39485a" stroke-width="10"/>
-      <!-- the emitter head -->
-      <circle cx="780" cy="240" r="26" fill="#101b28" stroke="${gel ? '#7bc47f' : '#e05252'}" stroke-width="4" class="${gel ? '' : 'flicker'}"/>
+    <!-- the dish (photoreal) -->
+    <g style="transform: rotate(${aligned ? -16 : -5}deg); transform-origin: 780px 440px; transition: transform 1.2s cubic-bezier(0.22,1,0.36,1);">
+      <image href="art/array-dish.webp" x="574" y="214" width="412" height="300" preserveAspectRatio="xMidYMin slice"/>
+      <!-- the emitter head (biogel target) -->
+      <circle cx="780" cy="238" r="26" fill="#101b28" stroke="${gel ? '#7bc47f' : '#e05252'}" stroke-width="4" class="${gel ? '' : 'flicker'}"/>
       ${gel
-        ? `<circle cx="780" cy="240" r="12" fill="rgba(123,196,127,0.5)" class="glow fast"/>`
-        : `<path d="M766 228 L794 252 M788 226 L776 240" stroke="#e05252" stroke-width="2.5"/>`}
+        ? `<circle cx="780" cy="238" r="12" fill="rgba(123,196,127,0.5)" class="glow fast"/>`
+        : `<path d="M766 226 L794 250 M788 224 L776 238" stroke="#e05252" stroke-width="2.5"/>`}
     </g>
-    <rect x="740" y="470" width="80" height="180" fill="#1c2430"/>
+    <rect x="748" y="450" width="64" height="200" fill="rgba(28,36,48,0.55)"/>
 
     <!-- console -->
     <g>

@@ -65,16 +65,12 @@ export default {
         ${[700, 770, 845].map(y => `<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`).join('')}
       </g>
 
-      <!-- telescope -->
+      <!-- telescope (photoreal) -->
       <g>
-        <rect x="240" y="560" width="26" height="130" fill="#26313f"/>
-        <g transform="rotate(-28 253 560)">
-          <rect x="213" y="520" width="200" height="44" rx="18" fill="#2b3547" stroke="#39485a" stroke-width="3"/>
-          <circle cx="410" cy="542" r="20" fill="#141c26" stroke="#4fd8d0" stroke-width="2.5"/>
-        </g>
+        <image href="art/obs-telescope.webp" x="188" y="266" width="264" height="384" preserveAspectRatio="xMidYMax meet"/>
         <!-- shard 5 in the housing -->
-        <rect x="286" y="600" width="24" height="34" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
-        <text x="298" y="623" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
+        <rect x="286" y="602" width="24" height="34" rx="4" fill="rgba(16,26,38,0.92)" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="298" y="625" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
       </g>
 
       <!-- calibration card, clipped to the telescope mount -->

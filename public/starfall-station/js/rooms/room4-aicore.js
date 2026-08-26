@@ -30,14 +30,11 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/aicore.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/aicore.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- dead server racks, curving around -->
+      <!-- dead server racks (photoreal); a failing LED or two kept flickering for life -->
       ${[60, 260, 460, 1140, 1340].map((x, i) => `
-      <g opacity="0.9">
-        <rect x="${x}" y="150" width="160" height="470" rx="8" fill="#12151f" stroke="#1e2333" stroke-width="4"/>
-        ${[0, 1, 2, 3, 4, 5, 6, 7].map(k => `
-          <rect x="${x + 16}" y="${170 + k * 55}" width="128" height="38" rx="4" fill="#0c0f18"/>
-          <circle cx="${x + 30}" cy="${189 + k * 55}" r="3.5" fill="${(i + k) % 5 === 0 ? '#e05252' : '#1e2333'}" ${(i + k) % 5 === 0 ? 'class="flicker"' : ''}/>
-        `).join('')}
+      <g opacity="0.94">
+        <image href="art/core-rack.webp" x="${x - 2}" y="150" width="164" height="500" preserveAspectRatio="xMidYMax meet"/>
+        <circle cx="${x + 30}" cy="${262 + i * 33}" r="3.5" fill="#e05252" class="flicker" opacity="0.85"/>
       </g>`).join('')}
 
       <!-- the empty cradle -->
@@ -49,7 +46,7 @@ export default {
         <!-- socket where a mind used to plug in -->
         <rect x="770" y="492" width="60" height="24" rx="6" fill="#04070d" stroke="#2f9e97" stroke-width="2" opacity="0.9"/>
         <!-- pedestal readout -->
-        <rect x="700" y="580" width="200" height="54" rx="8" fill="#0d1a26" stroke="#2b3547" stroke-width="3"/>
+        <rect x="700" y="580" width="200" height="54" rx="8" fill="rgba(13,26,38,0.85)" stroke="rgba(79,216,208,0.28)" stroke-width="2"/>
         <text x="800" y="602" text-anchor="middle" font-size="11.5" fill="#ff8f8f" font-family="Consolas, monospace" class="flicker">RESIDENT INSTANCE: MIGRATED</text>
         <text x="800" y="620" text-anchor="middle" font-size="11.5" fill="#ffb45e" font-family="Consolas, monospace">→ MAINTENANCE CHASSIS 7</text>
         <!-- shard 4 -->
@@ -59,7 +56,7 @@ export default {
 
       <!-- breaker panel -->
       <g>
-        <rect x="1400" y="230" width="170" height="330" rx="10" fill="#141824" stroke="${solved ? '#7bc47f' : cleared ? '#4fd8d0' : '#ffb45e'}" stroke-width="4" class="${solved ? '' : 'beckon'}"/>
+        <rect x="1400" y="230" width="170" height="330" rx="10" fill="rgba(20,24,36,0.85)" stroke="${solved ? '#7bc47f' : cleared ? '#4fd8d0' : '#ffb45e'}" stroke-width="4" class="${solved ? '' : 'beckon'}"/>
         <text x="1485" y="258" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace">ISOLATION LOGIC</text>
         ${['A', 'B', 'C', 'D'].map((l, i) => `
           <g>
@@ -72,7 +69,7 @@ export default {
 
       <!-- etched schematic on the wall -->
       <g>
-        <rect x="1130" y="80" width="330" height="110" rx="8" fill="#10131e" stroke="#26313f" stroke-width="3"/>
+        <rect x="1130" y="80" width="330" height="110" rx="8" fill="rgba(16,19,30,0.85)" stroke="rgba(79,216,208,0.3)" stroke-width="2"/>
         <text x="1295" y="108" text-anchor="middle" font-size="12.5" fill="#4fd8d0" font-family="Consolas, monospace">DOOR = A ∧ ¬B ∧ (C ∨ D)</text>
         <text x="1295" y="132" text-anchor="middle" font-size="12.5" fill="#ff8f8f" font-family="Consolas, monospace">ALARM = B ∨ (¬C ∧ D) ∨ (C ∧ D)</text>
         <text x="1295" y="166" text-anchor="middle" font-size="10.5" fill="#5d7080" font-family="Consolas, monospace">door LIVE · alarm DARK — hand-etched, underlined twice</text>
