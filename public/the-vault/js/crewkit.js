@@ -10,6 +10,7 @@ import { getRole, roleName, nextName, ROLES, NEXT, PREV } from './role.js';
 // Photoreal plates live in <game>/art/<slug>.webp; resolve against this
 // module's URL so they load under Pages/Vercel/localhost alike.
 const ART = new URL('../art/', import.meta.url).href;
+export function art(file) { return `${ART}${file}`; }
 
 /* ---------- palette / defs ---------- */
 export function defs(slug) {
@@ -128,10 +129,7 @@ function defaultHints(cfg, role) {
   ];
 }
 
-// The four dials of your own lock read live from these flags.
-const dialFlags = (slug) => [`${slug}_d0`, `${slug}_d1`, `${slug}_d2`];
-
-function lockSvg(slug, open, label, state) {
+function lockSvg(slug, open, label) {
   if (open) {
     return `<g>
       <rect x="620" y="600" width="360" height="210" rx="12" fill="#05070d" stroke="#123a2c" stroke-width="6"/>
@@ -139,13 +137,11 @@ function lockSvg(slug, open, label, state) {
         font-family="Consolas, monospace" class="flicker">${label} — OPEN</text>
     </g>`;
   }
-  const d = dialFlags(slug).map(k => state.flags[k] ?? 0);
+  // Photoreal brass combination panel; the engraved name-plate carries the label.
+  // (The dials on the plate are decorative — the real code is set in the modal.)
   return `<g font-family="Consolas, monospace" text-anchor="middle">
-    <rect x="620" y="600" width="360" height="210" rx="12" fill="rgba(9,26,32,0.92)" stroke="#2b3547" stroke-width="6"/>
-    <text x="800" y="648" font-size="15" fill="#8fb6c4">${label}</text>
-    ${[0, 1, 2].map(i => `
-      <circle cx="${700 + i * 100}" cy="720" r="40" fill="#0c1a22" stroke="#c9a227" stroke-width="4"/>
-      <text x="${700 + i * 100}" y="732" font-size="34" fill="#e8c85a">${d[i]}</text>`).join('')}
+    <image href="${art('lock-panel.webp')}" x="620" y="600" width="360" height="210" preserveAspectRatio="xMidYMid meet"/>
+    <text x="800" y="666" font-size="14" fill="#241c08" letter-spacing="1">${label}</text>
   </g>`;
 }
 

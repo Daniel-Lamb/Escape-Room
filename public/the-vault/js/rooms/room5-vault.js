@@ -5,7 +5,7 @@
 // This is the last room, so opening it wins the game for whoever throws it.
 
 import { getRole, roleName } from '../role.js';
-import { defs, backdrop, roleTag, comboLock } from '../crewkit.js';
+import { defs, backdrop, roleTag, comboLock, art } from '../crewkit.js';
 
 const SLUG = 'vault';
 const COMBO = '471936';
@@ -27,20 +27,9 @@ export default {
       ${backdrop(SLUG)}
       ${roleTag()}
 
-      <!-- the vault door -->
+      <!-- the vault door (photoreal plate; the wheel and bolt-work are part of the image) -->
       <g>
-        <circle cx="800" cy="430" r="230" fill="url(#${SLUG}_steel)" stroke="#0a0e14" stroke-width="14"/>
-        <circle cx="800" cy="430" r="230" fill="none" stroke="rgba(120,240,190,0.12)" stroke-width="3"/>
-        <circle cx="800" cy="430" r="150" fill="#1b2330" stroke="#3a4656" stroke-width="10"/>
-        <!-- spoked wheel -->
-        <g stroke="#c9a227" stroke-width="10" stroke-linecap="round">
-          ${[0, 60, 120, 180, 240, 300].map(a => {
-            const r1 = 34, r2 = 132;
-            const rad = a * Math.PI / 180;
-            return `<line x1="${(800 + Math.cos(rad) * r1).toFixed(0)}" y1="${(430 + Math.sin(rad) * r1).toFixed(0)}" x2="${(800 + Math.cos(rad) * r2).toFixed(0)}" y2="${(430 + Math.sin(rad) * r2).toFixed(0)}"/>`;
-          }).join('')}
-        </g>
-        <circle cx="800" cy="430" r="34" fill="#241c08" stroke="#c9a227" stroke-width="6"/>
+        <image href="${art('vault-door.webp')}" x="570" y="200" width="460" height="460" preserveAspectRatio="xMidYMid meet"/>
         ${open
           ? `<circle cx="800" cy="430" r="150" fill="#05070d"/>
              <text x="800" y="438" text-anchor="middle" font-size="26" fill="#7cf0be" font-family="Consolas, monospace" class="flicker">OPEN</text>`
