@@ -53,21 +53,12 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/reactor.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/reactor.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- the reactor torus -->
-      <g>
-        <ellipse cx="800" cy="300" rx="330" ry="200" fill="url(#gd_rx_torus)" class="glow"/>
-        <ellipse cx="800" cy="300" rx="250" ry="130" fill="none" stroke="#3a2c1c" stroke-width="34"/>
-        <ellipse cx="800" cy="300" rx="250" ry="130" fill="none" stroke="#ffb45e" stroke-width="7" opacity="0.85" class="flicker"/>
-        <ellipse cx="800" cy="300" rx="250" ry="130" fill="none" stroke="rgba(255,220,160,0.6)" stroke-width="2" class="spin slow"/>
-        ${[0, 60, 120, 180, 240, 300].map(a => {
-          const x = 800 + 250 * Math.cos(a * Math.PI / 180), y = 300 + 130 * Math.sin(a * Math.PI / 180);
-          return `<rect x="${x - 14}" y="${y - 20}" width="28" height="40" rx="6" fill="#241a10" stroke="#3a2c1c" stroke-width="3"/>`;
-        }).join('')}
-      </g>
+      <!-- the reactor torus is carried by the footage; only a faint heat-bloom accent over it -->
+      <ellipse cx="470" cy="330" rx="150" ry="120" fill="url(#gd_rx_torus)" class="glow" opacity="0.5"/>
 
       <!-- coolant manifold with shard 6 -->
       <g>
-        <rect x="120" y="380" width="240" height="240" rx="12" fill="#1a141f" stroke="#2b2233" stroke-width="4"/>
+        <rect x="120" y="380" width="240" height="240" rx="12" fill="rgba(26,20,31,0.72)" stroke="rgba(255,180,94,0.3)" stroke-width="3"/>
         ${[0, 1, 2].map(k => `<path d="M${150 + k * 60} 380 L${150 + k * 60} 300 Q${150 + k * 60} 270 ${180 + k * 60} 270 L360 270" stroke="#2b3547" stroke-width="12" fill="none"/>`).join('')}
         <rect x="220" y="470" width="26" height="38" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
         <text x="233" y="496" text-anchor="middle" font-size="14" fill="#4fd8d0">▮</text>
@@ -76,7 +67,7 @@ export default {
 
       <!-- control pit: bus panel -->
       <g>
-        <rect x="1080" y="330" width="440" height="300" rx="14" fill="#161019" stroke="${solved ? '#7bc47f' : fuseOut ? '#4fd8d0' : '#e05252'}" stroke-width="5" class="${solved ? '' : 'beckon'}"/>
+        <rect x="1080" y="330" width="440" height="300" rx="14" fill="rgba(22,16,25,0.84)" stroke="${solved ? '#7bc47f' : fuseOut ? '#4fd8d0' : '#e05252'}" stroke-width="5" class="${solved ? '' : 'beckon'}"/>
         <text x="1300" y="362" text-anchor="middle" font-size="14" fill="#8fa3b8" letter-spacing="2" font-family="Consolas, monospace">EMERGENCY POWER — BUS PANEL</text>
         <text x="1300" y="384" text-anchor="middle" font-size="11.5" fill="#ffb45e" font-family="Consolas, monospace">⚠ MAX TWO CELLS PER BUS ⚠</text>
         ${BUSES.map((b, i) => `
@@ -101,7 +92,7 @@ export default {
 
       <!-- cell rack -->
       <g>
-        <rect x="1080" y="120" width="440" height="130" rx="12" fill="#141019" stroke="#2b2233" stroke-width="4"/>
+        <rect x="1080" y="120" width="440" height="130" rx="12" fill="rgba(20,16,25,0.84)" stroke="rgba(255,180,94,0.3)" stroke-width="3"/>
         <text x="1300" y="148" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace">EMERGENCY CELL RACK</text>
         ${CELLS.map((v, i) => `
           <g>
@@ -112,7 +103,7 @@ export default {
 
       <!-- servo door -->
       <g>
-        <path d="M40 640 L40 320 Q120 260 200 320 L200 640 Z" fill="${solved ? '#0b131e' : '#191320'}" stroke="#2b2233" stroke-width="8"/>
+        <path d="M40 640 L40 320 Q120 260 200 320 L200 640 Z" fill="${solved ? 'rgba(11,19,30,0.32)' : 'rgba(25,19,32,0.5)'}" stroke="rgba(255,180,94,0.32)" stroke-width="5"/>
         <text x="120" y="480" text-anchor="middle" font-size="12" fill="${solved ? '#7bc47f' : '#e05252'}"
           font-family="Consolas, monospace" ${solved ? 'class="flicker"' : ''}>${solved ? 'SERVOS LIVE' : 'SERVOS DARK'}</text>
       </g>
