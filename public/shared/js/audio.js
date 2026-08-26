@@ -7,7 +7,14 @@
 let ctx = null;
 /** @type {GainNode | null} */
 let master = null;
-let muted = false;
+const MUTE_KEY = 'escape-room-muted';
+/** Read the saved mute preference. Defaults to muted so the game starts quiet
+ *  and the player opts into sound with the speaker button. */
+function readMuted() {
+  try { const v = localStorage.getItem(MUTE_KEY); return v === null ? true : v === '1'; }
+  catch { return true; }
+}
+let muted = readMuted();
 /** @type {AudioScheduledSourceNode[]} */
 let ambienceNodes = [];
 // Bumped on every stop; a scheduled ambience callback captures the value it was
@@ -34,6 +41,7 @@ export function isMuted() { return muted; }
 export function toggleMute() {
   muted = !muted;
   if (master && ctx) master.gain.setTargetAtTime(muted ? 0 : 0.8, ctx.currentTime, 0.05);
+  try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch { /* ignore */ }
   return muted;
 }
 
@@ -513,6 +521,7 @@ const AMBIENCE = {
 
 /** @param {string} [kind] */
 export function startAmbience(kind = 'cave') {
+  if (muted) return;
   try {
     ensureCtx();
     stopAmbience();

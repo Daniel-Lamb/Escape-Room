@@ -337,9 +337,10 @@ export function initEngine(roomModules, { onEnd, config }) {
   $('#btn-journal').addEventListener('click', openJournal);
   $('#btn-sound').addEventListener('click', () => {
     const muted = audio.toggleMute();
-    $('#sound-icon').innerHTML = muted ? '&#215;' : '&#9834;';
+    syncSoundButton();
     if (!muted) audio.startAmbience(ambienceKind());
   });
+  syncSoundButton();
   $('#btn-restart').addEventListener('click', confirmRestart);
   $('#message-card').addEventListener('click', () => {
     if (typing) skipTyping();
@@ -410,6 +411,16 @@ function syncDevSkip() {
 function ambienceKind() {
   const a = cfg.ambience;
   return typeof a === 'function' ? a() : a;
+}
+
+// Point the sound button's icon and tooltip at the current mute state (which
+// persists across rooms/games/reloads; the game starts muted by default).
+function syncSoundButton() {
+  const m = audio.isMuted();
+  const icon = document.getElementById('sound-icon');
+  if (icon) icon.innerHTML = m ? '&#215;' : '&#9834;';
+  const btn = document.getElementById('btn-sound');
+  if (btn) btn.title = m ? 'Sound off — click to turn on' : 'Sound on — click to mute';
 }
 
 /** @param {boolean} [resumed] */
