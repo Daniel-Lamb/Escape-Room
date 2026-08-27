@@ -886,10 +886,30 @@ function victory() {
         </div>
       </div>`,
     buttons: [
-      { label: 'Escape Again', class: 'btn-primary', onClick: () => { if (onGameEnd) onGameEnd('restart'); } },
+      { label: 'Share Your Escape', class: 'btn-primary', closes: false, onClick: () => shareEscape(m, s) },
+      { label: 'Escape Again', class: 'btn-ghost', onClick: () => { if (onGameEnd) onGameEnd('restart'); } },
       { label: 'Return to Title', class: 'btn-ghost', onClick: () => { if (onGameEnd) onGameEnd('title'); } },
     ],
   });
+}
+
+// Share the run — the native share sheet on mobile, clipboard copy elsewhere.
+/** @param {number} m @param {number} s */
+function shareEscape(m, s) {
+  const name = document.title.split(/\s[—–-]\s/)[0].trim() || 'this escape room';
+  const time = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  const url = location.origin + location.pathname;
+  const line = `I escaped ${name} with ${time} to spare. Can you?`;
+  if (navigator.share) {
+    navigator.share({ title: name, text: line, url }).catch(() => { /* dismissed */ });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(`${line} ${url}`).then(
+      () => toast('Result copied to clipboard'),
+      () => toast('Could not copy — long-press to select'),
+    );
+  } else {
+    toast(line);
+  }
 }
 
 function defeat() {
