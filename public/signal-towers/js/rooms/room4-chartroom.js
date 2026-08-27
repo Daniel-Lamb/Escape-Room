@@ -146,6 +146,7 @@ function openChannelPicker(game) {
     title: 'Buoy the Safe Channel',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-chart.webp)"></div>
         <p class="puzzle-desc">Only one channel is both clear of rock and deep enough. Compare
         your chart with your partner's, then buoy it.</p>
         <div class="puzzle-row" id="ch-opts"></div>

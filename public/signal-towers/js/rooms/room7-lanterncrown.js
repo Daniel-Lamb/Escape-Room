@@ -139,6 +139,7 @@ function openWheel(game) {
     title: 'Set the Beam',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-crown.webp)"></div>
         <p class="puzzle-desc">Combine all six bearing-marks — your three and your partner's —
         in order by bearing, shallowest first. Set the word and throw the beam.</p>
         <div class="puzzle-row">

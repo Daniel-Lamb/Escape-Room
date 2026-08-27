@@ -154,6 +154,7 @@ function openBell(game) {
     title: 'Set the Fog-Bell',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-bell.webp)"></div>
         <p class="puzzle-desc">Set how many times the bell should toll, then sound it. The count
         comes from your two gauges and the rule your partner reads you.</p>
         <div class="puzzle-row">

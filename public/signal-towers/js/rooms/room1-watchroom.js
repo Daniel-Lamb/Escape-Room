@@ -205,6 +205,7 @@ function openHatch(game) {
     title: 'The Storm-Hatch',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-dials.webp)"></div>
         <p class="puzzle-desc">Three brass dials, 0–9. This tower's code is <em>not</em> on your
         wall — it's on your partner's. Ask them what their wall says about the ${towerName()} hatch.</p>
         <div class="puzzle-row" id="wh-dials"></div>

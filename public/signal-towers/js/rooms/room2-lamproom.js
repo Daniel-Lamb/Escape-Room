@@ -178,6 +178,7 @@ function openPanels(game) {
     title: 'True the Prism Panels',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-lamp.webp)"></div>
         <p class="puzzle-desc">Turn each of the four panels to its bearing. Your bearings are on
         your partner's lamp-card — ask them to read you panels 1 through 4.</p>
         <div class="puzzle-row" id="lp-dials"></div>

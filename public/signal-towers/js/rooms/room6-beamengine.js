@@ -159,6 +159,7 @@ function openValves(game) {
     title: 'Set the Pressure Valves',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-valves.webp)"></div>
         <p class="puzzle-desc">Open or shut each of the five valves to match your engine's pattern —
         which is drawn on your partner's schematic. Click a valve to flip it.</p>
         <div class="puzzle-row" id="be-valves"></div>

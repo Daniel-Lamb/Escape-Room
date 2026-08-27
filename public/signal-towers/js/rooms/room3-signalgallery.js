@@ -189,6 +189,7 @@ function openKey(game) {
     title: 'The Signal Key',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-signal.webp)"></div>
         <p class="puzzle-desc">Read your recorded flash-counts to your partner. Their codebook
         page turns them into a four-letter word. Key it in here.</p>
         <div class="puzzle-row">
