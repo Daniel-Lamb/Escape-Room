@@ -123,6 +123,7 @@ function openClock(game) {
     title: 'Set the Hour',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-clock.webp)"></div>
         <p class="puzzle-desc">Your number is on your partner's clock face — but the mirror shows
         it backwards, so reverse what they read you. Set the four digits.</p>
         <div class="puzzle-row">

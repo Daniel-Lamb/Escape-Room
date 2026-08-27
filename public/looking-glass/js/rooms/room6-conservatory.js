@@ -131,6 +131,7 @@ function openTaps(game) {
     title: 'Set the Taps',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-taps.webp)"></div>
         <p class="puzzle-desc">Open or shut each of the five taps to match your pool's pattern —
         drawn on your partner's plaque. Click a tap to flip it.</p>
         <div class="puzzle-row" id="cv-taps"></div>

@@ -139,6 +139,7 @@ function openBox(game) {
     title: 'Wind the Music Box',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-nursery.webp)"></div>
         <p class="puzzle-desc">Turn each figure to the right animal. Your order is on your partner's
         card — ask them to read you figures 1 through 4.</p>
         <div class="puzzle-row" id="nu-dials"></div>

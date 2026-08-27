@@ -147,6 +147,7 @@ function openLock(game) {
     title: 'The Mark-Lock',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-diary.webp)"></div>
         <p class="puzzle-desc">Read the lock's marks to your partner; their diary page turns them
         into a four-letter word. Set it here.</p>
         <div class="puzzle-row">

@@ -144,6 +144,7 @@ function openDoor(game) {
     title: 'The Word-Lock',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-door.webp)"></div>
         <p class="puzzle-desc">The door wants a word. It is written backwards on your partner's
         far wall — ask them to read it to you.</p>
         <div class="puzzle-row">

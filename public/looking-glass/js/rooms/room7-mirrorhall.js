@@ -120,6 +120,7 @@ function openFrame(game) {
     title: 'Name the Glass',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-mirror.webp)"></div>
         <p class="puzzle-desc">Pool all six shards with your partner, set them in order 1→6 to read a
         word, then turn it about — the glass keeps its name reversed. Speak the true name.</p>
         <div class="puzzle-row">
