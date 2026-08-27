@@ -224,6 +224,7 @@ function openPipePuzzle(game) {
     render(body, api) {
       const SZ = 86, GAP = 8;
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-junction.webp)"></div>
         <p class="puzzle-desc">The junction grid, frozen mid-evacuation. Flow enters at the
         <strong style="color:#4fd8d0;">left valve</strong> and must reach the
         <strong style="color:#7bc47f;">right return</strong>. The valves are seized:

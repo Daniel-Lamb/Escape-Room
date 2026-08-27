@@ -290,7 +290,8 @@ function openLockerPad(game, uvRevealed) {
     render(body, api) {
       function draw() {
         body.innerHTML = `
-          <p class="puzzle-desc">${uvRevealed
+          <div class="puzzle-hero" style="background-image:url(art/pz-medbay.webp)"></div>
+        <p class="puzzle-desc">${uvRevealed
             ? 'Under the blacklight, four keys glow with long use: <strong style="color:#c9a6ff;">2 · 0 · 8 · 5</strong>. The order is the story.'
             : 'A ten-key pad, wiped clean to the eye. To the eye.'}</p>
           <div class="puzzle-row">

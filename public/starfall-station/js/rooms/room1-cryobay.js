@@ -289,6 +289,7 @@ function openThawLock(game) {
     title: 'Thaw-Lock Interlock',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-cryo.webp)"></div>
         <p class="puzzle-desc">The cryo safety interlock sealed every bulkhead when the bay
         went cold. Release code = the four coolant gauges, A·B·C·D — assuming all four
         can still be read. Which is a bold assumption for gauge C.</p>

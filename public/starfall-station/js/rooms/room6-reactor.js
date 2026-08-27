@@ -229,7 +229,8 @@ function openBusPuzzle(game) {
 
       function draw() {
         body.innerHTML = `
-          <p class="puzzle-desc">Feed each bus its <em>exact</em> demand.
+          <div class="puzzle-hero" style="background-image:url(art/pz-reactor.webp)"></div>
+        <p class="puzzle-desc">Feed each bus its <em>exact</em> demand.
           <strong style="color:#ffb45e;">MAX TWO CELLS PER BUS</strong> — the frame stamp is not a suggestion,
           it is a fire marshal. Click a cell, then a bus. Click a placed cell to pull it back.</p>
           <div class="puzzle-row" style="gap:10px;">

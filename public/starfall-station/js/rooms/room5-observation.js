@@ -214,7 +214,8 @@ function openAttitudePuzzle(game) {
     render(body, api) {
       function draw() {
         body.innerHTML = `
-          <p class="puzzle-desc">Three axes, three thruster banks, one tumbling station.
+          <div class="puzzle-hero" style="background-image:url(art/pz-thrusters.webp)"></div>
+        <p class="puzzle-desc">Three axes, three thruster banks, one tumbling station.
           The dome ghosts know the correct attitude — they have been broadcasting it in
           maintenance glyphs the whole time.</p>
           <div class="puzzle-row" style="gap:30px;">

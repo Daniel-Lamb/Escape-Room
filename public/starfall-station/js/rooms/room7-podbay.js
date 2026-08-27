@@ -488,6 +488,7 @@ function openPassphrase(game) {
     title: 'Voiceprint Passphrase',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-uplink.webp)"></div>
         <p class="puzzle-desc">The console holds a sealed instruction, eleven months old:
         <em>"Wake her with the word she chose."</em> Then, etched beneath —
         <strong style="color:#4fd8d0;">"SIX SHARDS MAKE THE WORD. THE FEWEST PEAKS SPEAK FIRST."</strong><br>
@@ -533,6 +534,7 @@ function openAlignment(game) {
     render(body, api) {
       function draw() {
         body.innerHTML = `
+          <div class="puzzle-hero" style="background-image:url(art/pz-uplink.webp)"></div>
           <p class="puzzle-desc">The dish will hold one heading through the burn — it has to be
           the right one. Somewhere out there, RV-7 is holding still and listening.
           Your suit log knows exactly where.</p>
@@ -591,6 +593,7 @@ function openIgnition(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-uplink.webp)"></div>
         <p class="puzzle-desc">The array is built, but eleven months cold — and the pre-charge
         cell fires <em>once</em>. The console will not transmit until you run the emergency
         cold-start <strong>in its true order</strong>. Seat the six steps in sequence; a wrong

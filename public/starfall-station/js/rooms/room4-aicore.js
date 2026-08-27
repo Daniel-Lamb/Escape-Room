@@ -206,6 +206,7 @@ function openLogicPuzzle(game) {
     title: 'Isolation Breakers',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-breakers.webp)"></div>
         <p class="puzzle-desc">Four breakers feed the door bolts through the etched logic:
         <span style="color:#4fd8d0; font-family:Consolas, monospace;">DOOR = A ∧ ¬B ∧ (C ∨ D)</span> ·
         <span style="color:#ff8f8f; font-family:Consolas, monospace;">ALARM = B ∨ (¬C ∧ D) ∨ (C ∧ D)</span>.
