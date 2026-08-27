@@ -84,6 +84,7 @@ function openVerdict(game) {
     title: 'The Verdict of the Court',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-verdict.webp)"></div>
         <p class="puzzle-desc">The jury must answer twice. Choose the witness who lied to the bench, then set the four figures to the thief's name your exhibits spell (in order, #1&ndash;#4).</p>
         <p class="verdict-q">Which witness lied?</p>
         <div class="puzzle-row" id="vj-liar"></div>

@@ -128,6 +128,7 @@ function openTelegraph(game) {
     id: 'telegraph_tg', title: 'The Engine Telegraph',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-telegraph.webp)"></div>
         <p class="puzzle-desc">Four pointers (each wraps 0–3), three <em>coupled</em> levers:
         <strong>A</strong> turns 1&amp;2, <strong>B</strong> turns 2&amp;3, <strong>C</strong> turns 3&amp;4.
         Walk them to the target on your tender's schematic — ask them for it.</p>

@@ -162,6 +162,7 @@ export function comboLock(game, opts) {
     title: opts.title,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-lock.webp)"></div>
         <p class="puzzle-desc">${opts.desc}</p>
         <div class="puzzle-row" id="cl-dials"></div>
         <div class="puzzle-row"><button class="btn btn-primary" id="cl-go">${opts.goLabel || 'Set It'}</button></div>
