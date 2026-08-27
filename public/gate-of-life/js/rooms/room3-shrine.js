@@ -328,6 +328,7 @@ function openPourRite(game) {
     title: 'The Libation',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-shrine.webp)"></div>
         <p class="puzzle-desc">IIII heminae — four — poured in one breath, from one
         vessel. The amphora never runs dry; the jugs know only their own brims. Emptied
         oil returns to the amphora: the goddess minds waste, not tidiness.</p>

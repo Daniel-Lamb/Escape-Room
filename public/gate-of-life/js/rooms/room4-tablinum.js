@@ -260,6 +260,7 @@ function openSquare(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-tablet.webp)"></div>
         <p class="puzzle-desc">Five by five, the middle row riveted fast: T E N E T.
         Above the frame: <em>QVATTVOR VIIS LEGITVR — it reads by four roads</em> — the
         same left to right, right to left, top to bottom, bottom to top. Pick a tile,

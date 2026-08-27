@@ -349,6 +349,7 @@ function openDressing(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-armory.webp)"></div>
         <p class="puzzle-desc">The tag says SECVTOR — "the chaser", who follows the
         net-man. The inspection bell knows his kit even if you don't yet. Choose one of
         each; the racks are labeled only by what the gear looks like.</p>

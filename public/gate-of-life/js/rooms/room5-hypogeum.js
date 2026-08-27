@@ -309,6 +309,7 @@ function openMaze(game) {
     render(body, api) {
       const planKnown = game.journal.has('note_plan');
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-hypogeum.webp)"></div>
         <p class="puzzle-desc">Dark tunnels under the arena floor. The turns do not move
         you — <strong>Sinistra</strong> and <strong>Dextra</strong> only turn you in
         place; only <strong>Perge</strong> steps ahead. The stair is out there. So are

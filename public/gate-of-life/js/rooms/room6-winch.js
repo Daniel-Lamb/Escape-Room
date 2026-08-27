@@ -335,6 +335,7 @@ function openRigging(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-winch.webp)"></div>
         <p class="puzzle-desc">The beam says it plainly: the lift asks TWELVE men, the
         crank gives ONE, and drum times block must make the twelve — no less, or she
         will not rise; no more, for the rope is cut to her length.</p>

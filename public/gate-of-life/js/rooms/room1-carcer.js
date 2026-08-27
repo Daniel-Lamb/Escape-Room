@@ -243,6 +243,7 @@ function openLetterLock(game) {
     title: 'The Letter-Lock',
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-lock.webp)"></div>
         <p class="puzzle-desc">A merchant's letter-lock, won at dice and chained here by a
         turnkey who cannot read — which the man who set its word was counting on. Five
         tumblers; click one to slide it to its next letter.</p>

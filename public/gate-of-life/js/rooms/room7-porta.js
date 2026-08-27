@@ -461,6 +461,7 @@ function openOrdo(game) {
     wide: true,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-porta.webp)"></div>
         <p class="puzzle-desc">Six iron bolts, each stamped with an office of the games.
         Felix wired the Gate of Life to a fail-safe: it opens only when the day is set in
         its <em>true running order</em>, dawn to dusk. Throw the bolts into the six seats
