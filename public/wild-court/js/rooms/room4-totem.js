@@ -569,6 +569,7 @@ function openTotemPuzzle(game) {
     onCleanup() { game.refreshScene(); },
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-drums.webp)"></div>
         <p class="puzzle-desc">Five drums, five faces each — the sky, the shadow-cat, the coil,
         the singer, the dancer. The column facing the stone door is the one the Court reads,
         and the dais line is carved plain: <em>from the sky downward, each face takes the meal

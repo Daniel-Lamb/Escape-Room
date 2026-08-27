@@ -662,6 +662,7 @@ function openWordPuzzle(game) {
     wide: false,
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-roots.webp)"></div>
         ${carved('Carved on the Speaking Stone', WORD_RULE)}
         <p class="puzzle-desc">Six court tokens ride in your journal, each a creature and a letter.
           The totem's order stands in the record: sky downward. And the advocate — the Court's own

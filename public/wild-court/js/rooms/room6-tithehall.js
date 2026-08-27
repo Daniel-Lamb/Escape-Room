@@ -410,6 +410,7 @@ function openScaleRite(game) {
       let placements = {};
 
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-scale.webp)"></div>
         <style>
           #th-pods { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
           .th-tile { width: 66px; padding: 8px 4px; text-align: center; cursor: pointer; user-select: none; }

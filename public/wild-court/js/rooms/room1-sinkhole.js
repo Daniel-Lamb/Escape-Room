@@ -377,6 +377,7 @@ function openGatePuzzle(game) {
     onCleanup() { game.refreshScene(); },
     render(body, api) {
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-tracks.webp)"></div>
         <p class="puzzle-desc">Three sockets in the root-gate, each beside a trace the old mud
         preserved. Name the clan that left each — the gate opens only for walkers it remembers.
         Your field guide named their signs. <em>One trace is the absence of a trace.</em></p>

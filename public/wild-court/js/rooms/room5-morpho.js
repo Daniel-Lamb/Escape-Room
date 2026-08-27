@@ -362,6 +362,7 @@ function openMosaicPuzzle(game) {
       const revealed = () => !!game.getFlag('morpho_wingRevealed');
 
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-morpho.webp)"></div>
         <p class="puzzle-desc">The left wing is the key; the right wing is yours to finish. Set each
         socket so the right wing becomes the left's <em>reflection</em> — outer stays outer, top stays
         top. ${'' /* key faded warning inserted below */}<span id="mo-warn"></span></p>

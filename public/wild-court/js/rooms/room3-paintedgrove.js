@@ -347,6 +347,7 @@ function openBorderPuzzle(game) {
       const markColor = { 'tree-frog': '#5aa552', jaguar: '#d1a53f', tapir: '#9fb37e', macaw: '#c0392b' };
 
       body.innerHTML = `
+        <div class="puzzle-hero" style="background-image:url(art/pz-grove.webp)"></div>
         <p class="puzzle-desc">The clans are painted and fixed. Redraw the <em>borders</em>: click a
         boundary line to raise it (a border stands) or raze it (the grounds no longer touch). The
         Crown's four borders are carved fast. Obey the three laws, then judge the ground.</p>
