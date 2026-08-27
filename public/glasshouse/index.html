@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Glasshouse — A Botanical Logic Puzzle</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪴</text></svg>" />
+  <style>
+    :root{
+      --bg-0:#070b08; --bg-1:#0d1611; --panel:rgba(10,18,13,0.82); --panel-2:rgba(14,24,17,0.9);
+      --line:rgba(120,180,140,0.22); --line-strong:rgba(150,210,170,0.4);
+      --green:#7bd88f; --green-deep:#2f7d52; --gold:#e8c85a; --gold-soft:#d9b24a;
+      --text:#e9f2ea; --dim:#9db4a6; --dim-2:#6f8a7c; --bad:#ff7a7a; --good:#7bd88f;
+      --serif:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{
+      font-family:var(--sans); color:var(--text); background:var(--bg-0);
+      background-image:
+        linear-gradient(180deg, rgba(6,10,8,0.72) 0%, rgba(6,10,8,0.86) 55%, rgba(5,8,6,0.96) 100%),
+        url("art/glasshouse.webp");
+      background-size:cover; background-position:center; background-attachment:fixed;
+      min-height:100vh; padding:clamp(14px,3vw,40px);
+    }
+    .wrap{max-width:1080px; margin:0 auto}
+    header.top{text-align:center; margin-bottom:22px}
+    .kicker{font-family:var(--mono); letter-spacing:.34em; text-transform:uppercase; font-size:12px; color:var(--green); opacity:.9}
+    h1{font-family:var(--serif); font-weight:700; font-size:clamp(30px,5.4vw,54px); margin:.24em 0 .1em;
+       background:linear-gradient(180deg,#f4ffe9 0%, var(--green) 60%, var(--green-deep) 100%);
+       -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+    .intro{max-width:640px; margin:.4em auto 0; color:var(--dim); font-size:clamp(14px,1.7vw,16px); line-height:1.55}
+    .grid-2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:18px; align-items:start}
+    @media(max-width:820px){ .grid-2{grid-template-columns:1fr} }
+    .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:clamp(14px,2.2vw,22px);
+          backdrop-filter:blur(6px); box-shadow:0 18px 50px rgba(0,0,0,.45)}
+    .card h2{font-family:var(--serif); font-size:19px; margin:0 0 12px; color:var(--text); display:flex; align-items:center; gap:9px}
+    .card h2 .mk{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--green); text-transform:uppercase}
+    /* clues */
+    ol.clues{margin:0; padding:0; list-style:none; counter-reset:c}
+    ol.clues li{counter-increment:c; position:relative; padding:9px 0 9px 38px; border-bottom:1px dashed var(--line); font-size:14.5px; line-height:1.5; color:#dce9de}
+    ol.clues li:last-child{border-bottom:0}
+    ol.clues li::before{content:counter(c); position:absolute; left:0; top:8px; width:24px; height:24px; border-radius:50%;
+      display:grid; place-items:center; font-family:var(--mono); font-size:12px; color:var(--bg-0); background:var(--gold-soft); font-weight:700}
+    .legend{margin-top:16px; border-top:1px solid var(--line); padding-top:14px}
+    .legend h3{font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim-2); margin:0 0 10px}
+    .plant-row{display:flex; gap:10px; align-items:flex-start; padding:6px 0}
+    .plant-row .em{font-size:22px; line-height:1; width:26px; text-align:center; flex:none}
+    .plant-row .nm{font-weight:700; color:#eaf5ec}
+    .plant-row .ds{color:var(--dim); font-size:13px; line-height:1.45}
+    /* deduction grid */
+    .board{overflow-x:auto}
+    table.dg{border-collapse:collapse; margin:2px auto 0; width:100%}
+    table.dg th,table.dg td{border:1px solid var(--line); text-align:center}
+    table.dg thead th{font-family:var(--mono); font-size:12px; color:var(--dim); font-weight:600; padding:6px 4px}
+    table.dg thead th.pedh{color:var(--gold)}
+    table.dg .rowhead{white-space:nowrap; padding:6px 10px 6px 8px; text-align:left; background:var(--panel-2)}
+    table.dg .rowhead .em{font-size:18px; margin-right:6px}
+    table.dg .rowhead .nm{font-family:var(--serif); font-size:15px}
+    td.cell{width:56px; height:52px; padding:0}
+    button.mk{width:100%; height:100%; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1;
+      color:var(--dim-2); transition:background .12s, color .12s}
+    button.mk:hover{background:rgba(123,216,143,.08)}
+    button.mk.yes{color:var(--good); background:rgba(47,125,82,.22)}
+    button.mk.no{color:var(--bad)}
+    button.mk:focus-visible{outline:2px solid var(--gold); outline-offset:-2px}
+    .hint-line{margin-top:8px; font-size:12.5px; color:var(--dim-2); text-align:center}
+    /* pedestals */
+    .pedestals{margin-top:18px}
+    .ped-strip{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+    .ped{background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px 8px; text-align:center; min-height:150px;
+      display:flex; flex-direction:column; align-items:center; justify-content:flex-end; position:relative}
+    .ped .num{position:absolute; top:6px; left:0; right:0; font-family:var(--mono); font-size:11px; color:var(--gold); letter-spacing:.1em}
+    .ped .art{width:100%; height:96px; display:grid; place-items:center; margin-bottom:6px}
+    .ped .art img{max-width:100%; max-height:96px; object-fit:contain; filter:drop-shadow(0 8px 12px rgba(0,0,0,.5))}
+    .ped .art .em{font-size:44px; opacity:.9}
+    .ped .art .q{font-size:34px; color:var(--dim-2); opacity:.5}
+    .ped .cap{font-family:var(--serif); font-size:14px; color:#e7f2e9; min-height:18px}
+    .ped.filled{border-color:var(--line-strong)}
+    .ped .base{position:absolute; bottom:0; left:8%; right:8%; height:8px; border-radius:0 0 10px 10px; background:linear-gradient(180deg,rgba(120,160,130,.28),rgba(0,0,0,.2))}
+    /* controls */
+    .controls{display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin-top:18px}
+    .btn{font-family:var(--sans); font-size:15px; font-weight:700; border-radius:10px; padding:12px 22px; cursor:pointer; border:1px solid transparent}
+    .btn-go{background:linear-gradient(180deg,var(--gold),var(--gold-soft)); color:#241c05; box-shadow:0 6px 18px rgba(217,178,74,.25)}
+    .btn-go:hover{filter:brightness(1.06)}
+    .btn-ghost{background:transparent; border-color:var(--line-strong); color:var(--dim)}
+    .btn-ghost:hover{color:var(--text); border-color:var(--green)}
+    .feedback{min-height:24px; text-align:center; margin-top:12px; font-size:15px; font-weight:600}
+    .feedback.bad{color:var(--bad)} .feedback.good{color:var(--good)} .feedback.warn{color:var(--gold)}
+    .foot{text-align:center; margin-top:26px; color:var(--dim-2); font-size:12.5px}
+    .foot a{color:var(--dim); text-decoration:none; border-bottom:1px dotted var(--dim-2)}
+    /* win overlay */
+    .overlay{position:fixed; inset:0; background:rgba(4,8,6,.82); backdrop-filter:blur(8px); display:none; place-items:center; z-index:50; padding:20px}
+    .overlay.on{display:grid; animation:fade .5s ease}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .win{max-width:560px; background:var(--panel-2); border:1px solid var(--line-strong); border-radius:18px; padding:34px 30px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+    .win h2{font-family:var(--serif); font-size:32px; margin:.1em 0 .3em;
+      background:linear-gradient(180deg,#f4ffe9,var(--green)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+    .win p{color:var(--dim); line-height:1.6; font-size:15px}
+    .win .order{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:16px 0 6px; font-family:var(--serif)}
+    .win .order span{background:rgba(47,125,82,.2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:14px}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="kicker">A Botanical Logic Puzzle</div>
+      <h1>The Glasshouse</h1>
+      <p class="intro">A storm has torn the brass labels from five pedestals in the old palm-house. Only the head gardener's field notes remain. Read the notes, mark the grid, and set each plant back on its rightful pedestal — <strong>1</strong> by the sunny window to <strong>5</strong> in the shaded corner.</p>
+    </header>
+
+    <div class="grid-2">
+      <section class="card" aria-labelledby="notes-h">
+        <h2 id="notes-h">The Head Gardener's Notes <span class="mk">6 clues</span></h2>
+        <ol class="clues" id="clue-list"></ol>
+        <div class="legend">
+          <h3>Five different plants</h3>
+          <div id="legend"></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="grid-h">
+        <h2 id="grid-h">Deduction Grid <span class="mk">click to mark ✓ / ✗</span></h2>
+        <div class="board">
+          <table class="dg" id="dg"><thead></thead><tbody></tbody></table>
+        </div>
+        <div class="hint-line">Click a cell to cycle blank → ✓ → ✗. Marking ✓ rules out the rest of that plant's row and pedestal's column.</div>
+
+        <div class="pedestals">
+          <div class="ped-strip" id="ped-strip"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-go" id="btn-check">Set the Labels</button>
+          <button class="btn btn-ghost" id="btn-reset">Clear grid</button>
+        </div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <p class="foot"><a href="../">⌂ Back to the Escape Rooms</a></p>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="win">
+      <div style="font-size:40px">🪴</div>
+      <h2>Every Label Restored</h2>
+      <p>The pedestals stand in order again, window to corner:</p>
+      <div class="order" id="win-order"></div>
+      <p id="win-note"></p>
+      <div class="controls" style="margin-top:18px">
+        <button class="btn btn-ghost" id="btn-again">Play again</button>
+        <a class="btn btn-go" href="../" style="text-decoration:none">Back to the rooms</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const PLANTS = [
+      {key:'fern',   name:'Fern',   em:'🌿', note:'A shade-lover that unfurls in the green damp. It bears no flower — it scatters spores.'},
+      {key:'orchid', name:'Orchid', em:'🌸', note:'A tropical epiphyte, throwing a magenta bloom from an arching stem.'},
+      {key:'cactus', name:'Cactus', em:'🌵', note:'A desert survivor that hoards water and crowns itself with a single yellow flower.'},
+      {key:'lotus',  name:'Lotus',  em:'🪷', note:'It rises from still water and opens pink above its broad lily pads.'},
+      {key:'bonsai', name:'Bonsai', em:'🌲', note:'A mountain pine kept in miniature — evergreen, patient, decades in a shallow tray.'},
+    ];
+    const PEDS = [1,2,3,4,5];
+    // p maps plant key -> pedestal (1..5). Predicates mirror the verified clue set.
+    const CLUES = [
+      {text:'The cactus, a desert thing, basks nearest the window — on pedestal 1 or 2.',      ok:p=>p.cactus===1||p.cactus===2},
+      {text:'The orchid stands somewhere to the right of the cactus.',                          ok:p=>p.orchid>p.cactus},
+      {text:'The lotus needs the corner drain, so it sits on an end pedestal (1 or 5).',        ok:p=>p.lotus===1||p.lotus===5},
+      {text:'Exactly two pedestals stand between the cactus and the orchid.',                    ok:p=>Math.abs(p.orchid-p.cactus)===3},
+      {text:'The fern is somewhere to the left of the bonsai.',                                  ok:p=>p.fern<p.bonsai},
+      {text:'The lotus stands farther from the window than the orchid.',                         ok:p=>p.lotus>p.orchid},
+    ];
+    const SOLUTION = {cactus:1, fern:2, bonsai:3, orchid:4, lotus:5}; // verified unique
+
+    // state[key][ped] in 0(blank) | 1(yes) | 2(no)
+    const state = {};
+    PLANTS.forEach(pl => { state[pl.key] = {}; PEDS.forEach(pd => state[pl.key][pd] = 0); });
+
+    const byKey = Object.fromEntries(PLANTS.map(p=>[p.key,p]));
+    const $ = s => document.querySelector(s);
+
+    // ---- render clues + legend ----
+    $('#clue-list').innerHTML = CLUES.map(c => `<li>${c.text}</li>`).join('');
+    $('#legend').innerHTML = PLANTS.map(p =>
+      `<div class="plant-row"><div class="em">${p.em}</div><div><span class="nm">${p.name}</span> — <span class="ds">${p.note}</span></div></div>`).join('');
+
+    // ---- render grid ----
+    const thead = $('#dg thead'), tbody = $('#dg tbody');
+    thead.innerHTML = '<tr><th></th>' + PEDS.map(pd=>`<th class="pedh">Pedestal ${pd}</th>`).join('') + '</tr>';
+    tbody.innerHTML = PLANTS.map(pl =>
+      `<tr><th class="rowhead"><span class="em">${pl.em}</span><span class="nm">${pl.name}</span></th>` +
+      PEDS.map(pd=>`<td class="cell"><button class="mk" data-k="${pl.key}" data-p="${pd}" aria-label="${pl.name} on pedestal ${pd}"></button></td>`).join('') +
+      '</tr>').join('');
+
+    function glyph(v){ return v===1 ? '✓' : v===2 ? '✕' : ''; }
+    function paint(){
+      document.querySelectorAll('button.mk').forEach(b=>{
+        const v = state[b.dataset.k][b.dataset.p];
+        b.textContent = glyph(v);
+        b.classList.toggle('yes', v===1);
+        b.classList.toggle('no', v===2);
+      });
+      renderPedestals();
+    }
+    function setYes(key, ped){
+      state[key][ped] = 1;
+      PEDS.forEach(pd => { if(pd!==+ped && state[key][pd]===0) state[key][pd]=2; });     // rest of the row
+      PLANTS.forEach(pl => { if(pl.key!==key && state[pl.key][ped]===0) state[pl.key][ped]=2; }); // rest of the column
+    }
+    document.querySelector('#dg').addEventListener('click', e=>{
+      const b = e.target.closest('button.mk'); if(!b) return;
+      const k=b.dataset.k, p=b.dataset.p, v=state[k][p];
+      if(v===0) setYes(k,p);
+      else if(v===1) state[k][p]=2;
+      else state[k][p]=0;
+      setFeedback('');
+      paint();
+    });
+
+    // ---- pedestal strip ----
+    function placement(){ // returns {key:ped} for plants with exactly one ✓, and column owners
+      const owner = {}; // ped -> key (if exactly one ✓ in that column)
+      PEDS.forEach(pd=>{
+        const yes = PLANTS.filter(pl=>state[pl.key][pd]===1).map(pl=>pl.key);
+        if(yes.length===1) owner[pd]=yes[0];
+      });
+      return owner;
+    }
+    function renderPedestals(){
+      const owner = placement();
+      $('#ped-strip').innerHTML = PEDS.map(pd=>{
+        const k = owner[pd];
+        const pl = k && byKey[k];
+        const art = pl
+          ? `<img src="art/plant-${pl.key}.webp" alt="${pl.name}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'em',textContent:'${pl.em}'}))">`
+          : `<span class="q">?</span>`;
+        return `<div class="ped ${pl?'filled':''}"><span class="num">PEDESTAL ${pd}</span>`+
+               `<div class="art">${art}</div><div class="cap">${pl?pl.name:''}</div><div class="base"></div></div>`;
+      }).join('');
+    }
+
+    // ---- check ----
+    function setFeedback(msg, cls){ const f=$('#feedback'); f.textContent=msg||''; f.className='feedback'+(cls?' '+cls:''); }
+    $('#btn-check').addEventListener('click', ()=>{
+      const owner = placement();
+      const filled = PEDS.filter(pd=>owner[pd]).length;
+      const distinct = new Set(Object.values(owner)).size;
+      if(filled<5 || distinct<5){
+        setFeedback('Not every pedestal has exactly one plant yet — mark a ✓ for each.', 'warn');
+        return;
+      }
+      // build plant->ped map
+      const p = {}; PEDS.forEach(pd=>{ p[owner[pd]] = pd; });
+      const failed = CLUES.findIndex(c=>!c.ok(p));
+      if(failed===-1){ win(p); }
+      else { setFeedback(`Note ${failed+1} doesn't hold: "${CLUES[failed].text}"`, 'bad'); }
+    });
+    $('#btn-reset').addEventListener('click', ()=>{
+      PLANTS.forEach(pl=>PEDS.forEach(pd=>state[pl.key][pd]=0));
+      setFeedback(''); paint();
+    });
+
+    function win(p){
+      const order = PEDS.map(pd => PLANTS.find(pl=>p[pl.key]===pd));
+      $('#win-order').innerHTML = order.map((pl,i)=>`<span>${i+1}. ${pl.em} ${pl.name}</span>`).join('');
+      $('#win-note').textContent = 'The desert cactus keeps its window; the fern shelters the little pine; the orchid and the lotus hold the shaded corner. The glasshouse is in order.';
+      $('#overlay').classList.add('on');
+    }
+    $('#btn-again').addEventListener('click', ()=>{
+      $('#overlay').classList.remove('on');
+      PLANTS.forEach(pl=>PEDS.forEach(pd=>state[pl.key][pd]=0));
+      setFeedback(''); paint();
+    });
+
+    paint();
+  })();
+  </script>
+</body>
+</html>
