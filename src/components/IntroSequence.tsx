@@ -40,6 +40,9 @@ export default function IntroSequence() {
     } catch {
       /* private mode — just don't persist */
     }
+    // Hand off at the very top so the selection screen opens on the featured
+    // hero, never mid-scroll.
+    window.scrollTo(0, 0);
     document.documentElement.setAttribute("data-intro", "seen");
   }, []);
 
@@ -76,6 +79,7 @@ export default function IntroSequence() {
     }
     (window as unknown as { __introMounted?: boolean }).__introMounted = true;
     document.documentElement.setAttribute("data-intro", "play");
+    window.scrollTo(0, 0); // start the whole sequence pinned to the top
     setActive(true);
     holdTimer.current = window.setTimeout(flyThrough, HOLD_MS);
     return () => {

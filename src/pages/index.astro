@@ -37,13 +37,17 @@ const ogDescription =
     <script is:inline>
       (function () {
         var d = document.documentElement;
+        var seen;
         try {
-          d.setAttribute(
-            'data-intro',
-            sessionStorage.getItem('escape-intro-seen') === '1' ? 'seen' : 'play',
-          );
+          seen = sessionStorage.getItem('escape-intro-seen') === '1';
         } catch (e) {
-          d.setAttribute('data-intro', 'play');
+          seen = false;
+        }
+        d.setAttribute('data-intro', seen ? 'seen' : 'play');
+        // When the intro will play, don't let the browser restore a prior
+        // scroll position — the hand-off must land on the featured hero.
+        if (!seen) {
+          try { history.scrollRestoration = 'manual'; } catch (e2) {}
         }
         // Don't strand the dashboard hidden if the island never mounts.
         setTimeout(function () {
