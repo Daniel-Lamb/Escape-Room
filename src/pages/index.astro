@@ -1,9 +1,11 @@
 ---
 import '../styles/global.css';
 import '../styles/dashboard.css';
+import '../styles/intro.css';
 import { rooms, sections } from '../data/rooms';
 import RoomShowcase from '../components/RoomShowcase.tsx';
 import Billboard from '../components/Billboard.tsx';
+import IntroSequence from '../components/IntroSequence.tsx';
 
 const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
@@ -29,6 +31,29 @@ const ogDescription =
     <meta name="theme-color" content="#0a0b10" />
     <meta name="color-scheme" content="dark" />
 
+    <!-- Opening cinematic gate. Set pre-paint so the dashboard beneath the
+         intro overlay never flashes, and so returning visitors this session
+         skip straight to it. The client-only IntroSequence island takes over. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        try {
+          d.setAttribute(
+            'data-intro',
+            sessionStorage.getItem('escape-intro-seen') === '1' ? 'seen' : 'play',
+          );
+        } catch (e) {
+          d.setAttribute('data-intro', 'play');
+        }
+        // Don't strand the dashboard hidden if the island never mounts.
+        setTimeout(function () {
+          if (d.getAttribute('data-intro') === 'play' && !window.__introMounted) {
+            d.setAttribute('data-intro', 'seen');
+          }
+        }, 3000);
+      })();
+    </script>
+
     <!-- Open Graph / social share -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Escape Rooms" />
@@ -53,6 +78,8 @@ const ogDescription =
     />
   </head>
   <body>
+    <div class="intro-mount"><IntroSequence client:only="react" /></div>
+
     <div class="bg"></div>
 
     <header class="nav">

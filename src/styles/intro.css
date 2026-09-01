@@ -1,0 +1,204 @@
+/* Opening cinematic — the placard corridor and its hand-off to the selection
+   screen. Palette tokens come from global.css @theme so the fly-through lands
+   on the same background the dashboard already paints. */
+
+/* Hold the dashboard hidden until the intro hands off. Set pre-paint by the
+   inline script in index.astro, so returning visitors (data-intro="seen") see
+   the dashboard immediately and first-time visitors never flash it. */
+html[data-intro="play"] {
+  background: var(--color-bg-0, #0d0704);
+}
+html[data-intro="play"] body {
+  overflow: hidden;
+}
+html[data-intro="play"] body > :not(.intro-mount) {
+  opacity: 0;
+}
+html[data-intro="seen"] body > :not(.intro-mount) {
+  opacity: 1;
+  transition: opacity 0.9s ease 0.05s;
+}
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--color-bg-0, #0d0704);
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.85s ease,
+    transform 0.85s cubic-bezier(0.66, 0, 0.34, 1);
+  will-change: opacity, transform;
+}
+/* The fly-through: push the corridor past the viewer and dissolve to reveal
+   the selection screen fading in beneath. */
+.intro-overlay.is-exiting {
+  opacity: 0;
+  transform: scale(1.35);
+  pointer-events: none;
+}
+
+.intro-corridor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Darken top and bottom so the wordmark stays legible over bright placards. */
+.intro-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      130% 85% at 50% 44%,
+      rgba(13, 7, 4, 0) 38%,
+      rgba(13, 7, 4, 0.5) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(13, 7, 4, 0.74) 0%,
+      rgba(13, 7, 4, 0) 24%,
+      rgba(13, 7, 4, 0) 60%,
+      rgba(13, 7, 4, 0.88) 100%
+    );
+}
+
+/* Copy splits to top and bottom so the corridor's busy centre — where the
+   placards are born and the ribbon is densest — stays clear. */
+.intro-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  padding: clamp(2.4rem, 7vh, 5rem) 6vw;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--color-ink, #f7ece0);
+  pointer-events: none;
+}
+.intro-top,
+.intro-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+.intro-copy :where(.intro-word, .intro-enter, .intro-kicker, .intro-sub) {
+  pointer-events: auto;
+}
+
+.intro-kicker {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.5vw, 0.95rem);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--color-dim, #c39a78);
+}
+
+.intro-word {
+  margin: 0;
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: 0.03em;
+  font-size: clamp(2.6rem, 9vw, 7rem);
+  color: var(--color-ink, #f7ece0);
+  text-shadow:
+    0 2px 40px rgba(0, 0, 0, 0.65),
+    0 0 70px rgba(255, 154, 61, 0.2);
+}
+
+.intro-sub {
+  margin: 0.2rem 0 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  color: var(--color-dim, #c39a78);
+}
+
+.intro-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.intro-enter {
+  font: inherit;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  color: #241202;
+  background: linear-gradient(
+    180deg,
+    var(--color-o-300, #ffb765),
+    var(--color-o-500, #ff7a18)
+  );
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8em 1.9em;
+  cursor: pointer;
+  box-shadow:
+    0 10px 32px rgba(255, 122, 24, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.intro-enter:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 40px rgba(255, 122, 24, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.intro-enter:active {
+  transform: translateY(0);
+}
+.intro-enter:focus-visible {
+  outline: 2px solid var(--color-amber, #ffd9a0);
+  outline-offset: 3px;
+}
+
+.intro-skip {
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  right: 1.2rem;
+  z-index: 12;
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--color-dim, #c39a78);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.45em 1em;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition:
+    color 0.15s,
+    background 0.15s,
+    border-color 0.15s;
+}
+.intro-skip:hover {
+  color: var(--color-ink, #f7ece0);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.intro-skip:focus-visible {
+  outline: 2px solid var(--color-amber, #ffd9a0);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay {
+    transition: opacity 0.5s ease;
+  }
+  .intro-overlay.is-exiting {
+    transform: none;
+  }
+  html[data-intro="seen"] body > :not(.intro-mount) {
+    transition: opacity 0.4s ease;
+  }
+}
