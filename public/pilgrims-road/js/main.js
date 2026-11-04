@@ -19,6 +19,8 @@ const CONFIG = {
   victory: {
     title: 'Aurora',
     heading: 'You Have Escaped',
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     story: `Black water closes over your head — then opens again into grey air and reeds.
       You surface on the far bank of the mere as the first true light touches the towers of
       Vayne Keep, Edmund's confession dry inside your shirt. The dawn that was meant to kill
@@ -27,6 +29,8 @@ const CONFIG = {
   defeat: {
     title: 'Dawn',
     heading: 'The Bell Tolls',
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     story: `Grey light spills through the arrow slits. Boots echo on stone — many of them,
       and unhurried, because they know exactly where you are. Yet as they drag you past a cold
       wall, a voice like wind through a visor whispers:

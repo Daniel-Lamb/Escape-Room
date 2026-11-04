@@ -23,6 +23,8 @@ const CONFIG = {
   renderCollectible: evidenceCard,
   collectibleToast: (e) => `Exhibit entered: #${e.sun.rays} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Verdict: Guilty',
     heading: 'The Truce Holds',
     story: `The court rises as one. The old Sloth, who could no more climb that wall than fly it,
@@ -35,6 +37,8 @@ const CONFIG = {
       another year.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Mistrial',
     heading: 'The Court Adjourns',
     story: `The light fails through the canopy and the court must rise with the question still

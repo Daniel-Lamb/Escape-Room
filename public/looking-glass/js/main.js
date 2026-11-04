@@ -37,6 +37,8 @@ const CONFIG = {
   renderCollectible: shardCard,
   collectibleToast: (e) => `Mirror-shard kept: number ${e.sun.rays} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Through the Glass',
     heading: 'The Glass Gives You Back',
     story: `The mirror-frame runs cold, then warm, and the silver goes to water. On the Waking
@@ -47,6 +49,8 @@ const CONFIG = {
       asleep in a warm square of it.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Dawn',
     heading: 'The Glass Breaks',
     story: `The first grey light touches the mirror and the silver crazes over like ice on a

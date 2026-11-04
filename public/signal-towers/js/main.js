@@ -46,6 +46,8 @@ const CONFIG = {
   renderCollectible: bearingCard,
   collectibleToast: (e) => `Bearing-mark pocketed: depth ${e.sun.rays} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Safe Harbour',
     heading: 'The Meridian Makes Port',
     story: `Both beams swing onto the channel as one, and the wreckers' false light gutters
@@ -57,6 +59,8 @@ const CONFIG = {
       them. Ashore.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'The Tide Turns',
     heading: 'The Reef Takes Her',
     story: `The tide turns while the towers are still arguing in the dark, and the false

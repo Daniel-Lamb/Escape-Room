@@ -935,6 +935,14 @@ button { font-family: inherit; cursor: pointer; }
   text-align: center;
   padding: 10px 6px;
 }
+/* Cinematic win/lose stinger at the head of the end screen (video, poster-backed). */
+.end-hero {
+  width: 100%; height: 168px; margin: -2px 0 22px; border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 -52px 56px rgba(0, 0, 0, 0.72), 0 8px 24px rgba(0, 0, 0, 0.5);
+  background: #05060a;
+}
+.end-hero video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .end-screen h2 {
   font-size: 40px;
   letter-spacing: 0.06em;
@@ -964,6 +972,21 @@ button { font-family: inherit; cursor: pointer; }
   .hud-btn { padding: 7px 10px; font-size: 13px; }
   #stage { padding: 10px; }
   .title-buttons { flex-direction: column; align-items: center; }
+}
+
+/* At phone width the absolute-centred timer would sit on top of the buttons,
+   so float it back into the flex row; drop the room title (the badge already
+   shows progress and it truncates to nothing) and collapse Journal to its
+   icon (its label is a bare text node, so zero the button font and restore
+   the icon span). */
+@media (max-width: 560px) {
+  #room-title { display: none; }
+  .hud-center { position: static; transform: none; }
+  #btn-journal { font-size: 0; gap: 0; }
+  #btn-journal .hud-btn-icon { font-size: 16px; }
+  .hud { padding: 0 12px; }
+  .hud-right { gap: 6px; }
+  .hud-btn { padding: 7px 9px; }
 }
 
 /* ============ DEV ROOM-JUMPER (inspection tool, all games) ============ */

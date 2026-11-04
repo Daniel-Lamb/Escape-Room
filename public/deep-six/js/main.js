@@ -40,6 +40,8 @@ const CONFIG = {
   // Two soundscapes: the Diver breathes on the wreck, the Tender listens topside.
   ambience: () => (isDiver() ? 'deep-diver' : 'deep-tender'),
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Surfaced',
     heading: 'You Break the Surface Together',
     story: `The ballast blows in a roar of silver, the ascent word holds the decompression
@@ -53,6 +55,8 @@ const CONFIG = {
       years before it. Two ends of one line. One word passed along it. Ascend.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'The Line Goes Slack',
     heading: 'The Deep Keeps Its Own',
     story: `The minutes run out while the two of you are still guessing in the dark, and the

@@ -43,6 +43,8 @@ const CONFIG = {
   renderCollectible: pinCard,
   collectibleToast: (e) => `Vault-pin lifted: position ${e.sun.rays} — digit "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Clean Getaway',
     heading: 'The Bird Flies',
     story: `The last door swings on the master your two files spelled, and the silent alarm
@@ -53,6 +55,8 @@ const CONFIG = {
       number neither of you could read alone. Gone before dawn, and clean.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Caught',
     heading: 'Every Door Locks at Once',
     story: `The clock finds six before you find the number, and the building answers the only

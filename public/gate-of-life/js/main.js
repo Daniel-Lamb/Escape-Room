@@ -43,6 +43,8 @@ const CONFIG = {
   renderCollectible: tesseraCard,
   collectibleToast: (e) => `Bone tessera pocketed: the ${e.sun.emblem.replace('-', ' ')} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Missio',
     heading: 'MISSIO — GRANTED',
     story: `The Gate of Life swings into white daylight and roar, and you walk out of the
@@ -54,6 +56,8 @@ const CONFIG = {
       never wrong about doors."</em>`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'The Lift Comes Down',
     heading: 'The Sand Calls',
     story: `Torchlight, and the escort, and the cage-lift rising toward a white square of

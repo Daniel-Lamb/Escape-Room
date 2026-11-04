@@ -356,7 +356,16 @@ export function initEngine(roomModules, { onEnd, config }) {
    title/role screen the first jump also boots the game.
    ============================================================ */
 
+/** True only in local development (or with an explicit ?dev), so the room
+ *  jumper never ships to players on the deployed hosts. */
+function isDevEnv() {
+  const h = location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '' || h.endsWith('.local')) return true;
+  try { return new URLSearchParams(location.search).has('dev'); } catch { return false; }
+}
+
 function mountDevSkip() {
+  if (!isDevEnv()) return;
   if (document.getElementById('dev-skip')) return;
   const bar = document.createElement('div');
   bar.id = 'dev-skip';
@@ -853,6 +862,15 @@ function stopEmbers() {
    END STATES
    ============================================================ */
 
+/** A cinematic video banner for the end screen, resolved against the game's
+ *  asset base so it works under any deploy path. Empty when no art is set. */
+function endHeroHtml(art, poster) {
+  if (!art) return '';
+  const base = cfg.assetBase || '';
+  const posterAttr = poster ? ` poster="${base}${poster}"` : '';
+  return `<div class="end-hero"><video autoplay muted loop playsinline${posterAttr}><source src="${base}${art}" type="video/mp4"></video></div>`;
+}
+
 function victory() {
   stopTimer();
   state.finished = true;
@@ -877,6 +895,7 @@ function victory() {
     title: v.title || 'Freedom',
     html: `
       <div class="end-screen">
+        ${endHeroHtml(v.art, v.poster)}
         <h2>${v.heading || 'You Have Escaped'}</h2>
         <p class="end-story">${v.story || ''}</p>
         <div class="end-stats">
@@ -924,6 +943,7 @@ function defeat() {
       title: d.title || 'Out of Time',
       html: `
         <div class="end-screen defeat">
+          ${endHeroHtml(d.art, d.poster)}
           <h2>${d.heading || 'Time Runs Out'}</h2>
           <p class="end-story">${d.story || ''}</p>
         </div>`,

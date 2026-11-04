@@ -23,6 +23,8 @@ const CONFIG = {
   renderCollectible: chipCard,
   collectibleToast: (e) => `Tumbler-chip pocketed: #${e.sun.rays} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Clean Getaway',
     heading: 'The Door Comes Open',
     story: `Six tumblers drop as one and the wheel spins sweet and free. The vault sighs open
@@ -34,6 +36,8 @@ const CONFIG = {
       morning. Split it four ways. Nobody talks. Clean getaway.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Caught',
     heading: 'The Time-Lock Re-Arms',
     story: `The clock beats you to it. The vault's own time-lock rolls over, the bolts seat

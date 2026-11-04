@@ -38,6 +38,8 @@ const CONFIG = {
   renderCollectible: shardCard,
   collectibleToast: (e) => `Memory shard integrated: ${e.sun.rays} wave-peaks — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'Signal Found',
     heading: 'You Have Escaped',
     story: `The dish holds its angle while the sky turns to fire. Somewhere between one
@@ -48,6 +50,8 @@ const CONFIG = {
       <em>"Told you I would remember for both of us."</em>`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Re-entry',
     heading: 'The Sky Catches Fire',
     story: `The horizon comes up too fast and the hull begins to sing — the long, rising

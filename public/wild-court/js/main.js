@@ -57,6 +57,8 @@ const CONFIG = {
   renderCollectible: tokenCard,
   collectibleToast: (e) => `Court token strung: the ${e.sun.creature} — "${e.sun.letter}"`,
   victory: {
+    art: 'art/end-win.mp4',
+    poster: 'art/end-win.webp',
     title: 'The Verdict',
     heading: 'The Court Rules in Your Favor',
     story: `The root-doors part onto a corridor of green dark, ten thousand fireflies
@@ -69,6 +71,8 @@ const CONFIG = {
       where it belongs.`,
   },
   defeat: {
+    art: 'art/end-lose.mp4',
+    poster: 'art/end-lose.webp',
     title: 'Nightfall',
     heading: 'The Court Adjourns',
     story: `The fireflies rise all at once, like a verdict being read in a language of
