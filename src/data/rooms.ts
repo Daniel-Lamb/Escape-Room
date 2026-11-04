@@ -104,6 +104,23 @@ export const rooms: Room[] = [
     freshText: 'Unplayed — the carcer waits.',
   },
   {
+    id: 'tomb-of-the-scarab',
+    mode: 'single',
+    status: 'live',
+    kicker: 'Room V · Ancient Egypt',
+    title: 'The Tomb of the Scarab',
+    blurb:
+      "Sealed inside a pharaoh's tomb when the entrance caves in, you have until the air runs out. Finish the burial rites the walls describe — weigh the heart against the feather, read the glyphs, raise the Dog Star — and come forth by day.",
+    teaser: "Sealed in a pharaoh's tomb, with the air running out.",
+    chips: ['1 player', '5 chambers', '~30 min'],
+    gusChip: '🪲 Gus, the heart-scarab',
+    art: 'tomb-of-the-scarab',
+    href: 'tomb-of-the-scarab/',
+    cta: 'Enter the Tomb',
+    saveKey: 'tomb-of-the-scarab-save-v1',
+    freshText: 'Unplayed — the entrance has just fallen.',
+  },
+  {
     id: 'signal-towers',
     mode: 'duo',
     status: 'live',

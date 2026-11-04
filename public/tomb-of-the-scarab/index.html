@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Tomb of the Scarab — Come Forth by Day</title>
+  <meta name="description" content="A 30-minute ancient-Egyptian escape room in your browser. Five sealed chambers, one failing lamp, and a golden scarab named Gus to guide you out." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Escape Rooms" />
+  <meta property="og:title" content="The Tomb of the Scarab — Come Forth by Day" />
+  <meta property="og:description" content="A 30-minute ancient-Egyptian escape room in your browser. Five sealed chambers, one failing lamp, and a golden scarab named Gus to guide you out." />
+  <meta property="og:url" content="https://daniel-lamb.github.io/Escape-Room/tomb-of-the-scarab/" />
+  <meta property="og:image" content="https://daniel-lamb.github.io/Escape-Room/tomb-of-the-scarab/art/cover.webp" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="671" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Tomb of the Scarab — Come Forth by Day" />
+  <meta name="twitter:description" content="A 30-minute ancient-Egyptian escape room in your browser. Five sealed chambers, one failing lamp, and a golden scarab named Gus to guide you out." />
+  <meta name="twitter:image" content="https://daniel-lamb.github.io/Escape-Room/tomb-of-the-scarab/art/cover.webp" />
+  <link rel="canonical" href="https://daniel-lamb.github.io/Escape-Room/tomb-of-the-scarab/" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#129714;</text></svg>" />
+  <link rel="stylesheet" href="../shared/css/main.css" />
+  <link rel="stylesheet" href="../shared/css/animations.css" />
+  <link rel="stylesheet" href="../shared/css/title.css" />
+  <link rel="stylesheet" href="skin.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="title-screen" class="screen">
+      <div id="title-bg"></div>
+      <div id="title-stars"></div>
+      <div class="title-content">
+        <p class="title-kicker">Sealed in — and the air is going</p>
+        <h1 id="game-title">The Tomb of the&nbsp;Scarab</h1>
+        <p class="title-sub" id="game-tagline">Finish the burial rites and come forth by day, before the lamp gutters out.</p>
+        <div class="title-buttons">
+          <button class="btn btn-primary" id="btn-new-game">Enter the Tomb</button>
+          <button class="btn hidden" id="btn-continue">Continue</button>
+          <button class="btn btn-ghost" id="btn-how">How to Play</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;">&#8962; All Rooms</a>
+        </div>
+        <p class="title-foot">Five chambers &middot; about 30 minutes &middot; best played with sound on</p>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="game-screen" class="screen hidden">
+      <header id="hud">
+        <div class="hud-left">
+          <span id="room-badge"></span>
+          <h2 id="room-title"></h2>
+        </div>
+        <div class="hud-center">
+          <div id="timer" title="Air remaining">30:00</div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="btn-journal" title="Scribe's Palette — everything you've learned">
+            <span class="hud-btn-icon">&#9998;</span> Journal
+          </button>
+          <button class="hud-btn" id="btn-sound" title="Toggle sound">
+            <span class="hud-btn-icon" id="sound-icon">&#9834;</span>
+          </button>
+          <button class="hud-btn" id="btn-restart" title="Restart from the beginning">&#8635;</button>
+          <a class="hud-btn" href="../" title="Back to room select" style="text-decoration:none;">&#8962;</a>
+        </div>
+      </header>
+
+      <main id="stage">
+        <div id="scene-wrap">
+          <div id="scene" aria-label="tomb scene"></div>
+          <div id="hotspots"></div>
+          <div id="embers" aria-hidden="true"></div>
+          <div id="vignette" aria-hidden="true"></div>
+          <button id="gus-dock" title="Gus, the heart-scarab — your companion. Stuck? Ask him." aria-label="Ask Gus for help"></button>
+        </div>
+      </main>
+
+      <div id="narration-bar">
+        <div id="message-card" class="hidden">
+          <p id="message-text"></p>
+          <span id="message-more" aria-hidden="true">&#9660;</span>
+        </div>
+      </div>
+
+      <footer id="inventory">
+        <span id="inv-label">Palette</span>
+        <div id="inv-slots"></div>
+      </footer>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <div id="modal-root"></div>
+    <div id="fader"></div>
+    <div id="fly-layer" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

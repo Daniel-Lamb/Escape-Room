@@ -1,0 +1,29 @@
+/* THE TOMB OF THE SCARAB — Egyptian skin over the shared base theme.
+   Warm sandstone + torchlight gold, with a lapis accent for stars and water. */
+
+:root {
+  --bg-0: #0d0803;
+  --bg-1: #171006;
+  --bg-2: #241705;
+  --stone-1: #3a2a12;
+  --stone-2: #241705;
+  --torch: #ffb24d;
+  --torch-deep: #d9791f;
+  --gold: #d4a72a;
+  --gold-bright: #f2d774;
+  --parchment: #efe0b8;
+  --lapis: #2f6fb0;
+  --text: #e6dcc4;
+  --text-dim: #a08a63;
+}
+
+/* Procedural title backdrop (no cover art needed): torch-lit sandstone. */
+#title-bg {
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(255,178,77,0.28) 0%, rgba(255,178,77,0) 46%),
+    radial-gradient(90% 70% at 50% 120%, rgba(47,111,176,0.18) 0%, rgba(47,111,176,0) 60%),
+    linear-gradient(180deg, #1c1206 0%, #0d0803 100%);
+}
+
+/* Warm the hint companion glow toward gold rather than the base blue. */
+#gus-dock { filter: drop-shadow(0 0 12px rgba(232, 200, 90, 0.35)); }

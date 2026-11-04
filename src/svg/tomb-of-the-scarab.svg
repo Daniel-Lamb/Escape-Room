@@ -1,0 +1,43 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tsc_bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1c0a"/>
+      <stop offset="0.6" stop-color="#1a1206"/>
+      <stop offset="1" stop-color="#0d0803"/>
+    </linearGradient>
+    <radialGradient id="tsc_glow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="rgba(255,178,77,0.4)"/>
+      <stop offset="1" stop-color="rgba(255,178,77,0)"/>
+    </radialGradient>
+    <linearGradient id="tsc_shell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2d774"/>
+      <stop offset="0.5" stop-color="#d4a72a"/>
+      <stop offset="1" stop-color="#8a6a15"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#tsc_bg)"/>
+  <ellipse cx="200" cy="95" rx="180" ry="120" fill="url(#tsc_glow)"/>
+
+  <!-- hieroglyph columns flanking -->
+  <g opacity="0.5" fill="#8a6a15">
+    <rect x="24" y="30" width="34" height="165" rx="4" fill="none" stroke="#8a6a15" stroke-width="2"/>
+    <rect x="342" y="30" width="34" height="165" rx="4" fill="none" stroke="#8a6a15" stroke-width="2"/>
+    <circle cx="41" cy="52" r="6"/><rect x="34" y="70" width="14" height="8"/><path d="M34 96 q7 -8 14 0" stroke="#8a6a15" stroke-width="2" fill="none"/><ellipse cx="41" cy="120" rx="8" ry="4"/><rect x="37" y="140" width="8" height="16"/><circle cx="41" cy="176" r="5"/>
+    <circle cx="359" cy="52" r="6"/><rect x="352" y="70" width="14" height="8"/><path d="M352 96 q7 -8 14 0" stroke="#8a6a15" stroke-width="2" fill="none"/><ellipse cx="359" cy="120" rx="8" ry="4"/><rect x="355" y="140" width="8" height="16"/><circle cx="359" cy="176" r="5"/>
+  </g>
+
+  <!-- the golden scarab -->
+  <g transform="translate(200 108)">
+    <g stroke="#7a5c12" stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M-32 -14 L-64 -34 M-34 4 L-70 4 M-30 22 L-58 44"/>
+      <path d="M32 -14 L64 -34 M34 4 L70 4 M30 22 L58 44"/>
+    </g>
+    <ellipse cx="0" cy="12" rx="40" ry="52" fill="url(#tsc_shell)" stroke="#6b520f" stroke-width="3"/>
+    <line x1="0" y1="-34" x2="0" y2="60" stroke="#6b520f" stroke-width="3"/>
+    <path d="M-30 -14 Q0 -22 30 -14" fill="none" stroke="#6b520f" stroke-width="2.5"/>
+    <path d="M-40 -30 Q0 -44 40 -30 Q0 -22 -40 -30 Z" fill="url(#tsc_shell)" stroke="#6b520f" stroke-width="3"/>
+    <circle cx="0" cy="-46" r="15" fill="#f2d774" stroke="#a07d1c" stroke-width="3"/>
+  </g>
+
+  <text x="200" y="210" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="15" letter-spacing="3" fill="#d4a72a">THE TOMB OF THE SCARAB</text>
+</svg>
