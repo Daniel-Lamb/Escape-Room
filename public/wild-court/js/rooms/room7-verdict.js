@@ -11,6 +11,9 @@
 // Registers NO items. Consumes hollow_pod, survey_map, oath_seal_paste;
 // vance_compass stays in the satchel as the narrated straightedge.
 
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
+
+const WORD = 'canopy';   // the word the Court speaks (entered trimmed, lowercased)
 const SIL = '#060b06';                       // silhouette ink for the watching Court
 const frac = (x) => x - Math.floor(x);
 
@@ -83,6 +86,7 @@ let walkingOut = false;   // session-local guard: completeRoom fires exactly onc
 
 export default {
   id: 'verdict',
+  lintStates: [{ label: 'rite done', flags: { verdict_revealed: true, verdict_podPlaced: true, verdict_wordSpoken: true, verdict_mapSealed: true } }],
   title: 'The Verdict Roots',
   intro: 'The last passage does not open into another chamber — it opens into a courtroom: a root amphitheater beneath the open night canopy, tiers banked with ten thousand fireflies sitting still as a sworn jury, six pairs of eyes catching the green moonlight from bough and coil and leaf, vast root-doors sealed at the far end, and at the center, waiting with the patience of something that has waited since 1911, a single carved stone.',
 
@@ -153,6 +157,7 @@ export default {
         .verdict-carve { animation: verdict_pulse 3.4s ease-in-out infinite; }
       </style>
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_verdict_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#050a06"/>
           <stop offset="0.55" stop-color="#0e1c12"/>
@@ -199,39 +204,11 @@ export default {
       <!-- night sky, moon through the canopy -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/verdict.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/verdict.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- canopy masses and flanking trunks -->
-      <path d="M0 0 L1600 0 L1600 118 Q1500 88 1440 128 Q1380 78 1300 116 Q1240 68 1150 106
-        Q1080 58 1000 94 Q930 128 860 90 Q800 58 720 98 Q650 128 580 86 Q520 58 440 102
-        Q370 128 300 90 Q230 60 150 106 Q80 128 0 94 Z" fill="#070d08"/>
-      <path d="M0 0 L1600 0 L1600 74 Q1420 40 1240 66 Q1040 30 860 60 Q660 28 460 62 Q240 34 0 60 Z" fill="#0b140c" opacity="0.85"/>
-      <path d="M28 0 Q60 200 40 480 L112 480 Q86 220 118 0 Z" fill="#101a10"/>
-      <path d="M1556 0 Q1582 240 1566 520 L1600 520 L1600 0 Z" fill="#0c150c"/>
-      <g class="sway slow">
-        <path d="M520 0 Q514 74 524 148" stroke="#223a26" stroke-width="4" fill="none"/>
-        <ellipse cx="521" cy="86" rx="5" ry="13" fill="#16281a"/>
-        <ellipse cx="526" cy="132" rx="5" ry="13" fill="#16281a"/>
-      </g>
-      <g class="sway slow">
-        <path d="M132 0 Q140 90 128 190" stroke="#223a26" stroke-width="4" fill="none"/>
-        <ellipse cx="136" cy="104" rx="6" ry="15" fill="#16281a"/>
-        <ellipse cx="129" cy="168" rx="6" ry="15" fill="#16281a"/>
-      </g>
+      <!-- the canopy, the moon, the trunks and the clearing floor are painted in the plate -->
 
-      <!-- the root amphitheater: three sweeping tiers -->
-      <path d="M0 470 Q800 350 1600 470 L1600 532 Q800 412 0 532 Z" fill="#0d1810"/>
-      <path d="M0 546 Q800 436 1600 546 L1600 616 Q800 506 0 616 Z" fill="#122015"/>
-      <path d="M0 626 Q800 522 1600 626 L1600 706 Q800 602 0 706 Z" fill="#16281a"/>
-      <path d="M0 470 Q800 350 1600 470" stroke="#4a3626" stroke-width="3" opacity="0.3" fill="none"/>
-      <path d="M0 546 Q800 436 1600 546" stroke="#4a3626" stroke-width="3" opacity="0.3" fill="none"/>
-      <path d="M0 626 Q800 522 1600 626" stroke="#4a3626" stroke-width="3" opacity="0.3" fill="none"/>
-
-      <!-- ground -->
-      <!-- forest floor supplied by the plate -->
-      <ellipse cx="420" cy="770" rx="180" ry="26" fill="#223a26" opacity="0.35"/>
-      <ellipse cx="1240" cy="800" rx="220" ry="30" fill="#223a26" opacity="0.3"/>
-
-      <!-- THE ROOT-DOORS -->
-      <g>
+      <!-- THE ROOT-DOORS: great roots arching up out of the clearing floor -->
+      <g data-mount="floor">
+        ${shadow(1255, 676, 230, 18)}
         ${sealed ? doorWayOpen() : doorLeavesSealed()}
         <path d="M1070 672 L1070 300 Q1070 172 1255 150 Q1440 172 1440 300 L1440 672"
           fill="none" stroke="#3a2a1c" stroke-width="34" stroke-linecap="round"/>
@@ -292,8 +269,9 @@ export default {
       ${eye(1019, 633, 1.5)} ${eye(1024, 634, 1.5)}
 
       <!-- the dais and THE SPEAKING STONE -->
-      <ellipse cx="830" cy="690" rx="270" ry="50" fill="#2e3a2c" stroke="#202b1e" stroke-width="4"/>
-      <ellipse cx="830" cy="684" rx="224" ry="38" fill="#38473a" opacity="0.7"/>
+      ${shadow(830, 708, 300, 40)}
+      <ellipse cx="830" cy="690" rx="270" ry="50" fill="url(#sk_basalt)" stroke="#14130f" stroke-width="4"/>
+      <ellipse cx="830" cy="684" rx="224" ry="38" fill="#4b4a40" opacity="0.6"/>
       ${revealed ? `<ellipse cx="835" cy="560" rx="200" ry="130" fill="url(#gd_verdict_stoneglow)" class="glow"/>` : ''}
       <image href="art/verdict-stone.webp" x="712" y="474" width="248" height="182" preserveAspectRatio="xMidYMax meet"/>
       ${[560, 585, 610].map(y => `
@@ -351,9 +329,6 @@ export default {
       <circle cx="905" cy="248" r="5" fill="url(#gd_verdict_mote)" class="glow fast"/>
       <circle cx="1180" cy="726" r="4.4" fill="url(#gd_verdict_mote)" class="glow fast"/>
 
-      <!-- canopy light-shafts, last -->
-      <polygon points="690,-10 850,-10 1010,640 750,640" fill="url(#gd_verdict_beam)" class="moonbeam"/>
-      <polygon points="1210,-10 1290,-10 1420,540 1300,540" fill="url(#gd_verdict_beam)" class="moonbeam" opacity="0.6"/>
 
       <path d="M0 900 L0 864 Q800 906 1600 864 L1600 900 Z" fill="#04070d"/>
     </svg>`;
@@ -676,7 +651,7 @@ function openWordPuzzle(game) {
       const attempt = () => {
         const v = (input.value || '').trim().toLowerCase();
         if (!v) { api.setFeedback('The Court waits. Silence is not a word.', 'bad'); return; }
-        if (v === 'canopy') {
+        if (v === WORD) {
           game.setFlag('verdict_wordSpoken');
           api.solved({ message: '"CANOPY," you say — and ten thousand fireflies pulse once, all together, bright as noon for a single heartbeat. The word that shelters every clan. SECOND, THE WORD: entered into the record.' });
           game.refreshScene();

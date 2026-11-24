@@ -4,8 +4,39 @@
 // block (I / II / IIII sheaves) so drum x block = XII exactly.
 // Unique: III x IIII. Token 6 (fish-crest, "S") in the grease pit.
 
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
+
+// Layout — the plate (art/winch.webp): the great winch machine centre (drum on
+// its axle ~767,690), a timber cage-lift right of it, a great column (left),
+// galleries above, torches on the walls.
+const POWER = 12;   // drum × sheaves the gate needs
+// what's on the shelf and in the chest — the pickers offer exactly these
+const DRUMS = [
+  { v: 2, label: 'Drum II — two', art: 'art/win-drum.webp' },
+  { v: 3, label: 'Drum III — three', art: 'art/win-drum.webp' },
+  { v: 5, label: 'Drum V — five', art: 'art/win-drum.webp' },
+];
+const BLOCKS = [
+  { v: 1, label: 'Single sheave — I', art: 'art/win-block.webp' },
+  { v: 2, label: 'Double sheave — II', art: 'art/win-block.webp' },
+  { v: 4, label: 'Four sheaves — IIII', art: 'art/win-block.webp' },
+];
+/** The one drum and block whose product is POWER, as the hint names them. */
+function rightRig() {
+  const roman = { 2: 'II', 3: 'III', 5: 'V' }, words = { 1: 'single', 2: 'double', 4: 'four' };
+  for (const d of DRUMS) for (const b of BLOCKS) if (d.v * b.v === POWER) return [`${roman[d.v]} drum`, `${words[b.v]}-sheave block`];
+  return [];
+}
+const NOTE = { x: 34, y: 320, k: 0.86 };
+const ASSY_DY = 200;
+const SHELF_DX = -180, SHELF_DY = 110;
+const CHEST_DX = 40, CHEST_DY = 60;
+const CAGE = { x: 966, w: 240, top: 350, bottom: 600 };
+
 export default {
   id: 'winch',
+  solution: () => rightRig(),
+  lintStates: [{ label: 'raised', flags: { winch_brakeFree: true, winch_crankSet: true, winch_drum: 3, winch_block: 4, winch_raised: true } }],
   title: 'The Great Winch',
   intro: 'The winch gallery rises two storeys around the great capstan that hauls the western cage-lift, its ropes climbing into darkness toward a slot of white arena light, and everything about the machine says it would work perfectly if the fire had not eaten its rigging, its bars, and the man who loved it.',
 
@@ -19,6 +50,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_win_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#1d1812"/>
           <stop offset="1" stop-color="#2e2519"/>
@@ -39,23 +71,26 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/winch.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/winch.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- fire-scarred beams -->
-      <g>
-        <rect x="240" y="140" width="46" height="620" fill="#3a2d1c"/>
-        <path d="M250 200 q14 40 -4 90 q18 30 2 80" stroke="#171209" stroke-width="10" fill="none" opacity="0.8"/>
-        <rect x="240" y="140" width="46" height="120" fill="#171209" opacity="0.6"/>
-        <!-- Felix's beam note -->
-        <rect x="330" y="150" width="450" height="120" rx="6" fill="#2b2318" stroke="#453a2e" stroke-width="3"/>
-        <g font-family="Palatino Linotype, Georgia, serif" fill="#c9b98f" text-anchor="middle">
+      <!-- fire scars, burnt into the plate's great timber column -->
+      <g data-mount="inset" opacity="0.85">
+        <path d="M420 200 q14 40 -4 90 q18 30 2 80" stroke="#0a0705" stroke-width="12" fill="none"/>
+        <path d="M466 260 q-10 50 6 120" stroke="#0a0705" stroke-width="8" fill="none"/>
+      </g>
+      <!-- Felix's beam note, nailed along the front beam of the left gallery -->
+      <g data-mount="nails" transform="translate(${NOTE.x} ${NOTE.y}) scale(${NOTE.k}) translate(-330 -150)">
+        <rect x="330" y="150" width="450" height="120" rx="6" fill="url(#sk_darkwood)" stroke="#120b05" stroke-width="3" filter="url(#sk_drop)"/>
+        ${[[344, 164], [766, 164], [344, 256], [766, 256]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#2a2620"/>`).join('')}
+        <g font-family="Palatino Linotype, Georgia, serif" fill="#e3d4ac" text-anchor="middle">
           <text x="555" y="185" font-size="15" letter-spacing="2">THE WEST LIFT ASKS TWELVE MEN.</text>
           <text x="555" y="212" font-size="13" letter-spacing="1">A MAN AT THE CRANK IS ONE. DRVM TIMES BLOCK</text>
           <text x="555" y="238" font-size="13" letter-spacing="1">MVST MAKE THE TWELVE — NO LESS, NO MORE.</text>
         </g>
       </g>
+      <!-- warmth over the plate's torches -->
+      ${[[250, 233], [1333, 250], [783, 450], [233, 600], [1367, 600]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="60" ry="50" fill="url(#gd_win_torch)" class="glow"/>`).join('')}
 
-      <!-- the great capstan/drum assembly -->
-      <g>
-        <rect x="760" y="300" width="34" height="460" fill="#453a2e"/>
+      <!-- the drum assembly, fitted onto the painted winch machine's axle -->
+      <g data-mount="bolts" transform="translate(0 ${ASSY_DY})">
         <!-- mounted geared drum -->
         ${drum
           ? `<g class="${raised ? 'spin slow' : ''}" style="transform-origin: 777px 420px;">
@@ -85,8 +120,12 @@ export default {
           : `<line x1="777" y1="120" x2="777" y2="330" stroke="#3a2d1c" stroke-width="4" stroke-dasharray="10 8"/>`}
       </g>
 
-      <!-- drum shelf (photoreal geared drums; marks kept legible) -->
-      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
+      <!-- drum shelf on stubby legs on the floor (photoreal geared drums; marks kept legible) -->
+      <g data-mount="floor" transform="translate(${SHELF_DX} ${SHELF_DY})">
+        ${shadow(465, 700, 180, 10)}
+        ${[320, 610].map(x => `<rect x="${x - 6}" y="656" width="12" height="44" rx="2" fill="#2b2318"/>`).join('')}
+      </g>
+      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round" transform="translate(${SHELF_DX} ${SHELF_DY})">
         <rect x="300" y="642" width="330" height="16" rx="6" fill="#3a3025" stroke="none"/>
         ${[2, 3, 5].map((mark, i) => {
           const x = 350 + i * 105;
@@ -101,8 +140,9 @@ export default {
         <text x="465" y="692" text-anchor="middle" font-size="12" letter-spacing="3" fill="#c9b98f" stroke-width="2.5">TYMPANA</text>
       </g>
 
-      <!-- block chest (photoreal pulley blocks; sheave counts kept countable) -->
-      <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
+      <!-- block chest on the floor (photoreal pulley blocks; sheave counts kept countable) -->
+      ${shadow(1285 + CHEST_DX, 742 + CHEST_DY, 170, 12)}
+      <g transform="translate(${CHEST_DX} ${CHEST_DY})" font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
         <rect x="1130" y="620" width="310" height="120" rx="10" fill="#3a2d1c" stroke="#241c12" stroke-width="5"/>
         ${[1, 2, 4].map((sheaves, i) => {
           const x = 1180 + i * 90;
@@ -116,32 +156,25 @@ export default {
         <text x="1285" y="770" text-anchor="middle" font-size="12" letter-spacing="3" fill="#c9b98f" stroke-width="2.5">TROCHLEAE</text>
       </g>
 
-      <!-- the cage-lift platform -->
-      <g>
+      <!-- the lift: the plate's timber cage; its platform rides inside it, and the cage darkens once it rises -->
+      <g data-mount="wall">
         ${raised
-          ? `<g>
-               <rect x="1200" y="300" width="220" height="20" rx="5" fill="#6b4f2c"/>
-               <line x1="1240" y1="300" x2="1240" y2="60" stroke="#8a6d34" stroke-width="4"/>
-               <line x1="1380" y1="300" x2="1380" y2="60" stroke="#8a6d34" stroke-width="4"/>
-             </g>`
-          : `<g>
-               <rect x="1200" y="700" width="220" height="20" rx="5" fill="#6b4f2c"/>
-               <line x1="1240" y1="700" x2="1240" y2="60" stroke="#8a6d34" stroke-width="3" opacity="0.5"/>
-               <line x1="1380" y1="700" x2="1380" y2="60" stroke="#8a6d34" stroke-width="3" opacity="0.5"/>
-               <text x="1310" y="694" text-anchor="middle" font-size="12" fill="#8a7f6a"
-                 font-family="Palatino Linotype, Georgia, serif">ONVS: CCCL</text>
-             </g>`}
+          ? `<rect x="${CAGE.x}" y="${CAGE.top}" width="${CAGE.w}" height="${CAGE.bottom - CAGE.top}" fill="#0a0705" opacity="0.6"/>
+             <rect x="${CAGE.x}" y="${CAGE.top - 110}" width="${CAGE.w}" height="20" rx="5" fill="#6b4f2c"/>
+             ${[CAGE.x + 30, CAGE.x + CAGE.w - 30].map(x => `<line x1="${x}" y1="${CAGE.top - 110}" x2="${x}" y2="40" stroke="#8a6d34" stroke-width="4"/>`).join('')}`
+          : `<rect x="${CAGE.x}" y="${CAGE.bottom - 14}" width="${CAGE.w}" height="20" rx="5" fill="#6b4f2c"/>
+             <text x="${CAGE.x + CAGE.w / 2}" y="${CAGE.bottom - 22}" text-anchor="middle" font-size="12" fill="#e3d4ac" paint-order="stroke" stroke="#0a0705" stroke-width="3"
+               font-family="Palatino Linotype, Georgia, serif">ONVS: CCCL</text>`}
       </g>
-
-      <!-- upper door (appears with the raised platform) -->
-      <g>
+      <!-- upper door on the right-hand gallery (reachable once the platform is raised) -->
+      <g data-mount="wall">
         <path d="M1460 420 L1460 200 Q1520 170 1580 200 L1580 420 Z" fill="${raised ? '#171008' : '#241c12'}" stroke="#453a2e" stroke-width="6"/>
         ${raised ? `<text x="1520" y="320" text-anchor="middle" font-size="12" fill="#e8cf96" class="flicker"
           font-family="Palatino Linotype, Georgia, serif">the corridor</text>` : ''}
       </g>
 
-      <!-- grease pit -->
-      <g>
+      <!-- grease pit, sunk in the floor -->
+      <g data-mount="floor">
         <ellipse cx="960" cy="790" rx="120" ry="34" fill="#0f0c08"/>
         <ellipse cx="960" cy="786" rx="100" ry="26" fill="#171209"/>
         ${!state.journal.some(e => e.id === 'token6') ? `<circle cx="1000" cy="786" r="6" fill="#e8dcc0" class="beckon"/>` : ''}
@@ -156,13 +189,6 @@ export default {
         <line x1="1456" y1="540" x2="1560" y2="480"/>
       </g>
 
-      <!-- torch -->
-      <g>
-        <rect x="1080" y="330" width="12" height="58" rx="4" fill="#3a2b18"/>
-        <ellipse cx="1086" cy="316" rx="40" ry="34" fill="url(#gd_win_torch)" class="glow"/>
-        <path class="torch-flame" d="M1086 330 q11 -19 0 -34 q-11 15 0 34z" fill="#ffa94d"/>
-      </g>
-
       <path d="M0 900 L0 866 Q800 904 1600 866 L1600 900 Z" fill="#0a0705"/>
     </svg>`;
   },
@@ -175,7 +201,7 @@ export default {
 
     if (!brake) {
       spots.push({
-        id: 'brake', x: 640, y: 580, w: 130, h: 90, label: 'The locked brake',
+        id: 'brake', x: 640, y: 580 + ASSY_DY, w: 130, h: 90, label: 'The locked brake',
         onInteract(game) {
           if (game.selectedItem === 'winch_key') {
             game.useSelected();
@@ -192,7 +218,7 @@ export default {
 
     if (!crank) {
       spots.push({
-        id: 'socket', x: 790, y: 530, w: 100, h: 80, label: 'The empty crank socket',
+        id: 'socket', x: 790, y: 530 + ASSY_DY, w: 100, h: 80, label: 'The empty crank socket',
         onInteract(game) {
           if (game.selectedItem === 'crank_handle') {
             game.useSelected();
@@ -208,7 +234,7 @@ export default {
     }
 
     spots.push({
-      id: 'beamnote', x: 320, y: 140, w: 470, h: 140, label: "Felix's beam note",
+      id: 'beamnote', x: NOTE.x, y: NOTE.y, w: 450 * NOTE.k, h: 120 * NOTE.k, label: "Felix's beam note",
       onInteract(game) {
         const html = `<span class="stone-cut">THE WEST LIFT ASKS TWELVE MEN.<br>
           A MAN AT THE CRANK IS ONE.<br>
@@ -225,7 +251,7 @@ export default {
     });
 
     spots.push({
-      id: 'drums', x: 290, y: 540, w: 350, h: 130, label: 'The drum shelf',
+      id: 'drums', x: 290 + SHELF_DX, y: 540 + SHELF_DY, w: 350, h: 130, label: 'The drum shelf',
       onInteract(game) {
         const html = `<p>Three geared drums on the shelf, each cut with its mason's mark:</p>
           <p style="text-align:center;"><strong>II</strong> — two, says the mark &middot;
@@ -238,7 +264,7 @@ export default {
     });
 
     spots.push({
-      id: 'blocks', x: 1120, y: 610, w: 330, h: 140, label: 'The block chest',
+      id: 'blocks', x: 1120 + CHEST_DX, y: 610 + CHEST_DY, w: 330, h: 140, label: 'The block chest',
       onInteract(game) {
         const html = `<p>Three pulley blocks in the chest. You count the sheaves aloud,
           because Felix would have:</p>
@@ -253,7 +279,7 @@ export default {
 
     if (!raised) {
       spots.push({
-        id: 'rigging', x: 700, y: 300, w: 170, h: 220, label: 'The rigging mounts',
+        id: 'rigging', x: 700, y: 300 + ASSY_DY, w: 170, h: 220, label: 'The rigging mounts',
         onInteract(game) { openRigging(game); },
       });
     }
@@ -272,7 +298,7 @@ export default {
     }
 
     spots.push({
-      id: 'scars', x: 230, y: 130, w: 70, h: 630, label: 'Fire-scarred beam',
+      id: 'scars', x: 400, y: 160, w: 100, h: 140, label: 'Fire-scarred beam',
       onInteract(game) {
         game.say('The beam wears the fire like a healed wound — char scaled off, new timber scarfed in below. You wrote the report that said the western works needed twice the fire-watch. Somebody filed it. This is what filing looks like, twenty years on.');
       },
@@ -286,7 +312,7 @@ export default {
     });
 
     spots.push({
-      id: 'platform', x: raised ? 1190 : 1190, y: raised ? 280 : 660, w: 240, h: raised ? 140 : 100,
+      id: 'platform', x: CAGE.x - 6, y: raised ? CAGE.top - 140 : CAGE.bottom - 80, w: CAGE.w + 12, h: raised ? 120 : 100,
       label: raised ? 'Ride up to the corridor' : 'The dead lift platform',
       onInteract(game) {
         if (!raised) {
@@ -361,16 +387,8 @@ function openRigging(game) {
           col.appendChild(el);
         }
       };
-      mk('#win-drums', [
-        { v: 2, label: 'Drum II — two', art: 'art/win-drum.webp' },
-        { v: 3, label: 'Drum III — three', art: 'art/win-drum.webp' },
-        { v: 5, label: 'Drum V — five', art: 'art/win-drum.webp' },
-      ], drum, v => { drum = v; game.setFlag('winch_drum', v); game.refreshScene(); });
-      mk('#win-blocks', [
-        { v: 1, label: 'Single sheave — I', art: 'art/win-block.webp' },
-        { v: 2, label: 'Double sheave — II', art: 'art/win-block.webp' },
-        { v: 4, label: 'Four sheaves — IIII', art: 'art/win-block.webp' },
-      ], block, v => { block = v; game.setFlag('winch_block', v); game.refreshScene(); });
+      mk('#win-drums', DRUMS, drum, v => { drum = v; game.setFlag('winch_drum', v); game.refreshScene(); });
+      mk('#win-blocks', BLOCKS, block, v => { block = v; game.setFlag('winch_block', v); game.refreshScene(); });
 
       body.querySelector('#win-heave').addEventListener('click', () => {
         if (!game.getFlag('winch_brakeFree') || !game.getFlag('winch_crankSet')) {
@@ -385,7 +403,7 @@ function openRigging(game) {
           return;
         }
         const power = drum * block;
-        if (power === 12) {
+        if (power === POWER) {
           game.setFlag('winch_raised');
           game.playSfx('unlock');
           api.solved({ message: 'Three times four is twelve, and twelve men\'s strength walks out of one crank and up the ropes. The drum turns, the block sings, and the western cage-lift rises off its blocks for the first time since the fire — grinding, complaining, working.' });

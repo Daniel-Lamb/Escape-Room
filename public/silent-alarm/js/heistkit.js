@@ -4,6 +4,7 @@
 // (phosphor schematics + scanline flicker). Keeps the seven scenes consistent.
 // Every id/keyframe is prefixed by a per-scene slug so nothing collides.
 
+import { kitDefs } from '../../shared/js/scenekit.js';
 import { roleName, isHand } from './role.js';
 
 // Photoreal animated backdrops live in <game>/art/<slug>.{webp,mp4}; resolve
@@ -12,7 +13,7 @@ const ART = new URL('../art/', import.meta.url).href;
 
 /** Common gradient + keyframe defs. Call once inside <defs>. */
 export function defs(slug) {
-  return `
+  return `${kitDefs()}
     <linearGradient id="${slug}_hallSky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#05070a"/>
       <stop offset="0.55" stop-color="#0b1118"/>

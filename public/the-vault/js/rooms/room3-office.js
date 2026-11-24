@@ -19,6 +19,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 2,
   id: 'office',
   slug: 'of',
   lockLabel: 'Your Lock',

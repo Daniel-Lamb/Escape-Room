@@ -8,6 +8,7 @@ const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export default {
   id: 'gatehouse',
+  lintStates: [{ label: 'door open', flags: { gatehouse_doorOpen: true }, inventory: ['crank_handle', 'iron_crow'] }],
   title: 'The Gatehouse',
   intro: 'The stair spits you into the winch chamber of the gatehouse. Above, through the murder-holes, boots and low voices — the main gate is watched, and the watchers sound awake. But in the north wall, low and half-forgotten, a stone door waits under a carved sun.',
 

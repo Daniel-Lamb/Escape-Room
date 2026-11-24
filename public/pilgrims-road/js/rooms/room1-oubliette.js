@@ -3,6 +3,7 @@
 // set the three numeral rings to VII / IV / II.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   candle_stub: {
@@ -27,11 +28,30 @@ registerItems({
 });
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+const RINGS_SET = [6, 3, 1];   // VII, IV, II — crows, rats, chains
 
 function grateOpen(state) { return !!state.flags.oubliette_grateOpen; }
 
+// Sun-mark #1 sits on the footing stone of the wall, just left of the grate.
+const SUN1 = { cx: 520, cy: 640 };
+
+// A sun cut into stone: a dark carved channel with a pale upper lip, and the
+// remains of gilding. Exactly `rays` rays — the finale counts them.
+function carvedSun(cx, cy, rays) {
+  const ray = (i, r0, r1, w) => {
+    const a = (i / rays) * Math.PI * 2 - Math.PI / 2;
+    return `<line x1="${cx + Math.cos(a) * r0}" y1="${cy + Math.sin(a) * r0}" x2="${cx + Math.cos(a) * r1}" y2="${cy + Math.sin(a) * r1}" stroke-width="${w}" stroke-linecap="round"/>`;
+  };
+  const all = (r0, r1, w) => Array.from({ length: rays }, (_, i) => ray(i, r0, r1, w)).join('');
+  return `
+    <g stroke="#06070b" fill="none" opacity="0.85" transform="translate(1.5 2)"><circle cx="${cx}" cy="${cy}" r="15" stroke-width="5"/>${all(21, 38, 5)}</g>
+    <g stroke="#9aa1b3" fill="none" opacity="0.55"><circle cx="${cx}" cy="${cy}" r="15" stroke-width="2"/>${all(21, 38, 2)}</g>
+    <g stroke="#c9a227" fill="none" opacity="0.7"><circle cx="${cx}" cy="${cy}" r="15" stroke-width="1.5" stroke-dasharray="6 5"/>${all(24, 34, 1.5)}</g>`;
+}
+
 export default {
   id: 'oubliette',
+  solution: RINGS_SET.map(i => ROMAN[i]),
   title: 'The Oubliette',
   intro: 'You wake on wet straw at the bottom of a stone throat. Far above, a torch gutters. They said: at dawn, the rope. But scratched into the wall beside you, in an old man\'s careful hand, someone has left... verses.',
 
@@ -43,6 +63,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_oub_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#131725"/>
           <stop offset="0.55" stop-color="#232736"/>
@@ -80,12 +101,16 @@ export default {
       <image href="art/oub-monk.webp" x="595" y="224" width="120" height="202" preserveAspectRatio="xMidYMid meet" style="mix-blend-mode:screen"/>
 
       <!-- chains: two, with empty shackles (photoreal) -->
-      <image href="art/oub-chains.webp" x="952" y="168" width="135" height="300" preserveAspectRatio="xMidYMid meet" class="sway slow"/>
+      <g data-mount="bolts">
+        <image href="art/oub-chains.webp" x="952" y="168" width="135" height="300" preserveAspectRatio="xMidYMid meet" class="sway slow"/>
+        ${[996, 1044].map(x => `<circle cx="${x}" cy="172" r="9" fill="url(#sk_iron)" stroke="#0b0c10" stroke-width="2"/><circle cx="${x}" cy="172" r="3" fill="#0b0c10"/>`).join('')}
+      </g>
 
-      <!-- the verse, scratched beside the grate -->
-      <g font-family="Palatino Linotype, Georgia, serif" fill="#b9bfcf" opacity="0.85">
-        <text x="470" y="500" font-size="26" font-style="italic">"Count the crows upon the gallows-tree..."</text>
-        <text x="470" y="534" font-size="20" opacity="0.75">— faint verses, scratched deep. E.</text>
+      <!-- the verse, scratched into the stone above the grate (engraved: dark cut, pale lip) -->
+      <g font-family="Palatino Linotype, Georgia, serif" font-style="italic" font-size="26" data-mount="inset">
+        <text x="472" y="503" fill="#07080c" opacity="0.8">"Count the crows upon the gallows-tree..."</text>
+        <text x="470" y="500" fill="#c3c9d6" opacity="0.62" style="mix-blend-mode:screen">"Count the crows upon the gallows-tree..."</text>
+        <text x="860" y="536" fill="#c3c9d6" opacity="0.5" font-size="20" style="mix-blend-mode:screen">— E.</text>
       </g>
 
       <!-- drain grate with three numeral rings -->
@@ -104,26 +129,31 @@ export default {
              </g>`}
       </g>
 
-      <!-- sun-mark #1: carved gilded sun (photoreal), scratched letter R below -->
-      <g class="beckon">
-        <image href="art/oub-sun.webp" x="470" y="646" width="100" height="102" preserveAspectRatio="xMidYMid meet"/>
-        <text x="520" y="784" text-anchor="middle" font-size="24" fill="#e8c85a"
+      <!-- sun-mark #1: seven rays cut into the footing stone beside the grate, a gilded R below -->
+      <g class="beckon" data-mount="inset">
+        ${carvedSun(SUN1.cx, SUN1.cy, 7)}
+        <text x="${SUN1.cx}" y="${SUN1.cy + 58}" text-anchor="middle" font-size="24" fill="#e8c85a"
           font-family="Palatino Linotype, Georgia, serif">R</text>
       </g>
 
-      <!-- bread board with loaf ${spoonHere ? '+ spoon' : ''} -->
-      <g>
+      <!-- bread board with loaf ${spoonHere ? '+ spoon' : ''}, set down in the straw -->
+      <g data-mount="floor">
+        ${shadow(1248, 826, 128, 16)}
         <image href="art/oub-board.webp" x="1128" y="694" width="240" height="146" preserveAspectRatio="xMidYMid meet"/>
         ${spoonHere ? `
         <g transform="translate(1318 742) rotate(18)">
-          <ellipse cx="0" cy="0" rx="13" ry="9" fill="none" stroke="#9a9a8a" stroke-width="3"/>
-          <path d="M10 6 q12 10 16 26" fill="none" stroke="#9a9a8a" stroke-width="4" stroke-linecap="round"/>
+          <path d="M8 6 q14 12 18 30" fill="none" stroke="#1a1a16" stroke-width="7" stroke-linecap="round" opacity="0.5" transform="translate(2 3)"/>
+          <path d="M8 6 q14 12 18 30" fill="none" stroke="url(#sk_steel)" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="0" cy="0" rx="12" ry="8.5" fill="url(#sk_steel)" stroke="#2a2d35" stroke-width="1.5"/>
+          <ellipse cx="-2" cy="-2" rx="6" ry="3.5" fill="#c9ced8" opacity="0.55"/>
+          <line x1="-4" y1="3" x2="3" y2="-3" stroke="#1a1a16" stroke-width="1.5"/>
         </g>` : ''}
       </g>
 
       <!-- candle stub glinting in the straw -->
       ${candleHere ? `
-      <image href="art/oub-candle.webp" x="430" y="758" width="52" height="112" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
+      <g data-mount="floor">${shadow(456, 866, 34, 7)}
+      <image href="art/oub-candle.webp" x="430" y="758" width="52" height="112" preserveAspectRatio="xMidYMid meet" class="beckon"/></g>` : ''}
 
       <!-- foreground shadow lip of the pit -->
       <path d="M0 900 L0 840 Q800 920 1600 840 L1600 900 Z" fill="#05070d"/>
@@ -135,7 +165,7 @@ export default {
     const open = grateOpen(state);
 
     spots.push({
-      id: 'verse', x: 440, y: 440, w: 560, h: 130, label: "Edmund's verses",
+      id: 'verse', x: 440, y: 460, w: 560, h: 100, label: "Edmund's verses",
       onInteract(game) {
         game.journal.add('note_verse', {
           title: "Edmund's Verse (Oubliette wall)",
@@ -205,7 +235,7 @@ export default {
     });
 
     spots.push({
-      id: 'sun1', x: 480, y: 650, w: 110, h: 130, label: 'A carved sun',
+      id: 'sun1', x: SUN1.cx - 55, y: SUN1.cy - 50, w: 110, h: 130, label: 'A carved sun',
       onInteract(game) {
         game.journal.add('sun1', {
           title: 'Oubliette — beside the grate',
@@ -257,12 +287,26 @@ export default {
       spots.push({
         id: 'grate_open', x: 550, y: 680, w: 300, h: 130, label: 'The way down',
         onInteract(game) {
-          if (!state.flags.oubliette_candleTaken || !state.flags.oubliette_spoonTaken) {
-            game.say('The shaft below is black as a closed book. A prisoner leaves nothing behind — take what little this cell offers first.');
-            return;
+          // Nothing blocks the way down: whatever the cell still offers, you
+          // gather as you crouch at the shaft — a prisoner leaves nothing behind.
+          const gathered = [];
+          if (!state.flags.oubliette_candleTaken) {
+            game.setFlag('oubliette_candleTaken');
+            game.addItem('candle_stub', { from: { x: 456, y: 820 }, silent: true });
+            gathered.push('the candle stub from the straw');
+          }
+          if (!state.flags.oubliette_spoonTaken) {
+            game.setFlag('oubliette_spoonTaken');
+            game.addItem('bent_spoon', { from: { x: 1318, y: 742 }, silent: true });
+            gathered.push('the bent spoon beside the loaf');
           }
           if (!game.journal.has('sun1')) {
-            game.say('Edmund\'s verse nags at you as you crouch: "Mark each sun along the road." His sun is carved right beside this grate — look at it before you go.');
+            game.journal.add('sun1', { title: 'Oubliette — beside the grate', category: 'sun', sun: { rays: 7, letter: 'R' } });
+            gathered.push('a quick copy of the seven-rayed sun by the grate, R beneath it');
+          }
+          if (gathered.length) {
+            game.say(`A prisoner leaves nothing behind. Before you lower yourself into the shaft you take ${gathered.join(', and ')}. "Mark each sun along the road."`);
+            game.completeRoom({ delay: 3200 });
             return;
           }
           game.completeRoom({ delay: 600 });
@@ -326,8 +370,7 @@ function openGratePuzzle(game) {
       });
 
       body.querySelector('#oub-try').addEventListener('click', () => {
-        // VII, IV, II -> indices 6, 3, 1
-        if (values[0] === 6 && values[1] === 3 && values[2] === 1) {
+        if (RINGS_SET.every((n, i) => values[i] === n)) {
           game.setFlag('oubliette_grateOpen');
           game.playSfx('stone');
           api.solved({ message: 'Deep in the wall, counterweights shift. The grate swings up on a hidden hinge — below, a dry cistern shaft, and hand-holds cut into the stone. Edmund fled downward.' });

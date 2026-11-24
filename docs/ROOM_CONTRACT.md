@@ -132,7 +132,38 @@ Puzzles must be fully re-openable: never assume the modal persists.
   check `state.flags` / `state.inventory` inside `scene()` and render accordingly).
 - Text inside scenes: `font-family="Palatino Linotype, Georgia, serif"`.
 
+## Placement — nothing floats
+
+Background plates were painted separately from the props, so a prop drawn at an old
+coordinate will hover in front of the wrong thing. Every prop must sit on something
+the player can believe holds it.
+
+- **Map props to the plate.** Measure the plate's features: wall panels, mantels,
+  tables, shelves, doorways, floor line. Draw each prop onto one of them, and put the
+  coordinates in named constants at the top of the room (`const MIRROR = {…}`). The
+  art and the hotspot both spread the same constant, so they can't drift apart.
+- **Mount through `shared/js/scenekit.js`.** `panel({ …rect, material, mount })`
+  gives boards, plates, cards and lock faces the hardware that holds them. Mounts:
+  `nails`, `pinned`, `hook`, `chains`, `bolts`, `bracket`, `inset`, `easel`, `post`,
+  `table`, `arm`, `console`. Use `grounded()` for things on the floor with a contact
+  shadow, `shelf()`, `pedestal()`, `wallDoor()` for a door in a side wall in
+  perspective, and `shadow()`. Each helper marks its group `data-mount`.
+- **Lighting is not a prop.** Glows, washes, glass sheen and water get `data-fx`, so
+  the lint doesn't read them as floating panels.
+- **Relays dock (duo and group games).** A portable card the player reads to a
+  partner (a codebook page, a note, a schematic) docks in the player's kit at the
+  top-right `DOCK` via `dock(fromRect, inner, { kind, title })`. Its hotspot spreads
+  `...DOCK` and opens the full card. Fixed things (a plate on the wall, writing on a
+  slate) stay mounted where they are.
+- **Exterior plates get interiors.** If the plate shows the outside but the room is
+  inside (Signal Towers), draw the interior shell over it, with the plate visible only
+  through a window (`interior()` in `signal-towers/js/scenekit.js`).
+
 ## Hotspot rules
+
+- **Later hotspots stack on top** (the engine appends them in order). Push a
+  collectible after the machine or table it sits on. A hotspot wholly under a later
+  one can never be clicked; the lint reports it as `HIDDEN`.
 
 - **Gus's reserve zone (series rule): keep the TOP-LEFT ~220×250 scene units free of
   hotspots.** Gus always docks top-left of the scene; narration always renders in its
@@ -146,6 +177,13 @@ Puzzles must be fully re-openable: never assume the modal persists.
   when flags unlock (`hotspots(state)` is re-queried on every `refreshScene()`).
 
 ## Difficulty & fairness (non-negotiable)
+
+- **Hints:** exactly three tiers. The first nudges and never contains the answer. The
+  last states the answer the code accepts, and the lint checks it against the room's
+  answer constants or its declared `solution`.
+- **Split knowledge (duo and group games):** prefer data on one screen and the rule on
+  the other (a reef bearing plus an aiming rule; line pressures plus a valve rule) over
+  plain dictation of the answer.
 
 - The full deduction chain must exist in-scene: clue objects + a way to notice they
   matter. Follow the DESIGN.md spec for your room exactly — exact solutions, exact

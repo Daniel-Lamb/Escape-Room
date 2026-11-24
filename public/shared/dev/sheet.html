@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Room Contact Sheet</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <style>
+    :root { color-scheme: dark; }
+    html { overflow: auto !important; height: auto !important; }
+    body { position: static !important; }
+    body { background: #0b0d14; color: #d8dcea; font: 14px/1.4 system-ui, sans-serif; margin: 0; padding: 16px; overflow: auto; height: auto; }
+    header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+    header select, header label { font: inherit; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 14px; }
+    .card { background: #151826; border: 1px solid #262a3d; border-radius: 8px; overflow: hidden; }
+    .card h2 { font-size: 13px; margin: 0; padding: 6px 10px; font-weight: 600; letter-spacing: .02em; }
+    .card h2 small { color: #8a90a8; font-weight: 400; }
+    .frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+    .frame > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .hs { position: absolute; outline: 2px solid #00e5ff; background: rgba(0, 229, 255, .08); }
+    .hs span { position: absolute; left: 0; top: 0; font: 10px/1.1 system-ui, sans-serif; color: #00e5ff; background: rgba(0, 0, 0, .75); padding: 1px 3px; white-space: nowrap; max-width: 100%; overflow: hidden; }
+    .gus { position: absolute; left: 0; top: 0; width: 13.75%; height: 27.78%; outline: 1px dashed #ff5ad1; pointer-events: none; }
+    .no-outline .hs, .no-outline .gus { display: none; }
+    .hs.bare { outline: 2px dashed #ff4d4d; background: rgba(255, 77, 77, .12); }
+    .hs.bare span { color: #ff8080; }
+    #bare-report { white-space: pre-wrap; background: #151826; border: 1px solid #3a2030; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font: 12px/1.5 ui-monospace, monospace; }
+    .blocked { padding: 40px; text-align: center; }
+  </style>
+</head>
+<body>
+  <script type="module" src="sheet.js"></script>
+</body>
+</html>

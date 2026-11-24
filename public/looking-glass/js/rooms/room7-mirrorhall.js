@@ -4,18 +4,28 @@
 // (Waking: R,V,I ; Glass: E,L,S) — the word needs both journals.
 
 import { getRole, isWaking, sideName } from '../role.js';
-import { defs, backdrop, sideTag, sconce, tint } from '../glasskit.js';
+import { defs, backdrop, sideTag, mirrorGlass, sconce, tint } from '../glasskit.js';
+import { dock, DOCK, panel, shadow } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'hall';
 const ANSWER = 'SILVER';
+
+// The great mirror stands free in the middle of the hall (the plate's mirrors
+// line the walls): glass, gilt frame, a plinth carrying the inscription.
+const GLASS = { x: 662, y: 132, w: 276, h: 456 };
+const FRAME = { x: 640, y: 110, w: 320, h: 500 };
+const BASE = { x: 612, y: 610, w: 376, h: 92 };
+const PLAQUE = { x: 630, y: 620, w: 340, h: 72 };
+const SETTINGS = [[650, 120], [950, 120], [960, 360], [950, 600], [650, 600], [640, 360]];
 
 function done(state) { return !!state.flags.mirrorhall_done; }
 
 export default {
   id: 'mirrorhall',
+  lintStates: [{ label: 'solved', flags: { mirrorhall_done: true } }],
   get title() { return `${sideName()} · The Mirror Hall`; },
   get intro() {
-    return 'The last hall, and the tallest mirror in the house — the twin of the one you woke beside, its frame ringed with six empty settings for shards. Set the word its shards spell and the glass will open, and the two of you can be one reflection again. But the glass keeps its name backwards, and you hold only half the shards.';
+    return 'The last hall, lined with mirrors, and standing free in the middle of it the tallest mirror in the house — the twin of the one you woke beside, its frame ringed with six empty settings for shards. Set the word its shards spell and the glass will open, and the two of you can be one reflection again. But the glass keeps its name backwards, and you hold only half the shards.';
   },
 
   scene(state) {
@@ -26,42 +36,34 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
-      ${sconce(SLUG, 240, 300)}
+      ${sconce(SLUG, 1300, 682, 'stand')}
 
-      <!-- the great mirror -->
-      <g>
-        <rect x="600" y="150" width="400" height="560" rx="12" fill="none" stroke="${t.accentDim}" stroke-width="16"/>
-        <rect x="622" y="172" width="356" height="516" fill="${fin ? 'rgba(255,207,138,0.10)' : 'rgba(159,168,189,0.06)'}"/>
-        ${fin
-          ? `<text x="800" y="440" text-anchor="middle" font-size="20" fill="${t.accent}" font-family="Georgia, serif">the silver goes to water</text>`
-          : `<text x="800" y="440" text-anchor="middle" font-size="15" fill="${t.accentDim}" font-family="Georgia, serif" opacity="0.7">your friend, waiting</text>`}
-        <!-- six shard settings around the frame -->
-        ${[[600, 150], [1000, 150], [1000, 430], [1000, 710], [600, 710], [600, 430]].map(([x, y], i) =>
-          `<circle cx="${x}" cy="${y}" r="12" fill="none" stroke="${t.accentDim}" stroke-width="3"/>`).join('')}
+      <!-- the great mirror, standing free in the middle of the hall on its plinth -->
+      <g data-mount="floor">
+        ${shadow(800, BASE.y + BASE.h + 4, 230, 14)}
+        <rect x="${BASE.x}" y="${BASE.y}" width="${BASE.w}" height="${BASE.h}" rx="6" fill="url(#sk_darkwood)" stroke="#0b0703" stroke-width="3"/>
+        <rect x="${GLASS.x - 22}" y="${GLASS.y - 22}" width="${GLASS.w + 44}" height="${GLASS.h + 44}" rx="14" fill="url(#sk_brass)" stroke="#3a2a0c" stroke-width="3" filter="url(#sk_drop)"/>
+        ${mirrorGlass(GLASS.x, GLASS.y, GLASS.w, GLASS.h, { open: fin })}
+        ${fin ? `<text x="800" y="380" text-anchor="middle" font-size="20" fill="${t.accent}" font-family="Georgia, serif">the silver goes to water</text>` : ''}
+        <!-- six empty shard settings round the frame -->
+        ${SETTINGS.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11" fill="#140f06" stroke="#3a2a0c" stroke-width="3"/>`).join('')}
       </g>
 
-      <!-- the plaque -->
-      <g>
-        <rect x="1120" y="200" width="400" height="170" rx="8" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="3"/>
-        <text x="1320" y="240" text-anchor="middle" font-size="14" fill="${t.accentDim}" font-family="Georgia, serif" letter-spacing="1">THE FRAME'S INSCRIPTION</text>
-        <text x="1320" y="278" text-anchor="middle" font-size="15" fill="${t.ink}" font-family="Georgia, serif">"Set the shards in order, one to</text>
-        <text x="1320" y="302" text-anchor="middle" font-size="15" fill="${t.ink}" font-family="Georgia, serif">six — then turn the word about,</text>
-        <text x="1320" y="326" text-anchor="middle" font-size="15" fill="${t.ink}" font-family="Georgia, serif">for the glass keeps its name</text>
-        <text x="1320" y="350" text-anchor="middle" font-size="15" fill="${t.ink}" font-family="Georgia, serif">reversed."</text>
-      </g>
+      <!-- the inscription, a brass plate on the plinth -->
+      ${panel({ ...PLAQUE, material: 'brass', mount: 'bolts', rx: 4, body: `
+        <text x="800" y="${PLAQUE.y + 24}" text-anchor="middle" font-size="13" fill="#2a1d05" font-family="Georgia, serif" font-style="italic">"Set the shards in order, one to six —</text>
+        <text x="800" y="${PLAQUE.y + 42}" text-anchor="middle" font-size="13" fill="#2a1d05" font-family="Georgia, serif" font-style="italic">then turn the word about, for the</text>
+        <text x="800" y="${PLAQUE.y + 60}" text-anchor="middle" font-size="13" fill="#2a1d05" font-family="Georgia, serif" font-style="italic">glass keeps its name reversed."</text>` })}
 
-      <!-- this side's three shards -->
-      <g>
-        <rect x="120" y="560" width="440" height="200" rx="10" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="3"/>
-        <text x="340" y="600" text-anchor="middle" font-size="14" fill="${t.accentDim}" font-family="Georgia, serif" letter-spacing="1">YOUR THREE SHARDS</text>
+      <!-- this side's three shards, in the pocket-book -->
+      ${dock({ x: 0, y: 0, w: 440, h: 200 }, `
         ${mine.map((e, i) => `
-          <g transform="translate(${190 + i * 120} 680)">
-            <polygon points="-30,-30 30,-34 34,4 16,44 -18,36 -32,-2" fill="rgba(201,204,214,0.08)" stroke="#c9ccd6" stroke-width="2"/>
-            <text y="-4" text-anchor="middle" font-size="18" fill="#dfe6f2" font-family="Consolas, monospace" font-weight="bold">${e.sun.rays}</text>
-            <text y="20" text-anchor="middle" font-size="18" fill="#e8ebf2" font-family="Georgia, serif">${e.sun.letter}</text>
-          </g>`).join('')}
-        <text x="340" y="748" text-anchor="middle" font-size="12" fill="#9fa8bd" font-family="Consolas, monospace">read number + letter to your partner</text>
-      </g>
+          <g transform="translate(${80 + i * 140} 82)">
+            <polygon points="-40,-44 40,-48 46,6 22,58 -24,48 -42,-2" fill="#dfe3ea" stroke="#6b7484" stroke-width="2.5"/>
+            <text y="-6" text-anchor="middle" font-size="26" fill="#26221a" font-family="Consolas, monospace" font-weight="bold">${e.sun.rays}</text>
+            <text y="30" text-anchor="middle" font-size="28" fill="#26221a" font-family="Georgia, serif">${e.sun.letter}</text>
+          </g>`).join('') || '<text x="220" y="96" text-anchor="middle" font-size="22" fill="#6b5a3a" font-family="Georgia, serif">no shards yet</text>'}
+        <text x="220" y="186" text-anchor="middle" font-size="20" fill="#6b5a3a" font-family="Georgia, serif">read number + letter to your partner</text>`, { kind: 'notebook', title: 'POCKET-BOOK' })}
 
       ${sideTag()}
     </svg>`;
@@ -71,7 +73,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'plaque', x: 1120, y: 200, w: 400, h: 170, label: "The frame's inscription",
+      id: 'plaque', ...PLAQUE, label: "The frame's inscription",
       onInteract(game) {
         const html = `<div class="manor-note"><div class="note-head">The frame's inscription</div>
           <p>"Set the shards in order, one to six — then <strong>turn the word about</strong>, for
@@ -83,7 +85,7 @@ export default {
     });
 
     spots.push({
-      id: 'shards', x: 120, y: 560, w: 440, h: 200, label: 'Your three shards',
+      id: 'shards', ...DOCK, label: 'Your three shards',
       onInteract(game) {
         const mine = game.state.journal.filter(e => e.category === 'sun').sort((a, b) => a.sun.rays - b.sun.rays);
         const list = mine.map(e => `number <b>${e.sun.rays}</b> = "<b>${e.sun.letter}</b>"`).join(' &nbsp; · &nbsp; ');
@@ -96,7 +98,7 @@ export default {
 
     if (!done(state)) {
       spots.push({
-        id: 'frame', x: 600, y: 150, w: 400, h: 560, label: 'The mirror-frame lock',
+        id: 'frame', ...FRAME, label: 'The mirror-frame lock',
         onInteract(game) { openFrame(game); },
       });
     }

@@ -4,6 +4,7 @@
 // letter) in "A Chronicle of the House of Vayne" -> N-O-R-T-H on the chest dials.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   still_key: {
@@ -56,8 +57,24 @@ const CHRONICLE = [
 
 const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+// Layout — read off the plate (art/scriptorium.webp): stair arch (left), small
+// desk, big desk with its wall sconce, chest (right), wall shelves (top right).
+const SCONCE = { cx: 1026, cy: 418 };
+const PEN = { cx: 1140, cy: 640 };
+const CHEST = { x: 1300, y: 600, w: 290 };
+const DOOR = 'M140 625 L140 262 Q212 150 286 262 L286 625 Z';
+const R = {
+  sconce:  { x: 972, y: 350, w: 110, h: 110 },
+  shelf:   { x: 770, y: 30, w: 640, h: 190 },
+  desks:   { x: 380, y: 440, w: 380, h: 220 },
+  pencase: { x: 1080, y: 596, w: 130, h: 80 },
+  chest:   { x: 1296, y: 580, w: 300, h: 230 },
+  stair:   { x: 140, y: 256, w: 146, h: 370 },
+};
+
 export default {
   id: 'scriptorium',
+  lintStates: [{ label: 'lit', flags: { scriptorium_candleLit: true } }, { label: 'open', flags: { scriptorium_candleLit: true, scriptorium_chestOpen: true } }],
   title: 'The Scriptorium',
   intro: 'The silver key lets you into a long room of sloped desks and the smell of oak-gall ink. It is very dark — the moon does not reach here. Somewhere in this room, forty years ago, Brother Edmund wrote things he never sent.',
 
@@ -69,6 +86,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_sc_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#14111c"/>
           <stop offset="1" stop-color="#241f2d"/>
@@ -87,48 +105,59 @@ export default {
       <!-- background plate (generated, lit state); the darkness scrim below dims it until the candle is lit -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/scriptorium.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/scriptorium.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- high shelf of six tomes (photoreal; tops run off the top edge of the frame) -->
-      <image href="art/sc-shelf.webp" x="474" y="-150" width="652" height="337" preserveAspectRatio="xMidYMid meet"/>
+      <!-- the six great tomes, standing on the plate's middle wall-shelf -->
+      <image href="art/sc-shelf.webp" x="760" y="-112" width="652" height="337" preserveAspectRatio="xMidYMid meet"/>
 
-      <!-- sloped writing desks (photoreal; each carries a vellum, inkhorn & quill) -->
-      ${[[150, 356], [560, 384], [980, 352]].map(([x, y]) => `<image href="art/sc-desk.webp" x="${x}" y="${y}" width="322" height="314" preserveAspectRatio="xMidYMid meet"/>`).join('')}
+      <!-- the painted wall candles are cold: only the one you bring will burn -->
+      <path d="M38 352 q7 -6 14 0 l0 18 -14 0 z" fill="#1a1410" opacity="0.9"/>
+      <circle cx="${SCONCE.cx}" cy="${SCONCE.cy - 8}" r="22" fill="#0b0908" opacity="0.92"/>
 
-      <!-- desk sconce (candle target) -->
-      <g>
-        <path d="M700 380 q0 -18 16 -18 q16 0 16 18 l-6 8 -20 0 z" fill="#57432a"/>
+      <!-- the desk sconce on the wall above the big desk (candle target) -->
+      <g data-mount="bracket">
+        <path d="M${SCONCE.cx - 18} ${SCONCE.cy + 14} q0 -16 18 -16 q18 0 18 16 l-6 8 -24 0 z" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="1.5"/>
+        <path d="M${SCONCE.cx + 18} ${SCONCE.cy + 18} q22 0 22 -22" fill="none" stroke="#3a2a08" stroke-width="4"/>
         ${lit ? `
-          <rect x="708" y="352" width="16" height="26" rx="3" fill="#e8d9b0"/>
-          <path class="torch-flame fast" d="M716 322 q10 12 0 26 q-10 -14 0 -26z" fill="#ffd9a0"/>
-          <ellipse cx="716" cy="420" rx="420" ry="240" fill="url(#gd_sc_pool)" class="glow"/>`
+          <rect x="${SCONCE.cx - 7}" y="${SCONCE.cy - 22}" width="14" height="24" rx="3" fill="#e8d9b0"/>
+          <path class="torch-flame fast" d="M${SCONCE.cx} ${SCONCE.cy - 52} q10 12 0 26 q-10 -14 0 -26z" fill="#ffd9a0"/>
+          <ellipse cx="${SCONCE.cx - 80}" cy="${SCONCE.cy + 120}" rx="460" ry="280" fill="url(#gd_sc_pool)" class="glow"/>`
         : ''}
       </g>
 
-      <!-- Edmund's chest with five letter dials -->
-      <g>
-        <image href="art/sc-chest.webp" x="1234" y="536" width="304" height="213" preserveAspectRatio="xMidYMid meet"/>
+      <!-- raven-quill pen case, lying on the big desk beside the inkhorns -->
+      <g data-mount="table" transform="rotate(-8 ${PEN.cx} ${PEN.cy})">
+        ${shadow(PEN.cx, PEN.cy + 12, 52, 7, 0.7)}
+        <rect x="${PEN.cx - 46}" y="${PEN.cy - 8}" width="92" height="20" rx="4" fill="url(#sk_darkwood)" stroke="#120b05" stroke-width="2"/>
+        ${[0, 1, 2].map(i => `<path d="M${PEN.cx - 30 + i * 12} ${PEN.cy - 6} q20 -24 52 -30 q-20 12 -48 32z" fill="#121318" stroke="#2e3240" stroke-width="1"/>`).join('')}
+      </g>
+
+      <!-- Edmund's chest (painted, right): five letter dials set in its front, lid raised once solved -->
+      <g data-mount="floor">
         ${chestOpen ? `
-          <rect x="1262" y="574" width="246" height="30" fill="#0c0912"/>
+          <path d="M${CHEST.x} ${CHEST.y} L${CHEST.x + CHEST.w} ${CHEST.y - 10} L${CHEST.x + CHEST.w - 20} ${CHEST.y - 118} L${CHEST.x + 14} ${CHEST.y - 104} Z" fill="url(#sk_darkwood)" stroke="#0e0905" stroke-width="3"/>
+          <path d="M${CHEST.x + 8} ${CHEST.y + 2} L${CHEST.x + CHEST.w - 8} ${CHEST.y - 8} L${CHEST.x + CHEST.w - 22} ${CHEST.y + 34} L${CHEST.x + 20} ${CHEST.y + 42} Z" fill="#0c0912"/>
           ${taken ? '' : `<g class="beckon">
-            <rect x="1300" y="640" width="60" height="40" rx="3" fill="#e8d9b0" transform="rotate(-6 1330 660)"/>
-            <circle cx="1430" cy="660" r="14" fill="none" stroke="#c9a227" stroke-width="4"/>
+            <rect x="${CHEST.x + 50}" y="${CHEST.y + 6}" width="60" height="30" rx="3" fill="#e8d9b0" transform="rotate(-6 ${CHEST.x + 80} ${CHEST.y + 20})"/>
+            <circle cx="${CHEST.x + 180}" cy="${CHEST.y + 20}" r="13" fill="none" stroke="#c9a227" stroke-width="4"/>
           </g>`}`
         : `
-          <rect x="1282" y="620" width="206" height="48" rx="8" fill="#241a10" stroke="#57432a" stroke-width="3"/>
-          <g font-family="Palatino Linotype, Georgia, serif" font-size="26" fill="#c9a227" text-anchor="middle">
+          <rect x="${CHEST.x + 28}" y="${CHEST.y + 70}" width="206" height="46" rx="8" fill="#241a10" stroke="#57432a" stroke-width="3" transform="rotate(-3 ${CHEST.x + 131} ${CHEST.y + 93})"/>
+          <g font-family="Palatino Linotype, Georgia, serif" font-size="26" fill="#c9a227" text-anchor="middle" transform="rotate(-3 ${CHEST.x + 131} ${CHEST.y + 93})">
             ${[0, 1, 2, 3, 4].map(i =>
-              `<text x="${1303 + i * 41}" y="653">${ALPHA[(state.flags[`scriptorium_d${i}`] ?? 0)]}</text>`).join('')}
+              `<text x="${CHEST.x + 49 + i * 41}" y="${CHEST.y + 102}">${ALPHA[(state.flags[`scriptorium_d${i}`] ?? 0)]}</text>`).join('')}
           </g>`}
       </g>
 
-      <!-- stair door behind the desks (photoreal arched door) -->
-      <g>
-        <image href="art/sc-door.webp" x="76" y="300" width="190" height="355" preserveAspectRatio="xMidYMid meet"/>
+      <!-- the stair door, hung in the painted arch on the left -->
+      <g data-mount="wall">
+        <clipPath id="clip_sc_door"><path d="${DOOR}"/></clipPath>
+        <image href="art/sc-door.webp" x="120" y="150" width="184" height="480" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_sc_door)"/>
+        <path d="${DOOR}" fill="none" stroke="#120b05" stroke-width="5"/>
       </g>
 
       ${lit ? '' : `
       <!-- darkness: the room before the candle -->
       <rect width="1600" height="900" fill="rgba(4,3,10,0.78)"/>
-      <ellipse cx="170" cy="475" rx="260" ry="300" fill="rgba(20,18,34,0.35)"/>
+      <ellipse cx="212" cy="420" rx="200" ry="280" fill="rgba(20,18,34,0.35)"/>
       <text x="800" y="80" text-anchor="middle" font-size="24" fill="#565b6c" font-style="italic"
         font-family="Palatino Linotype, Georgia, serif">too dark to read the small hand</text>`}
 
@@ -143,7 +172,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'sconce', x: 660, y: 310, w: 120, h: 110, label: lit ? 'Your candle' : 'Empty desk sconce',
+      id: 'sconce', ...R.sconce, label: lit ? 'Your candle' : 'Empty desk sconce',
       onInteract(game) {
         if (lit) { game.say('Your small flame holds the dark at arm\'s length. Wax runs like the minutes.'); return; }
         if (game.selectedItem === 'lit_candle') {
@@ -164,16 +193,16 @@ export default {
 
     if (!lit) {
       spots.push({
-        id: 'dark_desks', x: 300, y: 420, w: 700, h: 200, label: 'Writing desks',
+        id: 'dark_desks', ...R.desks, label: 'Writing desks',
         onInteract(game) { game.say('Vellum, ink horns, a pen case — all of it drowned in dark. You need light before this room will talk.'); },
       });
       spots.push({
-        id: 'dark_shelf', x: 480, y: 40, w: 640, h: 140, label: 'High shelf',
+        id: 'dark_shelf', ...R.shelf, label: 'High shelf',
         onInteract(game) { game.say('Heavy shapes of books, spines unreadable in the gloom.'); },
       });
     } else {
       spots.push({
-        id: 'pencase', x: 880, y: 430, w: 130, h: 70, label: 'Raven-quill pen case',
+        id: 'pencase', ...R.pencase, label: 'Raven-quill pen case',
         onInteract(game) {
           const html = `<div class="parchment-note aged"><div class="note-title">A strip of vellum, hidden under the quills</div>
             <p style="font-size:19px; letter-spacing:0.08em; text-align:center;">2:4 &middot; 5:1 &middot; 1:6 &middot; 7:3 &middot; 3:2</p>
@@ -185,28 +214,28 @@ export default {
       });
 
       spots.push({
-        id: 'shelf', x: 480, y: 40, w: 640, h: 140, label: 'Six great tomes',
+        id: 'shelf', ...R.shelf, label: 'Six great tomes',
         onInteract(game) { openShelf(game); },
       });
 
       spots.push({
-        id: 'desks', x: 280, y: 430, w: 360, h: 160, label: 'The copying desks',
+        id: 'desks', ...R.desks, label: 'The copying desks',
         onInteract(game) { game.say('Half-finished psalters, initials never gilded. The pestilence emptied these benches long before you were born.'); },
       });
 
       if (!chestOpen) {
         spots.push({
-          id: 'chest', x: 1240, y: 550, w: 290, h: 190, label: "Edmund's chest — five letter dials",
+          id: 'chest', ...R.chest, label: "Edmund's chest — five letter dials",
           onInteract(game) { openChestPuzzle(game); },
         });
       } else if (!taken) {
         spots.push({
-          id: 'chest_open', x: 1240, y: 550, w: 290, h: 190, label: 'Inside the chest',
+          id: 'chest_open', ...R.chest, label: 'Inside the chest',
           onInteract(game) {
             game.setFlag('scriptorium_chestTaken');
-            game.addItem('still_key', { from: { x: 1430, y: 660 }, silent: true });
-            game.addItem('recipe_right', { from: { x: 1330, y: 660 }, silent: true });
-            game.addItem('edmund_confession', { from: { x: 1380, y: 640 }, silent: true });
+            game.addItem('still_key', { from: { x: 1480, y: 620 }, silent: true });
+            game.addItem('recipe_right', { from: { x: 1380, y: 620 }, silent: true });
+            game.addItem('edmund_confession', { from: { x: 1430, y: 610 }, silent: true });
             const html = `<div class="parchment-note aged"><div class="note-title">The confession of Brother Edmund</div>
               <p>"I was no traitor. I was the castellan's own brother, and I smuggled the condemned out
               along the pilgrim's road — the tunnel beneath the mere, that the Chronicle still remembers.
@@ -225,18 +254,20 @@ export default {
         });
       } else {
         spots.push({
-          id: 'chest_done', x: 1240, y: 550, w: 290, h: 190, label: "Edmund's chest",
+          id: 'chest_done', ...R.chest, label: "Edmund's chest",
           onInteract(game) { game.say('Empty now, but for forty years of patience.'); },
         });
       }
     }
 
     spots.push({
-      id: 'stairdoor', x: 80, y: 300, w: 190, h: 330, label: 'Stair door',
+      id: 'stairdoor', ...R.stair, label: 'Stair door',
       onInteract(game) {
         if (game.hasItem('still_key')) {
           if (!game.journal.has('sun4')) {
-            game.say('"Mark each sun along the road." You have not sketched this room\'s sun — it hides in paint, in the one book that still opens. Look at the Chronicle\'s illuminated letters.');
+            game.journal.add('sun4', { title: 'Scriptorium — the illuminated O', category: 'sun', sun: { rays: 6, letter: 'O' } });
+            game.say('Before you go you thumb the Chronicle open once more: the great illuminated O is a sun of six rays. You copy it — "mark each sun along the road" — and take the stair down.');
+            game.completeRoom({ delay: 3000 });
             return;
           }
           game.say('The pestle-stamped key turns. Stone steps corkscrew down toward a smell of cold ash and rosemary — the still-room beneath the kitchens.');

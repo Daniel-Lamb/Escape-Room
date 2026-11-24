@@ -21,6 +21,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 0,
   id: 'servicedoor',
   slug: 'sd',
   lockLabel: 'Your Way In',

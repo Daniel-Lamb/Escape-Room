@@ -5,6 +5,7 @@
 // token 4, and the ledger that explains Felix and Gus both.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow, wallDoor } from '../../../shared/js/scenekit.js';
 
 registerItems({
   winch_key: {
@@ -21,8 +22,18 @@ registerItems({
 const SQUARE = ['SATOR', 'AREPO', 'TENET', 'OPERA', 'ROTAS'];
 const TRAY = 'AAAAOOOORRRRSSTTEEPPCVM'.split('');
 
+// Layout — the plate (art/tablinum.webp): scroll shelves + red curtain (left),
+// the Colosseum fresco on the back wall, a long table (centre), the strongroom's
+// iron-bound door in the right wall, a candelabrum (right).
+const DESK_DX = 220, DESK_DY = 70;
+const STRONG = { x: 1212, y: 186, w: 184, h: 540 };
+const GRID = { tx: 292, ty: 60, k: 0.8 };
+const CDOOR = { x1: 300, y1: 300, h1: 330, x2: 196, y2: 262, h2: 430 };
+
 export default {
   id: 'tablinum',
+  solution: SQUARE,
+  lintStates: [{ label: 'open', flags: { tablinum_waxScraped: true, tablinum_squareSolved: true } }],
   title: "The Lanista's Tablinum",
   intro: 'The lanista\'s office is small, airless, and arranged the way money likes to be arranged — every scroll a debt, every tablet a man — and its strongroom door carries no lock at all, only a bronze frame of five-by-five letter tiles, because down here superstition holds better than iron.',
 
@@ -33,6 +44,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_tab_wall2" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#28211a"/>
           <stop offset="1" stop-color="#382d22"/>
@@ -52,14 +64,10 @@ export default {
       <!-- the amphitheatre fresco is painted into the plate (back wall);
            the fresco hotspot points at it. -->
 
-      <!-- oil lamp on the desk -->
-      <ellipse cx="480" cy="520" rx="60" ry="46" fill="url(#gd_tab_lamp)" class="glow"/>
-
-      <!-- desk with tablets + abacus -->
-      <g>
-        <rect x="260" y="560" width="400" height="26" rx="8" fill="#6b4f2c"/>
-        <rect x="290" y="586" width="26" height="140" fill="#453a2e"/>
-        <rect x="600" y="586" width="26" height="140" fill="#453a2e"/>
+      <!-- on the painted table: the re-waxed tablet, an oil lamp, the abacus -->
+      <g data-mount="table" transform="translate(${DESK_DX} ${DESK_DY})">
+        <ellipse cx="480" cy="520" rx="60" ry="46" fill="url(#gd_tab_lamp)" class="glow"/>
+        ${shadow(400, 568, 66, 6, 0.6)}${shadow(560, 568, 46, 6, 0.6)}
         <!-- the re-waxed tablet -->
         <g transform="rotate(-5 400 540)">
           <rect x="340" y="516" width="120" height="52" rx="5" fill="#6b4f2c"/>
@@ -81,19 +89,18 @@ export default {
       <!-- scroll shelves are painted into the plate (left wall); the scrolls
            hotspot points at them. -->
 
-      <!-- strongroom door with the letter frame -->
-      <g>
-        <path d="M1080 650 L1080 220 L1440 220 L1440 650 Z" fill="${open ? '#0f0c08' : '#453a2e'}" stroke="#241f1a" stroke-width="9"/>
+      <!-- the strongroom: the plate's iron-bound door in the right wall, its letter frame fixed to it -->
+      <g data-mount="bolts">
         ${open
-          ? `<rect x="1110" y="250" width="300" height="380" fill="#171008"/>
-             <!-- strongroom interior glints -->
-             <g class="beckon">
+          ? `<rect x="${STRONG.x}" y="${STRONG.y}" width="${STRONG.w}" height="${STRONG.h}" fill="#171008"/>
+             <g class="beckon" transform="translate(${STRONG.x - 1110 + 10} ${STRONG.y - 250 + 40})">
                <circle cx="1180" cy="520" r="9" fill="none" stroke="#d1a53f" stroke-width="4"/>
                <path d="M1188 528 l24 24" stroke="#d1a53f" stroke-width="5" stroke-linecap="round"/>
-               <rect x="1250" y="430" width="120" height="70" rx="4" fill="#d9c493" transform="rotate(-4 1310 465)"/>
-               <rect x="1300" y="540" width="42" height="30" rx="5" fill="#e8dcc0"/>
+               <rect x="1220" y="430" width="110" height="64" rx="4" fill="#d9c493" transform="rotate(-4 1275 462)"/>
+               <rect x="1250" y="540" width="42" height="30" rx="5" fill="#e8dcc0"/>
              </g>`
-          : `<g>
+          : `<g transform="translate(${GRID.tx} ${GRID.ty}) scale(${GRID.k})">
+             <rect x="1124" y="250" width="276" height="310" rx="8" fill="url(#sk_iron)" stroke="#171209" stroke-width="4"/>
              ${SQUARE.map((row, r) => row.split('').map((ch, c) => {
               const x = 1140 + c * 50, y = 300 + r * 50;
               const fixed = r === 2;
@@ -102,18 +109,14 @@ export default {
                 ${fixed ? `<text x="${x + 22}" y="${y + 30}" text-anchor="middle" font-size="22" fill="#e8c85a"
                   font-family="Palatino Linotype, Georgia, serif">${ch}</text>` : ''}`;
             }).join('')).join('')}
-             <text x="1260" y="272" text-anchor="middle" font-size="15" letter-spacing="3" fill="#cfc6b4"
+             <text x="1262" y="280" text-anchor="middle" font-size="15" letter-spacing="2" fill="#cfc6b4"
                font-family="Palatino Linotype, Georgia, serif">QVATTVOR VIIS LEGITVR</text>
              </g>`}
       </g>
-
-      <!-- corridor door -->
-      <g>
-        <path d="M1490 650 L1490 340 Q1545 306 1596 340 L1596 650 Z" fill="${open ? '#0f0c08' : '#2b2015'}" stroke="#241f1a" stroke-width="6"/>
-        ${open ? '' : `<line x1="1484" y1="480" x2="1600" y2="480" stroke="#5c5546" stroke-width="12"/>`}
-      </g>
-
-      <!-- strongbox (flavor detail near desk) -->
+      <!-- corridor door: behind the red curtain on the left wall, barred until the strongroom opens -->
+      ${wallDoor({ ...CDOOR, open, barred: !open })}
+      <!-- strongbox (flavor detail), on the floor before the table -->
+      ${shadow(775, 802, 90, 9)}
       <rect x="700" y="700" width="150" height="100" rx="8" fill="#3a2d1c" stroke="#241f1a" stroke-width="5"/>
       <path d="M700 740 h150" stroke="#241f1a" stroke-width="4"/>
       <circle cx="775" cy="740" r="12" fill="#171209" stroke="#5c5546" stroke-width="3"/>
@@ -127,7 +130,7 @@ export default {
     const open = !!state.flags.tablinum_squareSolved;
 
     spots.push({
-      id: 'desk', x: 300, y: 490, w: 240, h: 110, label: 'The re-waxed tablet',
+      id: 'desk', x: 300 + DESK_DX, y: 490 + DESK_DY, w: 200, h: 110, label: 'The re-waxed tablet',
       onInteract(game) {
         if (game.getFlag('tablinum_waxScraped')) {
           const html = `<div class="wax-tablet"><div class="tab-title">Beneath the wax — an old hand</div>
@@ -153,7 +156,7 @@ export default {
     });
 
     spots.push({
-      id: 'frame', x: 1090, y: 230, w: 340, h: 410,
+      id: 'frame', x: STRONG.x - 10, y: STRONG.y, w: STRONG.w + 20, h: STRONG.h,
       label: open ? 'The strongroom' : 'The lettered frame',
       onInteract(game) {
         if (!open) { openSquare(game); return; }
@@ -166,7 +169,7 @@ export default {
         game.journal.add('note_ledger', { title: "The lanista's ledger (Tablinum)", category: 'note', html });
         if (!game.hasItem('winch_key') && !game.getFlag('tablinum_keyTaken')) {
           game.setFlag('tablinum_keyTaken');
-          game.addItem('winch_key', { from: { x: 1190, y: 530 } });
+          game.addItem('winch_key', { from: { x: STRONG.x + 80, y: STRONG.y + 320 } });
         }
         if (!game.journal.has('token4')) {
           game.journal.add('token4', {
@@ -180,28 +183,28 @@ export default {
     });
 
     spots.push({
-      id: 'fresco', x: 610, y: 70, w: 440, h: 190, label: 'The fresco',
+      id: 'fresco', x: 520, y: 160, w: 540, h: 300, label: 'The fresco',
       onInteract(game) {
         game.say('The amphitheatre in cutaway: lift shafts, winch galleries, the western works. Your drawings — you\'d know your own line-weight anywhere — copied by a workshop hand and signed by a man who never held a pen underground. You check the fresco for errors out of habit. There are two.');
       },
     });
 
     spots.push({
-      id: 'abacus', x: 510, y: 500, w: 110, h: 90, label: 'The abacus',
+      id: 'abacus', x: 510 + DESK_DX + 10, y: 500 + DESK_DY, w: 110, h: 90, label: 'The abacus',
       onInteract(game) {
         game.say('The beads stand mid-sum: somebody was interrupted counting other people\'s lives. You resist the architect\'s urge to finish the arithmetic. It would not come out in anyone\'s favor.');
       },
     });
 
     spots.push({
-      id: 'scrolls', x: 230, y: 210, w: 320, h: 220, label: 'The scroll shelves',
+      id: 'scrolls', x: 20, y: 260, w: 160, h: 400, label: 'The scroll shelves',
       onInteract(game) {
         game.say('Contracts, purchases, appeals. Every scroll a man; every seal a decision made over lunch. Somewhere in this wall is the scroll with your name on it, and there is no time in the world you would spend finding it.');
       },
     });
 
     spots.push({
-      id: 'door', x: 1480, y: 330, w: 118, h: 320,
+      id: 'door', x: 196, y: 262, w: 110, h: 420,
       label: open ? 'Down to the hypogeum' : 'The barred corridor door',
       onInteract(game) {
         if (!open) {

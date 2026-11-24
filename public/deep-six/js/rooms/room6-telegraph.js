@@ -5,7 +5,7 @@
 // Tender recovers depth-mark D (20 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART, DOCK } from '../divekit.js';
 
 const SLUG = 'telegraph';
 const TG_TARGET = [1, 2, 2, 1];              // the diver's coupled-pointer goal
@@ -18,6 +18,7 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_d');
 
 export default {
   id: 'telegraph',
+  solution: role => (role === 'p1' ? TG_TARGET.join('-') : WINCH),
   get title() { return isDiver() ? 'The Engine Telegraph' : 'The Winch'; },
   get intro() {
     return isDiver()
@@ -52,7 +53,7 @@ export default {
     const forWhat = isDiver() ? 'winch load' : 'telegraph target';
 
     spots.push({
-      id: 'relay', x: 556, y: 138, w: 488, h: 184, label: `The ${forWhat} (for your partner)`,
+      id: 'relay', ...DOCK, label: `The ${forWhat} (for your partner)`,
       onInteract(game) {
         const html = `<div class="chartcard"><div class="chart-title">${forWhat}</div>
           <p>Read off your side, meant for the other:</p>

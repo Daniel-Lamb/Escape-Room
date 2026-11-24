@@ -19,6 +19,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 1,
   id: 'alarms',
   slug: 'al',
   lockLabel: 'Your Cut-Out',

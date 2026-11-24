@@ -6,6 +6,7 @@
 // Answer: smooth helm · tall scutum · gladius.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow, wallDoor } from '../../../shared/js/scenekit.js';
 
 registerItems({
   dolabra: {
@@ -48,10 +49,22 @@ const WEAPONS = [
 ];
 
 // id -> sprite, for the in-scene racks and the dressed dummy.
+// the kit the inspection passes (the secutor's)
+const RIGHT_KIT = { helm: 'smooth', shield: 'scutum', weapon: 'gladius' };
 const KIT_ART = Object.fromEntries([...HELMS, ...SHIELDS, ...WEAPONS].map(k => [k.id, k.art]));
+
+// Layout — the plate (art/armory.webp): a vaulted armoury with racks along both
+// walls, wall torches, a plaster panel on the back wall, a practice-post in the
+// middle of the floor, a whetstone wheel (right) and a bench (bottom-left).
+const MURAL = { x: 640, y: 214, k: 0.68 };
+const POST_DX = 12;
+const TROUGH_DX = 230, TROUGH_DY = -70;
+const DOOR = { x1: 1476, y1: 360, h1: 300, x2: 1590, y2: 316, h2: 400 };
 
 export default {
   id: 'armory',
+  solution: () => ['smooth', 'scutum', 'gladius'].filter(id => Object.values(RIGHT_KIT).includes(id)).map(id => ({ smooth: 'egg helm', scutum: 'scutum', gladius: 'gladius' })[id]),
+  lintStates: [{ label: 'dressed', flags: { armory_dressed: true } }],
   title: 'The Armamentarium',
   intro: 'The armory runs long and vaulted under the stands, racked floor to arch with the iron trades of four kinds of dying, and at its center a practice dummy stands at attention wearing nothing but a wooden tag and an air of expectation.',
 
@@ -62,6 +75,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_arm_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#241f1a"/>
           <stop offset="1" stop-color="#332b23"/>
@@ -82,17 +96,11 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/armory.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/armory.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- torches -->
-      ${[240, 1360].map(x => `
-      <g>
-        <rect x="${x - 7}" y="330" width="14" height="64" rx="4" fill="#3a2b18"/>
-        <ellipse cx="${x}" cy="314" rx="42" ry="36" fill="url(#gd_arm_torch)" class="glow"/>
-        <path class="torch-flame" d="M${x} 330 q12 -20 0 -36 q-12 16 0 36z" fill="#ffa94d"/>
-        <path class="torch-flame" d="M${x} 328 q6 -11 0 -20 q-6 9 0 20z" fill="#ffd9a0"/>
-      </g>`).join('')}
+      <!-- warmth over the plate's painted wall-torches -->
+      ${[[140, 330], [383, 420], [1447, 330], [1070, 440]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="60" ry="52" fill="url(#gd_arm_torch)" class="glow"/>`).join('')}
 
-      <!-- the mural of the four brothers, upper center -->
-      <g>
+      <!-- the mural of the four brothers, painted into the plaster panel on the back wall -->
+      <g data-mount="inset" transform="translate(${MURAL.x} ${MURAL.y}) scale(${MURAL.k}) translate(-620 -90)">
         <rect x="620" y="90" width="460" height="180" rx="8" fill="url(#gd_arm_mural)" stroke="#453a2e" stroke-width="4"/>
         ${[0, 1, 2, 3].map(i => {
           const x = 665 + i * 110;
@@ -103,35 +111,37 @@ export default {
             ${i === 1 ? `<path d="M${x + 8} 136 q6 -16 24 -8 l-6 8" stroke="#c9a45f" stroke-width="4" fill="none"/>` : ''}
             ${i === 3 ? `<path d="M${x + 2} 148 h36" stroke="#c9a45f" stroke-width="4"/>` : ''}
             <rect x="${x + 8}" y="170" width="24" height="46" rx="6" fill="#6b5a3a"/>
-            <text x="${x + 20}" y="238" text-anchor="middle" font-size="11" fill="#c9b98f"
+            <text x="${x + 20}" y="240" text-anchor="middle" font-size="16.9" fill="#c9b98f"
               font-family="Palatino Linotype, Georgia, serif">${['FISH', 'GRIFFIN', 'CHASER', 'NET-MAN'][i]}</text>
           </g>`;
         }).join('')}
-        <text x="850" y="118" text-anchor="middle" font-size="14" fill="#cfc6b4" letter-spacing="4"
+        <text x="850" y="118" text-anchor="middle" font-size="16.9" fill="#cfc6b4" letter-spacing="4"
           font-family="Palatino Linotype, Georgia, serif">QVATTVOR FRATRES HARENAE</text>
       </g>
 
-      <!-- helmet rack, left (photoreal kit sprites) -->
-      <g>
+      <!-- helmet shelf, on iron brackets on the left wall (photoreal kit sprites) -->
+      <g data-mount="bracket">
+        ${[300, 520].map(x => `<path d="M${x} 397 L${x} 430 L${x + 26} 397 Z" fill="url(#sk_iron)" stroke="#111" stroke-width="1.5"/>`).join('')}
         <rect x="260" y="384" width="300" height="13" rx="6" fill="#3a3025"/>
         ${HELMS.map((h, i) => `<image href="${h.art}" x="${272 + i * 74}" y="298" width="66" height="92" preserveAspectRatio="xMidYMax meet"/>`).join('')}
       </g>
 
-      <!-- shield rack, right (photoreal kit sprites) -->
-      <g>
+      <!-- shield rail, pegged into the right wall (photoreal kit sprites) -->
+      <g data-mount="bracket">
+        ${[1110, 1410].map(x => `<rect x="${x - 6}" y="292" width="12" height="28" rx="3" fill="#24262c"/>`).join('')}
         <rect x="1090" y="300" width="340" height="13" rx="6" fill="#3a3025"/>
         ${SHIELDS.map((s, i) => `<image href="${s.art}" x="${1100 + i * 86}" y="314" width="80" height="152" preserveAspectRatio="xMidYMin meet"/>`).join('')}
       </g>
 
-      <!-- weapon rack, left lower (photoreal kit sprites) -->
-      <g>
+      <!-- weapon rail, pegged into the left wall below the helmets (photoreal kit sprites) -->
+      <g data-mount="bracket">
+        ${[270, 550].map(x => `<rect x="${x - 6}" y="462" width="12" height="28" rx="3" fill="#24262c"/>`).join('')}
         <rect x="260" y="470" width="300" height="13" rx="6" fill="#3a3025"/>
         ${WEAPONS.map((w, i) => `<image href="${w.art}" x="${282 + i * 74}" y="484" width="58" height="150" preserveAspectRatio="xMidYMin meet"/>`).join('')}
       </g>
 
-      <!-- the dummy, center -->
-      <g>
-        <rect x="770" y="420" width="20" height="260" rx="8" fill="#6b4f2c"/>
+      <!-- the dummy: crossbar and head lashed to the painted practice-post at the centre of the floor -->
+      <g data-mount="post" transform="translate(${POST_DX} 0)">
         <rect x="700" y="470" width="160" height="18" rx="8" fill="#6b4f2c"/>
         ${dressed
           ? `<image href="${KIT_ART.scutum}" x="688" y="430" width="104" height="182" preserveAspectRatio="xMidYMin meet"/>
@@ -144,23 +154,24 @@ export default {
       </g>
 
       <!-- drill-master's tablet on a stand -->
-      <g>
+      <g data-mount="post">
+        ${shadow(959, 682, 50, 8)}
         <rect x="950" y="560" width="18" height="120" fill="#453a2e"/>
         <rect x="905" y="500" width="110" height="76" rx="6" fill="#6b4f2c" transform="rotate(-8 960 538)"/>
         <rect x="915" y="508" width="90" height="60" rx="4" fill="#1d1812" transform="rotate(-8 960 538)"/>
       </g>
 
-      <!-- whetstone wheel + trough -->
-      <g>
-        <circle cx="1250" cy="720" r="58" fill="#5c5546" stroke="#2b2318" stroke-width="6"/>
-        <circle cx="1250" cy="720" r="10" fill="#2b2318"/>
+      <!-- the whetstone wheel is painted (right); its water-trough sits on the floor below it -->
+      <g data-mount="floor" transform="translate(${TROUGH_DX} ${TROUGH_DY})">
+        ${shadow(1255, 798, 130, 10)}
         <path d="M1140 780 h230 a12 12 0 0 1 -12 16 h-206 a12 12 0 0 1 -12 -16 z" fill="#453a2e"/>
         <ellipse cx="1255" cy="782" rx="100" ry="10" fill="#c9a45f" opacity="0.6"/>
         ${!state.journal.some(e => e.id === 'token2') ? `<circle cx="1290" cy="780" r="6" fill="#e8dcc0" class="beckon"/>` : ''}
       </g>
 
-      <!-- maintenance locker -->
-      <g>
+      <!-- maintenance locker, standing on the floor -->
+      <g data-mount="floor">
+        ${shadow(535, 822, 110, 10)}
         <rect x="440" y="690" width="190" height="130" rx="8" fill="#3a2d1c" stroke="#241f1a" stroke-width="5"/>
         ${dressed
           ? `<rect x="452" y="702" width="166" height="106" rx="5" fill="#171209"/>
@@ -170,30 +181,22 @@ export default {
              <circle cx="535" cy="748" r="10" fill="#171209" stroke="#5c5546" stroke-width="3"/>`}
       </g>
 
-      <!-- practice sword rack (flavor) -->
-      <g>
+      <!-- practice sword rack (flavor), pegged to the left wall -->
+      <g data-mount="bracket" transform="translate(-30 120)">
         <rect x="70" y="330" width="120" height="12" rx="5" fill="#453a2e"/>
         ${[92, 118, 144].map(x => `<path d="M${x} 342 v70 M${x - 7} 350 h14" stroke="#6b4f2c" stroke-width="5"/>`).join('')}
       </g>
 
-      <!-- cold forge (flavor) -->
-      <g>
+      <!-- cold forge (flavor), on the floor beside the painted bench -->
+      <g data-mount="floor" transform="translate(130 30)">
+        ${shadow(150, 762, 100, 10)}
         <path d="M60 760 h180 l-20 -60 h-140 z" fill="#3a3126"/>
         <ellipse cx="150" cy="700" rx="55" ry="14" fill="#171209"/>
         <ellipse cx="150" cy="698" rx="30" ry="8" fill="#2b2318"/>
       </g>
 
-      <!-- barred far door -->
-      <g>
-        <path d="M1460 640 L1460 330 Q1530 290 1596 330 L1596 640 Z" fill="${dressed ? '#0f0c08' : '#2b2015'}" stroke="#241f1a" stroke-width="7"/>
-        ${dressed
-          ? `<text x="1528" y="470" text-anchor="middle" font-size="13" fill="#e8cf96" class="flicker"
-               font-family="Palatino Linotype, Georgia, serif">open</text>`
-          : `<line x1="1452" y1="470" x2="1600" y2="470" stroke="#5c5546" stroke-width="14"/>
-             <text x="1528" y="440" text-anchor="middle" font-size="12" fill="#8a7f6a"
-               font-family="Palatino Linotype, Georgia, serif">INSPECTION</text>`}
-      </g>
-
+      <!-- the far door, in the right wall: barred until the inspection passes -->
+      ${wallDoor({ ...DOOR, open: dressed, barred: !dressed, label: dressed ? 'OPEN' : 'INSPECTION' })}
       <path d="M0 900 L0 862 Q800 906 1600 862 L1600 900 Z" fill="#0a0705"/>
     </svg>`;
   },
@@ -203,7 +206,7 @@ export default {
     const dressed = !!state.flags.armory_dressed;
 
     spots.push({
-      id: 'dummy', x: 690, y: 380, w: 190, h: 310, label: dressed ? 'The dressed dummy' : 'The practice dummy',
+      id: 'dummy', x: 690 + POST_DX, y: 380, w: 190, h: 310, label: dressed ? 'The dressed dummy' : 'The practice dummy',
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">The wooden tag</div>
           <em class="tab-carve">SECVTOR — "the chaser", who follows the net-man.
@@ -218,7 +221,7 @@ export default {
     });
 
     spots.push({
-      id: 'mural', x: 620, y: 250, w: 460, h: 60, label: 'The mural of the four brothers',
+      id: 'mural', x: MURAL.x, y: MURAL.y, w: 460 * MURAL.k, h: 180 * MURAL.k, label: 'The mural of the four brothers',
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">The mural's painted caption</div>
           <em class="tab-carve">Four brothers of the sand: the FISH-CREST fights the
@@ -272,7 +275,7 @@ export default {
 
     if (!state.journal.some(e => e.id === 'token2')) {
       spots.push({
-        id: 'trough', x: 1130, y: 740, w: 250, h: 90, label: 'The whetstone trough',
+        id: 'trough', x: 1130 + TROUGH_DX, y: 740 + TROUGH_DY, w: 230, h: 90, label: 'The whetstone trough',
         onInteract(game) {
           game.journal.add('token2', {
             title: 'in the whetstone trough', category: 'sun',
@@ -297,21 +300,21 @@ export default {
     }
 
     spots.push({
-      id: 'practice', x: 60, y: 320, w: 150, h: 100, label: 'Practice swords',
+      id: 'practice', x: 30, y: 440, w: 150, h: 100, label: 'Practice swords',
       onInteract(game) {
         game.say('Wooden swords for drill — every one dented, none of them a rudis. A real one is earned, not shelved. Somewhere a lanista keeps a ledger of who has earned what, and the ledger is the whole of the law down here.');
       },
     });
 
     spots.push({
-      id: 'forge', x: 50, y: 690, w: 210, h: 100, label: 'The cold forge',
+      id: 'forge', x: 180, y: 720, w: 210, h: 100, label: 'The cold forge',
       onInteract(game) {
         game.say('The forge is cold and has been for years — since the fire closed the western works, nobody has trusted flame this side of the hypogeum. The anvil wears a skin of dust like it is embarrassed.');
       },
     });
 
     spots.push({
-      id: 'door', x: 1450, y: 320, w: 148, h: 330, label: dressed ? 'To the shrine corridor' : 'The barred door',
+      id: 'door', x: 1470, y: 300, w: 128, h: 420, label: dressed ? 'To the shrine corridor' : 'The barred door',
       onInteract(game) {
         if (!dressed) {
           game.say('Barred from the far side, and the bar answers to the inspection bell. The dummy passes muster or nobody does. The tag on its chest is where you would start.');
@@ -387,7 +390,7 @@ function openDressing(game) {
           api.setFeedback('The dummy is missing pieces. The bell declines to embarrass you both.', 'bad');
           return;
         }
-        if (pick.helm === 'smooth' && pick.shield === 'scutum' && pick.weapon === 'gladius') {
+        if (Object.entries(RIGHT_KIT).every(([k, v]) => pick[k] === v)) {
           game.setFlag('armory_dressed');
           game.playSfx('bell');
           api.solved({ message: 'The inspection bell rings once, clean and satisfied, and somewhere in the wall a counterweight lets the door bar go. The locker under the bench drops open with the same clatter — maintenance passes muster too.' });

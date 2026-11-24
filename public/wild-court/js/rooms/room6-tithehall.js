@@ -8,6 +8,7 @@
 // takeable item. Exit gate: hollow pod + Vance's compass + token 6.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   vance_compass: {
@@ -42,8 +43,23 @@ const SEQ = [6, 3, 8, 1, 5, 2, 7, 4];
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 const PODX = [920, 970, 1020, 1070, 1120, 1170, 1220, 1270];
 
+// Layout — the plate (art/tithehall.webp) paints a ruined colonnade: a stone
+// walkway on the left, a canal down the middle, a mossy walkway along the
+// right-hand arches. Each group is moved onto those surfaces as a whole.
+const SCALE_DX = -330, SCALE_DY = 50;        // Scale of Truth -> left walkway
+const TABLE_DX = -120, TABLE_DY = -198;       // offering table -> right walkway
+const OLD_DX = -200, OLD_DY = 40;             // older offerings -> near walkway
+const FRIEZE_DX = 460, FRIEZE_DY = -48;       // frieze -> over the right arches
+const DOOR_T = { x: 363, y: 3, k: 0.78 };     // door -> last right-hand arch
+
 export default {
   id: 'tithehall',
+  solution: () => {
+    // the two weighings that find the one odd pod among them, from how many there are
+    const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'], n = SEQ.length, k = Math.ceil(n / 3);
+    return [`${words[k]} against ${words[k]}`, `${words[1]} against ${words[1]}`];
+  },
+  lintStates: [{ label: 'solved', flags: { tithehall_solved: true, tithehall_compassTaken: true }, inventory: ['vance_compass', 'hollow_pod'] }],
   title: 'The Tithe Hall',
   intro: 'The great wing folds shut behind you on a long hall of green-black stone: an offering table set with eight golden cacao pods, and a bronze scale taller than you holding out one pan like an open palm — the other dangles from a snapped cord — while Gus paces the plinth already talking: "The Scale of Truth, counsel. Mind your questions. It only answers two."',
 
@@ -56,6 +72,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_tithehall_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0e1c12"/>
           <stop offset="0.55" stop-color="#16281a"/>
@@ -95,17 +112,12 @@ export default {
       <!-- back wall and floor -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/tithehall.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/tithehall.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- canopy breach, hanging roots -->
-      <path d="M560 0 L1000 0 L952 44 L862 66 L742 74 L638 52 Z" fill="#070d08"/>
-      <ellipse cx="620" cy="42" rx="46" ry="16" fill="#16281a" transform="rotate(-14 620 42)"/>
-      <ellipse cx="960" cy="36" rx="52" ry="15" fill="#16281a" transform="rotate(11 960 36)"/>
-      <path d="M702 62 Q690 142 708 212" stroke="#223a26" stroke-width="6" fill="none" class="sway slow"/>
-      <path d="M842 68 Q856 152 840 226" stroke="#1d301f" stroke-width="5" fill="none" class="sway slow"/>
-      <path d="M772 72 Q766 120 776 158" stroke="#223a26" stroke-width="4" fill="none" class="sway"/>
+      <!-- the colonnade, the canal and the canopy breach are all painted in the plate -->
 
-      <!-- tithe frieze: the procession of bearers -->
-      <g opacity="0.92">
-        <rect x="300" y="148" width="345" height="88" fill="#2e3a2c" stroke="#1c2718" stroke-width="3"/>
+      <!-- tithe frieze: the procession of bearers, carved over the right-hand arches -->
+      <g opacity="0.95" data-mount="inset" transform="translate(${FRIEZE_DX} ${FRIEZE_DY})">
+        <rect x="292" y="140" width="361" height="104" fill="#000" opacity="0.45"/>
+        <rect x="300" y="148" width="345" height="88" fill="url(#sk_basalt)" stroke="#1c2718" stroke-width="3"/>
         <line x1="314" y1="164" x2="631" y2="164" stroke="#1c2718" stroke-width="2"/>
         ${[335, 390, 445, 500, 555, 610].map((x, i) => `
           <path d="M${x - 13} 214 Q${x} ${188 + (i % 2) * 6} ${x + 13} 214 Z" fill="#141f15"/>
@@ -113,17 +125,8 @@ export default {
           <circle cx="${x + 22}" cy="206" r="${6 - i * 0.5}" fill="#d1a53f" opacity="0.55"/>`).join('')}
       </g>
 
-      <!-- columns -->
-      ${[240, 1080].map(cx => `
-      <g>
-        <rect x="${cx}" y="96" width="72" height="564" fill="url(#gd_tithehall_stone)" stroke="#1c2718" stroke-width="3"/>
-        ${[190, 290, 390, 490, 590].map(y => `<line x1="${cx}" y1="${y}" x2="${cx + 72}" y2="${y}" stroke="#1c2718" stroke-width="2" opacity="0.8"/>`).join('')}
-        <path d="M${cx + 10} 96 Q${cx - 6} 300 ${cx + 16} 520 Q${cx + 22} 600 ${cx + 6} 660" stroke="#4a3626" stroke-width="7" fill="none" opacity="0.85"/>
-        <path d="M${cx + 52} 140 Q${cx + 66} 340 ${cx + 48} 560" stroke="#3a2a1c" stroke-width="5" fill="none" opacity="0.7"/>
-      </g>`).join('')}
-
-      <!-- the far door -->
-      <g>
+      <!-- the far door, set into the last arch of the right colonnade -->
+      <g data-mount="wall" transform="translate(${DOOR_T.x} ${DOOR_T.y}) scale(${DOOR_T.k})">
         <rect x="1240" y="240" width="230" height="420" fill="#1c2718"/>
         <circle cx="1355" cy="216" r="17" fill="#2e3a2c" stroke="#1c2718" stroke-width="3"/>
         <path d="M1344 206 L1348 197 L1352 205 M1358 205 L1362 197 L1366 206" stroke="#1c2718" stroke-width="3" fill="none"/>
@@ -144,8 +147,9 @@ export default {
         <rect x="1460" y="418" width="20" height="44" rx="4" fill="#7a5a20"/>`}
       </g>
 
-      <!-- the Scale of Truth -->
-      <g>
+      <!-- the Scale of Truth, on its plinth on the left walkway -->
+      <g data-mount="floor" transform="translate(${SCALE_DX} ${SCALE_DY})">
+        ${shadow(610, 672, 190, 16)}
         <rect x="455" y="548" width="310" height="16" rx="4" fill="url(#gd_tithehall_stone)" stroke="#1c2718" stroke-width="2"/>
         <rect x="470" y="564" width="280" height="106" fill="url(#gd_tithehall_stone)" stroke="#1c2718" stroke-width="3"/>
         <text x="610" y="600" text-anchor="middle" font-size="16" fill="#9fd4a8" opacity="0.7" letter-spacing="3"
@@ -181,8 +185,9 @@ export default {
         </g>`}
       </g>
 
-      <!-- the offering table -->
-      <g>
+      <!-- the offering table, standing along the right-hand walkway -->
+      <g data-mount="floor" transform="translate(${TABLE_DX} ${TABLE_DY})">
+        ${shadow(1140, 790, 330, 16)}
         <rect x="830" y="626" width="620" height="22" rx="6" fill="url(#gd_tithehall_wood)" stroke="#2a1e14" stroke-width="3"/>
         <rect x="842" y="648" width="596" height="58" fill="#4a3626" stroke="#2a1e14" stroke-width="3"/>
         <rect x="856" y="706" width="26" height="82" fill="#3a2a1c"/>
@@ -208,8 +213,9 @@ export default {
         </g>` : ''}
       </g>
 
-      <!-- older offerings, front-left -->
-      <g>
+      <!-- older offerings, set down on the near walkway -->
+      <g data-mount="floor" transform="translate(${OLD_DX} ${OLD_DY})">
+        ${shadow(320, 830, 90, 10)}
         <path d="M240 788 Q246 830 320 830 Q394 830 400 788 L390 758 L250 758 Z" fill="url(#gd_tithehall_wood)" stroke="#2a1e14" stroke-width="3"/>
         <path d="M252 776 Q320 792 388 776 M248 796 Q320 812 392 796" stroke="#2a1e14" stroke-width="2" fill="none" opacity="0.8"/>
         ${[0, 72, 144, 216, 288].map(a => `<ellipse cx="${282 + 9 * Math.cos(a * Math.PI / 180)}" cy="${746 + 9 * Math.sin(a * Math.PI / 180)}" rx="7" ry="4" fill="#c96fb0" opacity="0.85" transform="rotate(${a} ${282 + 9 * Math.cos(a * Math.PI / 180)} ${746 + 9 * Math.sin(a * Math.PI / 180)})"/>`).join('')}
@@ -224,7 +230,7 @@ export default {
       <ellipse cx="1180" cy="872" rx="480" ry="50" fill="rgba(159,212,168,0.05)" class="fog reverse"/>
 
       <!-- the canopy light-shaft, and its pool on the floor -->
-      <polygon points="640,10 880,10 700,668 420,668" fill="rgba(159,212,168,0.10)" class="moonbeam"/>
+      <polygon points="520,10 680,10 620,668 380,668" fill="rgba(159,212,168,0.08)" class="moonbeam"/>
       <ellipse cx="560" cy="668" rx="220" ry="34" fill="url(#gd_tithehall_pool)"/>
 
       <!-- firefly motes -->
@@ -241,7 +247,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'scale', x: 430, y: 252, w: 350, h: 292, label: 'The Scale of Truth',
+      id: 'scale', x: 430 + SCALE_DX, y: 252 + SCALE_DY, w: 350, h: 292, label: 'The Scale of Truth',
       onInteract(game) {
         if (game.getFlag('tithehall_solved')) {
           game.say('The Scale rests level above the emptied table, swaying by a hair, like something breathing in its sleep. It has said its two words and it will not be saying more.');
@@ -264,7 +270,7 @@ export default {
     });
 
     spots.push({
-      id: 'law', x: 465, y: 552, w: 290, h: 122, label: 'The carved law',
+      id: 'law', x: 465 + SCALE_DX, y: 552 + SCALE_DY, w: 290, h: 122, label: 'The carved law',
       onInteract(game) {
         const html = `<div class="leaf-tablet carved"><div class="leaf-title">The Law of the Tithe</div>
           "One tithe among the eight is hollow — gold over air, lighter than truth. The Scale answers
@@ -276,7 +282,7 @@ export default {
     });
 
     spots.push({
-      id: 'tithes', x: 902, y: 560, w: 400, h: 108, label: solved ? 'The emptied table' : 'The eight golden tithes',
+      id: 'tithes', x: 902 + TABLE_DX, y: 560 + TABLE_DY, w: 400, h: 108, label: solved ? 'The emptied table' : 'The eight golden tithes',
       onInteract(game) {
         if (game.getFlag('tithehall_solved')) {
           game.say('Eight carved sockets where the tithes sat. Seven pods sank into the stone the moment the lie left the table — accepted, presumably, wherever tithes go.');
@@ -293,7 +299,7 @@ export default {
 
     if (!state.flags.tithehall_tokenTaken) {
       spots.push({
-        id: 'token6', x: 808, y: 570, w: 92, h: 92, label: 'A carved wood disc',
+        id: 'token6', x: 808 + TABLE_DX, y: 570 + TABLE_DY, w: 92, h: 92, label: 'A carved wood disc',
         onInteract(game) {
           if (game.journal.has('token6')) return;
           game.setFlag('tithehall_tokenTaken');
@@ -306,7 +312,7 @@ export default {
 
     if (!state.flags.tithehall_compassTaken) {
       spots.push({
-        id: 'vance_compass', x: 1338, y: 562, w: 96, h: 94, label: 'A brass compass among the offerings',
+        id: 'vance_compass', x: 1338 + TABLE_DX, y: 562 + TABLE_DY, w: 96, h: 94, label: 'A brass compass among the offerings',
         onInteract(game) {
           game.setFlag('tithehall_compassTaken');
           game.journal.add('note_vance', {
@@ -316,7 +322,7 @@ export default {
               concession's founding survey — the one that was never filed, by the surveyor who was
               never found. Its needle is dead still. <em>So, you notice, is yours.</em></div>`,
           });
-          game.addItem('vance_compass', { from: { x: 1385, y: 606 } });
+          game.addItem('vance_compass', { from: { x: 1385 + TABLE_DX, y: 606 + TABLE_DY } });
           game.say('You pocket the dead man\'s compass. It feels less like theft than like inheritance. Gus turns the name over like a stone: "My predecessor\'s client. Keep it, counsel — the Court remembers its docket."');
           game.refreshScene();
         },
@@ -324,7 +330,7 @@ export default {
     }
 
     spots.push({
-      id: 'door', x: 1240, y: 250, w: 225, h: 300, label: solved ? 'The unbarred door' : 'The barred door',
+      id: 'door', x: 1330, y: 190, w: 180, h: 330, label: solved ? 'The unbarred door' : 'The barred door',
       onInteract(game) {
         if (!game.getFlag('tithehall_solved')) {
           game.say('A door built for something that does not knock, barred with a bronze beam thicker than your leg. Above it, an ocelot is carved mid-yawn. The hall is holding its breath until the lie is presented — the bar makes that clear without moving at all.');
@@ -348,21 +354,21 @@ export default {
     });
 
     spots.push({
-      id: 'breach', x: 600, y: 20, w: 280, h: 165, label: 'The canopy breach',
+      id: 'breach', x: 470, y: 20, w: 240, h: 160, label: 'The canopy breach',
       onInteract(game) {
         game.say('Far overhead the canopy is torn just enough to let one shaft of dusk lean into the hall. Motes ride it like they paid for seats. Somewhere up there is the sky you fell out of.');
       },
     });
 
     spots.push({
-      id: 'frieze', x: 305, y: 148, w: 240, h: 90, label: 'The tithe frieze',
+      id: 'frieze', x: 305 + FRIEZE_DX, y: 148 + FRIEZE_DY, w: 340, h: 90, label: 'The tithe frieze',
       onInteract(game) {
         game.say('A wall carving: animals in procession, each bearing a pod to the table — jaguar, tapir, ocelot, down to a mantis dragging one twice its size. Every tithe accounted for. The Court has always kept books.');
       },
     });
 
     spots.push({
-      id: 'offerings', x: 230, y: 705, w: 180, h: 120, label: 'Older offerings',
+      id: 'offerings', x: 230 + OLD_DX, y: 705 + OLD_DY, w: 180, h: 120, label: 'Older offerings',
       onInteract(game) {
         game.say('Older offerings crowd a basket by the wall: orchids gone papery, banded feathers, a jade bead worn smooth. Nothing here was cheap for whoever carried it in. The Court does not appraise — it remembers.');
       },
@@ -572,7 +578,7 @@ function openScaleRite(game) {
         if (!accused) return;
         if (accused === hollow) {
           game.setFlag('tithehall_solved');
-          game.addItem('hollow_pod', { from: { x: 1095, y: 602 } });
+          game.addItem('hollow_pod', { from: { x: 1095 + TABLE_DX, y: 602 + TABLE_DY } });
           game.journal.add('tithehall_verdict', {
             title: 'The Scale\'s verdict (Tithe Hall)', category: 'note',
             html: `<div class="leaf-tablet"><div class="leaf-title">The Scale's Verdict</div>

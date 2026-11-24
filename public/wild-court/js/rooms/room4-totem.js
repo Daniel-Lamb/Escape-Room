@@ -11,6 +11,7 @@
 // (TAMARIN, "Y") clatters from the crown onto the dais.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   amber_lens: {
@@ -103,6 +104,11 @@ function creatureGlyph(key, tone = '#e4f0d0') {
 
 export default {
   id: 'totem',
+  solution: ['harpy', 'ocelot', 'boa', 'tree-frog', 'mantis'],
+  lintStates: [
+    { label: 'vines cut', flags: { totem_vinesCut: true } },
+    { label: 'solved', flags: { totem_vinesCut: true, totem_solved: true, totem_drums: '01234' }, inventory: ['amber_lens'] },
+  ],
   title: 'The Totem of Teeth',
   intro: 'The painted trunks close ranks behind you and the jungle goes courtroom-quiet: a tall torchless hall, one shaft of dusk-green light falling through the torn canopy onto a stone dais, and a totem of five carved drums glaring down a sealed stone door — every face on it, top to bottom, showing teeth.',
 
@@ -179,7 +185,7 @@ export default {
           <circle cx="1058" cy="729" r="5" fill="none" stroke="#ffe08a" stroke-width="1.6"/>
           <path d="M1052 725 q-3 -4 -1 -7 M1064 725 q3 -4 1 -7 M1051 731 q-4 1 -6 4 M1065 731 q4 1 6 4"
             stroke="#ffe08a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-          <text x="1058" y="746" text-anchor="middle" font-size="9" fill="#ffe08a"
+          <text x="1058" y="747" text-anchor="middle" font-size="11.5" fill="#ffe08a"
             font-family="Palatino Linotype, Georgia, serif">Y</text>
         </g>`
       : '';
@@ -187,6 +193,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_totem_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#070d08"/>
           <stop offset="0.45" stop-color="#0e1c12"/>
@@ -235,35 +242,21 @@ export default {
 
       <!-- walls & floor -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/totem.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/totem.mp4" type="video/mp4"/></video></foreignObject>
-      <ellipse cx="330" cy="700" rx="130" ry="18" fill="#223a26" opacity="0.5"/>
-      <ellipse cx="1480" cy="800" rx="150" ry="22" fill="#223a26" opacity="0.4"/>
 
-      <!-- roots pouring down the walls -->
-      <g stroke-linecap="round" fill="none">
-        <path d="M120 0 Q132 210 108 420 Q96 560 128 660" stroke="#4a3626" stroke-width="20"/>
-        <path d="M120 0 Q132 210 108 420" stroke="#6b4f37" stroke-width="6" opacity="0.7"/>
-        <path d="M192 0 Q172 160 198 330 Q214 480 186 660" stroke="#4a3626" stroke-width="13"/>
-        <path d="M1560 0 Q1546 220 1566 430 Q1578 560 1552 660" stroke="#4a3626" stroke-width="16"/>
-        <path d="M1560 0 Q1546 220 1566 430" stroke="#6b4f37" stroke-width="5" opacity="0.7"/>
-      </g>
+      <!-- open sky, carved poles and the still pool are all painted in the plate; a thin sunbeam over the dais -->
+      <polygon points="1060,62 1200,62 1150,790 880,790" fill="url(#gd_totem_beam)" class="moonbeam" opacity="0.5"/>
 
-      <!-- torn canopy above; the breach over the dais -->
-      <path d="M0 0 H1600 V70 Q1520 96 1420 74 Q1340 106 1250 70 L1010 84 Q950 62 870 90 Q760 116 640 82 Q520 108 400 78 Q300 100 180 76 Q90 98 0 74 Z" fill="#070d08"/>
-      <ellipse cx="1120" cy="66" rx="170" ry="42" fill="#9fd4a8" opacity="0.28" class="flicker"/>
-      <g class="sway slow" fill="#0e1c12">
-        <path d="M150 58 q-12 72 8 132 q26 -58 6 -130 z"/>
-        <path d="M212 68 q-4 56 14 100 q18 -48 0 -100 z"/>
+      <!-- two carved standing stones at the pool's edge carry the four reliefs -->
+      <g data-mount="post">
+        ${shadow(280, 652, 170, 18)}
+        <path d="M134 652 L134 190 Q280 120 426 190 L426 652 Z" fill="url(#sk_basalt)" stroke="#2c2418" stroke-width="4"/>
+        ${shadow(1030, 646, 120, 14)}
+        <path d="M934 646 L934 290 Q1030 236 1126 290 L1126 646 Z" fill="url(#sk_basalt)" stroke="#2c2418" stroke-width="4"/>
       </g>
-      <g class="sway slow" fill="#0e1c12" style="animation-delay:-2s">
-        <path d="M1382 64 q-10 62 10 118 q22 -54 4 -116 z"/>
-      </g>
-
-      <!-- the canopy light-shaft, falling on the dais -->
-      <polygon points="1005,62 1235,62 1160,790 858,790" fill="url(#gd_totem_beam)" class="moonbeam"/>
 
       <!-- relief A: the sky-nest (upper left wall) -->
       <g>
-        <rect x="250" y="160" width="160" height="140" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="4"/>
+        <rect x="250" y="160" width="160" height="140" rx="8" fill="#24231d" stroke="#1e1a10" stroke-width="4"/>
         <rect x="258" y="168" width="144" height="124" rx="6" fill="none" stroke="#3f4a3c" stroke-width="2"/>
         <g fill="none" stroke="#9fb37e" stroke-width="3" stroke-linecap="round" opacity="0.85">
           <path d="M268 262 Q330 236 392 262"/>
@@ -277,7 +270,7 @@ export default {
 
       <!-- relief B: the shed skin (lower left wall) -->
       <g>
-        <rect x="150" y="480" width="170" height="150" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="4"/>
+        <rect x="150" y="480" width="170" height="150" rx="8" fill="#24231d" stroke="#1e1a10" stroke-width="4"/>
         <rect x="158" y="488" width="154" height="134" rx="6" fill="none" stroke="#3f4a3c" stroke-width="2"/>
         <g fill="none" stroke="#9fb37e" stroke-width="3" stroke-linecap="round" opacity="0.85">
           <path d="M166 608 Q200 590 214 562 Q228 532 260 528 Q296 526 304 502"/>
@@ -291,7 +284,7 @@ export default {
 
       <!-- relief C: the singer's meal (right wall, upper) -->
       <g>
-        <rect x="950" y="270" width="160" height="130" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="4"/>
+        <rect x="950" y="270" width="160" height="130" rx="8" fill="#24231d" stroke="#1e1a10" stroke-width="4"/>
         <rect x="958" y="278" width="144" height="114" rx="6" fill="none" stroke="#3f4a3c" stroke-width="2"/>
         <g fill="none" stroke="#9fb37e" stroke-width="3" stroke-linecap="round" opacity="0.85">
           <path d="M962 372 Q1020 344 1094 356 Q1040 384 962 372 Z"/>
@@ -304,7 +297,7 @@ export default {
 
       <!-- relief D: the shadow-cat's den (right wall, lower) -->
       <g>
-        <rect x="950" y="470" width="160" height="140" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="4"/>
+        <rect x="950" y="470" width="160" height="140" rx="8" fill="#24231d" stroke="#1e1a10" stroke-width="4"/>
         <rect x="958" y="478" width="144" height="124" rx="6" fill="none" stroke="#3f4a3c" stroke-width="2"/>
         <path d="M974 596 Q974 548 1030 548 Q1086 548 1086 596 Z" fill="#070d08"/>
         <path d="M966 596 Q966 540 1030 540 Q1094 540 1094 596" fill="none" stroke="#9fb37e" stroke-width="3" opacity="0.85"/>
@@ -318,8 +311,12 @@ export default {
         </g>
       </g>
 
-      <!-- the stone door in its toothed frame -->
-      <g>
+      <!-- the stone door, in a toothed stone portal standing on the right bank -->
+      <g data-mount="post">
+        ${shadow(1320, 744, 210, 18)}
+        <rect x="1140" y="200" width="44" height="544" fill="url(#sk_basalt)" stroke="#2c2418" stroke-width="4"/>
+        <rect x="1456" y="200" width="44" height="544" fill="url(#sk_basalt)" stroke="#2c2418" stroke-width="4"/>
+        <rect x="1124" y="176" width="392" height="44" rx="4" fill="url(#sk_basalt)" stroke="#2c2418" stroke-width="4"/>
         <rect x="1176" y="236" width="288" height="500" fill="#2e3a2c" stroke="#070d08" stroke-width="5"/>
         ${door}
         ${[0, 1, 2, 3, 4, 5, 6].map(t =>
@@ -329,18 +326,20 @@ export default {
       </g>
 
       <!-- tooth-marks gouged into the doorframe wall -->
-      <g stroke="#9fb37e" stroke-width="4" stroke-linecap="round" opacity="0.65">
-        <path d="M1489 316 L1509 424 M1511 310 L1531 420 M1533 306 L1553 414 M1555 302 L1573 408"/>
+      <g stroke="#1e1a10" stroke-width="4" stroke-linecap="round" opacity="0.8">
+        <path d="M1462 316 L1470 424 M1472 310 L1480 420 M1482 306 L1490 414 M1492 302 L1498 408"/>
       </g>
 
       <!-- the dais, its light pool, and the carved reading-line -->
-      <ellipse cx="1010" cy="758" rx="200" ry="40" fill="#3f4a3c" stroke="#2e3a2c" stroke-width="5"/>
-      <ellipse cx="1010" cy="752" rx="184" ry="32" fill="#55624a" opacity="0.55"/>
+      ${shadow(1010, 772, 220, 30)}
+      <ellipse cx="1010" cy="758" rx="200" ry="40" fill="url(#sk_basalt)" stroke="#14130f" stroke-width="5"/>
+      <ellipse cx="1010" cy="752" rx="184" ry="32" fill="#6b6a5c" opacity="0.35"/>
       <ellipse cx="1010" cy="756" rx="190" ry="36" fill="url(#gd_totem_pool)" class="glow"/>
       <path d="M865 756 L1178 728" stroke="#9fd4a8" stroke-width="6" opacity="0.55" stroke-dasharray="20 12" class="shimmer"/>
 
-      <!-- THE TOTEM -->
-      <g>
+      <!-- THE TOTEM, standing in the pool like the painted poles around it -->
+      <g data-mount="floor">
+        ${shadow(730, 760, 160, 18)}
         <rect x="600" y="668" width="260" height="92" rx="8" fill="url(#gd_totem_wood2)" stroke="#2c2014" stroke-width="4"/>
         <g stroke="#4a3626" stroke-width="2.5" fill="none" opacity="0.5">
           <circle cx="640" cy="700" r="10"/><circle cx="828" cy="712" r="9"/>
@@ -497,7 +496,7 @@ export default {
     }
 
     spots.push({
-      id: 'toothmarks', x: 1470, y: 290, w: 120, h: 180, label: 'Tooth-marks on the doorframe',
+      id: 'toothmarks', x: 1440, y: 290, w: 90, h: 180, label: 'Tooth-marks on the doorframe',
       onInteract(game) {
         game.say('Four long gouges rake the doorframe at shoulder height — shoulder height on something considerably better supplied with shoulders than you. The stone has healed smooth around them, which is not a thing stone does.');
       },

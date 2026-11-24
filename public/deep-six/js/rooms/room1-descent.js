@@ -5,7 +5,7 @@
 // Diver also recovers depth-mark A (5 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
 
 const SLUG = 'descent';
 const MYCODE = { p1: '629', p2: '417' };   // p1 = Diver hatch, p2 = Tender winch
@@ -49,7 +49,7 @@ export default {
     const label = isDiver() ? 'winch brake' : 'deck hatch';
 
     spots.push({
-      id: 'relay', x: 556, y: 138, w: 488, h: 184, label: `The ${label} code (for your partner)`,
+      id: 'relay', ...DOCK, label: `The ${label} code (for your partner)`,
       onInteract(game) {
         const html = `<div class="chartcard"><div class="chart-title">${label} release</div>
           <p>Stamped on your side, meant for the other:</p>

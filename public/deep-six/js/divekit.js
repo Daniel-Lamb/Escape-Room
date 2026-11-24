@@ -4,6 +4,9 @@
 // porthole onto the night sea. Every id/keyframe is prefixed by a per-scene slug.
 
 import { isDiver, isTender, roleName } from './role.js';
+import { kitDefs, dock, DOCK, panel } from '../../shared/js/scenekit.js';
+
+export { DOCK };
 
 // Photoreal diver backdrops live in <game>/art/<slug>.{webp,mp4}; resolve against
 // this module's URL so they work on Pages/Vercel/localhost alike.
@@ -11,7 +14,7 @@ export const ART = new URL('../art/', import.meta.url).href;
 
 /** Common gradient + keyframe defs. Call once inside <defs>. */
 export function defs(slug) {
-  return `
+  return `${kitDefs()}
     <linearGradient id="${slug}_water" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#0a2230"/><stop offset="0.6" stop-color="#07161f"/><stop offset="1" stop-color="#040c12"/>
     </linearGradient>
@@ -85,17 +88,19 @@ export function roleTag() {
     </g>`;
 }
 
-/** The cross-screen relay plaque: the reading THIS screen holds for the partner. */
+/** The cross-screen relay: the reading THIS screen holds for the partner. It is
+ *  not part of the wreck or the cabin — it is on your own dive slate (diver) or
+ *  radio log (tender), docked at the frame edge. Hotspot: DOCK. */
 export function relayPlaque(code, label) {
-  return `<g>
-    <rect x="556" y="138" width="488" height="184" rx="10" fill="rgba(5,18,24,0.86)" stroke="#c9a227" stroke-width="3"/>
+  const from = { x: 556, y: 138, w: 488, h: 184 };
+  return dock(from, `
     <text x="800" y="180" text-anchor="middle" font-size="16" fill="#9fc7dd"
       font-family="Consolas, monospace" letter-spacing="2">${label}</text>
     <text x="800" y="252" text-anchor="middle" font-size="46" fill="#e8c85a"
       font-family="Consolas, monospace" letter-spacing="8">${code}</text>
-    <text x="800" y="298" text-anchor="middle" font-size="13" fill="#7f8a99"
-      font-family="Consolas, monospace">read this to your partner</text>
-  </g>`;
+    <text x="800" y="298" text-anchor="middle" font-size="13" fill="#9fb0c4"
+      font-family="Consolas, monospace">read this to your partner</text>`,
+    { kind: isDiver() ? 'tablet' : 'radio', title: isDiver() ? 'DIVE SLATE' : 'RADIO LOG' });
 }
 
 /** A beckoning brass depth-mark waiting to be recovered — photoreal tag with the
@@ -110,23 +115,22 @@ export function depthTag(x, y, depth, letter, beckon) {
     <image href="${ART}mark-tag.webp" x="${x + 7}" y="${y}" width="78" height="120" preserveAspectRatio="xMidYMid meet"/>
     <text x="${x + 46}" y="${y + 60}" text-anchor="middle" font-size="23" fill="#241c08"
       font-family="Consolas, monospace" font-weight="bold" paint-order="stroke" stroke="#d8c98a" stroke-width="0.8">${depth}</text>
-    <text x="${x + 46}" y="${y + 73}" text-anchor="middle" font-size="8" fill="#3a2f12"
+    <text x="${x + 46}" y="${y + 75}" text-anchor="middle" font-size="11.5" fill="#3a2f12"
       font-family="Consolas, monospace" letter-spacing="1">FATHOMS</text>
     <text x="${x + 46}" y="${y + 101}" text-anchor="middle" font-size="22" fill="#241c08"
       font-family="Georgia, serif" paint-order="stroke" stroke="#d8c98a" stroke-width="0.8">${letter}</text>
   </g>`;
 }
 
-/** A framed lock panel; shows the RELEASED state when open, else the given contents. */
+/** A lock, bolted to the hull plating (diver) or the cabin bulkhead (tender);
+ *  shows the RELEASED state when open, else the given contents. */
 export function lockPanel(x, y, open, label, contents) {
-  return `<g>
-    <rect x="${x}" y="${y}" width="360" height="196" rx="12"
-      fill="${open ? 'rgba(4,12,16,0.55)' : 'rgba(9,26,32,0.9)'}" stroke="#2b3547" stroke-width="5"/>
+  return panel({ x, y, w: 360, h: 196, material: 'steel', mount: 'bolts', rx: 12, body: `
+    <rect x="${x + 10}" y="${y + 10}" width="340" height="176" rx="8" fill="${open ? '#04090c' : '#08161c'}"/>
     ${open
       ? `<text x="${x + 180}" y="${y + 108}" text-anchor="middle" font-size="20" fill="#7cf0be"
            font-family="Consolas, monospace" class="flicker">${label} — RELEASED</text>`
-      : contents}
-  </g>`;
+      : contents}` });
 }
 
 /**

@@ -19,6 +19,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 1,
   id: 'trucestone',
   slug: 'ts',
   lockLabel: 'Your Reckoning',

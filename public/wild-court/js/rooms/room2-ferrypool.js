@@ -8,6 +8,7 @@
 // fledgling repeats, in YOUR recorded voice, "Quadrant nine. Mark the big kapok."
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   vine_cord: {
@@ -22,6 +23,8 @@ registerItems({
   },
 });
 
+// who eats whom when left alone on a bank (crossRiver refuses either)
+const EATS = [['kit', 'bird'], ['bird', 'figs']];
 const CHARGES = {
   kit:  { name: 'the ocelot kit',    short: 'kit' },
   bird: { name: 'the macaw fledgling', short: 'bird' },
@@ -39,8 +42,37 @@ function bank(flags, who) {
   return p === 'coracle' ? (playerFar(flags) ? 'far' : 'near') : p;
 }
 
+// Layout — read off the plate (art/ferrypool.webp): the near shore's stone
+// ledges on the left, the far shore and its steps on the right, the pool between.
+const POST_N = { x: 548, top: 500, base: 620 };
+const POST_F = { x: 1262, top: 430, base: 540 };
+const CARVE = { x: 1284, y: 440, w: 140, h: 64 };
+const STAIRS = { x: 1384, y: 524, w: 200, h: 136 };
+// where each charge stands on each shore, and where the coracle rides
+const NEAR_SLOTS = { kit: [420, 586], bird: [310, 560], figs: [220, 600] };
+const FAR_SLOTS = { kit: [1112, 522], bird: [1192, 500], figs: [1032, 544] };
+const CORACLE = { near: [640, 660], far: [1070, 660] };
+
 export default {
   id: 'ferrypool',
+  solution: () => {
+    // the fewest crossings that get all three over with nothing eaten
+    const who = ['kit', 'bird', 'figs'], key = (s) => `${s.me}|${who.map(w => s[w]).join('')}`;
+    const safe = (s) => EATS.every(([a, b]) => !(s[a] === s[b] && s[a] !== s.me));
+    let frontier = [{ me: 0, kit: 0, bird: 0, figs: 0 }], seen = new Set([key(frontier[0])]);
+    for (let n = 1; n < 12; n++) {
+      const next = [];
+      for (const s of frontier) for (const take of [null, ...who.filter(w => s[w] === s.me)]) {
+        const t = { ...s, me: 1 - s.me }; if (take) t[take] = t.me;
+        if (!safe(t) || seen.has(key(t))) continue;
+        if (who.every(w => t[w] === 1)) return [`${['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n]} crossings`];
+        seen.add(key(t)); next.push(t);
+      }
+      frontier = next;
+    }
+    return ['no safe crossing'];
+  },
+  lintStates: [{ label: 'solved', flags: { ferrypool_ferried: true, ferrypool_playerFar: true }, inventory: ['vine_cord'] }],
   title: 'The Ferry Pool',
   intro: 'The gate lets you out onto the lip of a black flooded gallery, still as poured glass, and on the near shore three small charges wait to be taken across: an ocelot kit, a scarlet macaw fledgling, and a net of river-figs — while a reed coracle rides a vine pulley-line to a far ledge, and Gus reads the carving on the ferry post with the grim relish of a man who has done this the hard way.',
 
@@ -83,9 +115,9 @@ export default {
     };
 
     // where each charge draws
-    const nearSlots = { kit: [430, 690], bird: [560, 700], figs: [300, 720] };
-    const farSlots  = { kit: [1210, 470], bird: [1320, 470], figs: [1120, 486] };
-    const coracleCenter = pFar ? [1180, 604] : [560, 604];
+    const nearSlots = NEAR_SLOTS;
+    const farSlots  = FAR_SLOTS;
+    const coracleCenter = pFar ? CORACLE.far : CORACLE.near;
     const coracleSlot = [coracleCenter[0], coracleCenter[1] - 26];
 
     const drawCharge = (who) => {
@@ -99,6 +131,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_ferry_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#070d08"/>
           <stop offset="0.5" stop-color="#0e1c12"/>
@@ -130,20 +163,6 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/ferrypool.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/ferrypool.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- roots + arch overhead -->
-      <g stroke-linecap="round" fill="none">
-        <path d="M0 60 Q400 130 800 92 Q1200 130 1600 66" stroke="#3a2a1c" stroke-width="30"/>
-        <path d="M0 60 Q400 130 800 92 Q1200 130 1600 66" stroke="#4a3626" stroke-width="12" opacity="0.6"/>
-        <path d="M140 0 Q170 160 120 320" stroke="#4a3626" stroke-width="16"/>
-        <path d="M1470 0 Q1440 160 1492 330" stroke="#4a3626" stroke-width="16"/>
-      </g>
-      <g class="sway slow" fill="#16281a">
-        <path d="M360 96 q-14 66 6 120 q26 -52 8 -118 z"/>
-        <path d="M1240 108 q16 58 -6 116 q-24 -48 -6 -114 z"/>
-      </g>
-
-      <!-- the canopy light-shaft -->
-      <polygon points="700,10 900,10 1030,540 560,540" fill="url(#gd_ferry_beam)" class="moonbeam"/>
 
       <!-- the black pool -->
       <!-- pool surface supplied by the plate -->
@@ -152,45 +171,38 @@ export default {
         <path d="M120 680 Q800 654 1500 686" style="animation: ferry_shine 7s ease-in-out infinite; animation-delay:-2s"/>
         <path d="M260 764 Q800 740 1360 770" style="animation: ferry_shine 8s ease-in-out infinite; animation-delay:-4s"/>
       </g>
-      <ellipse cx="820" cy="612" rx="260" ry="20" fill="#9fd4a8" opacity="0.06" style="animation: ferry_shine 5s ease-in-out infinite"/>
 
-      <!-- near bank (left) -->
-      <path d="M0 640 Q300 616 660 660 L680 900 L0 900 Z" fill="url(#gd_ferry_ledge)"/>
-      <path d="M0 640 Q300 616 660 660" stroke="#5aa552" stroke-width="3" fill="none" opacity="0.3"/>
-
-      <!-- far ledge (right) -->
-      <path d="M1060 520 Q1320 500 1600 528 L1600 720 Q1320 700 1060 716 Z" fill="url(#gd_ferry_ledge)"/>
-      <path d="M1060 520 Q1320 500 1600 528" stroke="#5aa552" stroke-width="3" fill="none" opacity="0.3"/>
-
-      <!-- the pulley line + posts -->
-      <line x1="470" y1="548" x2="1210" y2="470" stroke="#4a3626" stroke-width="4"/>
-      <line x1="470" y1="558" x2="1210" y2="480" stroke="#5aa552" stroke-width="2" opacity="0.6"/>
-      <!-- near post + far post -->
-      <g>
-        <rect x="452" y="548" width="20" height="120" rx="4" fill="#4a3626"/>
-        <circle cx="462" cy="548" r="12" fill="none" stroke="#6b4f37" stroke-width="4"/>
-        ${cordHere ? `<g class="beckon"><path d="M436 596 q-10 14 2 26 q12 -6 8 -20" fill="none" stroke="#5aa552" stroke-width="4" stroke-linecap="round"/><circle cx="440" cy="624" r="4" fill="#3f7a37"/></g>` : ''}
+      <!-- the shores, the ledges and the far steps are painted in the plate (near shore left, far shore right) -->
+      <!-- the pulley line, strung between the two ferry posts -->
+      <line x1="${POST_N.x}" y1="${POST_N.top}" x2="${POST_F.x}" y2="${POST_F.top}" stroke="#4a3626" stroke-width="4"/>
+      <line x1="${POST_N.x}" y1="${POST_N.top + 8}" x2="${POST_F.x}" y2="${POST_F.top + 8}" stroke="#5aa552" stroke-width="2" opacity="0.6"/>
+      <!-- near post, driven into the near ledge -->
+      <g data-mount="floor">
+        ${shadow(POST_N.x, POST_N.base, 22, 5)}
+        <rect x="${POST_N.x - 10}" y="${POST_N.top}" width="20" height="${POST_N.base - POST_N.top}" rx="4" fill="#4a3626" stroke="#2a1e14" stroke-width="2"/>
+        <circle cx="${POST_N.x}" cy="${POST_N.top}" r="12" fill="none" stroke="#6b4f37" stroke-width="4"/>
+        ${cordHere ? `<g class="beckon"><path d="M${POST_N.x - 26} ${POST_N.top + 48} q-10 14 2 26 q12 -6 8 -20" fill="none" stroke="#5aa552" stroke-width="4" stroke-linecap="round"/><circle cx="${POST_N.x - 22}" cy="${POST_N.top + 76}" r="4" fill="#3f7a37"/></g>` : ''}
       </g>
-      <g>
-        <rect x="1200" y="470" width="20" height="120" rx="4" fill="#4a3626"/>
-        <circle cx="1210" cy="470" r="12" fill="none" stroke="#6b4f37" stroke-width="4"/>
-        <!-- ferry-post carving plate -->
-        <rect x="1240" y="512" width="150" height="70" rx="6" fill="#2e3a2c" stroke="#1c2718" stroke-width="3"/>
-        <path d="M1256 530 h118 M1256 544 h108 M1256 558 h116" stroke="#5aa552" stroke-width="2" opacity="0.5"/>
-        ${tokenHere ? `
+      <!-- far post, on the far ledge, with its carved plank nailed beside it -->
+      <g data-mount="floor">
+        ${shadow(POST_F.x, POST_F.base, 22, 5)}
+        <rect x="${POST_F.x - 10}" y="${POST_F.top}" width="20" height="${POST_F.base - POST_F.top}" rx="4" fill="#4a3626" stroke="#2a1e14" stroke-width="2"/>
+        <circle cx="${POST_F.x}" cy="${POST_F.top}" r="12" fill="none" stroke="#6b4f37" stroke-width="4"/>
+      </g>
+      ${panel({ ...CARVE, material: 'darkwood', mount: 'nails', rx: 4, body: `
+        <path d="M${CARVE.x + 16} ${CARVE.y + 20} h${CARVE.w - 32} M${CARVE.x + 16} ${CARVE.y + 34} h${CARVE.w - 42} M${CARVE.x + 16} ${CARVE.y + 48} h${CARVE.w - 34}" stroke="#9fd48a" stroke-width="2" opacity="0.55"/>` })}
+      ${tokenHere ? `
         <g class="beckon">
-          <circle cx="1210" cy="452" r="16" fill="#6b4f37" stroke="#d1a53f" stroke-width="2.5"/>
-          <path d="M1210 442 L1210 462 M1210 448 q-6 1 -8 -4 M1210 448 q6 1 8 -4 M1210 462 l-4 5 M1210 462 l4 5"
+          <circle cx="${POST_F.x}" cy="${POST_F.top - 18}" r="16" fill="#6b4f37" stroke="#d1a53f" stroke-width="2.5"/>
+          <path d="M${POST_F.x} ${POST_F.top - 28} L${POST_F.x} ${POST_F.top - 8} M${POST_F.x} ${POST_F.top - 22} q-6 1 -8 -4 M${POST_F.x} ${POST_F.top - 22} q6 1 8 -4 M${POST_F.x} ${POST_F.top - 8} l-4 5 M${POST_F.x} ${POST_F.top - 8} l4 5"
             stroke="#ffe08a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-          <text x="1210" y="437" text-anchor="middle" font-size="11" fill="#ffe08a" font-family="Palatino Linotype, Georgia, serif">P</text>
+          <text x="${POST_F.x}" y="${POST_F.top - 37}" text-anchor="middle" font-size="11" fill="#ffe08a" font-family="Palatino Linotype, Georgia, serif">P</text>
         </g>` : ''}
-      </g>
-
       <!-- the coracle (photoreal reed boat) -->
       <g>
         <ellipse cx="${coracleCenter[0]}" cy="${coracleCenter[1] + 10}" rx="86" ry="18" fill="#0a1a12" opacity="0.6"/>
         <image href="art/ferry-coracle.webp" x="${coracleCenter[0] - 92}" y="${coracleCenter[1] - 46}" width="184" height="127" preserveAspectRatio="xMidYMid meet"/>
-        <line x1="${coracleCenter[0]}" y1="${coracleCenter[1] - 14}" x2="${pFar ? 1210 : 462}" y2="${pFar ? 476 : 554}" stroke="#5aa552" stroke-width="2"/>
+        <line x1="${coracleCenter[0]}" y1="${coracleCenter[1] - 14}" x2="${pFar ? POST_F.x : POST_N.x}" y2="${pFar ? POST_F.top + 8 : POST_N.top + 8}" stroke="#5aa552" stroke-width="2"/>
         <!-- the ferryman marker (you) -->
         <circle cx="${coracleCenter[0] + (pFar ? 40 : -40)}" cy="${coracleCenter[1] - 18}" r="7" fill="#9ce08a" opacity="0.9" class="glow"/>
       </g>
@@ -200,16 +212,13 @@ export default {
       ${drawCharge('kit')}
       ${drawCharge('bird')}
 
-      <!-- stairs up from the far ledge -->
-      <g>
-        <path d="M1440 520 L1600 520 L1600 380 L1520 380 L1520 448 L1440 448 Z" fill="${ferried ? '#0a140d' : '#243020'}" stroke="#1c2718" stroke-width="3"/>
+      <!-- the far steps (painted): a curtain of strangler vine across them until the crossing is done -->
+      <g data-mount="wall">
         ${ferried
-          ? `<g stroke="#5aa552" stroke-width="4" opacity="0.6">
-               <line x1="1456" y1="500" x2="1584" y2="500"/><line x1="1470" y1="470" x2="1584" y2="470"/><line x1="1470" y1="440" x2="1560" y2="440"/><line x1="1470" y1="410" x2="1560" y2="410"/></g>
-             <text x="1520" y="360" text-anchor="middle" font-size="14" fill="#9ce08a" class="flicker" font-family="Palatino Linotype, Georgia, serif">the stairs rise</text>`
-          : `<text x="1520" y="470" text-anchor="middle" font-size="12" fill="#5c6a4c" font-family="Palatino Linotype, Georgia, serif">sealed</text>`}
+          ? `<text x="${STAIRS.x + STAIRS.w / 2}" y="${STAIRS.y - 10}" text-anchor="middle" font-size="14" fill="#9ce08a" class="flicker" font-family="Palatino Linotype, Georgia, serif">the stairs rise</text>`
+          : `${Array.from({ length: 9 }, (_, i) => `<path d="M${STAIRS.x + 10 + i * 24} ${STAIRS.y} q${i % 2 ? 10 : -10} ${STAIRS.h / 2} 0 ${STAIRS.h}" stroke="#2f4a26" stroke-width="7" fill="none" stroke-linecap="round"/>`).join('')}
+             <text x="${STAIRS.x + STAIRS.w / 2}" y="${STAIRS.y - 10}" text-anchor="middle" font-size="12" fill="#8fa37a" font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#05100a" stroke-width="3">sealed</text>`}
       </g>
-
       <!-- fireflies -->
       <g style="animation: ferry_fly1 11s ease-in-out infinite"><circle cx="900" cy="300" r="4" fill="#ffe08a" class="glow fast"/></g>
       <g style="animation: ferry_fly2 13s ease-in-out infinite"><circle cx="1080" cy="380" r="3.5" fill="#ffe08a" class="glow fast"/></g>
@@ -232,10 +241,10 @@ export default {
     // --- the vine cord (near post) ---
     if (!f.ferrypool_cordTaken) {
       spots.push({
-        id: 'cord', x: 410, y: 588, w: 90, h: 90, label: 'A coiled vine cord',
+        id: 'cord', x: POST_N.x - 70, y: POST_N.top + 30, w: 90, h: 80, label: 'A coiled vine cord',
         onInteract(game) {
           game.setFlag('ferrypool_cordTaken');
-          game.addItem('vine_cord', { from: { x: 440, y: 612 } });
+          game.addItem('vine_cord', { from: { x: POST_N.x - 22, y: POST_N.top + 62 } });
           game.say('You coil the coracle\'s spare tow-line over your shoulder — a double-braid of liana, stronger than rope has any right to be. "Take everything that is not nailed down," Gus advises. "Advocate\'s privilege. Also, general good practice."');
           game.refreshScene();
         },
@@ -244,7 +253,7 @@ export default {
 
     // --- the ferry-post carving (rules of capacity) ---
     spots.push({
-      id: 'postcarving', x: 1236, y: 508, w: 160, h: 80, label: 'The ferry-post carving',
+      id: 'postcarving', x: CARVE.x - 4, y: CARVE.y - 6, w: CARVE.w + 8, h: CARVE.h + 12, label: 'The ferry-post carving',
       onInteract(game) {
         const html = `<div class="leaf-tablet carved"><div class="leaf-title">Carved on the ferry post</div>
           "The coracle bears the ferryman and ONE charge. The Court counts what arrives."</div>`;
@@ -283,21 +292,17 @@ export default {
     const place = (who) => {
       const p = pos(f, who);
       if (p === 'coracle') {
-        const cc = pFar ? [1180, 578] : [560, 578];
-        return [cc[0] - 44, cc[1] - 40, 88, 90];
+        const c = pFar ? CORACLE.far : CORACLE.near;
+        return [c[0] - 44, c[1] - 26 - 40, 88, 90];
       }
       const b = bank(f, who);
-      if (b === 'far') {
-        const s = { kit: [1210, 470], bird: [1320, 470], figs: [1120, 486] }[who];
-        return [s[0] - 44, s[1] - 44, 92, 96];
-      }
-      const s = { kit: [430, 690], bird: [560, 700], figs: [300, 720] }[who];
-      return [s[0] - 44, s[1] - 44, 92, 100];
+      const s = (b === 'far' ? FAR_SLOTS : NEAR_SLOTS)[who];
+      return [s[0] - 44, s[1] - 44, 88, 92];
     };
     ['kit', 'bird', 'figs'].forEach(who => { const [x, y, w, h] = place(who); chargeSpot(who, x, y, w, h); });
 
     // --- the coracle / pulley: cross ---
-    const cc = pFar ? [1180, 604] : [560, 604];
+    const cc = pFar ? CORACLE.far : CORACLE.near;
     spots.push({
       id: 'coracle', x: cc[0] - 90, y: cc[1] - 50, w: 180, h: 110, label: 'The coracle',
       onInteract(game) { crossRiver(game); },
@@ -306,7 +311,7 @@ export default {
     // --- the far-bank token (reachable only from the far bank) ---
     if (!(state.journal || []).some(e => e.id === 'token2')) {
       spots.push({
-        id: 'token2', x: 1180, y: 430, w: 64, h: 60, label: 'A disc on the far post',
+        id: 'token2', x: POST_F.x - 32, y: POST_F.top - 60, w: 64, h: 60, label: 'A disc on the far post',
         onInteract(game) {
           if (!playerFar(game.state.flags)) {
             game.say('A carved disc hangs from the far-bank post, a mantis face just catching the light. It is on the wrong side of a great deal of black water. You will have to be standing over there to take it.');
@@ -321,7 +326,7 @@ export default {
 
     // --- the stairs (exit) ---
     spots.push({
-      id: 'stairs', x: 1500, y: 380, w: 100, h: 160, label: ferried ? 'The far stairs' : 'The sealed stairs',
+      id: 'stairs', x: STAIRS.x, y: STAIRS.y, w: STAIRS.w, h: STAIRS.h, label: ferried ? 'The far stairs' : 'The sealed stairs',
       onInteract(game) {
         if (!game.getFlag('ferrypool_ferried')) {
           game.say('Stairs climb from the far ledge into a grove of painted trunks — but the way is sealed until all three charges stand safe on the far bank, delivered whole. The Court counts what arrives, and it is still counting.');
@@ -423,12 +428,12 @@ function crossRiver(game) {
   const left = ['kit', 'bird', 'figs'].filter(w => pos(f, w) !== 'coracle' && bank(f, w) === departed);
   const has = (w) => left.includes(w);
 
-  if (has('kit') && has('bird')) {
+  if (has(EATS[0][0]) && has(EATS[0][1])) {
     game.playSfx('wrong');
     game.say('You push off — and the kit\'s ears flatten, its whole body pouring toward the fledgling. You haul the coracle back to the bank just in time, heart going like a trapped moth. The Court counts what ARRIVES, and a half-eaten macaw arrives as nothing.');
     return;
   }
-  if (has('bird') && has('figs')) {
+  if (has(EATS[1][0]) && has(EATS[1][1])) {
     game.playSfx('wrong');
     game.say('The line goes taut — and behind you the fledgling is already burying its beak in the fig-net. You reverse hard and scatter it off before it can gorge. Leave the bird alone with temptation and there will be nothing to ferry but an empty net.');
     return;

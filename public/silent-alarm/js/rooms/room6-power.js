@@ -1,23 +1,30 @@
 // SCENE 6 — The Power Room / The Breakers (5-lever pattern) + TWIST reveal.
-// Each side's breaker pattern is drawn on the OTHER side's schematic.
-//   Hand's pattern: UP DOWN UP UP DOWN   Eye's pattern: DOWN UP UP DOWN UP
+// SPLIT KNOWLEDGE. The OTHER side's schematic shows the LOAD on each of your
+// five circuits; YOUR placard holds the rule: trip (DOWN) any circuit drawing
+// MORE than 30 A, leave the rest UP. (A load of exactly 30 stays UP.)
+//   Hand loads 22 35 48 9 30  -> UP DOWN DOWN UP UP
+//   Eye  loads 41 33 12 27 38 -> DOWN DOWN UP UP DOWN
 // The Eye (P2) lifts vault-pin e (position 5, digit 1).
 // On solve, Gus surfaces with the double-cross reveal (the Client's remote trip).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK, panel } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'pow';
 // this side's own correct pattern (true = UP / open)
-const MY_PATTERN = { p1: [true, false, true, true, false], p2: [false, true, true, false, true] };
+const LIMIT = 30;
+const LOADS = { p1: [22, 35, 48, 9, 30], p2: [41, 33, 12, 27, 38] };
+const MY_PATTERN = { p1: LOADS.p1.map(a => a <= LIMIT), p2: LOADS.p2.map(a => a <= LIMIT) };
 // the schematic shown on THIS screen is the OTHER side's pattern (to relay)
-function schematicFor(role) { return role === 'p1' ? MY_PATTERN.p2 : MY_PATTERN.p1; }
-const fmt = (arr) => arr.map(o => o ? 'UP' : 'DOWN').join(' · ');
+function schematicFor(role) { return role === 'p1' ? LOADS.p2 : LOADS.p1; }
+const fmt = (arr) => arr.map(a => `${a}A`).join(' · ');
 
 function isCut(state) { return !!state.flags.power_cut; }
 
 export default {
   id: 'power',
+  solution: role => MY_PATTERN[role].map(o => (o ? 'UP' : 'DOWN')).join(' '),
   get title() { return `${roleName()} · The Power Room`; },
   get intro() {
     return isHand()
@@ -57,12 +64,16 @@ export default {
       </g>
 
       <!-- the schematic (OTHER side's breaker pattern) -->
-      <g>
-        <rect x="1090" y="150" width="430" height="150" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
-        <text x="1305" y="192" text-anchor="middle" font-size="14" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${otherRoleName().toUpperCase()} — BREAKER SCHEMATIC</text>
+      ${dock({ x: 1090, y: 150, w: 430, h: 150 }, `
+        <text x="1305" y="192" text-anchor="middle" font-size="14" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${otherRoleName().toUpperCase()} — CIRCUIT LOADS</text>
         <text x="1305" y="244" text-anchor="middle" font-size="19" fill="${isHand() ? '#e8c85a' : '#eafff2'}" font-family="Consolas, monospace">${fmt(sch)}</text>
-        <text x="1305" y="278" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">breakers 1–5 · read to your partner</text>
-      </g>
+        <text x="1305" y="278" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">loads on their 1–5 · read to your partner</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
+
+      <!-- your own breaker placard: the rule (the loads are on your partner's screen) -->
+      ${panel({ x: 230, y: 470, w: 300, h: 110, material: 'iron', mount: 'bolts', rx: 6, body: `
+        <text x="380" y="504" text-anchor="middle" font-size="13" fill="#e8e2d4" font-family="Consolas, monospace" letter-spacing="1">BREAKER PLACARD</text>
+        <text x="380" y="530" text-anchor="middle" font-size="13" fill="#ffcf8a" font-family="Consolas, monospace">TRIP (DOWN) ANY CIRCUIT</text>
+        <text x="380" y="552" text-anchor="middle" font-size="13" fill="#ffcf8a" font-family="Consolas, monospace">DRAWING MORE THAN 30 A</text>` })}
 
       ${cut ? `<text x="800" y="800" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">the alarm ring is dead — the vault is one number away</text>` : ''}
 
@@ -82,14 +93,14 @@ export default {
     const cut = isCut(state);
 
     spots.push({
-      id: 'schematic', x: 1090, y: 150, w: 430, h: 150, label: `${otherRoleName()} schematic`,
+      id: 'schematic', ...DOCK, label: `${otherRoleName()} schematic`,
       onInteract(game) {
         const sch = schematicFor(getRole());
-        const html = `<div class="console-card"><div class="console-title">${otherRoleName()} breaker schematic</div>
+        const html = `<div class="console-card"><div class="console-title">${otherRoleName()} — circuit loads</div>
           <p style="font-size:18px;color:#eafff2;text-align:center;letter-spacing:2px;">${fmt(sch)}</p>
-          <p style="text-align:center;color:#7f8a99;">breakers 1 → 5</p></div>
-          <div class="relay">This is your <strong>partner's</strong> breaker pattern. Read them the five in order; ask them to read you yours.</div>`;
-        game.journal.add('note_sch6', { title: `${otherRoleName()} breaker schematic`, category: 'note', html });
+          <p style="text-align:center;color:#7f8a99;">their breakers 1 → 5</p></div>
+          <div class="relay">These are the loads on your <strong>partner's</strong> circuits. Their placard says which to trip. Read them the five in order; ask them for yours.</div>`;
+        game.journal.add('note_sch6', { title: `${otherRoleName()} circuit loads`, category: 'note', html });
         game.dialog({ title: 'The Schematic', html });
       },
     });
@@ -99,16 +110,17 @@ export default {
       onInteract(game) { game.say(cut ? 'The outer ring is dead. Only the vault\'s inner lock is left between you and the bird.' : 'A live alarm ring around the whole vault. Cut it with the breakers and the door is next.'); },
     });
 
-    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_e')) {
-      spots.push({
-        id: 'pin_e', x: 1040, y: 590, w: 70, h: 90, label: 'A pin in the firmware dump',
-        onInteract(game) {
-          game.journal.add('pin_e', { title: 'Breaker firmware dump', category: 'sun', sun: { rays: 5, letter: '1' } });
-          game.say('The breaker panel\'s firmware dump gives up one more secret: position 5, digit 1 — your third vault-pin. The Hand holds the other three.');
-          game.refreshScene();
-        },
-      });
-    }
+
+    spots.push({
+      id: 'placard', x: 230, y: 470, w: 300, h: 110, label: 'The breaker placard',
+      onInteract(game) {
+        const html = `<div class="console-card"><div class="console-title">Breaker placard</div>
+          <p>Trip (DOWN) any circuit drawing <strong>more than 30 A</strong>. Leave the rest UP.</p></div>
+          <div class="relay">The loads on <strong>your</strong> five circuits are on your partner's screen.</div>`;
+        game.journal.add('note_placard6', { title: 'Breaker placard — the 30 A rule', category: 'note', html });
+        game.dialog({ title: 'The Placard', html });
+      },
+    });
 
     if (!cut) {
       spots.push({
@@ -125,15 +137,27 @@ export default {
       });
     }
 
+    // collectibles last, so they sit on top of the machine they are in
+    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_e')) {
+      spots.push({
+        id: 'pin_e', x: 1040, y: 590, w: 70, h: 90, label: 'A pin in the firmware dump',
+        onInteract(game) {
+          game.journal.add('pin_e', { title: 'Breaker firmware dump', category: 'sun', sun: { rays: 5, letter: '1' } });
+          game.say('The breaker panel\'s firmware dump gives up one more secret: position 5, digit 1 — your third vault-pin. The Hand holds the other three.');
+          game.refreshScene();
+        },
+      });
+    }
+
     return spots;
   },
 
   hintContext() { return getRole(); },
   hints() {
     return [
-      { text: 'The pattern for your breakers is on your partner\'s schematic, not yours. So theirs is on yours. Trade patterns.', cost: 60 },
-      { text: 'Five breakers, each UP or DOWN. Read the five on your schematic to your partner, in order; set the five they read you.', cost: 120 },
-      { text: isHand() ? 'Your breakers: UP, DOWN, UP, UP, DOWN.' : 'Your breakers: DOWN, UP, UP, DOWN, UP.', cost: 240 },
+      { text: 'Your placard says which circuits to trip; the loads on your circuits are on your partner\'s screen. Trade loads.', cost: 60 },
+      { text: 'Ask for your five loads. Any circuit drawing MORE than 30 A goes DOWN; the rest stay UP — and 30 exactly is not more than 30.', cost: 120 },
+      { text: isHand() ? 'Your breakers: UP, DOWN, DOWN, UP, UP.' : 'Your breakers: DOWN, DOWN, UP, UP, DOWN.', cost: 240 },
     ];
   },
 };
@@ -149,8 +173,8 @@ function openBreakers(game) {
     render(body, api) {
       body.innerHTML = `
         <div class="puzzle-hero pz-breakers"></div>
-        <p class="puzzle-desc">Throw each of the five breakers UP or DOWN to match your pattern —
-        which is drawn on your partner's schematic. Click a breaker to flip it.</p>
+        <p class="puzzle-desc">Your placard: <strong>trip (DOWN) any circuit drawing more than 30 A</strong>; leave the rest UP.
+        The loads on your five are on your partner's screen. Click a breaker to flip it.</p>
         <div class="puzzle-row" id="pow-levers"></div>
         <div class="puzzle-row"><button class="btn btn-primary" id="pow-cut">Drop the Ring</button></div>
         <div class="puzzle-feedback"></div>`;

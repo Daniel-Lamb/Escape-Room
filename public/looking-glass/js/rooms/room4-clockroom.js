@@ -6,15 +6,26 @@
 
 import { getRole, isWaking, sideName, otherSideName } from '../role.js';
 import { defs, backdrop, sideTag, sconce, tint } from '../glasskit.js';
+import { panel } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'clock';
 const SHOWN = { p1: '4608', p2: '1725' };     // this clock's reading = partner's answer, reversed
 const MY_ANSWER = { p1: '5271', p2: '8064' };  // this side's own code
 
+// The longcase clock is in the plate (right of centre): its dial, its glass
+// pendulum door, the bob low in the case. The side tag moves left, off the dial.
+const DIAL = { cx: 912, cy: 138 };
+const FACE = { x: 850, y: 78, w: 124, h: 150 };
+const CASE = { x: 882, y: 269, w: 113, h: 400 };
+const SETPLATE = { x: 886, y: 300, w: 104, h: 80 };
+const SET_SPOT = { x: 882, y: 269, w: 113, h: 250 };
+const SHARD = { x: 905, y: 545, w: 95, h: 100 };
+
 function done(state) { return !!state.flags.clockroom_done; }
 
 export default {
   id: 'clockroom',
+  lintStates: [{ label: 'solved', flags: { clockroom_done: true } }],
   get title() { return `${sideName()} · The Clock Room`; },
   get intro() {
     return 'A long room full of clocks, all stopped at different wrong hours. One tall clock still glows a number in its face — but this is the mirror\'s house, and the mirror runs numbers backwards. Read yours to your partner; they must turn it about. And so must you, with theirs.';
@@ -29,35 +40,32 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
-      ${sconce(SLUG, 240, 300)}
+      ${sconce(SLUG, 750, 300)}
 
-      <!-- other stopped clocks (flavor) -->
-      <g opacity="0.5">
-        ${[[430, 250], [1230, 250], [1360, 470]].map(([x, y]) =>
-          `<circle cx="${x}" cy="${y}" r="46" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="4"/>
-           <line x1="${x}" y1="${y}" x2="${x + 24}" y2="${y - 10}" stroke="${t.accentDim}" stroke-width="3"/>
-           <line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 26}" stroke="${t.accentDim}" stroke-width="3"/>`).join('')}
+      <!-- the tall clock on the plate: a lit aperture across its dial shows the number -->
+      <g data-mount="inset">
+        <ellipse data-fx="light" cx="${DIAL.cx}" cy="${DIAL.cy + 20}" rx="56" ry="30" fill="${isWaking() ? 'rgba(255,207,138,0.16)' : 'rgba(201,204,214,0.14)'}" class="glow"/>
+        <rect x="${DIAL.cx - 52}" y="${DIAL.cy + 4}" width="104" height="36" rx="5" fill="#0c0906" stroke="${t.accentDim}" stroke-width="2"/>
+        <text x="${DIAL.cx}" y="${DIAL.cy + 31}" text-anchor="middle" font-size="26" fill="${t.accent}" font-family="Consolas, monospace" letter-spacing="3">${shown}</text>
       </g>
 
-      <!-- the tall glowing clock -->
-      <g>
-        <rect x="700" y="230" width="200" height="560" rx="14" fill="${t.wall1}" stroke="${t.accentDim}" stroke-width="6"/>
-        <circle cx="800" cy="330" r="72" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="4"/>
-        <text x="800" y="342" text-anchor="middle" font-size="40" fill="${t.accent}" font-family="Consolas, monospace" letter-spacing="4">${shown}</text>
-        <rect x="740" y="470" width="120" height="200" rx="6" fill="${fin ? '#0a0810' : t.panel}" stroke="${t.accentDim}" stroke-width="3"/>
-        ${fin
-          ? `<text x="800" y="580" text-anchor="middle" font-size="16" fill="${t.accent}" font-family="Georgia, serif">it strikes,</text><text x="800" y="602" text-anchor="middle" font-size="16" fill="${t.accent}" font-family="Georgia, serif">and opens</text>`
-          : `<text x="800" y="560" text-anchor="middle" font-size="14" fill="#9fa8bd" font-family="Consolas, monospace">SET THE HOUR</text>
-             <text x="800" y="596" text-anchor="middle" font-size="26" fill="${t.accent}" font-family="Consolas, monospace" letter-spacing="4">${state.flags.clockroom_set || '____'}</text>`}
-      </g>
+      ${fin ? `
+      <!-- the case door swung out -->
+      <g data-mount="wall">
+        <rect x="${CASE.x}" y="${CASE.y}" width="${CASE.w}" height="${CASE.h}" fill="#040306"/>
+        <rect data-fx="light" x="${CASE.x + 8}" y="${CASE.y + 8}" width="${CASE.w - 16}" height="${CASE.h - 16}" fill="${isWaking() ? 'rgba(255,207,138,0.07)' : 'rgba(159,168,189,0.09)'}"/>
+        <path d="M${CASE.x + CASE.w} ${CASE.y} L${CASE.x + CASE.w + 44} ${CASE.y - 14} L${CASE.x + CASE.w + 44} ${CASE.y + CASE.h + 16} L${CASE.x + CASE.w} ${CASE.y + CASE.h} Z" fill="url(#sk_darkwood)" stroke="#0b0703" stroke-width="3"/>
+      </g>` : panel({ ...SETPLATE, material: 'brass', mount: 'bolts', rx: 4, body: `
+        <text x="${SETPLATE.x + SETPLATE.w / 2}" y="${SETPLATE.y + 24}" text-anchor="middle" font-size="12" fill="#2a1d05" font-family="Consolas, monospace">SET THE HOUR</text>
+        <text x="${SETPLATE.x + SETPLATE.w / 2}" y="${SETPLATE.y + 60}" text-anchor="middle" font-size="22" fill="#2a1d05" font-family="Consolas, monospace" letter-spacing="3">${state.flags.clockroom_set || '____'}</text>` })}
 
       ${markHere ? `
       <g class="beckon">
-        <polygon points="1030,700 1075,692 1082,736 1060,770 1028,760 1020,724" fill="rgba(201,204,214,0.10)" stroke="#c9ccd6" stroke-width="2.5"/>
-        <text x="1050" y="736" text-anchor="middle" font-size="18" fill="#dfe6f2" font-family="Consolas, monospace" font-weight="bold">4</text>
+        <polygon points="952,622 958,572 978,564 990,590 984,624" fill="rgba(201,204,214,0.14)" stroke="#c9ccd6" stroke-width="2.5"/>
+        <text x="972" y="604" text-anchor="middle" font-size="16" fill="#dfe6f2" font-family="Consolas, monospace" font-weight="bold">4</text>
       </g>` : ''}
 
-      ${sideTag()}
+      ${sideTag(560)}
     </svg>`;
   },
 
@@ -66,7 +74,7 @@ export default {
     const role = getRole();
 
     spots.push({
-      id: 'face', x: 700, y: 260, w: 200, h: 150, label: 'The glowing clock face',
+      id: 'face', ...FACE, label: 'The glowing clock face',
       onInteract(game) {
         const shown = SHOWN[role];
         const html = `<div class="cipher"><div class="cipher-title">The clock face</div>
@@ -79,7 +87,7 @@ export default {
 
     if (role === 'p2' && !state.journal.some(e => e.id === 'shard_l')) {
       spots.push({
-        id: 'shard_l', x: 1010, y: 690, w: 90, h: 110, label: 'A mirror-shard',
+        id: 'shard_l', ...SHARD, label: 'A mirror-shard',
         onInteract(game) {
           game.journal.add('shard_l', { title: 'Clock Room — behind the pendulum', category: 'sun', sun: { rays: 4, letter: 'L' } });
           game.say('Caught behind a dead pendulum: a mirror-shard, numbered 4, letter L. Kept.');
@@ -90,12 +98,12 @@ export default {
 
     if (!done(state)) {
       spots.push({
-        id: 'set', x: 740, y: 470, w: 120, h: 200, label: 'Set the hour',
+        id: 'set', ...SET_SPOT, label: 'Set the hour',
         onInteract(game) { openClock(game); },
       });
     } else {
       spots.push({
-        id: 'out', x: 700, y: 230, w: 200, h: 560, label: 'The clock-case passage',
+        id: 'out', ...SET_SPOT, label: 'The clock-case passage',
         onInteract(game) {
           if (role === 'p2' && !game.journal.has('shard_l')) { game.say('A shard sits behind the pendulum — take it before you go.'); return; }
           game.completeRoom({ delay: 600 });

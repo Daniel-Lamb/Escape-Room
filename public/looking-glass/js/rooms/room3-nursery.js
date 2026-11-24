@@ -1,20 +1,26 @@
-// SCENE 3 — The Nursery (alignment; the sequence is on the partner's card).
-// Set the four music-box figures to the animals drawn on the OTHER side's card.
+// SCENE 3 — The Nursery (alignment through the mirror).
+// The OTHER side's card shows your four figures as they stand in THEIR nursery —
+// and their nursery is your mirror image, so the card reads right-to-left for
+// you. The plate on your own music box says so. Reverse what you are read.
 //   Waking figures: Owl, Hare, Wren, Fox     Glass figures: Wren, Owl, Fox, Hare
 // Waking (P1) finds mirror-shard V (3).
 
 import { getRole, isWaking, sideName, otherSideName } from '../role.js';
 import { defs, backdrop, sideTag, sconce, tint } from '../glasskit.js';
+import { dock, DOCK, shadow } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'nursery';
 const ANIMALS = ['Owl', 'Fox', 'Hare', 'Wren'];
 const TARGET = { p1: [0, 2, 3, 1], p2: [3, 0, 1, 2] };   // this side's own correct figures
-function cardFor(role) { return role === 'p1' ? TARGET.p2 : TARGET.p1; }  // shown here = partner's target
+// shown here = the partner's figures as they stand in THIS (mirrored) room: reversed
+function cardFor(role) { return [...(role === 'p1' ? TARGET.p2 : TARGET.p1)].reverse(); }
 
 function done(state) { return !!state.flags.nursery_done; }
 
 export default {
   id: 'nursery',
+  solution: role => TARGET[role].map(i => ANIMALS[i]),
+  lintStates: [{ label: 'solved', flags: { nursery_done: true } }],
   get title() { return `${sideName()} · The Nursery`; },
   get intro() {
     return 'A child\'s nursery, dust on the rocking-horse, a music box with four little carved figures that turn. It will play — and unlock the toy-cupboard passage — only when the figures face the right way. That order is painted on the card in the other room, not this one.';
@@ -31,18 +37,15 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
-      ${sconce(SLUG, 240, 300)}
+      ${sconce(SLUG, 160, 392, 'stand')}
 
-      <!-- rocking horse (flavor) -->
-      <g opacity="0.8">
-        <path d="M200 720 q60 -50 150 0" fill="none" stroke="${t.accentDim}" stroke-width="6"/>
-        <rect x="250" y="640" width="60" height="60" rx="10" fill="${t.wall1}"/>
-        <path d="M310 650 q30 -20 40 -6 l-8 20 z" fill="${t.wall1}"/>
-      </g>
-
-      <!-- the music box + four figures -->
-      <g>
+      <!-- the music box + four figures, on its little table, with its plate -->
+      <g data-mount="table">
+        ${shadow(800, 770, 280, 16)}
+        ${[600, 1000].map(x => `<rect x="${x - 8}" y="680" width="16" height="90" rx="3" fill="${t.wall1}" stroke="${t.accentDim}" stroke-width="2"/>`).join('')}
         <rect x="560" y="560" width="480" height="120" rx="12" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="5"/>
+        <rect x="660" y="686" width="280" height="30" rx="4" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="1.5"/>
+        <text x="800" y="706" text-anchor="middle" font-size="12.5" fill="#2a1d05" font-family="Georgia, serif" font-style="italic">"what stands at your left stands at the glass's right"</text>
         ${f.map((v, i) => `
           <g transform="translate(${640 + i * 110} 560)">
             <circle r="42" fill="${fin ? 'rgba(255,207,138,0.10)' : '#1a1626'}" stroke="${t.accentDim}" stroke-width="3"/>
@@ -51,18 +54,16 @@ export default {
           </g>`).join('')}
       </g>
 
-      <!-- the partner's card -->
-      <g>
-        <rect x="1120" y="170" width="380" height="230" rx="8" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="3"/>
-        <text x="1310" y="212" text-anchor="middle" font-size="15" fill="${t.accentDim}" font-family="Georgia, serif" letter-spacing="1">${otherSideName().toUpperCase()} — MUSIC-BOX CARD</text>
+      <!-- the partner's card (as their figures stand in THIS room) — in your pocket-book -->
+      ${dock({ x: 1120, y: 170, w: 380, h: 230 }, `
+        <text x="1310" y="212" text-anchor="middle" font-size="15" fill="#4a3a22" font-family="Georgia, serif" letter-spacing="1">${otherSideName().toUpperCase()} — AS THEY STAND HERE</text>
         ${card.map((v, i) => `
           <g transform="translate(${1180 + i * 84} 300)">
-            <circle r="32" fill="#1a1626" stroke="${t.accentDim}" stroke-width="2.5"/>
-            <text y="6" text-anchor="middle" font-size="14" fill="${t.accent}" font-family="Georgia, serif">${ANIMALS[v]}</text>
-            <text y="52" text-anchor="middle" font-size="12" fill="#9fa8bd" font-family="Consolas, monospace">${i + 1}</text>
+            <circle r="32" fill="#efe6cf" stroke="#6b5a3a" stroke-width="2.5"/>
+            <text y="6" text-anchor="middle" font-size="14" fill="#26221a" font-family="Georgia, serif">${ANIMALS[v]}</text>
+            <text y="52" text-anchor="middle" font-size="12" fill="#6b5a3a" font-family="Consolas, monospace">${i + 1}</text>
           </g>`).join('')}
-        <text x="1310" y="384" text-anchor="middle" font-size="12" fill="#9fa8bd" font-family="Consolas, monospace">read these four to your partner</text>
-      </g>
+        <text x="1310" y="384" text-anchor="middle" font-size="12" fill="#6b5a3a" font-family="Consolas, monospace">read these four to your partner, 1 to 4</text>`, { kind: 'notebook', title: 'POCKET-BOOK' })}
 
       ${markHere ? `
       <g class="beckon">
@@ -79,12 +80,12 @@ export default {
     const role = getRole();
 
     spots.push({
-      id: 'card', x: 1120, y: 170, w: 380, h: 230, label: `${otherSideName()} music-box card`,
+      id: 'card', ...DOCK, label: `${otherSideName()}'s figures, as they stand here`,
       onInteract(game) {
         const card = cardFor(role);
         const html = `<div class="cipher"><div class="cipher-title">${otherSideName()} — music-box card</div>
           <p style="text-align:center;font-size:20px;color:#f2ecdb;">${card.map(v => ANIMALS[v]).join(' &nbsp; ')}</p></div>
-          <div class="relay">These four are your <strong>partner's</strong> figures, in order 1–4. Read them across.</div>`;
+          <div class="relay">These are your <strong>partner's</strong> four figures as they stand in <em>this</em> room — but this room is their mirror. Read them across, 1 to 4; their music-box plate tells them what to do with it.</div>`;
         game.journal.add('note_boxcard', { title: `${otherSideName()} music-box card`, category: 'note', html });
         game.dialog({ title: 'The Music-Box Card', html });
       },
@@ -122,8 +123,8 @@ export default {
   hintContext() { return getRole(); },
   hints() {
     return [
-      { text: 'The order your four figures should face is on your partner\'s card, not yours. So theirs is on yours. Trade the four animals.', cost: 60 },
-      { text: 'Read the four animals on your card to your partner, in order 1–4. Set the four they read you.', cost: 120 },
+      { text: 'Your partner\'s card shows your four figures — as they stand in THEIR room. Read the plate on your own music box.', cost: 60 },
+      { text: 'Their room is your mirror: what stands at your left stands at their right. Have them read you their card 1 to 4, then set it backwards — their 4th is your 1st.', cost: 120 },
       { text: isWaking() ? 'Waking figures: Owl, Hare, Wren, Fox.' : 'Glass figures: Wren, Owl, Fox, Hare.', cost: 240 },
     ];
   },

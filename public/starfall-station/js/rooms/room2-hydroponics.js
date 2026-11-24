@@ -4,6 +4,7 @@
 // check; loop fills green on success and the grow racks bloom.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   uv_lamp: {
@@ -29,6 +30,25 @@ const GRID = [
   [{ t: 'L', need: null }, { t: 'S', need: null }, { t: 'L', need: null }, { t: 'S', need: null }],
 ];
 const ROWS = 3, COLS = 4;
+const SHEARED = { r: 1, c: 2 };            // the centre coupling the service note warns about
+
+// Layout — read off the plate (art/hydroponics.webp). Shared with hotspots().
+const RACK_L = { x: 0, y: 40, w: 440, h: 700, tiers: [220, 470, 700] };
+const RACK_R = { x: 1200, y: 226, w: 340, h: 330, tiers: [330, 430, 540] };
+const LAMP = { x: 110, y: 300, w: 260 };
+const TANK = { x: 800, y: 340, w: 104, h: 270 };
+const PIPE = { x: 586, y: 450, w: 168, h: 180 };
+const NOTE = { x: 594, y: 268, w: 150, h: 92 };
+const IRIS = { cx: 1066, cy: 338, r: 92 };
+const R = {
+  racks:  { x: 230, y: 360, w: 210, h: 380 },
+  racksR: { x: 1200, y: 230, w: 340, h: 320 },
+  shard2: { x: TANK.x + 20, y: TANK.y - 44, w: 64, h: 70 },
+  pipes:  { x: PIPE.x - 6, y: PIPE.y - 6, w: PIPE.w + 12, h: PIPE.h + 12 },
+  note:   { x: NOTE.x - 4, y: NOTE.y - 6, w: NOTE.w + 8, h: NOTE.h + 12 },
+  lamp:   { x: LAMP.x, y: LAMP.y - 24, w: LAMP.w, h: 70 },
+  iris:   { x: IRIS.cx - 110, y: IRIS.cy - 110, w: 220, h: 220 },
+};
 const INLET = { r: 1, c: 0, enter: 3 };   // flow enters (1,0) from the west
 const OUTLET = { r: 1, c: 3, exit: 1 };   // must leave (1,3) to the east
 
@@ -60,6 +80,15 @@ function trace(rots) {
 
 export default {
   id: 'hydroponics',
+  solution: () => {
+    // the route the tiles' own correct turns make (the lint flags it if they no longer reach the outlet)
+    const { solved, path } = trace(GRID.map(row => row.map(t => t.need ?? 0)));
+    if (!solved) return ['the needed turns do not reach the outlet'];
+    const cells = [...path].map(k => k.split(',').map(Number));
+    const words = new Set(cells.slice(1).map(([r, c], i) => (r < cells[i][0] ? 'up' : r > cells[i][0] ? 'down' : c > cells[i][1] ? 'right' : 'left')));
+    return [...words];
+  },
+  lintStates: [{ label: 'flowing', flags: { hydro_flow: true } }],
   title: 'Hydroponics Ring',
   intro: 'The ring section curves away in both directions, racked floor to ceiling with dead brown rows. It smells of old soil and older regret. "The nutrient loop froze during the evac," says Gus. "Fix the flow and this deck will forgive us. Plants are quick to forgive. It\'s one of their best features."',
 
@@ -70,6 +99,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_hy_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#101a16"/>
           <stop offset="1" stop-color="#18261f"/>
@@ -84,49 +114,59 @@ export default {
         </radialGradient>
       </defs>
 
+      <!-- background plate: grow racks on both walls, the valve bulkhead (left of centre) and the
+           round vault iris at the end of the corridor. Everything below sits on those. -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/hydroponics.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/hydroponics.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- grow racks, dead or blooming -->
-      ${[80, 420, 1180].map((x, i) => `
-      <g>
-        <image href="art/hydro-rack.webp" x="${x - 6}" y="186" width="312" height="464" preserveAspectRatio="xMidYMax meet"/>
-        ${[250, 340, 430, 520].map(y => flow
-            ? `<g>${[0, 1, 2, 3, 4].map(k => `<path d="M${x + 40 + k * 55} ${y} q6 -22 0 -30 M${x + 40 + k * 55} ${y} q-8 -16 2 -26" stroke="#7bc47f" stroke-width="3.5" fill="none" stroke-linecap="round" class="beckon"/>`).join('')}</g>`
-            : `<g>${[0, 1, 2, 3, 4].map(k => `<path d="M${x + 40 + k * 55} ${y} q4 -12 0 -18" stroke="#4a4434" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')}</g>`
-        ).join('')}
-        ${flow ? `<ellipse cx="${x + 150}" cy="400" rx="180" ry="200" fill="url(#gd_hy_bloom)" class="glow"/>` : ''}
-        ${i === 1 && lampHere ? `
-          <g class="beckon">
-            <rect x="${x + 60}" y="216" width="180" height="12" rx="6" fill="#3a2a5f" stroke="#7a5fd0" stroke-width="2.5"/>
-            <ellipse cx="${x + 150}" cy="222" rx="120" ry="30" fill="url(#gd_hy_glow)"/>
-          </g>` : ''}
-      </g>`).join('')}
+      <!-- the painted racks: withered brown while the loop is dead, green and glowing once it flows -->
+      ${[RACK_L, RACK_R].map(r => flow
+        ? `<ellipse cx="${r.x + r.w / 2}" cy="${r.y + r.h / 2}" rx="${r.w * 0.7}" ry="${r.h * 0.6}" fill="url(#gd_hy_bloom)" class="glow"/>
+           ${r.tiers.map(y => `<g>${Array.from({ length: 6 }, (_, k) => `<path d="M${r.x + 30 + k * (r.w - 60) / 5} ${y} q6 -22 0 -30 M${r.x + 30 + k * (r.w - 60) / 5} ${y} q-8 -16 2 -26" stroke="#7bc47f" stroke-width="3.5" fill="none" stroke-linecap="round"/>`).join('')}</g>`).join('')}`
+        : `<g data-fx="tint"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="#3a2a12" opacity="0.45" style="mix-blend-mode:color"/>
+           <rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="#05070a" opacity="0.25"/></g>`).join('')}
 
-      <!-- nutrient tank (photoreal) with shard 2 -->
-      <g>
-        <image href="art/hydro-tank.webp" x="836" y="322" width="128" height="308" preserveAspectRatio="xMidYMax meet"/>
-        <rect x="884" y="300" width="32" height="44" rx="6" fill="rgba(16,26,38,0.9)" stroke="#2f9e97" stroke-width="2" class="beckon"/>
-        <text x="900" y="330" text-anchor="middle" font-size="16" fill="#4fd8d0">▮</text>
-        <text x="900" y="656" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="3">NUTRIENT RESERVE</text>
+      <!-- the UV grow-tube, clipped under the second tier of the left rack -->
+      ${lampHere ? `
+        <g class="beckon" data-mount="bracket">
+          <ellipse cx="${LAMP.x + LAMP.w / 2}" cy="${LAMP.y + 26}" rx="${LAMP.w * 0.6}" ry="36" fill="url(#gd_hy_glow)"/>
+          <rect x="${LAMP.x}" y="${LAMP.y}" width="${LAMP.w}" height="12" rx="6" fill="#3a2a5f" stroke="#7a5fd0" stroke-width="2.5"/>
+          ${[LAMP.x + 20, LAMP.x + LAMP.w - 20].map(x => `<rect x="${x - 5}" y="${LAMP.y - 10}" width="10" height="12" fill="#5c6675"/>`).join('')}
+        </g>` : ''}
+
+      <!-- nutrient tank (photoreal), standing on the deck against the left wall, shard on its cap -->
+      <g data-mount="floor">
+        ${shadow(TANK.x + TANK.w / 2, TANK.y + TANK.h, TANK.w * 0.62, 12)}
+        <image href="art/hydro-tank.webp" x="${TANK.x}" y="${TANK.y}" width="${TANK.w}" height="${TANK.h}" preserveAspectRatio="xMidYMax meet"/>
+        <rect x="${TANK.x + TANK.w / 2 - 15}" y="${TANK.y - 30}" width="30" height="40" rx="6" fill="#0d1720" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="${TANK.x + TANK.w / 2}" y="${TANK.y - 3}" text-anchor="middle" font-size="15" fill="#4fd8d0">▮</text>
+        <text x="${TANK.x + TANK.w / 2}" y="${TANK.y + TANK.h + 22}" text-anchor="middle" font-size="11" fill="#8fa3b8" font-family="Consolas, monospace" paint-order="stroke" stroke="#04070d" stroke-width="3">NUTRIENT RESERVE</text>
       </g>
 
-      <!-- pipe access panel (the puzzle) -->
-      <g>
-        <rect x="1000" y="380" width="150" height="220" rx="10" fill="rgba(20,31,24,0.85)" stroke="${flow ? '#7bc47f' : '#ffb45e'}" stroke-width="4" class="${flow ? '' : 'beckon'}"/>
-        <g stroke="${flow ? '#7bc47f' : '#39485a'}" stroke-width="9" fill="none">
-          <path d="M1015 420 L1075 420 L1075 480 L1135 480"/>
-          <path d="M1015 540 L1055 540 L1055 500"/>
+      <!-- the junction access hatch, bolted to the painted valve bulkhead under its wheel -->
+      ${panel({ ...PIPE, material: 'steel', mount: 'bolts', rx: 8, body: `
+        <rect x="${PIPE.x + 14}" y="${PIPE.y + 14}" width="${PIPE.w - 28}" height="${PIPE.h - 60}" rx="6" fill="#141f18" stroke="${flow ? '#7bc47f' : '#ffb45e'}" stroke-width="3" class="${flow ? '' : 'beckon'}"/>
+        <g stroke="${flow ? '#7bc47f' : '#39485a'}" stroke-width="8" fill="none" transform="translate(${PIPE.x - 1000} ${PIPE.y - 380})">
+          <path d="M1018 420 L1062 420 L1062 470 L1122 470"/>
+          <path d="M1018 520 L1050 520 L1050 492"/>
         </g>
-        <text x="1075" y="628" text-anchor="middle" font-size="12" fill="${flow ? '#7bc47f' : '#ffb45e'}"
-          font-family="Consolas, monospace">${flow ? 'LOOP: CLOSED ✓' : 'LOOP: BROKEN'}</text>
-      </g>
+        <text x="${PIPE.x + PIPE.w / 2}" y="${PIPE.y + PIPE.h - 26}" text-anchor="middle" font-size="11" fill="${flow ? '#7bc47f' : '#ffb45e'}"
+          font-family="Consolas, monospace">${flow ? 'LOOP: CLOSED ✓' : 'LOOP: BROKEN'}</text>` })}
 
-      <!-- exit iris -->
-      <g>
-        <circle cx="1490" cy="440" r="120" fill="rgba(11,19,30,0.3)" stroke="rgba(79,216,208,0.35)" stroke-width="6"/>
+      <!-- the service note, taped to the bulkhead above the hatch -->
+      ${panel({ ...NOTE, material: 'paper', mount: 'pinned', tilt: 3, body: `
+        <g font-family="Consolas, monospace" fill="#26221a" transform="rotate(3 ${NOTE.x + NOTE.w / 2} ${NOTE.y + NOTE.h / 2})">
+          <text x="${NOTE.x + 10}" y="${NOTE.y + 24}" font-size="11" font-weight="bold">SVC NOTE · JCT 2-B</text>
+          <text x="${NOTE.x + 10}" y="${NOTE.y + 42}" font-size="11.5">centre coupling</text>
+          <text x="${NOTE.x + 10}" y="${NOTE.y + 58}" font-size="11.5">SHEARED in evac.</text>
+          <text x="${NOTE.x + 10}" y="${NOTE.y + 75}" font-size="11.5">route OVER it.</text>
+        </g>` })}
+
+      <!-- the vault iris at the corridor's end (painted), with its blades drawn closed or open -->
+      <g data-mount="wall">
         ${flow
-          ? `<circle cx="1490" cy="440" r="60" fill="#04070d" stroke="rgba(79,216,208,0.4)" stroke-width="3"/>`
-          : `${[0, 60, 120, 180, 240, 300].map(a => `<path d="M1490 440 L${1490 + 115 * Math.cos(a * Math.PI / 180)} ${440 + 115 * Math.sin(a * Math.PI / 180)}" stroke="#1a2a20" stroke-width="26"/>`).join('')}`}
+          ? `<circle cx="${IRIS.cx}" cy="${IRIS.cy}" r="${IRIS.r * 0.6}" fill="#04070d" stroke="rgba(79,216,208,0.45)" stroke-width="3"/>`
+          : `<g opacity="0.85">${[0, 60, 120, 180, 240, 300].map(a => `<path d="M${IRIS.cx} ${IRIS.cy} L${IRIS.cx + IRIS.r * Math.cos(a * Math.PI / 180)} ${IRIS.cy + IRIS.r * Math.sin(a * Math.PI / 180)}" stroke="#1a2a20" stroke-width="18"/>`).join('')}</g>
+             <circle cx="${IRIS.cx}" cy="${IRIS.cy}" r="12" fill="#ffb45e" opacity="0.7" class="beckon"/>`}
       </g>
 
       <path d="M0 900 L0 860 Q800 905 1600 860 L1600 900 Z" fill="#04070d"/>
@@ -138,7 +178,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'racks', x: 70, y: 190, w: 660, h: 440, label: flow ? 'The racks (blooming)' : 'Dead grow racks',
+      id: 'racks', ...R.racks, label: flow ? 'The racks (blooming)' : 'Dead grow racks',
       onInteract(game) {
         game.say(flow
           ? 'Green is happening at speed. Bioluminescent algae climb the drip lines like they have somewhere to be. The ring smells alive.'
@@ -147,7 +187,28 @@ export default {
     });
 
     spots.push({
-      id: 'shard2', x: 870, y: 285, w: 60, h: 75, label: 'A shard on the tank',
+      id: 'racksR', ...R.racksR, label: flow ? 'The far racks (blooming)' : 'The far racks',
+      onInteract(game) {
+        game.say(flow
+          ? 'The far racks have caught up: leaf on leaf, a green you can smell.'
+          : 'Brown, brittle, waiting. A drip line hangs dry above every tray.');
+      },
+    });
+
+    spots.push({
+      id: 'note', ...R.note, label: 'Service note',
+      onInteract(game) {
+        const html = `<div class="datapad"><div class="pad-title">Service note · Junction 2-B</div>
+          Centre coupling <span class="pad-bad">SHEARED</span> during evacuation.<br>
+          Flow cannot pass the middle of the junction — <strong>route over it</strong>.<br>
+          <span style="opacity:0.7">Valves seized: clockwise only. — J.O.</span></div>`;
+        game.journal.add('note_hydro_svc', { title: 'Service note (Hydroponics)', category: 'note', html });
+        game.dialog({ title: 'Taped to the Bulkhead', html });
+      },
+    });
+
+    spots.push({
+      id: 'shard2', ...R.shard2, label: 'A shard on the tank',
       onInteract(game) {
         game.journal.add('shard2', { title: 'Hydroponics — the nutrient tank', category: 'sun', sun: { rays: 3, letter: 'A' } });
         game.say('A memory shard, tucked above the waterline: —green rows under grow-lights; someone laughing about tomatoes in orbit— You put it away carefully, like it might bruise.');
@@ -155,7 +216,7 @@ export default {
     });
 
     spots.push({
-      id: 'pipes', x: 990, y: 370, w: 170, h: 240, label: flow ? 'Pipe access (flowing)' : 'Pipe access panel',
+      id: 'pipes', ...R.pipes, label: flow ? 'Pipe access (flowing)' : 'Pipe access panel',
       onInteract(game) {
         if (flow) { game.say('The loop hums, closed and content. Somewhere a pump is having the best day of its year.'); return; }
         openPipePuzzle(game);
@@ -164,10 +225,10 @@ export default {
 
     if (flow && !state.flags.hydro_lampTaken) {
       spots.push({
-        id: 'lamp', x: 460, y: 200, w: 220, h: 60, label: 'UV grow-lamp',
+        id: 'lamp', ...R.lamp, label: 'UV grow-lamp',
         onInteract(game) {
           game.setFlag('hydro_lampTaken');
-          game.addItem('uv_lamp', { from: { x: 570, y: 222 } });
+          game.addItem('uv_lamp', { from: { x: LAMP.x + LAMP.w / 2, y: LAMP.y } });
           game.say('You unclip a UV tube from the rack. The algae will share. Blacklight has other talents — fingerprints, for instance, glow like confessions.');
           game.refreshScene();
         },
@@ -175,7 +236,7 @@ export default {
     }
 
     spots.push({
-      id: 'iris', x: 1370, y: 320, w: 230, h: 240, label: flow ? 'Iris door — open' : 'Iris door — sealed',
+      id: 'iris', ...R.iris, label: flow ? 'Iris door — open' : 'Iris door — sealed',
       onInteract(game) {
         if (!flow) { game.say('The iris door stays clenched. Its interlock is plumbed straight into the nutrient loop — no flow, no thoroughfare. Stations have opinions about dead decks.'); return; }
         if (!state.flags.hydro_lampTaken) { game.say('Gus bumps your shoulder, gently, like a cat made of bolts: "The grow-lamp. Take it. Where we are going, there are things only blacklight will admit to."'); return; }
@@ -189,7 +250,7 @@ export default {
   },
 
   hints: [
-    { text: 'Water wants one unbroken road from the inlet valve to the return. The access panel opens the whole junction.', cost: 60 },
+    { text: 'Water wants one unbroken road from the inlet valve to the return. Read the service note taped above the access hatch before you start turning things.', cost: 60 },
     { text: 'The valves are seized — every tile turns CLOCKWISE only. Plan each tile\'s final facing before you spin past it; a straight has two useful facings, an elbow four.', cost: 120 },
     { text: 'Route the middle row up and over the blocked center: right from the inlet, up at the second column, across the top, down at the far corner, out. Turn each tile until the highlighted flow reaches the return.', cost: 240 },
   ],
@@ -254,6 +315,9 @@ function openPipePuzzle(game) {
                 <path d="${pipePath(GRID[r][c], rots[r][c], x, y, SZ)}"
                   fill="none" stroke="${inPath ? (solved ? '#7bc47f' : '#4fd8d0') : '#4a5a6a'}"
                   stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                ${r === SHEARED.r && c === SHEARED.c ? `
+                  <path d="M${x + SZ * 0.3} ${y + SZ * 0.25} l${SZ * 0.14} ${SZ * 0.22} -${SZ * 0.1} ${SZ * 0.08} l${SZ * 0.16} ${SZ * 0.24}" stroke="#e05252" stroke-width="4" fill="none"/>
+                  <text x="${x + SZ / 2}" y="${y + SZ - 8}" text-anchor="middle" font-size="11" fill="#e05252" font-family="Consolas, monospace">SHEARED</text>` : ''}
               </g>`;
           }
         }

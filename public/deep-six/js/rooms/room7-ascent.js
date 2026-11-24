@@ -6,8 +6,10 @@
 
 import { getRole, isDiver } from '../role.js';
 import { defs, backdrop, ambient, roleTag, comboLock, depthTag } from '../divekit.js';
+import { panel } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'ascent';
+const WORD = 'ASCEND';   // the six depth-marks, shallowest first
 const MY_MARKS = {
   p1: [[5, 'A'], [11, 'C'], [17, 'N']],   // the Diver's three
   p2: [[8, 'S'], [14, 'E'], [20, 'D']],   // the Tender's three
@@ -32,18 +34,20 @@ export default {
       ${backdrop(SLUG)}
       ${roleTag()}
       <!-- the rule plaque -->
-      <g>
-        <rect x="524" y="132" width="552" height="150" rx="10" fill="rgba(5,18,24,0.9)" stroke="#7cf0be" stroke-width="3"/>
-        <text x="800" y="176" text-anchor="middle" font-size="19" fill="#eafffb" font-family="Consolas, monospace" letter-spacing="2">SIX MARKS · THE ASCENT WORD</text>
-        <text x="800" y="214" text-anchor="middle" font-size="15" fill="#9fc7dd" font-family="Consolas, monospace">one letter per depth-mark — the shallowest fathom speaks first</text>
-        <text x="800" y="250" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">you hold three; your partner holds three</text>
-      </g>
+      ${panel({ x: 524, y: 132, w: 552, h: 150, material: 'steel', mount: 'bolts', rx: 10, body: `
+        <rect x="534" y="142" width="532" height="130" rx="6" fill="#08161c"/>
+        <text x="800" y="180" text-anchor="middle" font-size="19" fill="#eafffb" font-family="Consolas, monospace" letter-spacing="2">SIX MARKS · THE ASCENT WORD</text>
+        <text x="800" y="216" text-anchor="middle" font-size="15" fill="#9fc7dd" font-family="Consolas, monospace">one letter per depth-mark — the shallowest fathom speaks first</text>
+        <text x="800" y="250" text-anchor="middle" font-size="13" fill="#9fb0c4" font-family="Consolas, monospace">you hold three; your partner holds three</text>` })}
       <!-- your three marks -->
-      <text x="800" y="416" text-anchor="middle" font-size="14" fill="#8fa3b8" font-family="Consolas, monospace">YOUR DEPTH-MARKS · read them to your partner</text>
-      ${marksRow}
+      <!-- your three tags, clipped to a tag-board on the bulkhead -->
+      ${panel({ x: 604, y: 392, w: 392, h: 182, material: 'steel', mount: 'bolts', rx: 8, body: `
+        <text x="800" y="418" text-anchor="middle" font-size="13" fill="#cfd8e3" font-family="Consolas, monospace">YOUR DEPTH-MARKS · read them to your partner</text>
+        ${marksRow}` })}
       <!-- the decompression wheel -->
-      <g>
-        <rect x="600" y="628" width="400" height="200" rx="14" fill="${done ? 'rgba(4,12,16,0.55)' : 'rgba(9,26,32,0.9)'}" stroke="#2b3547" stroke-width="5"/>
+      <g data-mount="bolts">
+        ${panel({ x: 600, y: 628, w: 400, h: 200, material: 'steel', mount: 'bolts', rx: 14 })}
+        <rect x="612" y="640" width="376" height="176" rx="10" fill="${done ? '#04090c' : '#08161c'}"/>
         ${done
           ? `<text x="800" y="736" text-anchor="middle" font-size="22" fill="#7cf0be" font-family="Consolas, monospace" class="flicker">ASCENT VALVE — OPEN</text>`
           : `<text x="800" y="692" text-anchor="middle" font-size="15" fill="#8fa3b8" font-family="Consolas, monospace">DECOMPRESSION WHEEL · SIX LETTERS</text>
@@ -102,7 +106,7 @@ function openWheel(game) {
     title: 'The Decompression Wheel',
     desc: 'Six letters — one per depth-mark, shallowest fathom first. Read your marks to your partner and theirs to you.',
     slots: [{ type: 'letter' }, { type: 'letter' }, { type: 'letter' }, { type: 'letter' }, { type: 'letter' }, { type: 'letter' }],
-    target: 'ASCEND', goLabel: 'Open the Valve',
+    target: WORD, goLabel: 'Open the Valve',
     solvedMsg: 'The word holds the valve open. Ballast blows in a roar of silver — you are going up.',
     failMsg: 'The valve stays shut. Re-check the order — shallowest fathom first — with your partner.',
     onSolve(g) { g.setFlag('ascent_open'); g.refreshScene(); },

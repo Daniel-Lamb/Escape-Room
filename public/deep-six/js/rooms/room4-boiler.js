@@ -2,16 +2,16 @@
 // You can read your OWN two gauges, but the RULE that turns them into a setting is
 // on your partner's screen.
 //   Diver ballast  = his gauges 12 & 5, rule SUM  -> 17   (rule shown on Tender's screen)
-//   Tender pump    = her gauges 9 & 4, rule GAP  -> 05   (rule shown on Diver's screen)
+//   Tender pump    = her gauges 13 & 6, rule GAP -> 07   (rule shown on Diver's screen)
 // Tender recovers depth-mark E (14 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
 
 const SLUG = 'boiler';
-const GAUGES = { p1: [12, 5], p2: [9, 4] };
+const GAUGES = { p1: [12, 5], p2: [13, 6] };
 const RULE = { p1: 'SUM', p2: 'GAP' };       // this role's own rule (held on partner's screen)
-const MYCODE = { p1: '17', p2: '05' };
+const MYCODE = { p1: '17', p2: '07' };
 const other = () => (getRole() === 'p1' ? 'p2' : 'p1');
 const hasMark = (state) => state.journal.some(e => e.id === 'mark_e');
 
@@ -62,7 +62,7 @@ export default {
     const forWhat = isDiver() ? 'ballast rule' : 'pump rule';
 
     spots.push({
-      id: 'relay', x: 556, y: 138, w: 488, h: 184, label: `The ${forWhat} (for your partner)`,
+      id: 'relay', ...DOCK, label: `The ${forWhat} (for your partner)`,
       onInteract(game) {
         const meaning = relay === 'SUM' ? 'add your two gauges together' : 'the difference between your two gauges (larger minus smaller)';
         const html = `<div class="chartcard"><div class="chart-title">${forWhat}</div>
@@ -117,8 +117,8 @@ export default {
   hints() {
     return [
       { text: 'You can see your own two gauges, but not the rule for them. Your partner\'s screen has your rule; yours has theirs. Trade.', cost: 60 },
-      { text: isDiver() ? 'Read your two gauges (12 and 5) to your tender; their panel says whether to add them or take the difference. Set that.' : 'Read your two gauges (9 and 4) to your diver; their side says add or difference. Set that.', cost: 120 },
-      { text: isDiver() ? 'Your rule is SUM: 12 + 5 = set 17.' : 'Your rule is GAP: 9 − 4 = set 05.', cost: 240 },
+      { text: isDiver() ? 'Read your two gauges (12 and 5) to your tender; their panel says whether to add them or take the difference. Set that.' : 'Read your two gauges (13 and 6) to your diver; their side says add or difference. Set that.', cost: 120 },
+      { text: isDiver() ? 'Your rule is SUM: 12 + 5 = set 17.' : 'Your rule is GAP: 13 − 6 = set 07.', cost: 240 },
     ];
   },
 };

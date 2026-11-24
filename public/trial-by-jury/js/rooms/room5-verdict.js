@@ -7,6 +7,7 @@
 
 import { getRole, roleName, ROLES } from '../role.js';
 import { defs, backdrop, roleTag } from '../jurykit.js';
+import { panel } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'verdict';
 const LIAR = 'p2';
@@ -17,6 +18,7 @@ function done(state) { return !!state.flags.verdict_done; }
 
 export default {
   id: 'verdict',
+  solution: ['CROW'],
   get title() { return `${roleName()} · The Verdict`; },
   get intro() {
     return 'The court falls quiet. Two questions decide it, and the jury is you. First: which of the four witnesses lied to the bench? Second: whose name do the four carved exhibits spell — the true thief? Read your exhibits to each other, in order, and deliver the verdict together.';
@@ -47,11 +49,9 @@ export default {
 
       ${finished
         ? `<text x="800" y="600" text-anchor="middle" font-size="30" fill="#9fe08a" font-family="Georgia, serif" class="flicker">The court has spoken.</text>`
-        : `<g>
-             <rect x="600" y="560" width="400" height="150" rx="14" fill="rgba(20,34,18,0.92)" stroke="#8a6f34" stroke-width="5"/>
-             <text x="800" y="628" text-anchor="middle" font-size="20" fill="#a9c98f" font-family="Georgia, serif">Deliver the Verdict</text>
-             <text x="800" y="662" text-anchor="middle" font-size="14" fill="#7f9a72" font-family="Consolas, monospace">name the liar &middot; name the thief</text>
-           </g>`}
+        : panel({ x: 600, y: 560, w: 400, h: 150, material: 'darkwood', mount: 'post', floorY: 860, rx: 14, body: `
+             <text x="800" y="628" text-anchor="middle" font-size="20" fill="#e6d8a8" font-family="Georgia, serif">Deliver the Verdict</text>
+             <text x="800" y="662" text-anchor="middle" font-size="14" fill="#c9d8a8" font-family="Consolas, monospace">name the liar &middot; name the thief</text>` })}
     </svg>`;
   },
 

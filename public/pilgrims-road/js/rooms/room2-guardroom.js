@@ -4,6 +4,7 @@
 // Then: pry the concealed door behind the cabinet with the iron crow.
 
 import { registerItems, registerCombos } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   iron_crow: {
@@ -59,8 +60,38 @@ const BEASTS = [
 ];
 const ORDER = ['boar', 'serpent', 'wolf', 'stag', 'falcon'];
 
+// Layout — read off the plate (art/guardroom.webp) and shared with hotspots().
+// TABLE is the painted tabletop as a perspective quad: back-left, back-right,
+// front-right, front-left. tableAt(u, v) maps (0..1 across, 0..1 back→front).
+const TABLE = { bl: [646, 540], br: [940, 536], fr: [1132, 630], fl: [764, 656] };
+function tableAt(u, v) {
+  const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const back = lerp(TABLE.bl, TABLE.br, u), front = lerp(TABLE.fl, TABLE.fr, u);
+  const p = lerp(back, front, v);
+  return [Math.round(p[0]), Math.round(p[1])];
+}
+const CUP = { door: 'M1212 240 L1486 204 L1486 756 L1212 700 Z' };
+const SUN2 = { cx: 1300, cy: 152 };
+const R = {
+  roster:  { x: 648, y: 236, w: 150, h: 196 },
+  tally:   { x: 40, y: 280, w: 160, h: 160 },
+  carving: { x: 760, y: 626, w: 380, h: 64 },
+  letter:  { x: 970, y: 560, w: 140, h: 80 },
+  dice:    { x: 800, y: 548, w: 90, h: 64 },
+  flint:   { x: 720, y: 570, w: 80, h: 64 },
+  crow:    { x: 360, y: 610, w: 90, h: 190 },
+  hatch:   { x: 420, y: 740, w: 210, h: 110 },
+  sun2:    { x: 1250, y: 112, w: 130, h: 90 },
+  cabinet: { x: 1110, y: 214, w: 380, h: 520 },
+};
+
 export default {
   id: 'guardroom',
+  solution: ORDER,
+  lintStates: [
+    { label: 'bolts', flags: { guardroom_boltsOpen: true } },
+    { label: 'back', flags: { guardroom_boltsOpen: true, guardroom_backdoorOpen: true, guardroom_crowTaken: true, guardroom_flintTaken: true } },
+  ],
   title: "The Guard Room",
   intro: 'You haul yourself out of the cistern shaft into warmth: a low timbered room, a banked brazier, dice abandoned mid-game. The garrison has gone to the walls — all of them. Something has the castle holding its breath tonight.',
 
@@ -70,126 +101,126 @@ export default {
     const crowHere = !state.inventory.includes('iron_crow') && !state.flags.guardroom_crowTaken;
     const flintHere = !state.inventory.includes('flint_steel') && !state.flags.guardroom_flintTaken;
 
+    // The plate paints the room: brazier (left), archway to the battlements,
+    // wall torch, a trestle table in perspective, and the iron-bound armory
+    // cupboard against the right wall. Props sit on those; nothing is redrawn.
+    const T = (u, v) => tableAt(u, v);
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="gd_gr_wall" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#191524"/>
-          <stop offset="1" stop-color="#2b2433"/>
-        </linearGradient>
+        ${kitDefs()}
         <radialGradient id="gd_gr_brazier" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stop-color="rgba(255,140,60,0.5)"/>
           <stop offset="0.5" stop-color="rgba(255,140,60,0.18)"/>
           <stop offset="1" stop-color="rgba(255,140,60,0)"/>
         </radialGradient>
-        <linearGradient id="gd_gr_floor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#241e2b"/>
-          <stop offset="1" stop-color="#120e18"/>
-        </linearGradient>
-        <linearGradient id="gd_gr_cab" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#4a3a26"/>
-          <stop offset="1" stop-color="#2e2417"/>
-        </linearGradient>
       </defs>
 
-      <!-- background plate (generated); props/documents/effects layer on top -->
+      <!-- background plate (generated) -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/guardroom.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/guardroom.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- duty roster parchment on wall (photoreal parchment + legible text) -->
-      <g class="sway slow">
-        <image href="art/gr-roster.webp" x="278" y="172" width="204" height="266" preserveAspectRatio="xMidYMid meet" transform="rotate(-2 380 300)"/>
-        <g font-family="Palatino Linotype, Georgia, serif" fill="#3a2c14" transform="rotate(-2 380 300)">
-          <text x="380" y="215" font-size="22" text-anchor="middle" font-weight="bold">DUTY ROSTER</text>
-          <line x1="310" y1="228" x2="450" y2="228" stroke="#4a3a1c" stroke-width="2"/>
+      <!-- warmth over the painted brazier -->
+      <ellipse cx="250" cy="690" rx="230" ry="150" fill="url(#gd_gr_brazier)" class="glow"/>
+
+      <!-- duty roster, pinned to the back wall between the archway and the torch -->
+      <g data-mount="pinned">
+        <image href="art/gr-roster.webp" x="${R.roster.x}" y="${R.roster.y}" width="${R.roster.w}" height="${R.roster.h}" preserveAspectRatio="none" transform="rotate(-2 ${R.roster.x + R.roster.w / 2} ${R.roster.y + 110})" filter="url(#sk_drop)"/>
+        <g font-family="Palatino Linotype, Georgia, serif" fill="#3a2c14" transform="rotate(-2 ${R.roster.x + R.roster.w / 2} ${R.roster.y + 110})">
+          <text x="${R.roster.x + R.roster.w / 2}" y="${R.roster.y + 42}" font-size="17" text-anchor="middle" font-weight="bold">DUTY ROSTER</text>
+          <line x1="${R.roster.x + 22}" y1="${R.roster.y + 52}" x2="${R.roster.x + R.roster.w - 22}" y2="${R.roster.y + 52}" stroke="#4a3a1c" stroke-width="2"/>
           ${['Dusk', 'Evensong', 'Dead of Night', 'Cock-crow', 'Dawn'].map((w, i) =>
-            `<text x="310" y="${262 + i * 30}" font-size="17">${w} .......</text>`).join('')}
+            `<text x="${R.roster.x + 22}" y="${R.roster.y + 80 + i * 24}" font-size="14">${w} ......</text>`).join('')}
+        </g>
+        <circle cx="${R.roster.x + R.roster.w / 2}" cy="${R.roster.y + 12}" r="5" fill="#2a2620"/>
+      </g>
+
+      <!-- slate tally board, hung on a cord from a nail on the left wall -->
+      <g data-mount="hook">
+        <path d="M${R.tally.x + 40} ${R.tally.y + 14} L${R.tally.x + R.tally.w / 2} ${R.tally.y - 26} L${R.tally.x + R.tally.w - 40} ${R.tally.y + 14}" fill="none" stroke="#3b2d1c" stroke-width="3"/>
+        <circle cx="${R.tally.x + R.tally.w / 2}" cy="${R.tally.y - 26}" r="5" fill="#2a2620"/>
+        <image href="art/gr-slate.webp" x="${R.tally.x}" y="${R.tally.y}" width="${R.tally.w}" height="${R.tally.h}" preserveAspectRatio="xMidYMid meet" filter="url(#sk_drop)"/>
+        <g stroke="#eef2f6" stroke-width="3" opacity="0.9" stroke-linecap="round">
+          ${[0, 1, 2].map(r => [0, 1, 2, 3].map(c =>
+            `<line x1="${R.tally.x + 38 + c * 24}" y1="${R.tally.y + 42 + r * 40}" x2="${R.tally.x + 38 + c * 24}" y2="${R.tally.y + 66 + r * 40}"/>`).join('')).join('')}
+          <line x1="${R.tally.x + 32}" y1="${R.tally.y + 66}" x2="${R.tally.x + 114}" y2="${R.tally.y + 42}"/>
         </g>
       </g>
 
-      <!-- slate tally board (photoreal slate + chalk tallies) -->
-      <image href="art/gr-slate.webp" x="52" y="196" width="180" height="180" preserveAspectRatio="xMidYMid meet"/>
-      <g stroke="#eef2f6" stroke-width="3" opacity="0.9" stroke-linecap="round">
-        ${[0, 1, 2].map(r => [0, 1, 2, 3].map(c =>
-          `<line x1="${86 + c * 26}" y1="${240 + r * 46}" x2="${86 + c * 26}" y2="${268 + r * 46}"/>`).join('')).join('')}
-        <line x1="80" y1="268" x2="164" y2="240"/>
-      </g>
-
-      <!-- brazier -->
-      <g>
-        <ellipse cx="260" cy="560" rx="240" ry="150" fill="url(#gd_gr_brazier)" class="glow"/>
-        <ellipse cx="260" cy="580" rx="85" ry="26" fill="#2b2233"/>
-        <path d="M185 580 q0 -46 75 -46 q75 0 75 46 z" fill="#3c3040"/>
-        <g class="torch-flame">
-          <path d="M260 470 q30 36 12 92 q-6 14 -12 14 q-6 0 -12 -14 q-18 -56 12 -92z" fill="#ffa94d"/>
-          <path d="M260 500 q16 26 6 58 q-3 8 -6 8 q-3 0 -6 -8 q-10 -32 6 -58z" fill="#ffd9a0"/>
-        </g>
-        ${[0, 1, 2].map(i => `<circle cx="${230 + i * 30}" cy="${566 - (i % 2) * 10}" r="6" fill="#e07b2a" class="flicker"/>`).join('')}
-      </g>
+      <!-- iron crow, leaning against the archway's left jamb -->
       ${crowHere ? `
-      <image href="art/gr-crow.webp" x="352" y="474" width="60" height="180" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
+      <g data-mount="floor">
+        ${shadow(404, 792, 40, 8)}
+        <image href="art/gr-crow.webp" x="372" y="612" width="60" height="180" preserveAspectRatio="xMidYMid meet" transform="rotate(9 402 792)" class="beckon"/>
+      </g>` : ''}
 
-      <!-- trestle table -->
-      <g>
-        <rect x="560" y="520" width="500" height="34" rx="6" fill="#4a3a26"/>
-        <rect x="590" y="554" width="26" height="150" fill="#38290f"/>
-        <rect x="1000" y="554" width="26" height="150" fill="#38290f"/>
-        <!-- dice -->
-        <rect x="700" y="498" width="24" height="24" rx="5" fill="#e8d9b0"/>
-        <circle cx="712" cy="510" r="2.6" fill="#2b2015"/>
-        <rect x="732" y="502" width="22" height="22" rx="5" fill="#e8d9b0" transform="rotate(14 743 513)"/>
-        <g fill="#2b2015"><circle cx="739" cy="509" r="2.2"/><circle cx="748" cy="518" r="2.2"/></g>
-        <!-- cups -->
-        <path d="M840 470 l26 0 -4 40 -18 0 z" fill="#6b5330"/>
-        <path d="M880 476 l24 0 -4 34 -16 0 z" fill="#6b5330" transform="rotate(-8 892 493)"/>
-        <!-- unfinished letter + quill -->
-        <rect x="930" y="486" width="98" height="52" rx="3" fill="#e8d9b0" transform="rotate(-5 979 512)"/>
-        <g stroke="#8a7a50" stroke-width="2" transform="rotate(-5 979 512)">
-          <line x1="940" y1="500" x2="1015" y2="500"/><line x1="940" y1="510" x2="1008" y2="510"/>
-          <line x1="940" y1="520" x2="990" y2="520"/>
-        </g>
-        <path d="M1010 470 q20 -18 34 -20 q-8 14 -24 26z" fill="#cfd4de"/>
-        ${flintHere ? `<image href="art/gr-flint.webp" x="612" y="476" width="80" height="50" preserveAspectRatio="xMidYMid meet" class="beckon"/>` : ''}
-        <!-- knife-carved words -->
-        <text x="810" y="546" font-size="15" fill="#2b2015" font-style="italic"
-          font-family="Palatino Linotype, Georgia, serif" text-anchor="middle" opacity="0.9">"the serpent slithers in the moment the boar lies down"</text>
+      <!-- on the painted tabletop (perspective): dice, cups, an unfinished letter, the fire-kit -->
+      <g data-mount="table">
+        ${shadow(...T(0.3, 0.45), 26, 6, 0.6)}
+        <rect x="${T(0.3, 0.45)[0] - 14}" y="${T(0.3, 0.45)[1] - 20}" width="22" height="20" rx="4" fill="#e8d9b0"/>
+        <circle cx="${T(0.3, 0.45)[0] - 3}" cy="${T(0.3, 0.45)[1] - 10}" r="2.4" fill="#2b2015"/>
+        <rect x="${T(0.3, 0.45)[0] + 12}" y="${T(0.3, 0.45)[1] - 17}" width="19" height="18" rx="4" fill="#e8d9b0" transform="rotate(14 ${T(0.3, 0.45)[0] + 21} ${T(0.3, 0.45)[1] - 8})"/>
+        <g fill="#2b2015"><circle cx="${T(0.3, 0.45)[0] + 17}" cy="${T(0.3, 0.45)[1] - 12}" r="2"/><circle cx="${T(0.3, 0.45)[0] + 25}" cy="${T(0.3, 0.45)[1] - 4}" r="2"/></g>
+        ${[[0.55, 0.25], [0.64, 0.35]].map(([u, v]) => { const [x, y] = T(u, v); return `${shadow(x + 12, y, 20, 5, 0.6)}<path d="M${x} ${y - 38} l24 0 -4 38 -16 0 z" fill="#6b5330" stroke="#2a1f12" stroke-width="1.5"/><ellipse cx="${x + 12}" cy="${y - 38}" rx="12" ry="3" fill="#3a2a16"/>`; }).join('')}
+        ${(() => { const [x, y] = T(0.78, 0.55); return `
+          <g transform="rotate(-12 ${x} ${y})">
+            ${shadow(x, y + 4, 56, 7, 0.5)}
+            <rect x="${x - 50}" y="${y - 22}" width="100" height="46" rx="3" fill="url(#sk_parch)" stroke="#7d6538" stroke-width="1"/>
+            <g stroke="#8a7a50" stroke-width="2"><line x1="${x - 40}" y1="${y - 10}" x2="${x + 36}" y2="${y - 10}"/><line x1="${x - 40}" y1="${y}" x2="${x + 30}" y2="${y}"/><line x1="${x - 40}" y1="${y + 10}" x2="${x + 10}" y2="${y + 10}"/></g>
+            <path d="M${x + 30} ${y - 6} q22 -20 38 -22 q-8 14 -28 28z" fill="#cfd4de"/>
+          </g>`; })()}
+        ${flintHere ? (() => { const [x, y] = T(0.12, 0.6); return `${shadow(x, y + 4, 40, 7, 0.6)}<image href="art/gr-flint.webp" x="${x - 40}" y="${y - 30}" width="80" height="50" preserveAspectRatio="xMidYMid meet" class="beckon"/>`; })() : ''}
       </g>
 
-      <!-- armory cabinet with five beast bolts -->
-      <g>
-        <rect x="1180" y="200" width="330" height="440" rx="10" fill="url(#gd_gr_cab)" stroke="#1c1610" stroke-width="6"/>
-        ${back ? `
-          <rect x="1210" y="240" width="270" height="370" fill="#05070d"/>
-          <path d="M1210 240 L1480 240 L1480 610 L1210 610 Z" fill="none" stroke="#3c4152" stroke-width="4"/>
-          <g stroke="#2b3242" stroke-width="6" opacity="0.9">
-            ${[300, 370, 440, 510].map(y => `<line x1="1240" y1="${y + 40}" x2="1450" y2="${y}"/>`).join('')}
+      <!-- knife-carved words along the table's front edge -->
+      <text x="0" y="0" font-size="14" fill="#1a120a" font-style="italic" opacity="0.85"
+        font-family="Palatino Linotype, Georgia, serif" text-anchor="middle"
+        transform="translate(${(TABLE.fl[0] + TABLE.fr[0]) / 2} ${(TABLE.fl[1] + TABLE.fr[1]) / 2 + 16}) rotate(${Math.atan2(TABLE.fr[1] - TABLE.fl[1], TABLE.fr[0] - TABLE.fl[0]) * 180 / Math.PI})">"the serpent slithers in the moment the boar lies down"</text>
+
+      <!-- the armory cupboard (painted): five beast bolts riveted down its right door -->
+      ${back ? `
+        <g data-mount="wall">
+          <path d="${CUP.door}" fill="#05070d"/>
+          <path d="${CUP.door}" fill="none" stroke="#3c4152" stroke-width="4"/>
+          <g stroke="#2b3242" stroke-width="7" opacity="0.9">
+            ${[0, 1, 2, 3, 4].map(i => `<line x1="${1236 + i * 4}" y1="${640 - i * 70}" x2="${1460 - i * 4}" y2="${600 - i * 70}"/>`).join('')}
           </g>
-          <ellipse cx="1345" cy="330" rx="60" ry="30" fill="rgba(154,196,255,0.06)" class="fog"/>`
-        : bolts ? `
-          <rect x="1210" y="240" width="270" height="370" fill="#16110b"/>
-          ${[0, 1, 2, 3].map(i => `<circle cx="${1250 + i * 64}" cy="300" r="7" fill="#4a3a26"/>`).join('')}
-          ${[0, 1, 2, 3].map(i => `<circle cx="${1250 + i * 64}" cy="420" r="7" fill="#4a3a26"/>`).join('')}
-          <text x="1345" y="530" font-size="18" fill="#8b8878" text-anchor="middle" font-style="italic"
-            font-family="Palatino Linotype, Georgia, serif">empty pegs — a cold draft</text>`
-        : `
-          <rect x="1210" y="240" width="270" height="370" fill="#241a10"/>
+          <ellipse cx="1350" cy="420" rx="70" ry="34" fill="rgba(154,196,255,0.07)" class="fog"/>
+        </g>`
+      : bolts ? `
+        <g data-mount="wall">
+          <path d="${CUP.door}" fill="#120d08"/>
+          ${[0, 1, 2, 3].map(i => `<circle cx="${1250 + i * 64}" cy="${330 - i * 7}" r="7" fill="#4a3a26"/><circle cx="${1250 + i * 64}" cy="${470 - i * 7}" r="7" fill="#4a3a26"/>`).join('')}
+          <text x="1350" y="600" font-size="18" fill="#8b8878" text-anchor="middle" font-style="italic" transform="rotate(-5 1350 600)"
+            font-family="Palatino Linotype, Georgia, serif">empty pegs — a cold draft</text>
+        </g>`
+      : `
+        <g data-mount="bolts">
           ${BEASTS.map((b, i) => `
-            <g transform="translate(1240 ${268 + i * 68})">
-              <rect x="0" y="0" width="210" height="46" rx="8" fill="#3a2d1c" stroke="#57432a" stroke-width="3"/>
-              <rect x="6" y="8" width="120" height="30" rx="6" fill="#6d7d9c"/>
-              <g transform="translate(150 0) scale(0.9)" color="#c9a227">${b.glyph}</g>
+            <g transform="translate(1250 ${292 + i * 72}) skewY(-6)">
+              <rect x="0" y="0" width="200" height="46" rx="6" fill="url(#sk_iron)" stroke="#0e0f12" stroke-width="3" filter="url(#sk_drop)"/>
+              <rect x="8" y="9" width="116" height="28" rx="5" fill="#57606f" stroke="#2a2e36" stroke-width="2"/>
+              <circle cx="10" cy="23" r="4" fill="#1d2027"/><circle cx="190" cy="23" r="4" fill="#1d2027"/>
+              <g transform="translate(142 2) scale(0.88)" color="#c9a227">${b.glyph}</g>
             </g>`).join('')}
-        `}
+        </g>`}
+
+      <!-- sun-mark #2: three rays scratched small into the wall above the cupboard, gilt in the cuts -->
+      <g class="beckon" data-mount="inset">
+        ${[0, 1, 2].map(i => {
+          const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+          return `<line x1="${SUN2.cx + Math.cos(a) * 12}" y1="${SUN2.cy + Math.sin(a) * 12}" x2="${SUN2.cx + Math.cos(a) * 28}" y2="${SUN2.cy + Math.sin(a) * 28}" stroke="#e8c85a" stroke-width="3" stroke-linecap="round"/>`;
+        }).join('')}
+        <circle cx="${SUN2.cx}" cy="${SUN2.cy}" r="9" fill="none" stroke="#e8c85a" stroke-width="3"/>
+        <text x="${SUN2.cx + 40}" y="${SUN2.cy + 8}" font-size="22" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">A</text>
       </g>
 
-      <!-- sun-mark #2: carved gilded sun (photoreal, reused), letter A -->
-      <g class="beckon">
-        <image href="art/oub-sun.webp" x="1312" y="116" width="66" height="68" preserveAspectRatio="xMidYMid meet"/>
-        <text x="1388" y="160" font-size="22" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">A</text>
+      <!-- the cistern trapdoor you climbed through, lid thrown back on the boards -->
+      <g data-mount="floor">
+        <path d="M440 800 L600 796 L620 842 L424 848 Z" fill="#05070d"/>
+        <path d="M440 800 L600 796 L620 842 L424 848 Z" fill="none" stroke="#2a2118" stroke-width="4"/>
+        <path d="M440 800 L600 796 L590 742 L452 744 Z" fill="url(#sk_darkwood)" stroke="#1a120a" stroke-width="3"/>
+        <circle cx="521" cy="766" r="9" fill="none" stroke="#5d6270" stroke-width="3"/>
       </g>
-
-      <!-- open cistern hatch you climbed from -->
-      <ellipse cx="520" cy="810" rx="90" ry="30" fill="#05070d"/>
-      <path d="M430 810 a90 30 0 0 1 180 0" fill="none" stroke="#3a3e4f" stroke-width="6"/>
 
       <path d="M0 900 L0 856 Q800 910 1600 856 L1600 900 Z" fill="#05070d"/>
     </svg>`;
@@ -201,7 +232,7 @@ export default {
     const back = !!state.flags.guardroom_backdoorOpen;
 
     spots.push({
-      id: 'roster', x: 280, y: 170, w: 210, h: 260, label: 'Duty roster',
+      id: 'roster', ...R.roster, label: 'Duty roster',
       onInteract(game) {
         const html = `<div class="parchment-note"><div class="note-title">Duty Roster</div>
           <p>"Five companies, five watches: <strong>Dusk, Evensong, Dead of Night, Cock-crow, Dawn.</strong>
@@ -213,7 +244,7 @@ export default {
     });
 
     spots.push({
-      id: 'tally', x: 60, y: 250, w: 180, h: 160, label: 'Slate tally board',
+      id: 'tally', ...R.tally, label: 'Slate tally board',
       onInteract(game) {
         const html = `<p>Chalk tallies, and one line pressed hard enough to score the slate:</p>
           <div class="parchment-note aged"><p>"First watch to the company of <strong>the tusked</strong>."</p></div>`;
@@ -223,7 +254,7 @@ export default {
     });
 
     spots.push({
-      id: 'carving', x: 640, y: 524, w: 360, h: 40, label: 'Words carved in the table',
+      id: 'carving', ...R.carving, label: 'Words carved in the table',
       onInteract(game) {
         const html = `<p>Knife-carved during some long boring watch:</p>
           <div class="parchment-note aged"><p>"The Serpent slithers in the moment the Boar lies down."</p></div>
@@ -234,7 +265,7 @@ export default {
     });
 
     spots.push({
-      id: 'letter', x: 915, y: 462, w: 130, h: 90, label: 'Unfinished letter',
+      id: 'letter', ...R.letter, label: 'Unfinished letter',
       onInteract(game) {
         const html = `<div class="parchment-note"><div class="note-title">Unfinished letter</div>
           <p>"...my watch falls <strong>directly after the Stag's men come in</strong>, and I thank God I need
@@ -246,29 +277,29 @@ export default {
     });
 
     spots.push({
-      id: 'dice', x: 690, y: 470, w: 120, h: 60, label: 'Abandoned dice',
+      id: 'dice', ...R.dice, label: 'Abandoned dice',
       onInteract(game) { game.say('Fives and threes, mid-game, cups still half full. They left in a hurry, and not for a drill.'); },
     });
 
     spots.push({
-      id: 'hatch', x: 430, y: 770, w: 190, h: 70, label: 'Cistern hatch',
+      id: 'hatch', ...R.hatch, label: 'Cistern hatch',
       onInteract(game) { game.say('The shaft you climbed. It only goes back down to the cell. Forward is the only direction that exists tonight.'); },
     });
 
     spots.push({
-      id: 'sun2', x: 1300, y: 110, w: 130, h: 90, label: 'A carved sun',
+      id: 'sun2', ...R.sun2, label: 'A carved sun',
       onInteract(game) {
         game.journal.add('sun2', { title: 'Guard Room — above the bolt rack', category: 'sun', sun: { rays: 3, letter: 'A' } });
-        game.say('Scratched small above the bolt rack: a sun of three rays, and the letter A. The second mark on Edmund\'s road.');
+        game.say('Scratched small above the armory cupboard: a sun of three rays, and the letter A. The second mark on Edmund\'s road.');
       },
     });
 
     if (!state.inventory.includes('iron_crow') && !state.flags.guardroom_crowTaken) {
       spots.push({
-        id: 'crow', x: 340, y: 470, w: 100, h: 180, label: 'Iron pry bar',
+        id: 'crow', ...R.crow, label: 'Iron pry bar',
         onInteract(game) {
           game.setFlag('guardroom_crowTaken');
-          game.addItem('iron_crow', { from: { x: 380, y: 560 } });
+          game.addItem('iron_crow', { from: { x: 402, y: 700 } });
           game.refreshScene();
         },
       });
@@ -276,10 +307,10 @@ export default {
 
     if (!state.inventory.includes('flint_steel') && !state.flags.guardroom_flintTaken) {
       spots.push({
-        id: 'flint', x: 620, y: 478, w: 70, h: 60, label: 'Flint & steel',
+        id: 'flint', ...R.flint, label: 'Flint & steel',
         onInteract(game) {
           game.setFlag('guardroom_flintTaken');
-          game.addItem('flint_steel', { from: { x: 650, y: 500 } });
+          game.addItem('flint_steel', { from: { x: 760, y: 600 } });
           game.refreshScene();
         },
       });
@@ -287,12 +318,12 @@ export default {
 
     if (!bolts) {
       spots.push({
-        id: 'cabinet', x: 1190, y: 220, w: 310, h: 410, label: 'Armory cabinet — five bolts',
+        id: 'cabinet', ...R.cabinet, label: 'Armory cabinet — five bolts',
         onInteract(game) { openBoltPuzzle(game); },
       });
     } else if (!back) {
       spots.push({
-        id: 'backpanel', x: 1190, y: 220, w: 310, h: 410, label: 'The back of the cabinet',
+        id: 'backpanel', ...R.cabinet, label: 'The back of the cabinet',
         onInteract(game) {
           if (game.selectedItem === 'iron_crow') {
             game.setFlag('guardroom_backdoorOpen');
@@ -307,14 +338,17 @@ export default {
       });
     } else {
       spots.push({
-        id: 'stairs', x: 1210, y: 240, w: 280, h: 380, label: 'Stairs down',
+        id: 'stairs', ...R.cabinet, label: 'Stairs down',
         onInteract(game) {
           if (!state.inventory.includes('flint_steel') && !state.flags.guardroom_flintTaken) {
-            game.say('A guard\'s fire-kit still sits on the table. Where you are going is dark, and fire is the cheapest friend there is.');
-            return;
+            // Where you are going is dark: you pocket the guard's fire-kit on the way past.
+            game.setFlag('guardroom_flintTaken');
+            game.addItem('flint_steel', { from: { x: 760, y: 600 }, silent: true });
           }
           if (!game.journal.has('sun2')) {
-            game.say('"Mark each sun along the road." You have not marked this room\'s — something small and gold is scratched above the bolt rack.');
+            game.journal.add('sun2', { title: 'Guard Room — above the bolt rack', category: 'sun', sun: { rays: 3, letter: 'A' } });
+            game.say('On your way out, gold catches your eye above the bolt rack: a sun of three rays and the letter A. You copy it into your journal — "mark each sun along the road."');
+            game.completeRoom({ delay: 3000 });
             return;
           }
           game.completeRoom({ delay: 600 });

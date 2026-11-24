@@ -15,6 +15,17 @@ const CONFIG = {
   journalTitle: "Scribe's Palette",
   journalEmpty: 'Blank papyrus, waiting. Every glyph you read, every weight and star and amulet you find, will be copied here — you will want it at the false door.',
   collectiblesTitle: 'The Amulets of the Rite',
+  // Each amulet carries a sign (the chamber it came from), a bead count and a
+  // letter. The false door's hollows are ordered by sign; the beads agree.
+  collectibleToast: (e) => `Amulet copied to your palette: the ${e.sign || '?'} sign · ${e.sun.rays} bead${e.sun.rays === 1 ? '' : 's'} — "${e.sun.letter}"`,
+  renderCollectible: (e) => `
+    <svg viewBox="0 0 80 92" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="40" cy="38" rx="22" ry="28" fill="#2f6fb0" stroke="#f2d774" stroke-width="2.5"/>
+      ${Array.from({ length: e.sun.rays }, (_, i) => `<circle cx="${40 - (e.sun.rays - 1) * 7 + i * 14}" cy="14" r="4.5" fill="#f2d774"/>`).join('')}
+      <text x="40" y="48" text-anchor="middle" font-size="22" fill="#fdf3cf" font-family="Palatino Linotype, Georgia, serif">${e.sun.letter}</text>
+      <text x="40" y="86" text-anchor="middle" font-size="11" fill="#e8d9b0" font-family="Palatino Linotype, Georgia, serif">${e.sign || ''}</text>
+    </svg>
+    <div class="journal-sun-cap">${e.sun.rays} bead${e.sun.rays === 1 ? '' : 's'} &middot; ${e.sign ? `${e.sign} sign &middot; ` : ''}${e.title}</div>`,
   ambience: 'crypt',
   victory: {
     title: 'Come Forth by Day',

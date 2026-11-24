@@ -5,6 +5,7 @@
 // bellows until the kettle sings ONCE, then draw off.
 
 import { registerItems, registerCombos } from '../../../shared/js/items.js';
+import { kitDefs, panel, shadow, grounded } from '../../../shared/js/scenekit.js';
 
 registerItems({
   recipe_left: {
@@ -94,8 +95,25 @@ const JARS = [
 ];
 const NEEDED = { papaver: 3, valeriana: 1, mel: 2 };
 
+// Layout — one rectangle per object, shared by scene() and hotspots().
+// Shelf lines and the hearth come from the plate (art/stillroom.webp).
+const SHELF_TOP = 272, SHELF_MID = 344, SHELF_LOW = 432;
+const R = {
+  chart:  { x: 104, y: 282, w: 284, h: 292 },
+  spoons: { x: 930, y: 560, w: 210, h: 110 },
+  meat:   { x: 1234, y: 70, w: 96, h: 190 },
+  board:  { x: 1100, y: 396, w: 120, h: 70 },
+  kettle: { x: 540, y: 470, w: 250, h: 230 },
+  stair:  { x: 1400, y: 250, w: 190, h: 470 },
+  sun5:   { x: 650, y: 418, w: 110, h: 64 },
+};
+const DIAL = { cx: 566, cy: 378 };
+const SUN = { cx: 684, cy: 450 };
+
 export default {
   id: 'stillroom',
+  solution: Object.keys(NEEDED).map(k => k[0].toUpperCase() + k.slice(1)),
+  lintStates: [{ label: 'lit', flags: { stillroom_hearthLit: true, stillroom_leftTaken: true, stillroom_meatTaken: true, stillroom_brewed: true }, inventory: ['drugged_meat'] }],
   title: 'The Still-Room',
   intro: 'A vaulted cellar under the kitchens: cold hearth, copper kettle, and a wall of labeled jars — the physicker\'s garden, bottled. Rosemary, dust, and under it all a smell you know from the night they arrested you: valerian, like old boots.',
 
@@ -105,119 +123,120 @@ export default {
     const brewed = !!state.flags.stillroom_brewed;
     const hearthLit = !!state.flags.stillroom_hearthLit;
 
+    // Every prop sits on something the plate paints: jars on the niche shelves
+    // (right), the chart pinned to the bare left wall, spoons on the bench rail,
+    // the kettle hung in the hearth over the painted cauldron, the dial and the
+    // sun-brand on the hood, the bellows on the hearthstone.
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="gd_st_wall" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#171420"/>
-          <stop offset="1" stop-color="#262030"/>
-        </linearGradient>
+        ${kitDefs()}
         <radialGradient id="gd_st_hearth" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stop-color="rgba(255,150,70,0.55)"/>
-          <stop offset="0.55" stop-color="rgba(255,150,70,0.18)"/>
+          <stop offset="0" stop-color="rgba(255,150,70,0.6)"/>
+          <stop offset="0.55" stop-color="rgba(255,150,70,0.2)"/>
           <stop offset="1" stop-color="rgba(255,150,70,0)"/>
+        </radialGradient>
+        <radialGradient id="gd_st_cold" cx="0.5" cy="0.6" r="0.5">
+          <stop offset="0" stop-color="rgba(4,4,6,0.75)"/>
+          <stop offset="1" stop-color="rgba(4,4,6,0)"/>
         </radialGradient>
       </defs>
 
-      <!-- background plate (generated); jars, chart, kettle, props & effects layer on top -->
+      <!-- background plate (generated): vaulted cellar, hooded hearth, niche shelves, bench, stair -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/stillroom.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/stillroom.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- jar shelf -->
-      <g>
-        <rect x="120" y="300" width="620" height="14" rx="4" fill="#38290f"/>
-        <rect x="120" y="440" width="620" height="14" rx="4" fill="#38290f"/>
-        ${JARS.slice(0, 4).map((j, i) => jarSvg(150 + i * 150, 300, j.label)).join('')}
-        ${JARS.slice(4).map((j, i) => jarSvg(200 + i * 160, 440, j.label)).join('')}
-        ${leftTaken ? '' : `
-        <g class="beckon">
-          <path d="M700 470 l34 -8 4 26 -30 6 z" fill="#e8d9b0" transform="rotate(8 718 480)"/>
-        </g>`}
+      <!-- jars on the plate's niche shelves: four above, three below -->
+      ${JARS.slice(0, 4).map((j, i) => jarSvg(958 + i * 66, SHELF_TOP, j.label)).join('')}
+      ${JARS.slice(4).map((j, i) => jarSvg(978 + i * 70, SHELF_MID, j.label)).join('')}
+
+      <!-- the lowest shelf's loose end-board, with a parchment corner behind it -->
+      <g data-mount="bracket">
+        <rect x="${R.board.x + 8}" y="${SHELF_LOW - 6}" width="${R.board.w - 16}" height="14" rx="2" fill="url(#sk_wood)" stroke="#1c120a" stroke-width="2" transform="rotate(-4 ${R.board.x + R.board.w / 2} ${SHELF_LOW})"/>
+        ${leftTaken ? '' : `<path class="beckon" d="M${R.board.x + 30} ${SHELF_LOW - 4} l30 -22 10 20 -30 10 z" fill="#e8d9b0" stroke="#8a7446" stroke-width="1.5"/>`}
       </g>
 
-      <!-- herbal chart -->
-      <g class="sway slow">
-        <rect x="880" y="180" width="300" height="290" rx="6" fill="#d9c493" transform="rotate(1.5 1030 325)"/>
-        <g transform="rotate(1.5 1030 325)" font-family="Palatino Linotype, Georgia, serif" fill="#4a3a1c">
-          <text x="1030" y="215" font-size="20" text-anchor="middle" font-weight="bold">HORTUS SICCUS</text>
+      <!-- herbal chart, pinned to the bare stone of the left wall -->
+      ${panel({ ...R.chart, material: 'parchment', mount: 'nails', tilt: -1.5, body: `
+        <g font-family="Palatino Linotype, Georgia, serif" fill="#3b2a12" transform="rotate(-1.5 ${R.chart.x + R.chart.w / 2} ${R.chart.y + R.chart.h / 2})">
+          <text x="${R.chart.x + R.chart.w / 2}" y="${R.chart.y + 38}" font-size="19" text-anchor="middle" font-weight="bold">HORTUS SICCUS</text>
           ${['Papaver — the dreaming flower', 'Valeriana — root, foul as old boots', 'Mel — the bees’ gold',
              'Cicuta — hemlock. DEATH.', 'Artemisia — wormwood, bitter', 'Urtica — nettle', 'Mandragora — screams when pulled']
-            .map((t, i) => `<text x="900" y="${248 + i * 26}" font-size="14.5">${t}</text>`).join('')}
-          <text x="900" y="446" font-size="13.5" font-style="italic">Widdershins: against the sun.</text>
-        </g>
+            .map((t, i) => `<text x="${R.chart.x + 18}" y="${R.chart.y + 68 + i * 26}" font-size="13.5">${t}</text>`).join('')}
+          <text x="${R.chart.x + 18}" y="${R.chart.y + R.chart.h - 18}" font-size="12.5" font-style="italic">Widdershins: against the sun.</text>
+        </g>` })}
+
+      <!-- spoon rail along the bench apron: a 2-notch and a 3-notch spoon, and one empty hook -->
+      <g data-mount="bracket">
+        <rect x="${R.spoons.x}" y="${R.spoons.y + 10}" width="${R.spoons.w}" height="10" rx="4" fill="url(#sk_iron)" stroke="#111" stroke-width="1.5"/>
+        ${[R.spoons.x + 6, R.spoons.x + R.spoons.w - 6].map(bx => `<rect x="${bx - 4}" y="${R.spoons.y + 4}" width="8" height="20" rx="2" fill="#24262c"/>`).join('')}
+        ${[[R.spoons.x + 60, 2], [R.spoons.x + 120, 3]].map(([sx, n]) => `
+          <g stroke="#a3a393" stroke-width="5" fill="none" stroke-linecap="round">
+            <path d="M${sx} ${R.spoons.y + 20} l0 48"/>
+            <ellipse cx="${sx}" cy="${R.spoons.y + 82}" rx="9" ry="13"/>
+            ${Array.from({ length: n }, (_, k) => `<line x1="${sx - 6}" y1="${R.spoons.y + 34 + k * 8}" x2="${sx + 6}" y2="${R.spoons.y + 34 + k * 8}" stroke-width="2.5"/>`).join('')}
+          </g>`).join('')}
+        <path d="M${R.spoons.x + 180} ${R.spoons.y + 20} q0 12 8 12" fill="none" stroke="#57432a" stroke-width="4" stroke-linecap="round"/>
       </g>
 
-      <!-- spoon rack: 2- and 3-notch, one empty hook -->
-      <g>
-        <rect x="1250" y="200" width="200" height="14" rx="4" fill="#38290f"/>
-        <g stroke="#9a9a8a" stroke-width="5" fill="none" stroke-linecap="round">
-          <path d="M1285 214 l0 60 m0 0 q-12 16 0 30 m-8 -46 l16 0 m-14 10 l12 0"/>
-          <path d="M1355 214 l0 60 m0 0 q-12 16 0 30 m-8 -46 l16 0 m-14 8 l12 0 m-13 8 l14 0"/>
-        </g>
-        <circle cx="1420" cy="222" r="5" fill="#57432a"/>
-        <text x="1420" y="266" font-size="13" fill="#8b8878" text-anchor="middle" font-style="italic"
-          font-family="Palatino Linotype, Georgia, serif">an empty hook</text>
-      </g>
-
-      <!-- hanging meat shank (photoreal, hook + twine included) -->
-      ${meatTaken ? '' : `
-      <g class="sway">
-        <image href="art/st-meat.webp" x="1266" y="52" width="92" height="246" preserveAspectRatio="xMidYMid meet"/>
+      <!-- hanging meat shank on a ceiling hook (photoreal, twine included) -->
+      ${meatTaken ? `<path d="M${R.meat.x + 46} 0 L${R.meat.x + 46} 60 q0 14 -10 14" fill="none" stroke="#3b3f48" stroke-width="4"/>` : `
+      <g class="sway" data-mount="hook">
+        <image href="art/st-meat.webp" x="${R.meat.x - 4}" y="0" width="${R.meat.w}" height="246" preserveAspectRatio="xMidYMid meet"/>
       </g>`}
 
-      <!-- hearth + kettle + bellows + mantel -->
+      <!-- the hearth: dark & cold until lit; the kettle hangs from the crane chain inside -->
       <g>
-        <rect x="360" y="560" width="560" height="30" rx="6" fill="#2a2016"/>
-        <path d="M400 590 L400 470 Q640 420 880 470 L880 590 Z" fill="#0a0806"/>
         ${hearthLit ? `
-          <ellipse cx="640" cy="560" rx="300" ry="160" fill="url(#gd_st_hearth)" class="glow"/>
+          <ellipse cx="660" cy="640" rx="240" ry="150" fill="url(#gd_st_hearth)" class="glow"/>
           <g class="torch-flame">
-            <path d="M600 585 q10 -50 40 -60 q30 10 40 60 z" fill="#ffa94d"/>
-            <path d="M618 585 q8 -30 22 -36 q14 6 22 36 z" fill="#ffd9a0"/>
+            <path d="M620 682 q10 -50 40 -60 q30 10 40 60 z" fill="#ffa94d"/>
+            <path d="M638 682 q8 -30 22 -36 q14 6 22 36 z" fill="#ffd9a0"/>
           </g>` : `
+          <ellipse cx="664" cy="640" rx="120" ry="70" fill="url(#gd_st_cold)"/>
           <g stroke="#2b2233" stroke-width="8" stroke-linecap="round">
-            <line x1="580" y1="580" x2="700" y2="566"/><line x1="620" y1="566" x2="720" y2="582"/>
+            <line x1="612" y1="684" x2="702" y2="672"/><line x1="636" y1="672" x2="720" y2="686"/>
           </g>`}
-        <!-- kettle (photoreal cast-iron cauldron) -->
-        <image href="art/st-kettle.webp" x="550" y="296" width="212" height="266" preserveAspectRatio="xMidYMid meet"/>
-        <!-- stir dial with sun-arrow (clockwise) -->
-        <circle cx="660" cy="452" r="26" fill="#4a3520"/>
-        <circle cx="660" cy="452" r="26" fill="none" stroke="#c9a227" stroke-width="3"/>
-        <path d="M660 430 a22 22 0 1 1 -16 38" fill="none" stroke="#c9a227" stroke-width="3"/>
-        <path d="M644 468 l-8 2 6 -8 z" fill="#c9a227"/>
-        <circle cx="660" cy="452" r="5" fill="#c9a227"/>
-        <!-- bellows (photoreal) -->
-        <image href="art/st-bellows.webp" x="852" y="500" width="168" height="114" preserveAspectRatio="xMidYMid meet" transform="rotate(-8 936 557)"/>
-        <!-- mantel beam with sun-mark #5 -->
-        <rect x="380" y="420" width="520" height="30" rx="4" fill="#38290f"/>
-        <g class="beckon">
-          <circle cx="640" cy="435" r="10" fill="none" stroke="#c9a227" stroke-width="2.5"/>
-          ${Array.from({ length: 8 }, (_, i) => {
-            const a = (i / 8) * Math.PI * 2;
-            return `<line x1="${640 + Math.cos(a) * 13}" y1="${435 + Math.sin(a) * 13}"
-                          x2="${640 + Math.cos(a) * 21}" y2="${435 + Math.sin(a) * 21}"
-                          stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>`;
-          }).join('')}
-          <text x="672" y="443" font-size="18" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif">A</text>
-        </g>
-        ${brewed ? `<g class="float"><path d="M640 340 q6 -18 0 -34 M660 344 q8 -20 2 -38" stroke="rgba(207,224,255,0.5)" stroke-width="4" fill="none" stroke-linecap="round"/></g>` : ''}
+        <!-- crane chain from the hood throat to the kettle bail -->
+        <line x1="650" y1="472" x2="650" y2="560" stroke="#3b3f48" stroke-width="4" stroke-dasharray="7 4"/>
+        <image href="art/st-kettle.webp" x="572" y="548" width="156" height="140" preserveAspectRatio="xMidYMid meet"/>
+        ${brewed ? `<g class="float"><path d="M640 560 q6 -18 0 -34 M662 564 q8 -20 2 -38" stroke="rgba(207,224,255,0.5)" stroke-width="4" fill="none" stroke-linecap="round"/></g>` : ''}
       </g>
 
-      <!-- stair up to the great hall -->
-      <g>
-        <path d="M1460 640 L1600 640 L1600 300 L1520 300 L1520 380 L1490 380 L1490 460 L1460 460 Z" fill="#080604"/>
-        <path d="M1460 640 L1460 460 L1490 460 L1490 380 L1520 380 L1520 300 L1600 300" fill="none" stroke="#2a2118" stroke-width="6"/>
+      <!-- stirring dial: a brass roundel bolted to the hood face, arrow engraved sunwise -->
+      <g data-mount="bolts">
+        <circle cx="${DIAL.cx}" cy="${DIAL.cy}" r="34" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="3" filter="url(#sk_drop)"/>
+        <path d="M${DIAL.cx} ${DIAL.cy - 22} a22 22 0 1 1 -16 38" fill="none" stroke="#3a2a08" stroke-width="3"/>
+        <path d="M${DIAL.cx - 16} ${DIAL.cy + 16} l-8 2 6 -8 z" fill="#3a2a08"/>
+        <circle cx="${DIAL.cx}" cy="${DIAL.cy}" r="5" fill="#3a2a08"/>
+        ${[[-26, -26], [26, -26], [-26, 26], [26, 26]].map(([dx, dy]) => `<circle cx="${DIAL.cx + dx * 0.9}" cy="${DIAL.cy + dy * 0.9}" r="3" fill="#2a1d05"/>`).join('')}
       </g>
+
+      <!-- sun-mark #5, branded into the hearth lintel -->
+      <g class="beckon">
+        <circle cx="${SUN.cx}" cy="${SUN.cy}" r="10" fill="none" stroke="#c9a227" stroke-width="2.5"/>
+        ${Array.from({ length: 8 }, (_, i) => {
+          const a = (i / 8) * Math.PI * 2;
+          return `<line x1="${SUN.cx + Math.cos(a) * 13}" y1="${SUN.cy + Math.sin(a) * 13}"
+                        x2="${SUN.cx + Math.cos(a) * 21}" y2="${SUN.cy + Math.sin(a) * 21}"
+                        stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>`;
+        }).join('')}
+        <text x="${SUN.cx + 30}" y="${SUN.cy + 7}" font-size="18" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif">A</text>
+      </g>
+
+      <!-- bellows, leaning on the hearthstone by the right jamb -->
+      ${grounded({ cx: 836, baseY: 722, w: 130, body: `<image href="art/st-bellows.webp" x="764" y="636" width="146" height="96" preserveAspectRatio="xMidYMid meet" transform="rotate(-14 836 684)"/>` })}
 
       <path d="M0 900 L0 856 Q800 906 1600 856 L1600 900 Z" fill="#05070d"/>
     </svg>`;
 
     function jarSvg(x, shelfY, label) {
-      // Photoreal jar; the load-bearing label stays an SVG overlay.
+      // Photoreal jar standing on a plate shelf; the load-bearing label stays an SVG overlay.
       return `
-      <g>
-        <image href="art/st-jar.webp" x="${x - 16}" y="${shelfY - 80}" width="64" height="76" preserveAspectRatio="xMidYMid meet"/>
-        <rect x="${x - 8}" y="${shelfY - 44}" width="52" height="18" rx="3" fill="#e8d9b0"/>
-        <text x="${x + 18}" y="${shelfY - 31}" font-size="10.5" text-anchor="middle" fill="#4a3a1c"
+      <g data-mount="shelf">
+        ${shadow(x + 24, shelfY - 1, 24, 5, 0.6)}
+        <image href="art/st-jar.webp" x="${x}" y="${shelfY - 62}" width="48" height="62" preserveAspectRatio="xMidYMid meet"/>
+        <rect x="${x - 3}" y="${shelfY - 38}" width="54" height="18" rx="2" fill="#e8d9b0" stroke="#8a7446" stroke-width="0.8"/>
+        <text x="${x + 24}" y="${shelfY - 24.5}" font-size="11.5" text-anchor="middle" fill="#3b2a12"${label.length > 6 ? ' textLength="50" lengthAdjust="spacingAndGlyphs"' : ''}
           font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${label}</text>
       </g>`;
     }
@@ -228,7 +247,7 @@ export default {
     const brewed = !!state.flags.stillroom_brewed;
 
     spots.push({
-      id: 'chart', x: 870, y: 170, w: 320, h: 310, label: 'Herbal chart',
+      id: 'chart', ...R.chart, label: 'Herbal chart',
       onInteract(game) {
         const html = `<div class="parchment-note"><div class="note-title">Hortus Siccus — the dried garden</div>
           <ul style="line-height:1.9; margin-left: 18px;">
@@ -247,7 +266,7 @@ export default {
     });
 
     spots.push({
-      id: 'spoons', x: 1240, y: 190, w: 220, h: 130, label: 'Dosing spoons',
+      id: 'spoons', ...R.spoons, label: 'Dosing spoons',
       onInteract(game) {
         const html = `<p>A rack of dosing spoons — the physicker's law: <strong>notches are measures</strong>.
           A two-notch spoon and a three-notch spoon hang here. The first hook is <strong>empty</strong>.</p>
@@ -260,10 +279,10 @@ export default {
 
     if (!state.flags.stillroom_leftTaken) {
       spots.push({
-        id: 'board', x: 680, y: 440, w: 90, h: 70, label: 'Loose shelf board',
+        id: 'board', ...R.board, label: 'Loose shelf board',
         onInteract(game) {
           game.setFlag('stillroom_leftTaken');
-          game.addItem('recipe_left', { from: { x: 718, y: 480 } });
+          game.addItem('recipe_left', { from: { x: R.board.x + 50, y: SHELF_LOW - 14 } });
           game.say('Behind the loose board: the left half of a torn recipe, hidden the way you hide something you mean to come back for.');
           game.refreshScene();
         },
@@ -272,25 +291,25 @@ export default {
 
     if (!state.flags.stillroom_meatTaken) {
       spots.push({
-        id: 'meat', x: 1260, y: 120, w: 110, h: 100, label: 'Dried meat shank',
+        id: 'meat', ...R.meat, label: 'Dried meat shank',
         onInteract(game) {
           game.setFlag('stillroom_meatTaken');
-          game.addItem('meat_shank', { from: { x: 1310, y: 170 } });
+          game.addItem('meat_shank', { from: { x: R.meat.x + 48, y: R.meat.y + 90 } });
           game.refreshScene();
         },
       });
     }
 
     spots.push({
-      id: 'sun5', x: 600, y: 405, w: 110, h: 60, label: 'A branded sun',
+      id: 'sun5', ...R.sun5, label: 'A branded sun',
       onInteract(game) {
-        game.journal.add('sun5', { title: 'Still-Room — the hearth mantel', category: 'sun', sun: { rays: 8, letter: 'A' } });
-        game.say('Branded into the mantel beam, right where a brewer\'s eyes would rest: a sun of eight rays, and the letter A.');
+        game.journal.add('sun5', { title: 'Still-Room — the hearth lintel', category: 'sun', sun: { rays: 8, letter: 'A' } });
+        game.say('Branded into the hearth lintel, right where a brewer\'s eyes would rest: a sun of eight rays, and the letter A.');
       },
     });
 
     spots.push({
-      id: 'kettle', x: 480, y: 370, w: 330, h: 220, label: brewed ? 'The kettle (spent)' : 'Copper kettle',
+      id: 'kettle', ...R.kettle, label: brewed ? 'The kettle (spent)' : 'Copper kettle',
       onInteract(game) {
         if (brewed) { game.say('The kettle still smells of poppies and honey. Its work is done.'); return; }
         if (!game.hasItem('full_recipe')) {
@@ -306,11 +325,13 @@ export default {
     });
 
     spots.push({
-      id: 'stair', x: 1450, y: 300, w: 150, h: 340, label: 'Stairs up',
+      id: 'stair', ...R.stair, label: 'Stairs up',
       onInteract(game) {
         if (game.hasItem('drugged_meat')) {
           if (!game.journal.has('sun5')) {
-            game.say('"Mark each sun along the road." A brand on the hearth mantel is still unsketched — right where a brewer\'s eyes would rest.');
+            game.journal.add('sun5', { title: 'Still-Room — the hearth lintel', category: 'sun', sun: { rays: 8, letter: 'A' } });
+            game.say('At the stair foot you look back once: branded in the hearth lintel, a sun of eight rays and the letter A. Copied. Meat in hand, you climb toward the growling dark of the Great Hall.');
+            game.completeRoom({ delay: 3000 });
             return;
           }
           game.say('Meat in hand, you climb toward the growling dark of the Great Hall.');

@@ -5,6 +5,7 @@
 // (egg-helm, "S").
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   strigil: {
@@ -21,8 +22,18 @@ registerItems({
 
 const RING_LETTERS = ['A', 'E', 'N', 'R', 'S', 'V'];
 
+// Layout — the plate (art/carcer.webp) paints the oak door + its torch on the
+// left wall, the back wall, the barred window (upper right) and a straw floor.
+const VERSE = { x: 530, y: 300 };
+const MAN_DX = 140;
+const DOOR = {
+  lock: { x: 262, y: 420 },
+  gap: 'M372 120 L404 128 L404 780 L372 792 Z',
+};
+
 export default {
   id: 'carcer',
+  lintStates: [{ label: 'open', flags: { carcer_lockOpen: true, carcer_grateOpen: true } }],
   title: 'The Carcer',
   intro: 'You wake in straw that is not yours, in a cell the turnkey called "the old carcer" with the satisfaction of a man shelving a problem, and through the floor comes the long breathing roar of eighty thousand people who have come to watch the games that end, at midday, with you.',
 
@@ -34,6 +45,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_car_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#241f1a"/>
           <stop offset="1" stop-color="#332b23"/>
@@ -58,42 +70,36 @@ export default {
            the window hotspot below points at it. -->
 
 
-      <!-- torch beside the door -->
-      <g>
-        <rect x="1090" y="300" width="14" height="70" rx="4" fill="#3a2b18"/>
-        <ellipse cx="1097" cy="282" rx="46" ry="40" fill="url(#gd_car_torch)" class="glow"/>
-        <path class="torch-flame" d="M1097 300 q13 -22 0 -40 q-13 18 0 40z" fill="#ffa94d"/>
-        <path class="torch-flame" d="M1097 298 q7 -13 0 -24 q-7 11 0 24z" fill="#ffd9a0"/>
+      <!-- warmth over the plate's painted torch, beside the painted door (left wall) -->
+      <ellipse cx="150" cy="372" rx="120" ry="110" fill="url(#gd_car_torch)" class="glow"/>
+
+      <!-- Felix's verse, scratched into the plaster of the back wall (engraved: dark cut, pale lip) -->
+      <g font-family="Palatino Linotype, Georgia, serif" font-style="italic" font-size="18" data-mount="inset">
+        ${['All my days I counted grains…', 'Remember: sand forgets…', 'Every door they locked…', 'Nothing holds the man…', 'Ask the walls…'].map((t, i) => `
+          <text x="${VERSE.x + 1.5}" y="${VERSE.y + 28 + i * 36 + 1.5}" fill="#0a0705" opacity="0.8">${t}</text>
+          <text x="${VERSE.x}" y="${VERSE.y + 28 + i * 36}" fill="#d9caa0" opacity="0.62" style="mix-blend-mode:screen">${t}</text>`).join('')}
+        <text x="${VERSE.x + 250}" y="${VERSE.y + 214}" font-size="16" fill="#c9a227" opacity="0.8">— F.</text>
       </g>
 
-      <!-- Felix's verse wall, left-center (art only; hotspot sits below the reserve) -->
-      <g opacity="0.9">
-        <rect x="300" y="270" width="330" height="260" rx="6" fill="#2b241c"/>
-        ${[300, 336, 372, 408, 444].map((y, i) => `
-          <text x="320" y="${y + 26}" font-size="17" fill="#c9b98f" opacity="0.8"
-            font-family="Palatino Linotype, Georgia, serif" font-style="italic">${
-              ['All my days I counted grains…', 'Remember: sand forgets…', 'Every door they locked…', 'Nothing holds the man…', 'Ask the walls…'][i]
-            }</text>`).join('')}
-        <text x="560" y="516" font-size="16" fill="#c9a227" font-family="Palatino Linotype, Georgia, serif" font-style="italic">— F.</text>
-      </g>
-
-      <!-- manacles on the wall -->
-      <g stroke="#453a2e" stroke-width="7" fill="none">
+      <!-- manacles on the wall, on two iron eye-bolts -->
+      <g stroke="#453a2e" stroke-width="7" fill="none" data-mount="bolts" transform="translate(${MAN_DX} 0)">
+        <circle cx="760" cy="318" r="6" fill="#2a2620" stroke="none"/><circle cx="820" cy="318" r="6" fill="#2a2620" stroke="none"/>
         <path d="M760 320 q0 40 -24 56"/>
         <path d="M820 320 q0 40 24 56"/>
         <circle cx="732" cy="386" r="17"/>
         <circle cx="848" cy="386" r="17"/>
       </g>
 
-      <!-- the door: iron-strapped oak with the merchant's letter-lock (photoreal sprite) -->
-      <g>
+      <!-- the door is the painted oak door on the left wall: its merchant's letter-lock is fixed to it here -->
+      <g data-mount="bolts">
         ${lockOpen
-          ? `<path d="M1180 662 L1180 300 Q1290 244 1400 300 L1400 662 Z" fill="#0b0906" stroke="#241f1a" stroke-width="6"/>
-             <path d="M1202 662 L1202 322 Q1290 272 1378 322 L1378 662" fill="none" stroke="rgba(232,207,150,0.28)" stroke-width="3"/>
-             <text x="1290" y="486" text-anchor="middle" font-size="15" fill="#e8cf96" class="flicker"
+          ? `<path d="${DOOR.gap}" fill="#050302"/>
+             <path d="${DOOR.gap}" fill="none" stroke="rgba(232,207,150,0.3)" stroke-width="3"/>
+             <text x="${DOOR.lock.x + 40}" y="${DOOR.lock.y + 30}" text-anchor="middle" font-size="15" fill="#e8cf96" class="flicker"
                font-family="Palatino Linotype, Georgia, serif">ajar</text>`
-          : `<image href="art/car-door.webp" x="1174" y="284" width="246" height="382" preserveAspectRatio="xMidYMid meet"/>
-             <g class="beckon"><ellipse cx="1298" cy="474" rx="40" ry="40" fill="url(#gd_car_torch)"/></g>`}
+          : `<rect x="${DOOR.lock.x}" y="${DOOR.lock.y}" width="80" height="54" rx="6" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="2" filter="url(#sk_drop)"/>
+             ${[0, 1, 2, 3, 4].map(i => `<rect x="${DOOR.lock.x + 8 + i * 13.5}" y="${DOOR.lock.y + 14}" width="10" height="24" rx="2" fill="#2a1d05"/>`).join('')}
+             <g class="beckon"><ellipse cx="${DOOR.lock.x + 40}" cy="${DOOR.lock.y + 27}" rx="46" ry="40" fill="url(#gd_car_torch)"/></g>`}
       </g>
 
       <!-- straw pallet, lower left (photoreal sprite) -->
@@ -132,7 +138,7 @@ export default {
     const lockOpen = !!state.flags.carcer_lockOpen;
 
     spots.push({
-      id: 'verse', x: 290, y: 260, w: 350, h: 280, label: "A verse in the plaster",
+      id: 'verse', x: VERSE.x - 14, y: VERSE.y - 10, w: 330, h: 230, label: "A verse in the plaster",
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">Scratched deep in the plaster</div>
           <em class="tab-carve">
@@ -187,7 +193,7 @@ export default {
     });
 
     spots.push({
-      id: 'manacles', x: 700, y: 290, w: 180, h: 130, label: 'Old manacles',
+      id: 'manacles', x: 700 + MAN_DX, y: 290, w: 180, h: 130, label: 'Old manacles',
       onInteract(game) {
         game.say('Rusted open, mercifully. Whoever wore these last has been gone a long time. The wall around them is polished smooth at shoulder height, the way stone gets when a man leans and waits.');
       },
@@ -201,7 +207,7 @@ export default {
     });
 
     spots.push({
-      id: 'door', x: 1170, y: 290, w: 240, h: 380,
+      id: 'door', x: 220, y: 260, w: 190, h: 520,
       label: lockOpen ? 'The open door' : 'The chained door',
       onInteract(game) {
         if (!lockOpen) { openLetterLock(game); return; }

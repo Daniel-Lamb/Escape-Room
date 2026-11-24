@@ -10,6 +10,7 @@
 // Foreshadow: the border procession (humans led in under carved scales).
 
 import { registerItems, registerCombos } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   beeswax_lump: {
@@ -89,8 +90,18 @@ function placementsFrom(flags) {
   } catch { return {}; }
 }
 
+// Layout — the plate (art/morpho.webp) paints a great root arch over a glowing
+// path. A stone screen fills the arch; the mosaic is inlaid into it at a scale
+// that fits the opening.
+const SCREEN = 'M524 706 L524 300 Q526 120 776 40 Q1026 120 1028 300 L1028 706 Z';
+const MOSAIC_SCALE = 0.74;
+const COMB_DX = 220;
+const msc = (x, y) => [800 + (x - 800) * MOSAIC_SCALE, 450 + (y - 450) * MOSAIC_SCALE];
+
 export default {
   id: 'morpho',
+  solution: Object.values(SOLUTION).map(id => id.replace('_', ' ')),
+  lintStates: [{ label: 'solved', flags: { morpho_solved: true }, inventory: ['beeswax_lump'] }],
   title: 'The Morpho Gallery',
   intro: 'The totem\'s door lets you into an apse washed in a pale, sourceless light, where the whole end wall is a single vast mosaic of a morpho butterfly — one wing blazing blue, the other half-finished, its empty sockets waiting like missing teeth — and a hundred living morphos drift through the still air as though the wall exhales them.',
 
@@ -108,6 +119,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_morph_air" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0e1c12"/>
           <stop offset="0.5" stop-color="#13251a"/>
@@ -143,13 +155,15 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/morpho.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/morpho.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- the apse arch + its pale light -->
-      <path d="M300 660 L300 300 Q800 60 1300 300 L1300 660 Z" fill="#16281a" opacity="0.6"/>
-      <ellipse cx="800" cy="440" rx="520" ry="380" fill="url(#gd_morph_apse)"/>
-      <polygon points="700,10 900,10 1000,660 600,660" fill="url(#gd_morph_beam)" class="moonbeam"/>
+      <!-- the root arch is painted; a carved stone screen stands in it, and the mosaic is laid into the screen -->
+      <g data-mount="wall">
+        ${shadow(776, 706, 270, 16)}
+        <path d="${SCREEN}" fill="url(#sk_basalt)" stroke="#0e1c12" stroke-width="6"/>
+        <path d="${SCREEN}" fill="#16281a" opacity="0.35"/>
+      </g>
 
-      <!-- the mosaic border: the procession of defendants (foreshadow) -->
-      <g opacity="0.9">
+      <!-- the mosaic border: the procession of defendants (foreshadow), a frieze along the screen's head -->
+      <g opacity="0.9" transform="translate(800 196) scale(0.46) translate(-800 -185)">
         <rect x="330" y="150" width="940" height="70" rx="6" fill="#2e3a2c" stroke="#1c2718" stroke-width="3"/>
         ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => {
           const x = 388 + i * 118;
@@ -164,8 +178,8 @@ export default {
         }).join('')}
       </g>
 
-      <!-- the great morpho mosaic: body + two wings -->
-      <g>
+      <!-- the great morpho mosaic: body + two wings, inlaid in the screen -->
+      <g transform="translate(800 450) scale(${MOSAIC_SCALE}) translate(-800 -450)">
         <!-- body -->
         <ellipse cx="800" cy="450" rx="26" ry="130" fill="#1c2417" stroke="#0e1c12" stroke-width="3"/>
         <circle cx="800" cy="322" r="24" fill="#1c2417" stroke="#0e1c12" stroke-width="3"/>
@@ -200,13 +214,13 @@ export default {
 
         ${solved ? `
           <ellipse cx="800" cy="450" rx="360" ry="260" fill="url(#gd_morph_apse)" class="glow"/>
-          <text x="800" y="640" text-anchor="middle" font-size="14" fill="#9ce08a" class="flicker"
+          <text x="800" y="640" text-anchor="middle" font-size="15.5" fill="#9ce08a" class="flicker"
             font-family="Palatino Linotype, Georgia, serif">the wing unfolds — the way is through</text>` : ''}
       </g>
 
-      <!-- the wild bees' comb at the apse edge -->
+      <!-- the wild bees' comb, hanging under the arch's left root-edge -->
       ${waxHere ? `
-      <g class="sway">
+      <g class="sway" transform="translate(${COMB_DX} 0)">
         <path d="M250 300 Q244 340 262 360 Q292 366 300 330 Q304 300 280 288 Q260 282 250 300 Z" fill="#c9a227" stroke="#8a6a24" stroke-width="3"/>
         <g fill="#a8842a" opacity="0.7">
           <path d="M262 316 l6 -4 l6 4 l-2 7 l-8 0 z"/><path d="M276 328 l5 -3 l5 3 l-2 6 l-6 0 z"/>
@@ -214,10 +228,14 @@ export default {
         <circle cx="255" cy="292" r="2.4" fill="#ffe08a" class="glow fast"/>
       </g>` : ''}
 
-      <!-- the mosaic niche with token 5 -->
+      <!-- the niche with token 5, cut into a fallen block of the same stone, right of the arch -->
+      <g data-mount="floor">
+        ${shadow(1366, 600, 90, 12)}
+        <rect x="1296" y="410" width="140" height="190" rx="10" fill="url(#sk_basalt)" stroke="#0e1c12" stroke-width="4"/>
+        <rect x="1330" y="430" width="70" height="96" rx="8" fill="#0a120b" stroke="#1c2718" stroke-width="3"/>
+      </g>
       ${tokenHere ? `
       <g class="beckon">
-        <rect x="1330" y="430" width="70" height="96" rx="8" fill="#101a12" stroke="#2e3a2c" stroke-width="3"/>
         <circle cx="1365" cy="470" r="17" fill="#6b4f37" stroke="#d1a53f" stroke-width="2.5"/>
         <path d="M1365 460 l-6 -8 l0 8 M1365 460 l6 -8 l0 8 M1358 470 q-6 3 -8 8 M1372 470 q6 3 8 8"
           stroke="#ffe08a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -237,6 +255,11 @@ export default {
           <path d="M1186 606 Q1202 592 1206 608 Q1196 614 1188 608 Z" fill="#4a90d9"/>
         </g>
       </g>
+      <!-- three morphos resting on the ferns at the pool's edge -->
+      ${[[470, 640, 1], [530, 616, 0.85], [590, 650, 0.9]].map(([x, y, k]) => `
+        <g transform="translate(${x} ${y}) scale(${k})"><g style="transform-origin:center; animation: morph_flap ${2 + k}s ease-in-out infinite">
+          <path d="M0 0 Q-18 -10 -14 8 Q-6 12 2 6 Z" fill="#4a90d9"/><path d="M4 6 Q20 -10 24 8 Q14 14 6 8 Z" fill="#4a90d9"/>
+        </g></g>`).join('')}
       <circle cx="560" cy="620" r="4" fill="#ffe08a" class="glow fast"/>
       <circle cx="1080" cy="250" r="3.5" fill="#ffe08a" class="glow fast"/>
 
@@ -255,7 +278,7 @@ export default {
 
     // the mosaic: lens-reveal, then the mirror puzzle
     spots.push({
-      id: 'mosaic', x: 470, y: 300, w: 660, h: 300, label: solved ? 'The morpho, whole' : 'The morpho mosaic',
+      id: 'mosaic', x: msc(470, 300)[0], y: msc(470, 300)[1], w: 660 * MOSAIC_SCALE, h: 300 * MOSAIC_SCALE, label: solved ? 'The morpho, whole' : 'The morpho mosaic',
       onInteract(game) {
         if (game.getFlag('morpho_solved')) {
           game.say('The two wings hold each other in perfect reflection, blue answering blue — and the whole wall stands folded open behind them like something that has just decided to fly.');
@@ -275,10 +298,10 @@ export default {
     // the wild comb -> beeswax
     if (!state.flags.morpho_waxTaken) {
       spots.push({
-        id: 'comb', x: 236, y: 280, w: 90, h: 100, label: 'A wild bees\' comb',
+        id: 'comb', x: 236 + COMB_DX, y: 280, w: 90, h: 100, label: 'A wild bees\' comb',
         onInteract(game) {
           game.setFlag('morpho_waxTaken');
-          game.addItem('beeswax_lump', { from: { x: 276, y: 324 } });
+          game.addItem('beeswax_lump', { from: { x: 276 + COMB_DX, y: 324 } });
           game.say('You break off a knuckle of wild comb — warm, gold, and pliant, the bees long moved on. It wants to be pressed into the shape of something that matters. Gus eyes it thoughtfully but, for once, keeps his own counsel.');
           game.refreshScene();
         },
@@ -287,7 +310,7 @@ export default {
 
     // the border procession (foreshadow + Gus interjection = earnable mid-game reveal)
     spots.push({
-      id: 'border', x: 330, y: 150, w: 940, h: 72, label: 'The mosaic border',
+      id: 'border', x: 580, y: 168, w: 440, h: 64, label: 'The mosaic border',
       onInteract(game) {
         const html = `<div class="leaf-tablet"><div class="leaf-title">The border procession</div>
           Around the whole mosaic runs a procession in tile: <strong>animals leading human figures
@@ -313,7 +336,7 @@ export default {
 
     // flavor: the drifting morphos
     spots.push({
-      id: 'morphos', x: 380, y: 560, w: 260, h: 120, label: 'The living morphos',
+      id: 'morphos', x: 430, y: 590, w: 200, h: 90, label: 'The living morphos',
       onInteract(game) {
         game.say('Real morphos drift through the apse, the exact impossible blue of the mosaic, as if some had peeled themselves off the wall and thought better of stillness. When one lands on your sleeve and opens its wings, both halves match perfectly. The wall, you realize, is only asking you to do the same.');
       },
@@ -321,7 +344,7 @@ export default {
 
     // the way through (once solved)
     spots.push({
-      id: 'exit', x: 700, y: 320, w: 200, h: 300, label: solved ? 'Through the folded wing' : 'The mosaic wall',
+      id: 'exit', x: 640, y: 600, w: 300, h: 110, label: solved ? 'Through the folded wing' : 'The mosaic wall',
       onInteract(game) {
         if (!game.getFlag('morpho_solved')) {
           game.say('The mosaic is a wall until it is a wing. Complete the right side as the left\'s true reflection and it will unfold — grove-logic again, and again perfectly consistent.');

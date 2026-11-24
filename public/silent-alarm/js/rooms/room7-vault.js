@@ -6,6 +6,7 @@
 // The Client's voice pushes 000000 (the frame). Trust the pins, not the voice.
 
 import { getRole, isHand, roleName } from '../role.js';
+import { dock, DOCK, panel } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'vlt';
@@ -52,18 +53,15 @@ export default {
              </g>`}
       </g>
 
-      <!-- the maker's plate (meta rule) -->
-      <g>
-        <rect x="1100" y="150" width="420" height="150" rx="8" fill="#0b141c" stroke="#c9a227" stroke-width="4"/>
-        <text x="1310" y="190" text-anchor="middle" font-size="14" fill="#8aa0b4" font-family="Consolas, monospace" letter-spacing="2">THE MAKER'S PLATE</text>
-        <text x="1310" y="228" text-anchor="middle" font-size="15" fill="#e8e2d4" font-family="Georgia, serif">"The master runs first pin</text>
-        <text x="1310" y="252" text-anchor="middle" font-size="15" fill="#e8e2d4" font-family="Georgia, serif">to last — position one</text>
-        <text x="1310" y="276" text-anchor="middle" font-size="15" fill="#e8e2d4" font-family="Georgia, serif">through six."</text>
-      </g>
+      <!-- the maker's plate (meta rule), a brass plate bolted beside the vault door -->
+      ${panel({ x: 1120, y: 270, w: 400, h: 150, material: 'brass', mount: 'bolts', rx: 8, body: `
+        <text x="1320" y="306" text-anchor="middle" font-size="14" fill="#2a1d05" font-family="Consolas, monospace" letter-spacing="2">THE MAKER'S PLATE</text>
+        <text x="1320" y="342" text-anchor="middle" font-size="15" fill="#2a1d05" font-family="Georgia, serif">"The master runs first pin</text>
+        <text x="1320" y="366" text-anchor="middle" font-size="15" fill="#2a1d05" font-family="Georgia, serif">to last — position one</text>
+        <text x="1320" y="390" text-anchor="middle" font-size="15" fill="#2a1d05" font-family="Georgia, serif">through six."</text>` })}
 
-      <!-- this player's three pins on a rack (read these to your partner) -->
-      <g>
-        <rect x="120" y="600" width="470" height="200" rx="10" fill="#0b1a13" stroke="#7cffb2" stroke-width="3"/>
+      <!-- your three pins, in your own kit (read these to your partner) -->
+      ${dock({ x: 120, y: 600, w: 470, h: 200 }, `
         <text x="355" y="640" text-anchor="middle" font-size="14" fill="#7cffb2" font-family="Consolas, monospace" letter-spacing="2">YOUR THREE PINS</text>
         ${mine.map((e, i) => `
           <g transform="translate(${190 + i * 130} 720)">
@@ -71,8 +69,7 @@ export default {
             <text y="-4" text-anchor="middle" font-size="22" fill="#7cffb2" font-family="Consolas, monospace" font-weight="bold">${e.sun.letter}</text>
             <text y="34" text-anchor="middle" font-size="14" fill="#e8c85a" font-family="Consolas, monospace">pos ${e.sun.rays}</text>
           </g>`).join('')}
-        <text x="355" y="790" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">read position + digit to your partner</text>
-      </g>
+        <text x="355" y="790" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">read position + digit to your partner</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
 
       ${roleTag()}
       ${ambient(SLUG)}
@@ -84,7 +81,7 @@ export default {
     const done = won(state);
 
     spots.push({
-      id: 'plate', x: 1100, y: 150, w: 420, h: 150, label: "The maker's plate",
+      id: 'plate', x: 1120, y: 270, w: 400, h: 150, label: "The maker's plate",
       onInteract(game) {
         const html = `<div class="dossier"><div class="dossier-title">The maker's plate</div>
           <p>"The master runs first pin to last — <strong>position one through six</strong>."</p></div>
@@ -95,7 +92,7 @@ export default {
     });
 
     spots.push({
-      id: 'pins', x: 120, y: 600, w: 470, h: 200, label: 'Your three pins',
+      id: 'pins', ...DOCK, label: 'Your three pins',
       onInteract(game) {
         const mine = game.state.journal.filter(e => e.category === 'sun').sort((a, b) => a.sun.rays - b.sun.rays);
         const list = mine.map(e => `position <b>${e.sun.rays}</b> = "<b>${e.sun.letter}</b>"`).join(' &nbsp; · &nbsp; ');

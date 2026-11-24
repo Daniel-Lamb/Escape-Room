@@ -5,6 +5,7 @@
 // the wool_rag+oil_flask -> oiled_rag combo (registered here; Gus seeds it).
 
 import { registerItems, registerCombos } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   bronze_mirror: {
@@ -51,8 +52,19 @@ registerCombos([
   },
 ]);
 
+// Layout — the plate (art/shrine.webp): Nemesis on her plinth with the altar
+// before her (centre), urn-niche shelves on both walls, a lit candelabrum (left)
+// and a small doorway at the back right.
+const MEASURE = 4;   // heminae the lamp takes: IIII
+const LAMP = { cx: 944, y: 618 };
+const DOORWAY = { x: 1050, y: 368, w: 104, h: 296 };
+const VOT_DX = -150, VOT_DY = 224;
+const CHARM_DX = -120;
+
 export default {
   id: 'shrine',
+  solution: 'I'.repeat(MEASURE),
+  lintStates: [{ label: 'done', flags: { shrine_riteDone: true } }],
   title: 'The Shrine of Nemesis',
   intro: 'The corridor opens into a low shrine thick with dead incense, where Nemesis — wings folded, wheel at her sandal, scourge at her belt — watches a cold lamp with the expression of a goddess who has been kept waiting, and the door behind her altar has no intention of opening for a man who owes her a libation.',
 
@@ -64,6 +76,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_shr_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#241d16"/>
           <stop offset="1" stop-color="#332a1f"/>
@@ -91,16 +104,18 @@ export default {
         ${[0, 45, 90, 135].map(a => `<line x1="742" y1="582" x2="742" y2="638" stroke="#c9a227" stroke-width="4" transform="rotate(${a} 742 610)"/>`).join('')}
       </g>
 
-      <!-- the great lamp -->
-      <g>
-        <rect x="1010" y="470" width="16" height="170" fill="#453a2e"/>
-        <path d="M960 470 q58 -26 116 0 l-14 26 q-44 16 -88 0 z" fill="#6b5a3a" stroke="#2b2015" stroke-width="4"/>
+      <!-- the great lamp: a bronze lucerna on a low stand, set on the altar's right end -->
+      <g data-mount="table">
+        ${shadow(LAMP.cx, LAMP.y + 40, 60, 7)}
+        <rect x="${LAMP.cx - 6}" y="${LAMP.y + 6}" width="12" height="34" fill="#453a2e"/>
+        <path d="M${LAMP.cx - 40} ${LAMP.y + 40} h80 l-8 -6 h-64 z" fill="#453a2e"/>
+        <path d="M${LAMP.cx - 46} ${LAMP.y} q46 -22 92 0 l-12 14 q-34 12 -68 0 z" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="3"/>
+        <path d="M${LAMP.cx + 40} ${LAMP.y - 4} l22 -8 l-4 12 z" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="2"/>
         ${done
-          ? `<ellipse cx="1018" cy="440" rx="80" ry="66" fill="url(#gd_shr_lamp)" class="glow"/>
-             <path class="torch-flame" d="M1018 462 q18 -30 0 -54 q-18 24 0 54z" fill="#ffa94d"/>
-             <path class="torch-flame" d="M1018 458 q9 -16 0 -30 q-9 14 0 30z" fill="#ffd9a0"/>`
-          : `<ellipse cx="1018" cy="466" rx="22" ry="7" fill="#171209"/>
-             <path d="M1012 462 q6 -8 12 0" stroke="#453a2e" stroke-width="3" fill="none"/>`}
+          ? `<ellipse cx="${LAMP.cx + 56}" cy="${LAMP.y - 30}" rx="80" ry="66" fill="url(#gd_shr_lamp)" class="glow"/>
+             <path class="torch-flame" d="M${LAMP.cx + 56} ${LAMP.y - 8} q14 -24 0 -44 q-14 20 0 44z" fill="#ffa94d"/>
+             <path class="torch-flame" d="M${LAMP.cx + 56} ${LAMP.y - 10} q7 -13 0 -24 q-7 11 0 24z" fill="#ffd9a0"/>`
+          : `<ellipse cx="${LAMP.cx}" cy="${LAMP.y - 2}" rx="20" ry="5" fill="#171209"/>`}
       </g>
 
       <!-- altar with inscription -->
@@ -113,7 +128,8 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">IIII HEMINAE · VNO SPIRITV</text>
       </g>
 
-      <!-- vessels: amphora + jugs (photoreal sprites; V/III labels kept legible) -->
+      <!-- vessels: amphora + jugs standing on the floor (photoreal sprites; V/III labels kept legible) -->
+      ${shadow(446, 728, 70, 9)}${shadow(558, 718, 48, 7)}${shadow(322, 718, 38, 6)}
       <g font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#2b1c08" stroke-linejoin="round">
         <image href="art/shr-amphora.webp" x="384" y="518" width="122" height="212" preserveAspectRatio="xMidYMax meet"/>
         <image href="art/shr-jug5.webp" x="514" y="626" width="88" height="92" preserveAspectRatio="xMidYMax meet"/>
@@ -122,15 +138,16 @@ export default {
         <text x="322" y="704" text-anchor="middle" font-size="17" fill="#f7ecd0" stroke-width="3">III</text>
       </g>
 
-      <!-- votive pile with the mirror -->
-      <g>
+      <!-- votive pile with the mirror, heaped on the floor at the foot of the shelves -->
+      <g data-mount="floor" transform="translate(${VOT_DX} ${VOT_DY})">
         <ellipse cx="280" cy="560" rx="110" ry="28" fill="#3a3126"/>
         <path d="M210 552 l30 -12 l16 10 M300 546 l26 -8 M330 556 l24 -12" stroke="#8a7f6a" stroke-width="5" stroke-linecap="round"/>
         ${mirrorHere ? `<g class="beckon"><circle cx="268" cy="536" r="16" fill="#d1a53f" stroke="#6b4514" stroke-width="3"/><circle cx="268" cy="536" r="10" fill="#f0dfae"/></g>` : ''}
       </g>
 
-      <!-- votive tablets on the wall, one crooked -->
-      <g>
+      <!-- votive tablets nailed to the wall, one crooked -->
+      <g data-mount="nails">
+        ${[1212, 1292, 1372].map(x => `<circle cx="${x}" cy="296" r="4" fill="#2a2620"/>`).join('')}
         ${[1180, 1260, 1340].map((x, i) => `
           <rect x="${x}" y="300" width="64" height="86" rx="5" fill="#6b4f2c" stroke="#2b2015" stroke-width="3"
             ${i === 1 ? 'transform="rotate(7 1292 343)"' : ''}/>
@@ -138,20 +155,21 @@ export default {
             ${i === 1 ? 'transform="rotate(7 1292 343)"' : ''}/>`).join('')}
       </g>
 
-      <!-- doorway + charm plaster + passage door -->
-      <g>
-        <path d="M1440 650 L1440 330 Q1510 292 1580 330 L1580 650 Z" fill="${done ? '#0f0c08' : '#2b2015'}" stroke="#241f1a" stroke-width="7"/>
+      <!-- the passage: the plate's own doorway at the back right, barred with a beam until the rite -->
+      <g data-mount="wall">
         ${done
-          ? `<text x="1510" y="480" text-anchor="middle" font-size="13" fill="#e8cf96" class="flicker"
+          ? `<rect x="${DOORWAY.x}" y="${DOORWAY.y}" width="${DOORWAY.w}" height="${DOORWAY.h}" fill="#0f0c08" opacity="0.55"/>
+             <text x="${DOORWAY.x + DOORWAY.w / 2}" y="${DOORWAY.y + DOORWAY.h / 2}" text-anchor="middle" font-size="13" fill="#e8cf96" class="flicker"
                font-family="Palatino Linotype, Georgia, serif">unbarred</text>`
-          : `<line x1="1432" y1="470" x2="1588" y2="470" stroke="#5c5546" stroke-width="13"/>`}
-        <!-- the charm scratched on the plaster beside the door -->
-        <g opacity="0.9">
-          <rect x="1290" y="470" width="120" height="130" rx="4" fill="#3a3126"/>
-          <text x="1350" y="500" text-anchor="middle" font-size="18" letter-spacing="6" fill="#c9b98f"
-            font-family="Palatino Linotype, Georgia, serif">SATOR</text>
-          ${[518, 540, 562, 584].map(y => `<line x1="1306" y1="${y}" x2="1394" y2="${y}" stroke="#57493a" stroke-width="8" opacity="0.6"/>`).join('')}
-        </g>
+          : `<line x1="${DOORWAY.x - 14}" y1="${DOORWAY.y + DOORWAY.h * 0.45}" x2="${DOORWAY.x + DOORWAY.w + 14}" y2="${DOORWAY.y + DOORWAY.h * 0.45}" stroke="#5c5546" stroke-width="13" stroke-linecap="round"/>
+             ${[DOORWAY.x - 14, DOORWAY.x + DOORWAY.w + 6].map(x => `<rect x="${x}" y="${DOORWAY.y + DOORWAY.h * 0.45 - 14}" width="8" height="28" rx="2" fill="#2a2620"/>`).join('')}`}
+      </g>
+      <!-- the charm scratched on the plaster beside the doorway -->
+      <g opacity="0.9" data-mount="inset" transform="translate(${CHARM_DX} 0)">
+        <rect x="1290" y="470" width="120" height="130" rx="4" fill="#3a3126"/>
+        <text x="1350" y="500" text-anchor="middle" font-size="18" letter-spacing="6" fill="#c9b98f"
+          font-family="Palatino Linotype, Georgia, serif">SATOR</text>
+        ${[518, 540, 562, 584].map(y => `<line x1="1306" y1="${y}" x2="1394" y2="${y}" stroke="#57493a" stroke-width="8" opacity="0.6"/>`).join('')}
       </g>
 
       <!-- niche under the statue (opens with the rite) -->
@@ -161,16 +179,17 @@ export default {
         ${flaskHere ? `<g class="beckon"><path d="M792 606 h12 l4 10 q4 8 -10 8 q-14 0 -10 -8 z" fill="#8a5a1c"/><rect x="795" y="596" width="6" height="10" rx="2" fill="#6b4f2c"/></g>` : ''}
       </g>` : ''}
 
-      <!-- scratched prayers (flavor) -->
-      <g opacity="0.55">
-        <text x="180" y="720" font-size="13" fill="#8a7f6a" font-style="italic"
+      <!-- scratched prayers (flavor), cut into the flagstones at the altar's foot -->
+      <g opacity="0.6" data-mount="inset">
+        <text x="420" y="814" font-size="13" fill="#b5a888" font-style="italic"
           font-family="Palatino Linotype, Georgia, serif">NEMESIS LET IT BE QVICK</text>
-        <text x="150" y="746" font-size="13" fill="#8a7f6a" font-style="italic"
+        <text x="440" y="838" font-size="13" fill="#b5a888" font-style="italic"
           font-family="Palatino Linotype, Georgia, serif">OR LET IT BE HIM</text>
       </g>
 
-      <!-- cold brazier (flavor) -->
-      <g>
+      <!-- cold brazier (flavor), on its three legs on the floor -->
+      <g data-mount="floor">
+        ${shadow(1180, 820, 56, 8)}
         <circle cx="1180" cy="740" r="40" fill="#3a3126" stroke="#171209" stroke-width="4"/>
         <path d="M1150 776 l-10 40 M1210 776 l10 40 M1180 780 v40" stroke="#3a3126" stroke-width="7"/>
         <ellipse cx="1180" cy="736" rx="26" ry="8" fill="#171209"/>
@@ -195,7 +214,7 @@ export default {
     });
 
     spots.push({
-      id: 'lamp', x: 940, y: 380, w: 160, h: 260, label: done ? 'The burning lamp' : 'The cold lamp',
+      id: 'lamp', x: LAMP.cx - 60, y: LAMP.y - 90, w: 150, h: 140, label: done ? 'The burning lamp' : 'The cold lamp',
       onInteract(game) {
         if (done) {
           game.say('The lamp burns steady and pleased. Nemesis\'s wheel turns at her sandal, slow as a held grudge released.');
@@ -214,10 +233,10 @@ export default {
 
     if (!state.flags.shrine_mirrorTaken) {
       spots.push({
-        id: 'votives', x: 180, y: 500, w: 220, h: 90, label: 'The votive pile',
+        id: 'votives', x: 180 + VOT_DX, y: 500 + VOT_DY, w: 220, h: 90, label: 'The votive pile',
         onInteract(game) {
           game.setFlag('shrine_mirrorTaken');
-          game.addItem('bronze_mirror', { from: { x: 268, y: 536 } });
+          game.addItem('bronze_mirror', { from: { x: 268 + VOT_DX, y: 536 + VOT_DY } });
           game.say('Among the offerings — combs, dice, a child\'s sandal — a bronze hand-mirror, polished to a warm shine. The goddess of due measure will not miss one mirror. Probably.');
           game.refreshScene();
         },
@@ -238,7 +257,7 @@ export default {
     }
 
     spots.push({
-      id: 'charm', x: 1280, y: 460, w: 140, h: 150, label: 'A charm on the plaster',
+      id: 'charm', x: 1280 + CHARM_DX, y: 460, w: 140, h: 150, label: 'A charm on the plaster',
       onInteract(game) {
         const html = `<p>Scratched into the doorway plaster, mostly worn away:</p>
           <span class="stone-cut">S A T O R<br><span style="opacity:0.35">— — — — —<br>— — — — —<br>— — — — —<br>— — — — —</span></span>
@@ -269,7 +288,7 @@ export default {
     });
 
     spots.push({
-      id: 'prayers', x: 120, y: 690, w: 260, h: 80, label: 'Scratched prayers',
+      id: 'prayers', x: 400, y: 790, w: 260, h: 64, label: 'Scratched prayers',
       onInteract(game) {
         game.say('Generations of gladiators\' handwriting, all of it hurried: NEMESIS, LET IT BE QUICK OR LET IT BE HIM. Nobody prays down here for glory. They pray for arithmetic.');
       },
@@ -283,7 +302,7 @@ export default {
     });
 
     spots.push({
-      id: 'door', x: 1430, y: 320, w: 160, h: 340, label: done ? 'To the lanista\'s tablinum' : 'The barred passage',
+      id: 'door', x: DOORWAY.x - 10, y: DOORWAY.y - 8, w: DOORWAY.w + 20, h: DOORWAY.h + 16, label: done ? 'To the lanista\'s tablinum' : 'The barred passage',
       onInteract(game) {
         if (!done) {
           game.say('The bar behind the altar is the goddess\'s own: it lifts when her lamp is lit, and not before. The inscription on the altar names her price.');
@@ -372,7 +391,7 @@ function openPourRite(game) {
       body.querySelector('#shr-e3').addEventListener('click', act(() => { iii = 0; }));
 
       const tryLamp = (amt, clear) => {
-        if (amt === 4) {
+        if (amt === MEASURE) {
           game.setFlag('shrine_riteDone');
           clear();
           game.playSfx('solve');

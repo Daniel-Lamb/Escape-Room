@@ -6,7 +6,8 @@
 // Diver recovers depth-mark N (17 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
+import { dock, panel } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'wireless';
 const FLASH = { p1: [3, 2, 1, 4], p2: [4, 1, 2, 3] };            // this role's own visible flashes
@@ -18,12 +19,11 @@ const hasMark = (state) => state.journal.some(e => e.id === 'mark_n');
 function codebookPanel(role) {
   const p = PAGE[role];
   const cells = [1, 2, 3, 4].map((n, i) => `<text x="${640 + i * 130}" y="256" text-anchor="middle" font-size="26" fill="#eafffb" font-family="Consolas, monospace">${n}→${p[n]}</text>`).join('');
-  return `<g>
-    <rect x="556" y="138" width="488" height="184" rx="10" fill="rgba(5,18,24,0.86)" stroke="#7cf0be" stroke-width="3"/>
+  return dock({ x: 556, y: 138, w: 488, h: 184 }, `
     <text x="800" y="182" text-anchor="middle" font-size="16" fill="#9fc7dd" font-family="Consolas, monospace" letter-spacing="2">CODEBOOK · for your partner's flashes</text>
     ${cells}
-    <text x="800" y="298" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">decode their counts, read them the word</text>
-  </g>`;
+    <text x="800" y="298" text-anchor="middle" font-size="13" fill="#9fb0c4" font-family="Consolas, monospace">decode their counts, read them the word</text>`,
+    { kind: isDiver() ? 'tablet' : 'radio', title: isDiver() ? 'DIVE SLATE' : 'RADIO LOG' });
 }
 
 function indicator(role) {
@@ -34,11 +34,10 @@ function indicator(role) {
     for (let k = 0; k < c; k++) pips += `<circle cx="${cx}" cy="${470 + k * 15}" r="5" fill="#ffcf6a" class="flicker"/>`;
     return `<g>${pips}<text x="${cx}" y="558" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace">${c}</text></g>`;
   }).join('');
-  return `<g>
-    <rect x="556" y="424" width="488" height="150" rx="8" fill="rgba(9,26,32,0.85)" stroke="#3a4656" stroke-width="3"/>
-    <text x="800" y="452" text-anchor="middle" font-size="14" fill="#9fc7dd" font-family="Consolas, monospace">YOUR INDICATOR · read the counts to your partner</text>
-    ${groups}
-  </g>`;
+  return panel({ x: 556, y: 424, w: 488, h: 150, material: 'steel', mount: 'bolts', rx: 8, body: `
+    <rect x="566" y="434" width="468" height="130" rx="6" fill="#08161c"/>
+    <text x="800" y="458" text-anchor="middle" font-size="14" fill="#9fc7dd" font-family="Consolas, monospace">YOUR INDICATOR · read the counts to your partner</text>
+    ${groups}` });
 }
 
 export default {
@@ -75,7 +74,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'codebook', x: 556, y: 138, w: 488, h: 184, label: 'The codebook page (for your partner)',
+      id: 'codebook', ...DOCK, label: 'The codebook page (for your partner)',
       onInteract(game) {
         const p = PAGE[role];
         const rows = [1, 2, 3, 4].map(n => `${n} &rarr; ${p[n]}`).join(' &nbsp; ');

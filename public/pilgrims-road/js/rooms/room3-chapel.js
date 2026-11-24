@@ -2,6 +2,7 @@
 // Puzzle: the Lily Carillon — ring the bells C, E, A, D, B, C
 // (saints ordered by lilies held; the shepherd Cuthbert rings first AND last).
 
+import { kitDefs, panel, shadow, grounded } from '../../../shared/js/scenekit.js';
 import { registerItems } from '../../../shared/js/items.js';
 
 registerItems({
@@ -25,6 +26,23 @@ registerItems({
 });
 
 // bell definitions: saint, note letter, frequency, lilies in their window panel
+// Layout — read off the plate (art/chapel.webp) and shared with hotspots().
+const WIN = { x: 664, top: 112, bottom: 344, light: 54, gap: 8, get w() { return this.light * 5 + this.gap * 4; } };
+const BEAM = { x1: 520, x2: 1080, y: 452 };
+const bellX = i => BEAM.x1 + 40 + i * ((BEAM.x2 - BEAM.x1 - 80) / 4);
+const CRYPT = 'M222 782 L222 472 Q291 404 360 472 L360 782 Z';
+const SUN3 = { cx: 291, cy: 392 };
+const R = {
+  window:    { x: 650, y: 84, w: 320, h: 286 },
+  plaque:    { x: 630, y: 376, w: 360, h: 60 },
+  candles:   { x: 40, y: 680, w: 180, h: 150 },
+  psalter:   { x: 1180, y: 540, w: 150, h: 250 },
+  sun3:      { x: 236, y: 348, w: 120, h: 80 },
+  crypt:     { x: 224, y: 450, w: 136, h: 320 },
+  reliquary: { x: 700, y: 580, w: 200, h: 120 },
+  door:      { x: 1450, y: 350, w: 140, h: 440 },
+};
+
 const BELLS = [
   { saint: 'Cuthbert', note: 'C', freq: 261.63, lilies: 1, crook: true },
   { saint: 'Edmund',   note: 'E', freq: 329.63, lilies: 2, crook: false },
@@ -40,6 +58,7 @@ const GLASS_COLORS = ['#4a6fa5', '#7a4a8f', '#3f7a5e', '#8f4a4a', '#8a6d3c'];
 
 export default {
   id: 'chapel',
+  lintStates: [{ label: 'open', flags: { chapel_reliquaryOpen: true } }],
   title: 'The Chapel',
   intro: 'The stair opens behind the altar of a narrow chapel. Moonlight falls in five colours through the saints\' window, and five hand bells wait in their frame — the old monks\' carillon, silent these forty years. Dust like held breath.',
 
@@ -59,6 +78,7 @@ export default {
         .chapel-bell.bell-ring { animation: chapel_bellring 0.9s ease-out; }
       </style>
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_ch_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#10141f"/>
           <stop offset="1" stop-color="#1e2433"/>
@@ -77,96 +97,103 @@ export default {
         </radialGradient>
       </defs>
 
-      <!-- background plate (generated); stained glass, bells, altar & props layer on top -->
+      <!-- background plate (generated): tall blind lancet arch (centre), altar, candle ledge (left),
+           the crypt-stair arch (left wall). Glass, bells and furniture are set into those. -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/chapel.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/chapel.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- five-panel stained glass window -->
-      <g>
+      <!-- five-light saints' window, glazed into the painted lancet arch -->
+      <g data-mount="inset">
+        <path d="M${WIN.x - 14} ${WIN.bottom + 4} L${WIN.x - 14} ${WIN.top + 30} Q${WIN.x - 10} ${WIN.top - 50} ${WIN.x + WIN.w / 2} ${WIN.top - 76} Q${WIN.x + WIN.w + 10} ${WIN.top - 50} ${WIN.x + WIN.w + 14} ${WIN.top + 30} L${WIN.x + WIN.w + 14} ${WIN.bottom + 4} Z" fill="#06080e" opacity="0.88"/>
         ${BELLS.map((b, i) => {
-          const x = 330 + i * 130;
-          const arch = `M${x} 340 L${x} 130 Q${x + 55} 70 ${x + 110} 130 L${x + 110} 340 Z`;
+          const x = WIN.x + i * (WIN.light + WIN.gap);
+          const L = WIN.light;
+          const arch = `M${x} ${WIN.bottom} L${x} ${WIN.top + 26} Q${x + L / 2} ${WIN.top - 18} ${x + L} ${WIN.top + 26} L${x + L} ${WIN.bottom} Z`;
           return `
           <g>
             <clipPath id="clip_saint_${i}"><path d="${arch}"/></clipPath>
-            <image href="art/ch-saint-${i}.webp" x="${x - 4}" y="66" width="118" height="278"
+            <image href="art/ch-saint-${i}.webp" x="${x - 30}" y="${WIN.top - 20}" width="${L + 60}" height="${WIN.bottom - WIN.top + 20}"
               preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_saint_${i})"/>
-            <path d="${arch}" fill="none" stroke="#0a0d15" stroke-width="6"/>
-            <!-- authoritative lily count (this saint's puzzle number) -->
-            <rect x="${x + 55 - b.lilies * 10}" y="284" width="${b.lilies * 20}" height="26" rx="9" fill="rgba(6,10,20,0.68)"/>
+            <path d="${arch}" fill="none" stroke="#0a0d15" stroke-width="5"/>
+            <!-- authoritative lily count (this saint's puzzle number), stacked in the glass -->
+            <rect x="${x + 6}" y="${WIN.bottom - 16 - b.lilies * 17}" width="${L - 12}" height="${b.lilies * 17 + 8}" rx="7" fill="rgba(6,10,20,0.72)"/>
             ${Array.from({ length: b.lilies }, (_, k) =>
-              `<g transform="translate(${x + 55 - (b.lilies - 1) * 10 + k * 20} 297)">
-                 <path d="M0 7 q-6 -11 0 -15 q6 4 0 15 M0 7 q-10 -2 -10 -9 M0 7 q10 -2 10 -9"
-                   stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+              `<g transform="translate(${x + L / 2} ${WIN.bottom - 18 - k * 17})">
+                 <path d="M0 6 q-5 -10 0 -13 q5 3 0 13 M0 6 q-9 -2 -9 -8 M0 6 q9 -2 9 -8"
+                   stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
                </g>`).join('')}
-            <!-- name scroll -->
-            <rect x="${x + 12}" y="314" width="86" height="20" rx="4" fill="#e8d9b0" opacity="0.92"/>
-            <text x="${x + 55}" y="329" text-anchor="middle" font-size="14" fill="#2b2015"
-              font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${b.saint.toUpperCase()}</text>
           </g>`;
         }).join('')}
-        <!-- moonbeam through the window -->
-        <path d="M320 120 L1100 120 L1350 900 L560 900 Z" fill="url(#gd_ch_moon)" class="moonbeam"/>
+        <!-- stone sill with the saints' names cut into it -->
+        <rect x="${WIN.x - 16}" y="${WIN.bottom}" width="${WIN.w + 32}" height="22" fill="url(#sk_stone)" stroke="#2c2418" stroke-width="2"/>
+        ${BELLS.map((b, i) => `<text x="${WIN.x + i * (WIN.light + WIN.gap) + WIN.light / 2}" y="${WIN.bottom + 16.5}" text-anchor="middle" font-size="11.5" fill="#1e170d"${b.saint.length > 5 ? ` textLength="${WIN.light - 4}" lengthAdjust="spacingAndGlyphs"` : ''}
+            font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${b.saint.toUpperCase()}</text>`).join('')}
+        <!-- moonlight through the glass -->
+        <path d="M${WIN.x} ${WIN.top} L${WIN.x + WIN.w} ${WIN.top} L1260 900 L420 900 Z" fill="url(#gd_ch_moon)" class="moonbeam"/>
       </g>
 
-      <!-- brass plaque beneath window -->
-      <image href="art/ch-plaque.webp" x="556" y="362" width="448" height="72" preserveAspectRatio="none"/>
-      <text x="780" y="396" text-anchor="middle" font-size="17" fill="#2b1f08" font-weight="bold"
-        font-family="Palatino Linotype, Georgia, serif" letter-spacing="1">SING AS THE LILIES BLOOM;</text>
-      <text x="780" y="417" text-anchor="middle" font-size="17" fill="#2b1f08" font-weight="bold"
-        font-family="Palatino Linotype, Georgia, serif" letter-spacing="1">LET THE SHEPHERD SING FIRST AND LAST.</text>
+      <!-- brass plaque, bolted to the wall beneath the window -->
+      ${panel({ ...R.plaque, material: 'brass', mount: 'bolts', rx: 4, body: `
+        <text x="${R.plaque.x + R.plaque.w / 2}" y="${R.plaque.y + 24}" text-anchor="middle" font-size="13.5" fill="#2b1f08" font-weight="bold"
+          font-family="Palatino Linotype, Georgia, serif">SING AS THE LILIES BLOOM;</text>
+        <text x="${R.plaque.x + R.plaque.w / 2}" y="${R.plaque.y + 43}" text-anchor="middle" font-size="13.5" fill="#2b1f08" font-weight="bold"
+          font-family="Palatino Linotype, Georgia, serif">LET THE SHEPHERD SING FIRST AND LAST.</text>` })}
 
-      <!-- bell frame (photoreal carillon beam) -->
-      <g>
-        <image href="art/ch-frame.webp" x="376" y="450" width="808" height="129" preserveAspectRatio="xMidYMid meet"/>
-        ${BELLS.map((b, i) => {
-          const x = 470 + i * 160;
-          return `
+      <!-- the bell-beam, its ends set on stone corbels in the two piers; each saint's name cut into it -->
+      <g data-mount="bracket">
+        ${[BEAM.x1, BEAM.x2].map(x => `<path d="M${x - 26} ${BEAM.y + 28} L${x + 26} ${BEAM.y + 28} L${x + 14} ${BEAM.y + 58} L${x - 14} ${BEAM.y + 58} Z" fill="url(#sk_stone)" stroke="#2c2418" stroke-width="2"/>`).join('')}
+        <rect x="${BEAM.x1 - 30}" y="${BEAM.y}" width="${BEAM.x2 - BEAM.x1 + 60}" height="28" rx="3" fill="url(#sk_darkwood)" stroke="#120b05" stroke-width="2" filter="url(#sk_drop)"/>
+        ${BELLS.map((b, i) => `<text x="${bellX(i)}" y="${BEAM.y + 19}" text-anchor="middle" font-size="11" fill="#d8c79c" font-style="italic"
+            font-family="Palatino Linotype, Georgia, serif">${b.saint}</text>`).join('')}
+        ${BELLS.map((b, i) => `
           <g id="bell_chapel_${i}" class="chapel-bell">
-            <image href="art/ch-bell.webp" x="${x - 28}" y="486" width="56" height="120" preserveAspectRatio="xMidYMid meet"/>
-            <text x="${x}" y="556" text-anchor="middle" font-size="22" fill="#fff2cf" stroke="#5a4410" stroke-width="0.6"
+            <line x1="${bellX(i)}" y1="${BEAM.y + 28}" x2="${bellX(i)}" y2="${BEAM.y + 36}" stroke="#3b3f48" stroke-width="4"/>
+            <image href="art/ch-bell.webp" x="${bellX(i) - 26}" y="${BEAM.y + 32}" width="52" height="104" preserveAspectRatio="xMidYMid meet"/>
+            <text x="${bellX(i)}" y="${BEAM.y + 98}" text-anchor="middle" font-size="20" fill="#fff2cf" stroke="#5a4410" stroke-width="0.6"
               font-family="Palatino Linotype, Georgia, serif" font-weight="bold">${b.note}</text>
-            <text x="${x}" y="628" text-anchor="middle" font-size="13" fill="#cbb98f"
-              font-family="Palatino Linotype, Georgia, serif" font-style="italic">${b.saint}</text>
-          </g>`;
-        }).join('')}
+          </g>`).join('')}
       </g>
 
-      <!-- votive candles (photoreal; procedural glow kept for flicker) -->
-      <g>
-        <ellipse cx="176" cy="548" rx="150" ry="122" fill="url(#gd_ch_candle)" class="glow fast"/>
-        <image href="art/ch-candles.webp" x="86" y="440" width="182" height="282" preserveAspectRatio="xMidYMid meet"/>
+      <!-- candlelight over the painted votive ledge -->
+      <ellipse cx="140" cy="760" rx="160" ry="120" fill="url(#gd_ch_candle)" class="glow fast"/>
+
+      <!-- lectern with the psalter, standing on the floor by the right wall -->
+      ${grounded({ cx: 1255, baseY: 802, w: 130, body: `<image href="art/ch-lectern.webp" x="1180" y="520" width="150" height="282" preserveAspectRatio="xMidYMid meet"/>` })}
+
+      <!-- reliquary on the painted altar top -->
+      <g data-mount="table">
+        ${solved ? `
+          ${shadow(800, 690, 70, 8)}
+          <image href="art/ch-reliquary-open.webp" x="740" y="566" width="120" height="128" preserveAspectRatio="xMidYMid meet"/>
+          <ellipse cx="800" cy="680" rx="60" ry="14" fill="rgba(255,190,110,0.10)"/>
+          ${taken ? '' : `
+            <g class="beckon">
+              <image href="art/ch-key.webp" x="756" y="628" width="32" height="50" preserveAspectRatio="xMidYMid meet"/>
+              <image href="art/ch-oil.webp" x="808" y="626" width="36" height="52" preserveAspectRatio="xMidYMid meet"/>
+            </g>`}`
+        : `${shadow(800, 690, 86, 9)}<image href="art/ch-reliquary.webp" x="712" y="604" width="176" height="90" preserveAspectRatio="xMidYMid meet"/>`}
       </g>
 
-      <!-- lectern with psalter (photoreal) -->
+      <!-- the crypt stair, seen through the painted arch on the left wall; sun-mark #3 on its keystone -->
       <g>
-        <image href="art/ch-lectern.webp" x="1252" y="450" width="156" height="290" preserveAspectRatio="xMidYMid meet"/>
-      </g>
-
-      <!-- altar + reliquary (photoreal altar) -->
-      <g>
-        <image href="art/ch-altar.webp" x="592" y="644" width="376" height="180" preserveAspectRatio="xMidYMid meet"/>
-        <g>
-          ${solved ? `
-            <image href="art/ch-reliquary-open.webp" x="705" y="614" width="150" height="178" preserveAspectRatio="xMidYMid meet"/>
-            <ellipse cx="780" cy="740" rx="70" ry="18" fill="rgba(255,190,110,0.10)"/>
-            ${taken ? '' : `
-              <g class="beckon">
-                <image href="art/ch-key.webp" x="726" y="700" width="38" height="58" preserveAspectRatio="xMidYMid meet"/>
-                <image href="art/ch-oil.webp" x="796" y="698" width="42" height="60" preserveAspectRatio="xMidYMid meet"/>
-              </g>`}`
-          : `<image href="art/ch-reliquary.webp" x="690" y="652" width="180" height="98" preserveAspectRatio="xMidYMid meet"/>`}
+        <clipPath id="clip_ch_crypt"><path d="${CRYPT}"/></clipPath>
+        <image href="art/ch-crypt.webp" x="214" y="420" width="152" height="360" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_ch_crypt)" opacity="0.92"/>
+        <g class="beckon" data-mount="inset">
+          ${[0, 1, 2, 3].map(i => {
+            const a = (i / 4) * Math.PI * 2 - Math.PI / 4;
+            return `<line x1="${SUN3.cx + Math.cos(a) * 11}" y1="${SUN3.cy + Math.sin(a) * 11}" x2="${SUN3.cx + Math.cos(a) * 25}" y2="${SUN3.cy + Math.sin(a) * 25}" stroke="#e8c85a" stroke-width="3" stroke-linecap="round"/>`;
+          }).join('')}
+          <circle cx="${SUN3.cx}" cy="${SUN3.cy}" r="8" fill="none" stroke="#e8c85a" stroke-width="3"/>
+          <text x="${SUN3.cx + 34}" y="${SUN3.cy + 7}" font-size="20" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">U</text>
         </g>
       </g>
 
-      <!-- crypt-stair arch with sun-mark #3 (photoreal descending stair) -->
-      <g>
-        <clipPath id="clip_ch_crypt"><path d="M60 640 L60 380 Q140 300 220 380 L220 640 Z"/></clipPath>
-        <image href="art/ch-crypt.webp" x="60" y="300" width="160" height="340" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip_ch_crypt)"/>
-        <path d="M60 640 L60 380 Q140 300 220 380 L220 640" fill="none" stroke="#3a3e4f" stroke-width="10"/>
-        <g class="beckon">
-          <image href="art/oub-sun.webp" x="108" y="322" width="64" height="66" preserveAspectRatio="xMidYMid meet"/>
-          <text x="182" y="362" font-size="20" fill="#e8c85a" font-family="Palatino Linotype, Georgia, serif">U</text>
-        </g>
+      <!-- door to the cloister, set into the right wall (perspective) -->
+      <g data-mount="wall">
+        <path d="M1452 392 L1584 336 L1584 806 L1452 752 Z" fill="url(#sk_darkwood)" stroke="#0b0703" stroke-width="5"/>
+        ${[0.25, 0.5, 0.75].map(t => `<line x1="1452" y1="${392 + (752 - 392) * t}" x2="1584" y2="${336 + (806 - 336) * t}" stroke="#2b2116" stroke-width="7"/>`).join('')}
+        <path d="M1452 392 L1584 336 L1584 806 L1452 752 Z" fill="#000" opacity="0.45"/>
+        <circle cx="1478" cy="580" r="9" fill="none" stroke="#7d8494" stroke-width="3"/>
+        ${shadow(1518, 790, 80, 10)}
       </g>
 
       <path d="M0 900 L0 858 Q800 908 1600 858 L1600 900 Z" fill="#05070d"/>
@@ -179,7 +206,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'window', x: 320, y: 70, w: 790, h: 290, label: 'The saints\' window',
+      id: 'window', ...R.window, label: 'The saints\' window',
       onInteract(game) {
         const html = `<p>Five saints in coloured glass, each holding lilies:</p>
           <ul style="line-height:2; margin: 8px 0 8px 22px;">
@@ -196,7 +223,7 @@ export default {
     });
 
     spots.push({
-      id: 'plaque', x: 560, y: 366, w: 440, h: 66, label: 'Brass plaque',
+      id: 'plaque', ...R.plaque, label: 'Brass plaque',
       onInteract(game) {
         const html = `<div class="parchment-note"><div class="note-title">Brass, polished by centuries of thumbs</div>
           <p>"SING AS THE LILIES BLOOM;<br>LET THE SHEPHERD SING FIRST AND LAST."</p></div>`;
@@ -214,17 +241,17 @@ export default {
     });
 
     spots.push({
-      id: 'candles', x: 80, y: 500, w: 210, h: 110, label: 'Votive candles',
+      id: 'candles', ...R.candles, label: 'Votive candles',
       onInteract(game) { game.say('Four small flames for four small prayers. Someone still lights them — the castle is not as godless as its lord.'); },
     });
 
     spots.push({
-      id: 'psalter', x: 1265, y: 480, w: 130, h: 160, label: 'The psalter',
+      id: 'psalter', ...R.psalter, label: 'The psalter',
       onInteract(game) { game.say('A psalter open to the office of Lauds — the dawn prayer. You would rather not be here to hear it sung.'); },
     });
 
     spots.push({
-      id: 'sun3', x: 90, y: 310, w: 120, h: 90, label: 'A carved sun',
+      id: 'sun3', ...R.sun3, label: 'A carved sun',
       onInteract(game) {
         game.journal.add('sun3', { title: 'Chapel — the crypt-stair arch', category: 'sun', sun: { rays: 4, letter: 'U' } });
         game.say('On the keystone of the crypt arch: a sun of four rays, and the letter U. Edmund passed this way.');
@@ -232,24 +259,24 @@ export default {
     });
 
     spots.push({
-      id: 'crypt', x: 66, y: 380, w: 150, h: 250, label: 'Crypt stair',
+      id: 'crypt', ...R.crypt, label: 'Crypt stair',
       onInteract(game) { game.say('Steps down into standing water and bones. Edmund\'s road does not drown; it climbs. The mark is on the arch, not the stair.'); },
     });
 
     if (!solved) {
       spots.push({
-        id: 'reliquary', x: 690, y: 670, w: 180, h: 90, label: 'Bronze reliquary — locked',
+        id: 'reliquary', ...R.reliquary, label: 'Bronze reliquary — locked',
         onInteract(game) {
           game.say('A bronze reliquary bound to the altar, no keyhole at all. Around its lid, engraved: five tiny bells. It listens, rather than opens.');
         },
       });
     } else if (!taken) {
       spots.push({
-        id: 'reliquary_open', x: 690, y: 670, w: 180, h: 90, label: 'Inside the reliquary',
+        id: 'reliquary_open', ...R.reliquary, label: 'Inside the reliquary',
         onInteract(game) {
           game.setFlag('chapel_itemsTaken');
-          game.addItem('silver_key', { from: { x: 750, y: 722 }, silent: true });
-          game.addItem('holy_oil', { from: { x: 805, y: 716 }, silent: true });
+          game.addItem('silver_key', { from: { x: 772, y: 652 }, silent: true });
+          game.addItem('holy_oil', { from: { x: 826, y: 652 }, silent: true });
           game.say('Inside, on faded velvet: a silver key tagged "Scriptorium", and a vial of amber oil — "for the easing of hinges and of souls."');
           game.refreshScene();
         },
@@ -257,14 +284,16 @@ export default {
     }
 
     spots.push({
-      id: 'door', x: 1440, y: 360, w: 150, h: 300, label: 'Door to the cloister',
+      id: 'door', ...R.door, label: 'Door to the cloister',
       onInteract(game) {
         if (!solved) {
           game.say('A stout door to the cloister garth — locked. The lock plate is stamped with a quill: the scriptorium\'s key opens it, wherever that key is.');
         } else if (!taken) {
           game.say('Locked still. Whatever the reliquary holds, you will want it before you cross the garth.');
         } else if (!game.journal.has('sun3')) {
-          game.say('"Mark each sun along the road." Edmund\'s mark watches you from the crypt-stair arch — sketch it before you cross the garth.');
+          game.journal.add('sun3', { title: 'Chapel — the crypt-stair arch', category: 'sun', sun: { rays: 4, letter: 'U' } });
+          game.say('Passing the crypt-stair you glance up: a sun of four rays on the keystone, and the letter U. You copy it down, turn the silver key, and slip across the paling garth.');
+          game.completeRoom({ delay: 3000 });
         } else {
           game.say('The silver key turns like it was oiled yesterday. You slip across the moonlit garth — the sky at its edges has begun, very faintly, to pale.');
           game.completeRoom({ delay: 900 });

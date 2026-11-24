@@ -65,7 +65,7 @@ Each side's brass plate holds half the riddle; the keyed sitter fits both.
 Set your five taps to the pattern on your partner's plaque.
 - **Waking: OPEN, SHUT, OPEN, OPEN, SHUT.**
 - **Glass: SHUT, OPEN, OPEN, SHUT, OPEN.**
-- Glass takes mirror-shard **S (6)** from the dry pool. Both go on.
+- Glass takes mirror-shard **S (6)** from the soil of the fern's pot, left of the basin. Both go on.
 
 ## Room 7 — The Mirror Hall (finale)
 Read each other your three shards. All six, in order 1→6, read **REVLIS**. The glass keeps its

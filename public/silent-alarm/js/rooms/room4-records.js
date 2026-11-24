@@ -6,6 +6,7 @@
 // The Eye (P2) lifts vault-pin c (position 3, digit 9).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'rec';
@@ -56,12 +57,10 @@ export default {
       </g>
 
       <!-- this player's own eliminations, posted (read these to the partner) -->
-      <g>
-        <rect x="1080" y="160" width="440" height="150" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
+      ${dock({ x: 1080, y: 160, w: 440, h: 150 }, `
         <text x="1300" y="200" text-anchor="middle" font-size="14" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${isHand() ? 'YOUR EYES — ruled out' : 'DATABASE — ruled out'}</text>
         <text x="1300" y="252" text-anchor="middle" font-size="26" fill="#ff8f8f" font-family="Consolas, monospace" letter-spacing="4">${out.join('  &  ')}</text>
-        <text x="1300" y="288" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">${MY_OUT[getRole()].why} · tell your partner</text>
-      </g>
+        <text x="1300" y="288" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">${MY_OUT[getRole()].why} · tell your partner</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
 
       ${done ? `<text x="800" y="800" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">box III — the vault key is in your hand</text>` : ''}
 
@@ -81,7 +80,7 @@ export default {
     const done = isSolved(state);
 
     spots.push({
-      id: 'mine', x: 1080, y: 160, w: 440, h: 150, label: isHand() ? 'What you can see' : 'The database flags',
+      id: 'mine', ...DOCK, label: isHand() ? 'What you can see' : 'The database flags',
       onInteract(game) {
         const o = MY_OUT[getRole()];
         const html = `<div class="console-card"><div class="console-title">${isHand() ? 'Boxes you can rule out' : 'Boxes the database rules out'}</div>
@@ -110,16 +109,6 @@ export default {
       });
     }
 
-    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_c')) {
-      spots.push({
-        id: 'pin_c', x: 1040, y: 590, w: 70, h: 90, label: 'A pin on the manifest',
-        onInteract(game) {
-          game.journal.add('pin_c', { title: 'Decrypted manifest line', category: 'sun', sun: { rays: 3, letter: '9' } });
-          game.say('A decrypted manifest line coughs up more than box flags: position 3, digit 9 — a vault-pin. Logged.');
-          game.refreshScene();
-        },
-      });
-    }
 
     if (!done) {
       spots.push({
@@ -132,6 +121,18 @@ export default {
         onInteract(game) {
           if (getRole() === 'p2' && !game.journal.has('pin_c')) { game.say('There is a vault-pin on the manifest — pull it before you move on.'); return; }
           game.completeRoom({ delay: 600 });
+        },
+      });
+    }
+
+    // collectibles last, so they sit on top of the machine they are in
+    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_c')) {
+      spots.push({
+        id: 'pin_c', x: 1040, y: 590, w: 70, h: 90, label: 'A pin on the manifest',
+        onInteract(game) {
+          game.journal.add('pin_c', { title: 'Decrypted manifest line', category: 'sun', sun: { rays: 3, letter: '9' } });
+          game.say('A decrypted manifest line coughs up more than box flags: position 3, digit 9 — a vault-pin. Logged.');
+          game.refreshScene();
         },
       });
     }

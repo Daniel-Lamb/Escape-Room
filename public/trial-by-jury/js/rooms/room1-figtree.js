@@ -19,6 +19,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 0,
   id: 'figtree',
   slug: 'ft',
   lockLabel: 'Your Account',

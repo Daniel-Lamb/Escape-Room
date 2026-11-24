@@ -11,6 +11,7 @@
 //  the afternoon pairs, the sparing that opens this very gate).
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   rudis: {
@@ -42,8 +43,23 @@ const TRAY_ORDER = ['munus', 'pompa', 'missio', 'venatio', 'probatio', 'meridies
 // The true running order of the day, dawn to dusk.
 const SOLUTION = ['pompa', 'venatio', 'meridies', 'probatio', 'munus', 'missio'];
 
+// Layout — the plate (art/porta.webp): the great double gate in the centre,
+// a wall niche on either side, pillars flanking the gate, four torches.
+const GATE_T = { x: -325, y: 15, k: 0.9 };    // the gate's fittings, mapped onto the painted gate
+const ARCH_T = { x: 1080, y: 149, k: 0.68 };  // the bricked arch -> right-hand niche
+const PROG = { x: 1160, y: 456, k: 0.72 };    // games-bill -> right wall
+const CLEP_DX = -230;                         // water-clock -> floor, left of the gate
+const NOTE_DX = 120, NOTE_DY = -40;           // ordo-note -> right gate pillar
+const gx = (x) => GATE_T.k * x + GATE_T.x, gy = (y) => GATE_T.k * y + GATE_T.y;
+const ax = (x) => ARCH_T.k * x + ARCH_T.x, ay = (y) => ARCH_T.k * y + ARCH_T.y;
+
 export default {
   id: 'porta',
+  solution: ['POMPA', 'VENATIO', 'MERIDIES', 'PROBATIO', 'MVNVS', 'MISSIO'],
+  lintStates: [
+    { label: 'way open', flags: { porta_hingeOiled: true, porta_barPried: true, porta_archOpen: true } },
+    { label: 'ordo set', flags: { porta_hingeOiled: true, porta_barPried: true, porta_archOpen: true, porta_ordoSet: true } },
+  ],
   title: 'The Porta Sanavivaria',
   intro: 'The corridor behind the western wall runs straight at a pair of oak-and-iron doors taller than three men, bricked around and forgotten since the fire, with daylight standing in every seam and the crowd\'s roar coming through the stone like weather — the old Gate of Life, the door they open for the spared, and Felix\'s road ends at it.',
 
@@ -57,6 +73,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_por_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#241d15"/>
           <stop offset="1" stop-color="#332a1e"/>
@@ -85,26 +102,22 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/porta.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/porta.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- torches along the corridor -->
-      ${[300, 700].map(x => `
-      <g>
-        <rect x="${x - 6}" y="360" width="12" height="56" rx="4" fill="#3a2b18"/>
-        <ellipse cx="${x}" cy="346" rx="38" ry="32" fill="url(#gd_por_torch)" class="glow"/>
-        <path class="torch-flame" d="M${x} 360 q10 -18 0 -32 q-10 14 0 32z" fill="#ffa94d"/>
-      </g>`).join('')}
+      <!-- warmth over the plate's four torches -->
+      ${[[250, 183], [467, 400], [1133, 400], [1333, 250]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="56" ry="48" fill="url(#gd_por_torch)" class="glow"/>`).join('')}
 
-      <!-- THE PROGRAMMA: the painted games-bill, weathered (left wall) -->
-      <g>
+      <!-- THE PROGRAMMA: the games-bill, painted on the plaster right of the gate pillar -->
+      <g data-mount="inset" transform="translate(${PROG.x} ${PROG.y}) scale(${PROG.k}) translate(-96 -286)">
         <rect x="96" y="286" width="232" height="180" rx="6" fill="#3a3126" stroke="#5a4426" stroke-width="4"/>
         <rect x="106" y="296" width="212" height="160" rx="3" fill="#241c12"/>
-        <text x="212" y="316" text-anchor="middle" font-size="12" letter-spacing="3" fill="#c9b98f"
+        <text x="212" y="319" text-anchor="middle" font-size="16" letter-spacing="3" fill="#c9b98f"
           font-family="Palatino Linotype, Georgia, serif">PROGRAMMA</text>
         ${[334, 352, 370, 388, 406, 424, 442].map((y, i) =>
           `<line x1="118" y1="${y}" x2="${306 - (i % 3) * 34}" y2="${y}" stroke="#6b5a3a" stroke-width="3" opacity="${i % 4 === 0 ? 0.35 : 0.7}"/>`).join('')}
       </g>
 
-      <!-- THE CLEPSYDRA: a water-clock with hour marks (centre-left) -->
-      <g>
+      <!-- THE CLEPSYDRA: a water-clock standing on the floor left of the gate -->
+      <g data-mount="floor" transform="translate(${CLEP_DX} 0)">
+        ${shadow(673, 750, 76, 9)}
         <rect x="612" y="556" width="122" height="192" rx="10" fill="#2b2318" stroke="#453a2e" stroke-width="4"/>
         <rect x="640" y="576" width="66" height="150" rx="6" fill="#0f0c08" stroke="#3a3126" stroke-width="3"/>
         <rect x="640" y="656" width="66" height="70" rx="0" fill="#2f5c6b" opacity="0.7"/>
@@ -115,30 +128,21 @@ export default {
           font-family="Palatino Linotype, Georgia, serif">HORAE</text>
       </g>
 
-      <!-- FELIX'S ORDO-NOTE: a working scrawl nailed to a post (centre) -->
-      <g transform="rotate(-4 958 620)">
+      <!-- FELIX'S ORDO-NOTE: a working scrawl nailed to the gate's right-hand pillar -->
+      <g data-mount="nails" transform="translate(${NOTE_DX} ${NOTE_DY}) rotate(-4 958 620)">
+        ${[[896, 574], [1022, 574]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#2a2620"/>`).join('')}
         <rect x="884" y="562" width="150" height="118" rx="6" fill="#6b4f2c" stroke="#3a2b18" stroke-width="4"/>
         <rect x="893" y="571" width="132" height="100" rx="3" fill="#1d1812"/>
-        <text x="959" y="592" text-anchor="middle" font-size="10" letter-spacing="2" fill="#a8946c"
+        <text x="959" y="592" text-anchor="middle" font-size="11.5" letter-spacing="2" fill="#a8946c"
           font-family="Palatino Linotype, Georgia, serif">— F.</text>
         ${[610, 628, 646].map((y, i) =>
           `<line x1="906" y1="${y}" x2="${1010 - i * 16}" y2="${y}" stroke="#8a7f6a" stroke-width="2.4" opacity="0.7"/>`).join('')}
       </g>
 
-      <!-- THE GATE -->
-      <g>
-        <!-- daylight in the seams -->
-        <rect x="1046" y="150" width="8" height="620" fill="#fff4d6" opacity="0.85" class="flicker"/>
-        <rect x="1252" y="150" width="6" height="620" fill="#fff4d6" opacity="0.7" class="flicker"/>
-        <rect x="1030" y="140" width="450" height="10" fill="#fff4d6" opacity="0.8"/>
+      <!-- THE GATE: the plate's great double door (centre), daylight already in its seams.
+           The bar, the hinge, the editor's six-bolt bank and the frieze are fitted to it. -->
+      <g data-mount="bolts" transform="translate(${GATE_T.x} ${GATE_T.y}) scale(${GATE_T.k})">
         <ellipse cx="1255" cy="450" rx="330" ry="380" fill="url(#gd_por_day)" opacity="0.12"/>
-        <!-- doors -->
-        <rect x="1050" y="150" width="200" height="620" fill="url(#gd_por_gate)" stroke="#171209" stroke-width="7"/>
-        <rect x="1258" y="150" width="200" height="620" fill="url(#gd_por_gate)" stroke="#171209" stroke-width="7"/>
-        <!-- iron straps -->
-        ${[220, 380, 540, 700].map(y => `
-          <rect x="1050" y="${y}" width="200" height="20" fill="#453a2e"/>
-          <rect x="1258" y="${y}" width="200" height="20" fill="#453a2e"/>`).join('')}
         <!-- the great bar -->
         ${bar
           ? `<rect x="1010" y="360" width="34" height="330" rx="8" fill="#5c4a2e" stroke="#241c12" stroke-width="4" transform="rotate(-8 1027 690)"/>`
@@ -152,7 +156,7 @@ export default {
         <!-- THE EDITOR'S ORDO: the six-bolt bank -->
         <g>
           <rect x="1150" y="496" width="212" height="196" rx="10" fill="#2b2015" stroke="#171209" stroke-width="5"/>
-          <text x="1256" y="520" text-anchor="middle" font-size="10" letter-spacing="3" fill="#c9b98f"
+          <text x="1256" y="522" text-anchor="middle" font-size="12.8" letter-spacing="2" fill="#c9b98f"
             font-family="Palatino Linotype, Georgia, serif">THE EDITOR'S ORDO</text>
           ${[0, 1, 2, 3, 4, 5].map(i => {
             const y = 534 + i * 25;
@@ -166,9 +170,9 @@ export default {
             </g>`;
           }).join('')}
           ${ordo
-            ? `<text x="1256" y="686" text-anchor="middle" font-size="11" fill="#e8cf96" class="flicker"
+            ? `<text x="1256" y="686" text-anchor="middle" font-size="12.8" fill="#e8cf96" class="flicker"
                  font-family="Palatino Linotype, Georgia, serif">the day stands in order &middot; MISSIO</text>`
-            : `<text x="1256" y="686" text-anchor="middle" font-size="11" fill="#8a7f6a"
+            : `<text x="1256" y="686" text-anchor="middle" font-size="12.8" fill="#8a7f6a"
                  font-family="Palatino Linotype, Georgia, serif">the day is out of true</text>`}
         </g>
         <!-- the procession frieze above (the pompa: the day's first office) -->
@@ -188,13 +192,13 @@ export default {
               ${i === 5 ? `<path d="M${x + 10} 74 v14 M${x + 10} 76 q-6 -6 -10 -2 M${x + 10} 76 q6 -6 10 -2"/>` : ''}
             </g>`;
           }).join('')}
-          <text x="1255" y="156" text-anchor="middle" font-size="12" letter-spacing="2" fill="#c9b98f"
+          <text x="1255" y="156" text-anchor="middle" font-size="12.8" letter-spacing="2" fill="#c9b98f"
             font-family="Palatino Linotype, Georgia, serif">THE PROCESSION OPENS THE DAY</text>
         </g>
       </g>
 
-      <!-- the half-bricked arch / alcove -->
-      <g>
+      <!-- the half-bricked arch / alcove: the plate's right-hand wall niche -->
+      <g data-mount="inset" transform="translate(${ARCH_T.x} ${ARCH_T.y}) scale(${ARCH_T.k})">
         <path d="M360 760 L360 400 Q460 340 560 400 L560 760 Z" fill="#171209" stroke="#453a2e" stroke-width="7"/>
         ${arch
           ? `<ellipse cx="460" cy="560" rx="80" ry="120" fill="url(#gd_por_lamp)" opacity="0.5" class="glow"/>
@@ -207,14 +211,14 @@ export default {
              ${rudisTaken ? '' : `<g class="beckon"><path d="M492 640 L530 596" stroke="#b8893a" stroke-width="7" stroke-linecap="round"/><path d="M500 620 l14 14" stroke="#6b4f2c" stroke-width="5" stroke-linecap="round"/></g>`}
              <rect x="404" y="700" width="80" height="42" rx="4" fill="#6b4f2c" transform="rotate(-6 444 721)"/>`
           : `<image href="art/por-arch.webp" x="356" y="398" width="210" height="364" preserveAspectRatio="xMidYMax meet"/>
-             <text x="460" y="412" text-anchor="middle" font-size="11" fill="#e8dcc0" font-style="italic"
+             <text x="460" y="412" text-anchor="middle" font-size="16.9" fill="#e8dcc0" font-style="italic"
                font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#171209" stroke-width="2.5">bricked in a hurry, a generation ago</text>`}
       </g>
 
-      <!-- spy-slit (flavor) -->
-      <g>
-        <rect x="700" y="290" width="120" height="26" rx="10" fill="#0f0c08"/>
-        <rect x="706" y="296" width="108" height="14" rx="7" fill="#e8cf96" opacity="0.75" class="flicker"/>
+      <!-- spy-slit (flavor), cut through the left wall above the niche -->
+      <g data-mount="inset">
+        <rect x="156" y="300" width="120" height="26" rx="10" fill="#0f0c08"/>
+        <rect x="162" y="306" width="108" height="14" rx="7" fill="#e8cf96" opacity="0.75" class="flicker"/>
       </g>
 
       <!-- fallen garlands (flavor) -->
@@ -238,7 +242,7 @@ export default {
 
     // The gate itself: always present — refusal checklist, then the final open.
     spots.push({
-      id: 'gate', x: 1150, y: 170, w: 300, h: 300, label: 'The Gate of Life',
+      id: 'gate', x: gx(1150), y: gy(170), w: 300 * GATE_T.k, h: 300 * GATE_T.k, label: 'The Gate of Life',
       onInteract(game) {
         const refusals = [];
         if (!hinge) refusals.push('the hinge weeps rust');
@@ -259,7 +263,7 @@ export default {
 
     if (!hinge) {
       spots.push({
-        id: 'hinge', x: 1010, y: 236, w: 90, h: 110, label: 'The seized hinge',
+        id: 'hinge', x: gx(1010), y: gy(236), w: 90 * GATE_T.k, h: 110 * GATE_T.k, label: 'The seized hinge',
         onInteract(game) {
           if (game.selectedItem === 'oiled_rag') {
             game.useSelected();
@@ -280,7 +284,7 @@ export default {
 
     if (!bar) {
       spots.push({
-        id: 'barseat', x: 1000, y: 410, w: 110, h: 100, label: 'The bar in its seat',
+        id: 'barseat', x: gx(1000), y: gy(410), w: 110 * GATE_T.k, h: 100 * GATE_T.k, label: 'The bar in its seat',
         onInteract(game) {
           if (game.selectedItem === 'dolabra') {
             game.setFlag('porta_barPried');
@@ -296,7 +300,7 @@ export default {
 
     // The ordo bolt-bank — the hard chronological lock that releases the gate.
     spots.push({
-      id: 'ordo', x: 1150, y: 490, w: 212, h: 202, label: ordo ? 'The ordo — set in order' : 'The editor\'s ordo-bolts',
+      id: 'ordo', x: gx(1150), y: gy(490), w: 212 * GATE_T.k, h: 202 * GATE_T.k, label: ordo ? 'The ordo — set in order' : 'The editor\'s ordo-bolts',
       onInteract(game) {
         if (ordo) {
           game.say('Six bolts thrown in the day\'s true order — procession, beasts, the noon sand, the proving, the pairs, and MISSIO last of all. Felix\'s fail-safe is satisfied. The gate is waiting on you now, not the other way around.');
@@ -308,7 +312,7 @@ export default {
 
     // The programma: the painted games-bill (first / last / proving-before-pairs).
     spots.push({
-      id: 'programma', x: 96, y: 286, w: 232, h: 180, label: 'The programma (games-bill)',
+      id: 'programma', x: PROG.x, y: PROG.y, w: 232 * PROG.k, h: 180 * PROG.k, label: 'The programma (games-bill)',
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">The programma — the day's bill</div>
           <em class="tab-carve">…as the herald cries the order of the games:<br><br>
@@ -323,7 +327,7 @@ export default {
 
     // The clepsydra: water-clock hour marks (morning / noon / afternoon).
     spots.push({
-      id: 'clepsydra', x: 612, y: 556, w: 122, h: 192, label: 'The water-clock',
+      id: 'clepsydra', x: 612 + CLEP_DX, y: 556, w: 122, h: 192, label: 'The water-clock',
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">The clepsydra — marked by the hours</div>
           <em class="tab-carve">FIRST HOURS, in the cool of the morning: the BEASTS are loosed
@@ -338,7 +342,7 @@ export default {
 
     // Felix's ordo-note: the linchpin ("beasts before the bread, the bread before the blades").
     spots.push({
-      id: 'ordonote', x: 884, y: 560, w: 150, h: 120, label: "Felix's ordo-note",
+      id: 'ordonote', x: 884 + NOTE_DX, y: 560 + NOTE_DY, w: 150, h: 120, label: "Felix's ordo-note",
       onInteract(game) {
         const html = `<div class="wax-tablet"><div class="tab-title">Felix's working note, nailed to the post</div>
           <em class="tab-carve">The gate opens in the day's order or not at all — I built her
@@ -351,7 +355,7 @@ export default {
     });
 
     spots.push({
-      id: 'frieze', x: 1050, y: 50, w: 410, h: 120, label: 'The procession frieze',
+      id: 'frieze', x: gx(1050), y: gy(50), w: 410 * GATE_T.k, h: 110 * GATE_T.k, label: 'The procession frieze',
       onInteract(game) {
         const html = `<p>Carved above the ordo-bank, a procession — the pompa, the marchers
           who open every games-day, left to right:</p>
@@ -366,7 +370,7 @@ export default {
 
     if (!arch) {
       spots.push({
-        id: 'arch', x: 350, y: 390, w: 220, h: 370, label: 'The half-bricked arch',
+        id: 'arch', x: ax(350), y: ay(390), w: 220 * ARCH_T.k, h: 370 * ARCH_T.k, label: 'The half-bricked arch',
         onInteract(game) {
           if (game.selectedItem === 'dolabra') {
             game.setFlag('porta_archOpen');
@@ -380,7 +384,7 @@ export default {
       });
     } else {
       spots.push({
-        id: 'alcove', x: 350, y: 390, w: 220, h: 370, label: "Felix's alcove",
+        id: 'alcove', x: ax(350), y: ay(390), w: 220 * ARCH_T.k, h: 370 * ARCH_T.k, label: "Felix's alcove",
         onInteract(game) {
           const html = `<div class="wax-tablet"><div class="tab-title">Felix's last tablet</div>
             <em class="tab-carve">I could have gone in September. The lion could not —
@@ -394,7 +398,7 @@ export default {
           game.journal.add('note_felix', { title: "Felix's last tablet (the alcove)", category: 'note', html });
           if (!game.getFlag('porta_rudisTaken')) {
             game.setFlag('porta_rudisTaken');
-            game.addItem('rudis', { from: { x: 510, y: 620 }, silent: true });
+            game.addItem('rudis', { from: { x: ax(510), y: ay(620) }, silent: true });
             game.say('Bones in a carpenter\'s apron, tools folded beside them the way a tidy man leaves them at the end of a shift. Across his knees, a finished rudis — carved, balanced, never awarded. You take the sword and the tablet\'s words with it. Behind you, Gus lies down next to the bones and is, for a while, just an animal.');
           }
           game.dialog({ title: 'The Alcove', html });
@@ -404,7 +408,7 @@ export default {
     }
 
     spots.push({
-      id: 'slit', x: 690, y: 280, w: 140, h: 60, label: 'The spy-slit',
+      id: 'slit', x: 146, y: 290, w: 140, h: 60, label: 'The spy-slit',
       onInteract(game) {
         game.say('Through the slit: sand, sun, and the show mid-roar — a hunt, by the shapes of it, the crowd rising and falling like one animal breathing. Morning still, then; the beasts are running. That is the room you are not dying in today.');
       },

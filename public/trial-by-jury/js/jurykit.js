@@ -6,6 +6,22 @@
 // carved evidence-token to enter into the record, and a thing to examine.
 
 import { getRole, roleName, nextName, ROLES, NEXT, PREV } from './role.js';
+import { kitDefs, dock, DOCK, panel, shadow } from '../../shared/js/scenekit.js';
+
+/* ---------- split knowledge: your tally (yours) x the bench's ruling (another's) ----------
+ * No witness's figure is ever handed over whole. Each witness carries a tally of
+ * what THEY counted that night (on their own screen); the bench's ruling on how
+ * that tally must be corrected sits with the PREVIOUS witness. Only the two
+ * together give the sworn figure. The ruling rotates by scene and witness. */
+export const RULINGS = {
+  reverse: { text: 'give your tally from the LAST thing you counted back to the first', inverse: d => [...d].reverse().join('') },
+  plus1:   { text: 'the dark hid one of every kind — ADD ONE to each count (9 turns to 0)', inverse: d => [...d].map(c => (Number(c) + 9) % 10).join('') },
+  swap:    { text: 'you have the first and last counts the wrong way round — SWAP them', inverse: d => d[2] + d[1] + d[0] },
+  minus1:  { text: 'an echo doubled one of each — TAKE ONE from each count (0 turns to 9)', inverse: d => [...d].map(c => (Number(c) + 1) % 10).join('') },
+};
+const RULING_ORDER = ['swap', 'minus1', 'reverse', 'plus1'];
+function rulingFor(index, role) { return RULING_ORDER[(index + ['p1', 'p2', 'p3', 'p4'].indexOf(role)) % RULING_ORDER.length]; }
+function effective(code, rule) { return RULINGS[rule].inverse(code) === code ? 'plus1' : rule; }
 
 // Photoreal plates live in <game>/art/<slug>.webp; resolve against this
 // module's URL so they load under Pages/Vercel/localhost alike.
@@ -13,7 +29,7 @@ const ART = new URL('../art/', import.meta.url).href;
 
 /* ---------- palette / defs ---------- */
 export function defs(slug) {
-  return `
+  return `${kitDefs()}
     <linearGradient id="${slug}_canopy" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#122a17"/><stop offset="0.6" stop-color="#0d1f12"/><stop offset="1" stop-color="#08140b"/>
     </linearGradient>
@@ -123,28 +139,28 @@ export function evidenceCard(e) {
 
 const dialFlags = (slug) => [`${slug}_d0`, `${slug}_d1`, `${slug}_d2`];
 
-function lockSvg(slug, open, label, state) {
+function lockSvg(slug, open, label, state, tally) {
   if (open) {
-    return `<g>
-      <rect x="620" y="600" width="360" height="210" rx="12" fill="#0a1408" stroke="#2f5a2a" stroke-width="6"/>
+    return panel({ x: 620, y: 600, w: 360, h: 210, material: 'darkwood', mount: 'post', floorY: 880, rx: 12, body: `
       <text x="800" y="712" text-anchor="middle" font-size="20" fill="#9fe08a"
-        font-family="Georgia, serif" class="flicker">${label} — SWORN</text>
-    </g>`;
+        font-family="Georgia, serif" class="flicker">${label} — SWORN</text>` });
   }
   const d = dialFlags(slug).map(k => state.flags[k] ?? 0);
-  return `<g text-anchor="middle">
-    <rect x="620" y="600" width="360" height="210" rx="12" fill="rgba(20,34,18,0.92)" stroke="#40503a" stroke-width="6"/>
-    <text x="800" y="648" font-size="15" fill="#a9c98f" font-family="Consolas, monospace">${label}</text>
+  // the witness board: three sworn figures, on a post driven into the ground,
+  // and the witness's own tally-stick nailed across its foot
+  return `${panel({ x: 620, y: 600, w: 360, h: 210, material: 'darkwood', mount: 'post', floorY: 880, rx: 12, body: `
+    <text x="800" y="636" text-anchor="middle" font-size="15" fill="#d8e8b8" font-family="Consolas, monospace">${label}</text>
     ${[0, 1, 2].map(i => `
-      <circle cx="${700 + i * 100}" cy="720" r="40" fill="#10190d" stroke="#8a6f34" stroke-width="4"/>
-      <text x="${700 + i * 100}" y="732" font-size="34" fill="#e6d16a" font-family="Consolas, monospace">${d[i]}</text>`).join('')}
-  </g>`;
+      <circle cx="${700 + i * 100}" cy="704" r="38" fill="#10190d" stroke="#8a6f34" stroke-width="4"/>
+      <text x="${700 + i * 100}" y="716" text-anchor="middle" font-size="32" fill="#e6d16a" font-family="Consolas, monospace">${d[i]}</text>`).join('')}
+    <rect x="660" y="756" width="280" height="38" rx="5" fill="url(#sk_wood)" stroke="#2b2015" stroke-width="2"/>
+    <text x="800" y="782" text-anchor="middle" font-size="17" fill="#f1e2bf" font-family="Consolas, monospace">YOUR TALLY · ${tally.split('').join(' · ')}</text>` })}`;
 }
 
 function defaultHints(cfg, role) {
   return [
-    { text: "Your own account has a gap the court can see. The missing figure is not on your screen — it is with another witness. Work out which.", cost: 60 },
-    { text: `${roleName(PREV[role])} saw the part you missed; you hold the part ${nextName(role)} missed. Trade — read them theirs, and enter what they read you.`, cost: 120 },
+    { text: `Your tally of the night is on your own board — but the bench has ruled it must be corrected, and the ruling sits with ${roleName(PREV[role])}.`, cost: 60 },
+    { text: `Ask ${roleName(PREV[role])} for the bench's ruling on you: "${RULINGS[cfg.ruleOf(role)].text}". Apply it to your tally.`, cost: 120 },
     { text: `The figure your account needs is ${cfg.codes[role].split('').join(' - ')}.`, cost: 240 },
   ];
 }
@@ -162,10 +178,14 @@ function defaultHints(cfg, role) {
  */
 export function buildRoom(cfg) {
   const { id, slug } = cfg;
+  cfg.ruleOf = (role) => effective(cfg.codes[role], rulingFor(cfg.index ?? 0, role));
+  const tallyOf = (role) => RULINGS[cfg.ruleOf(role)].inverse(cfg.codes[role]);
   const tokenId = (role) => `${slug}_ex_${role}`;
   const isOpen = (state) => !!state.flags[`${slug}_open`];
 
   return {
+    // the code this role's lock accepts (room-lint checks the last hint states it)
+    solution: role => cfg.codes[role],
     id,
     get title() { return cfg.titleFor(getRole()); },
     get intro() { return cfg.introFor(getRole()); },
@@ -184,28 +204,26 @@ export function buildRoom(cfg) {
         ${backdrop(slug)}
         ${roleTag()}
 
-        <!-- RELAY: your screen holds the figure that completes ${relayFor}'s account -->
-        <g>
-          <rect x="556" y="150" width="488" height="176" rx="10" fill="rgba(10,20,11,0.9)" stroke="#8a6f34" stroke-width="3"/>
-          <text x="800" y="192" text-anchor="middle" font-size="16" fill="#a9c98f"
-            font-family="Consolas, monospace" letter-spacing="2">${relayFor.toUpperCase()} — MISSING FIGURE</text>
-          <text x="800" y="256" text-anchor="middle" font-size="46" fill="#e6d16a"
-            font-family="Consolas, monospace" letter-spacing="10">${relayCode.split('').join(' ')}</text>
-          <text x="800" y="300" text-anchor="middle" font-size="13" fill="#7f9a72"
-            font-family="Consolas, monospace">read this to that witness</text>
-        </g>
+        <!-- RELAY: your court notes hold the bench's ruling on ${relayFor}'s tally -->
+        ${dock({ x: 556, y: 150, w: 488, h: 176 }, `
+          <text x="800" y="186" text-anchor="middle" font-size="16" fill="#4a3a22"
+            font-family="Consolas, monospace" letter-spacing="2">THE BENCH ON ${relayFor.toUpperCase()}</text>
+          ${(() => { const w = RULINGS[cfg.ruleOf(NEXT[role])].text.split(' '); const h = Math.ceil(w.length / 2); return `
+            <text x="800" y="228" text-anchor="middle" font-size="17" fill="#26221a" font-family="Georgia, serif" font-style="italic">${w.slice(0, h).join(' ')}</text>
+            <text x="800" y="256" text-anchor="middle" font-size="17" fill="#26221a" font-family="Georgia, serif" font-style="italic">${w.slice(h).join(' ')}</text>`; })()}
+          <text x="800" y="298" text-anchor="middle" font-size="13" fill="#6b5a3a"
+            font-family="Consolas, monospace">read this to that witness</text>`, { kind: 'notebook', title: "COURT NOTES" })}
 
-        ${lockSvg(slug, open, cfg.lockLabel, state)}
+        ${lockSvg(slug, open, cfg.lockLabel, state, tallyOf(role))}
 
-        <!-- something to examine, right side -->
-        <g>
-          <rect x="1180" y="360" width="300" height="150" rx="8" fill="#152413" stroke="#40503a" stroke-width="4"/>
-          <circle cx="1330" cy="425" r="26" fill="url(#${slug}_glow)"/>
-          <text x="1330" y="495" text-anchor="middle" font-size="13" fill="#a9c98f" font-family="Consolas, monospace">examine</text>
-        </g>
+        <!-- something to examine: a bark-board on a stake, right side -->
+        ${panel({ x: 1180, y: 360, w: 300, h: 150, material: 'darkwood', mount: 'post', floorY: 760, rx: 8, body: `
+          <circle cx="1330" cy="420" r="26" fill="url(#${slug}_glow)"/>
+          <text x="1330" y="490" text-anchor="middle" font-size="13" fill="#d8e8b8" font-family="Consolas, monospace">${(cfg.loreFor(role).label || 'examine').toLowerCase()}</text>` })}
 
         ${showToken ? `
-        <g class="beckon">
+        <g class="beckon" data-mount="floor">
+          ${shadow(300, 682, 44, 8)}
           <rect x="272" y="612" width="56" height="66" rx="6" fill="#3a2f18" stroke="#8a6f34" stroke-width="4"/>
           <circle cx="300" cy="645" r="46" fill="rgba(230,200,90,0.10)"/>
           <text x="300" y="655" text-anchor="middle" font-size="24" fill="#e6d16a" font-family="Georgia, serif" font-weight="bold">${token.letter}</text>
@@ -222,13 +240,13 @@ export function buildRoom(cfg) {
       const relayFor = nextName(role);
 
       spots.push({
-        id: 'relay', x: 556, y: 150, w: 488, h: 176, label: `The figure ${relayFor}'s account is missing`,
+        id: 'relay', ...DOCK, label: `The bench's ruling on ${relayFor}`,
         onInteract(game) {
-          const html = `<div class="chartcard"><div class="chart-title">${relayFor} — missing figure</div>
-            <p>Plain on your side of the night, and nowhere on theirs:</p>
-            <p style="font-size:30px;letter-spacing:8px;color:#f2ffe0;text-align:center;">${relayCode.split('').join(' · ')}</p></div>
-            <div class="relay">This completes <strong>${relayFor}'s</strong> account, not yours. Read it across to them.</div>`;
-          game.journal.add(`${slug}_relay`, { title: `${relayFor}'s missing figure`, category: 'note', html });
+          const html = `<div class="chartcard"><div class="chart-title">the bench on ${relayFor}</div>
+            <p>In your court notes, about <strong>their</strong> tally:</p>
+            <p style="font-size:19px;color:#f2ffe0;text-align:center;">“${RULINGS[cfg.ruleOf(NEXT[role])].text}”</p></div>
+            <div class="relay">This corrects <strong>${relayFor}'s</strong> tally, not yours. Their tally is on their own board; only the two together make the sworn figure.</div>`;
+          game.journal.add(`${slug}_relay`, { title: `The bench on ${relayFor}`, category: 'note', html });
           game.dialog({ title: `Cross-examine ${relayFor}`, html });
         },
       });
@@ -262,7 +280,7 @@ export function buildRoom(cfg) {
             comboLock(game, {
               id: `${slug}_lock`,
               title: cfg.lockLabel,
-              desc: `Three figures. The detail your account is missing is <em>not</em> on your screen &mdash; only <strong>${holder}</strong> saw it. Ask them what their screen says your account needs.`,
+              desc: `Three figures. Your tally reads <strong>${tallyOf(role).split('').join(' · ')}</strong> &mdash; but the bench has ruled it must be corrected, and the ruling is with <strong>${holder}</strong>. Ask them, then swear the corrected figure.`,
               slots: [{ type: 'digit' }, { type: 'digit' }, { type: 'digit' }],
               target: cfg.codes[role],
               goLabel: 'Swear It',
@@ -276,7 +294,9 @@ export function buildRoom(cfg) {
           id: 'through', x: 620, y: 600, w: 360, h: 210, label: 'Call the next witness',
           onInteract(game) {
             if (token && !state.journal.some(e => e.id === tokenId(role))) {
-              game.say('Enter the carved tag on your left into the record before the court moves on — the verdict will want all four.');
+              game.journal.add(tokenId(role), { title: `Exhibit #${token.pos}`, category: 'sun', sun: { rays: token.pos, letter: token.letter } });
+              game.say(`Before the court moves on you enter the carved tag into the record: exhibit #${token.pos}, the letter ${token.letter}.`);
+              game.completeRoom({ delay: 3000 });
               return;
             }
             game.completeRoom({ delay: 600 });

@@ -91,8 +91,9 @@ Identical shared engine (60:00 timer, satchel/inventory, item combining, three-t
 hints, auto-journal, autosave, defeat-retry). Skin differences:
 
 - **Journal:** *"Keeper's Log."* Collectibles are **bearing-marks** — small brass
-  compass-rose plates, each stamped with a **depth number** and a **letter**
-  (`sun: { rays: <depth>, letter }`; `rays` rendered as a numeral, not rays).
+  compass-rose plates, each with a **needle** on one of the eight points and a **letter**
+  (`sun: { rays: <1–6>, letter }`; `rays` is the mark's place sunwise from north and is
+  drawn as the needle — `bearingOf()` / `compassPlate()` in `js/scenekit.js`).
 - **Inventory label:** *"Oilskin"* (a keeper's pocket).
 - **Palette (scene authoring):** storm night. Sea/sky `#0a1622`/`#0e2436`/`#123049`,
   deep shadow `#05080f`, wet stone `#2b3547`/`#1c2431`, brass `#c9a227`/`#e8c85a`,
@@ -105,19 +106,24 @@ hints, auto-journal, autosave, defeat-retry). Skin differences:
 
 ### The six bearing-marks (split meta currency)
 
-| Mark | Scene | Tower (who finds it) | Depth # | Letter |
-|---|---|---|---|---|
-| A | 2 Lamp Room | East (P2) | 1 | A |
-| S | 1 Watch Room | West (P1) | 2 | S |
-| H | 4 Chart Room | East (P2) | 3 | H |
-| O | 3 Signal Gallery | West (P1) | 4 | O |
-| R | 6 Beam Engine | East (P2) | 5 | R |
-| E | 5 Bell Loft | West (P1) | 6 | E |
+Each mark is a small brass compass plate: a needle pointing one way round the rose, and a
+letter. (Internally each still carries a number 1–6, which is its place sunwise from north.)
 
-**West (P1) journal:** S(2), O(4), E(6). **East (P2) journal:** A(1), H(3), R(5). Neither
-can spell the word alone. Combined and sorted by depth ascending (1→6): **A-S-H-O-R-E** =
-**ASHORE**. Scene 7's beam-lock (on both screens) accepts **ASHORE**. Rule telegraphed on
-the lantern plaque: *"Set the beam to the word the marks spell — shallowest bearing first."*
+| Mark | Scene | Tower (who finds it) | Needle | Letter |
+|---|---|---|---|---|
+| A | 2 Lamp Room | East (P2) | N | A |
+| S | 1 Watch Room | West (P1) | NE | S |
+| H | 4 Chart Room | East (P2) | E | H |
+| O | 3 Signal Gallery | West (P1) | SE | O |
+| R | 6 Beam Engine | East (P2) | S | R |
+| E | 5 Bell Loft | West (P1) | SW | E |
+
+**West (P1) journal:** S(NE), O(SE), E(SW). **East (P2) journal:** A(N), H(E), R(S).
+Neither can spell the word alone. Swept sunwise from north — N, NE, E, SE, S, SW — the
+letters read **A-S-H-O-R-E** = **ASHORE**. Scene 7's beam-lock (on both screens) accepts
+**ASHORE**. Rule on the lantern plaque: *"Sweep the beam sunwise from north, and read each
+mark as the light finds it."* — a lighthouse rule, where the old one ("shallowest bearing
+first") asked players to sort numbers.
 
 ### Item chain
 This game leans on *information* asymmetry rather than physical item hand-offs, so the
@@ -150,7 +156,7 @@ wall.**
 - **East (P2) wall** shows: *"WEST HATCH — 3 · 7 · 1."* (P2 reads this to P1.) East's own
   hatch is **5-2-8**, posted on the West wall.
 - **Puzzle (both):** a 3-dial 0–9 tide-lock. P1 sets **3-7-1**; P2 sets **5-2-8**.
-- **Bearing-mark:** West (P1) finds mark **S (depth 2)** on a brass plate at the West lamp
+- **Bearing-mark:** West (P1) finds mark **S (needle NE)** on a brass plate at the West lamp
   base. (East gets no mark this scene.)
 - **Foreshadow:** the watch-desk **log** (both towers, journaled): *"…the night we lost the
   Cormorant, the two lights never once agreed. Gus flew himself ragged between us and it was
@@ -163,24 +169,25 @@ wall.**
 
 ---
 
-### SCENE 2 — The Lamp Room (rotation alignment)
+### SCENE 2 — The Lamp Room (reef bearings × aiming rule)
 
-The great lamp is dark; its four **Fresnel prism panels** must be turned to the right
-compass bearings to focus the beam. **Your lamp's target bearings are engraved on the
-other keeper's lamp-card.**
+The great lamp is dark; its four **prism panels** must be turned before the beam will
+throw — each aimed **clear of the reef it guards**. Split knowledge: the reef bearings for
+a lamp are in the **other** tower's signal book; the rule for aiming away from a reef is on
+**this** lamp's own brass plate. (It used to be straight dictation of the four answers.)
 
 - 8-point index: 0=N,1=NE,2=E,3=SE,4=S,5=SW,6=W,7=NW.
-- **West (P1) holds** the *East* lamp-card (a diagram of four arrows): East target =
-  **E, S, NW, N** = `[2,4,7,0]`. (P1 reads it to P2.)
-- **East (P2) holds** the *West* lamp-card: West target = **NE, SE, W, S** = `[1,3,6,4]`.
-  (P2 reads it to P1.)
-- **Puzzle (both):** four rotation dials (each cycles the 8 points). P1 sets `[1,3,6,4]`;
-  P2 sets `[2,4,7,0]`.
-- **Bearing-mark:** East (P2) finds mark **A (depth 1)** in the lamp-housing tray.
-- **Flavor:** the mantle, the paraffin reservoir, moths at the glass.
-- **Hints:** ① *"Four panels, four bearings. Your bearings are drawn on your partner's card,
-  not yours."* ② *"Read the card in your hands to your partner; set the four points they
-  read to you, in order."* ③ P1: *"NE, SE, W, S."* / P2: *"E, S, NW, N."*
+- **West rule (on P1's lamp):** set each panel to the point **opposite** its reef. West
+  reefs (in P2's signal book): **SW, NW, E, N** → West panels **NE, SE, W, S** = `[1,3,6,4]`.
+- **East rule (on P2's lamp):** a **quarter-turn sunwise** of the reef. East reefs (in P1's
+  signal book): **N, E, SW, W** → East panels **E, S, NW, N** = `[2,4,7,0]`.
+- **Staging:** the lantern room — glazing all round (the other tower's light across the
+  bay), the lens on its pedestal with the four panel dials on its control plate, the rule
+  plate on the wall, the paraffin tank on the floor, the ladder up.
+- **Bearing-mark:** East (P2) finds mark **A (needle N)** in the tray at the pedestal's foot.
+- **Hints:** ① *"Your lamp's plate tells you how to aim a panel from the reef it guards. The
+  reefs round your lamp are in your partner's signal book."* ② the role's rule, spelled out
+  (N↔S, E↔W / N→E, E→S, S→W, W→N). ③ P1: *"NE, SE, W, S."* / P2: *"E, S, NW, N."*
 
 ---
 
@@ -201,7 +208,7 @@ flashes; the other holds the codebook that translates them.** Both directions at
   **TURN**. → P2 reads counts to P1, P1 decodes **TURN**, tells P2; **P2 enters TURN.**
 - **Puzzle (both):** read the flash counts aloud, partner decodes via their page, enter the
   4-letter word (text input, canonicalized).
-- **Bearing-mark:** West (P1) finds mark **O (depth 4)** by the signal telescope.
+- **Bearing-mark:** West (P1) finds mark **O (needle SE)** on the signal telescope's tripod.
 - **Foreshadow:** the codebook flyleaf (journaled): *"Kept by the keepers of both lights.
   A page torn to each tower, so neither could ever signal alone. — for Gus, who carries the
   rest."*
@@ -225,7 +232,7 @@ depths. Only together do they name the safe channel.**
 - **Only Channel III** is both rock-free (P1) and deep enough (P2). Each keeper must
   eliminate using their half + the partner's half; both select **III**.
 - **Puzzle (both):** pick the safe channel (I–IV) and confirm. Correct = **III**.
-- **Bearing-mark:** East (P2) finds mark **H (depth 3)** pinned to the chart table.
+- **Bearing-mark:** East (P2) finds mark **H (needle E)** pinned to the chart table.
 - **Flavor:** dividers and parallel rules, the barometer, a cold cup of tea.
 - **Hints:** ① *"You can only see half the bay. Your partner sees the half you can't."*
   ② P1: *"You can spot the rocks; ask your partner which channels are deep enough."* /
@@ -244,7 +251,7 @@ a rule from one screen and the numbers from the other.**
 - **East bell (P2 solves):** P2's own gauges read **5 and 3**. The *rule* is on **P1's
   plate**: *"Toll the SUM of the two gauges."* → 5 + 3 = **8**.
 - **Puzzle (both):** set a toll-count dial (0–12) and sound the bell. P1 = **5**; P2 = **8**.
-- **Bearing-mark:** West (P1) finds mark **E (depth 6)** cast into the bell yoke.
+- **Bearing-mark:** West (P1) finds mark **E (needle SW)** cast into the bell's headstock.
 - **Foreshadow:** bell inscription (journaled): *"Cast for two hands. One bell was never
   enough to be heard across the bay."*
 - **Hints:** ① *"Your gauges give numbers; your partner's plate gives the rule for what to
@@ -254,23 +261,25 @@ a rule from one screen and the numbers from the other.**
 
 ---
 
-### SCENE 6 — The Beam Engine Room (valve pattern)
+### SCENE 6 — The Beam Engine Room (line pressures × valve rule)
 
-Restore each rotating beam's paraffin-pressure drive by setting five valves. **Your
-tower's valve pattern is drawn on the other tower's manometer schematic.**
+Restore each rotating beam's paraffin-pressure drive by setting five valves. The towers
+share one pressure main, so **each tower's repeater reads the other engine's five line
+pressures** (copied into that tower's signal book); **each engine's own plate gives the
+rule** for which lines to open. (It used to be straight dictation of the pattern.)
 
-- Five valves per tower, each **OPEN** or **CLOSED** (the `.lever` UI, `down` = closed).
-- **West pattern** (drawn on **P2's schematic**): valves 1–5 = **Open, Closed, Open, Open,
-  Closed** (`O C O O C`).
-- **East pattern** (drawn on **P1's schematic**): valves 1–5 = **Closed, Open, Open,
-  Closed, Open** (`C O O C O`).
-- **Puzzle (both):** toggle five valves to the pattern the partner reads out, then engage.
-- **Bearing-mark:** East (P2) finds mark **R (depth 5)** on the governor housing.
-- **Flavor:** the spinning weight-drive, oil cans, the pressure gauge climbing.
-- **Hints:** ① *"The pattern for your engine is on your partner's schematic, not yours."*
-  ② *"Five valves, open or shut. Read your schematic to your partner; set what they read
-  you."* ③ P1: *"Open, Closed, Open, Open, Closed."* / P2: *"Closed, Open, Open, Closed,
-  Open."*
+- Five valves per tower, each **OPEN** or **SHUT** (the `.lever` UI, `down` = shut).
+- **West rule:** open every line reading an **even** number of pounds. West pressures (on
+  P2's repeater): **24, 37, 18, 42, 51** → `O S O O S`.
+- **East rule:** open every line reading **above 30 lb**. East pressures (on P1's
+  repeater): **22, 46, 38, 15, 33** → `S O O S O`.
+- **Staging:** the engine room — a porthole on the storm, the clockwork drive standing on
+  the floor with its governor on top, the main gauge on its standpipe, the rule plate on
+  the wall, the five valves on a manifold carried on two stands, the ladder up.
+- **Bearing-mark:** East (P2) finds mark **R (needle S)** on the drive housing.
+- **Hints:** ① *"Your engine's plate says which lines to open — but your line pressures
+  only show on your partner's repeater."* ② the role's rule, spelled out. ③ P1: *"OPEN,
+  SHUT, OPEN, OPEN, SHUT."* / P2: *"SHUT, OPEN, OPEN, SHUT, OPEN."*
 
 ---
 
@@ -280,19 +289,20 @@ Both beams live; but a **wreckers' false light** burns on the middle headland, p
 Meridian onto the rocks. Overpower it: set each tower's beam to the safe-channel bearing by
 entering the harbour word — **the word the six bearing-marks spell.**
 
-- **The meta lock (both screens):** a beam-bearing wheel with six letter rings. Plaque:
-  *"SET THE BEAM TO THE WORD THE MARKS SPELL — SHALLOWEST BEARING FIRST."* Sort all six
-  marks by depth (1→6): A(1), S(2), H(3), O(4), R(5), E(6) → **ASHORE**.
+- **The meta lock (both screens):** the beam-training wheel on its post. Plaque: *"Sweep
+  the beam sunwise from north, and read each mark as the light finds it."* Going round the
+  rose: N:A, NE:S, E:H, SE:O, S:R, SW:E → **ASHORE**. (Entering it widdershins, EROHSA,
+  gets a nudge to go round the other way.)
 - **The asymmetric crux:** each keeper's log holds only **three** marks (P1: S,O,E; P2:
-  A,H,R). Neither can spell ASHORE alone — they read their three marks (depth + letter) to
-  each other, combine, sort, and both enter **ASHORE**.
+  A,H,R). Neither can spell ASHORE alone — they read their three marks (needle + letter) to
+  each other, sweep them round the compass, and both enter **ASHORE**.
 - **Payoff:** on solve, both beams swing onto the channel, the false light drowns, the
   Meridian steers through. Gus's reveal plays (the petrel who has carried the word between
   the lights since before you; tonight two keepers finally spoke as one). `completeRoom` →
   victory: **SAFE HARBOUR.**
 - **Hints:** ① *"Six marks make the word; you only carry three. Your partner carries the
-  other three."* ② *"Read your three marks to each other — number and letter — then set them
-  all in order, shallowest depth first."* ③ *"A-S-H-O-R-E. Ashore."*
+  other three."* ② *"Read each other your marks as needle and letter, then go round the compass
+  sunwise from north."* ③ *"N:A, NE:S, E:H, SE:O, S:R, SW:E — ASHORE."*
 
 ---
 

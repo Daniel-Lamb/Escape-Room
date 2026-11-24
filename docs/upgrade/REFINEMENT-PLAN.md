@@ -121,13 +121,27 @@ elements, then the peak-room modal chrome.
 
 ## Status
 
-| Game | Backgrounds | Interactive sprites | Modal chrome | Gus portrait |
-|---|---|---|---|---|
-| Pilgrim's Road | ✅ 7 rooms + tunnel (WebP, verified) | ⏳ next | ⏳ | ⏳ |
-| Gate of Life | ⏳ | ⏳ | ⏳ | ⏳ |
-| Starfall Station | ⏳ | ⏳ | ⏳ | ⏳ |
-| Wild Court | ⏳ | ⏳ | ⏳ | ⏳ |
-| Duo games (×3) | ⏳ | ⏳ | ⏳ | ⏳ |
+Updated 2026-11-23. "Layout pass" means every prop is mapped onto a feature of its
+plate and mounted through `shared/js/scenekit.js`, relays are docked, and
+`npm run lint:rooms` and `npm run walk:rooms` are clean for every role.
+
+Gus is drawn from `form.art` (a photoreal cut-out) when a game has one, else from its
+`form.portrait()` SVG (`shared/js/gus-core.js`); both are complete forms. Puzzle-modal hero
+art is optional chrome over the procedural modal UI.
+
+| Game | Rooms | Background plates (WebP + looping MP4) | Layout pass | Puzzle-modal hero art | Gus portrait |
+|---|---|---|---|---|---|
+| Pilgrim's Road | 7 | ✅ (+ tunnel) | ✅ | 6 | ✅ |
+| Starfall Station | 7 | ✅ | ✅ | 7 | ✅ |
+| Wild Court | 7 | ✅ | ✅ | 6 | ✅ |
+| Gate of Life | 7 | ✅ | ✅ | 7 | ✅ |
+| Tomb of the Scarab | 5 | ✅ | ✅ | none (puzzles use the procedural modal UI) | ✅ SVG portrait (heart-scarab) |
+| Signal Towers | 7 | ✅ exterior storm plates, seen through drawn tower interiors | ✅ | 7 | ✅ |
+| Looking Glass | 7 | ✅ | ✅ | 6 | ✅ |
+| Silent Alarm | 7 | ✅ | ✅ | 7 | ✅ |
+| Deep Six | 7 | ✅ | ✅ | 2 | ✅ |
+| The Vault | 5 | ✅ (stills) | ✅ | none (puzzles use the procedural modal UI) | ✅ SVG portrait (ferret) |
+| Trial by Jury | 5 | ✅ (stills) | ✅ | 2 | ✅ SVG portrait (tamarin) |
 
 ## Asset pipeline (mechanics)
 

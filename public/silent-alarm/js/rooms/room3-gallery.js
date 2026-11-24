@@ -5,6 +5,7 @@
 // The Hand (P1) lifts vault-pin d (position 4, digit 4).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'gal';
@@ -58,14 +59,12 @@ export default {
       </g>
 
       <!-- the codebook page THIS player holds (for the OTHER's flashes) -->
-      <g>
-        <rect x="1080" y="150" width="440" height="200" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
+      ${dock({ x: 1080, y: 150, w: 440, h: 200 }, `
         <text x="1300" y="190" text-anchor="middle" font-size="14" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${isHand() ? 'ALARM LEGEND (page for the Eye)' : 'GRID SCHEMATIC (page for the Hand)'}</text>
         <g font-family="Consolas, monospace" text-anchor="middle" font-size="20" fill="#e8e2d4">
           ${[1, 2, 3, 4].map((n, i) => `<text x="${1140 + i * 105}" y="250">${n} → ${page[n]}</text>`).join('')}
         </g>
-        <text x="1300" y="312" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">read a letter when your partner reads you a count</text>
-      </g>
+        <text x="1300" y="312" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">read a letter when your partner reads you a count</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
 
       ${done ? `<text x="800" y="820" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">${isHand() ? 'the beams die — the floor is safe to cross' : 'the panel goes dark and quiet'}</text>` : ''}
 
@@ -98,7 +97,7 @@ export default {
     });
 
     spots.push({
-      id: 'page', x: 1080, y: 150, w: 440, h: 200, label: isHand() ? 'The alarm legend' : 'The grid schematic',
+      id: 'page', ...DOCK, label: isHand() ? 'The alarm legend' : 'The grid schematic',
       onInteract(game) {
         const page = MY_PAGE[getRole()];
         const rows = [1, 2, 3, 4].map(n => `${n} → <b>${page[n]}</b>`).join(' &nbsp; ');

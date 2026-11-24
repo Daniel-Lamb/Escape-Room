@@ -7,6 +7,7 @@
 // Foreshadows: the spun compass, the healed-over rim blazes.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   machete: {
@@ -38,8 +39,14 @@ const CLANS = ['JAGUAR', 'TAPIR', 'HARPY', 'BOA', 'MONKEY'];
 const SOLUTION = [0, 1, 3];
 const TRACE_LABEL = ['the four-toed pug mark', 'the three round toes', 'the smooth drag-line'];
 
+// Layout notes — the plate (art/sinkhole.webp) paints the sky-coin, the light
+// shaft, the root walls, a boulder (bottom-left) and the lit floor.
+const COMPASS = { cx: 560, cy: 812 };
+
 export default {
   id: 'sinkhole',
+  lintStates: [{ label: 'solved', flags: { sinkhole_gateOpen: true }, inventory: ['machete', 'survey_map'] }],
+  solution: ['jaguar', 'tapir', 'boa'],
   title: 'The Sinkhole Nave',
   intro: 'You come to at the bottom of the world: a fern-choked sinkhole that is also, impossibly, a room — a ruined stone nave with roots pouring down its walls like frozen waterfalls, a ragged coin of evening sky far, far above, and a small golden monkey in a woven collar watching you with the frank professional interest of someone reading a case file.',
 
@@ -53,6 +60,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_sink_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0e1c12"/>
           <stop offset="0.5" stop-color="#16281a"/>
@@ -87,34 +95,13 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/sinkhole.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/sinkhole.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- the coin of sky, far above -->
-      <ellipse cx="820" cy="30" rx="240" ry="60" fill="url(#gd_sink_sky)"/>
-      <ellipse cx="820" cy="26" rx="150" ry="34" fill="#9fd4a8" opacity="0.45" class="flicker"/>
-      <!-- the great light-shaft down the nave -->
-      <polygon points="690,20 950,20 1120,700 560,700" fill="url(#gd_sink_beam)" class="moonbeam"/>
+      <!-- the sky-coin, the light-shaft and the roots are all painted in the plate; only a breath of light here -->
+      <polygon points="700,20 940,20 1100,700 580,700" fill="url(#gd_sink_beam)" class="moonbeam" opacity="0.6"/>
 
-      <!-- roots pouring down the walls -->
-      <g stroke-linecap="round" fill="none">
-        <path d="M120 0 Q150 220 96 430 Q78 560 132 660" stroke="#4a3626" stroke-width="22"/>
-        <path d="M120 0 Q150 220 96 430" stroke="#6b4f37" stroke-width="7" opacity="0.7"/>
-        <path d="M250 0 Q214 180 262 360 Q286 500 232 660" stroke="#4a3626" stroke-width="14"/>
-        <path d="M1500 0 Q1548 220 1494 440 Q1470 560 1520 660" stroke="#4a3626" stroke-width="20"/>
-        <path d="M1360 0 Q1332 160 1372 340 Q1392 470 1352 660" stroke="#4a3626" stroke-width="12"/>
-        <path d="M1360 0 Q1332 160 1372 340" stroke="#6b4f37" stroke-width="5" opacity="0.6"/>
-      </g>
-      <!-- hanging ferns -->
-      <g class="sway slow" fill="#16281a">
-        <path d="M300 120 q-16 70 6 128 q28 -56 8 -126 z"/>
-        <path d="M1300 150 q18 60 -6 120 q-26 -50 -6 -118 z"/>
-      </g>
-
-      <!-- the rim blazes, high on the near wall: cuts grown smooth -->
-      <g>
-        <rect x="1140" y="150" width="150" height="120" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="3" opacity="0.8"/>
-        <path d="M1170 180 q8 22 -2 62 M1210 176 q6 26 -2 66 M1250 182 q8 20 0 58"
-          stroke="#3f5a3a" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <path d="M1170 180 q8 22 -2 62 M1210 176 q6 26 -2 66"
-          stroke="#5aa552" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+      <!-- the rim blazes: three old cuts in the bark of the great root-trunk on the right, grown smooth -->
+      <g data-mount="inset">
+        <path d="M1110 186 q8 22 -2 62 M1146 182 q6 26 -2 66 M1182 188 q8 20 0 58" stroke="#1a120a" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <path d="M1110 186 q8 22 -2 62 M1146 182 q6 26 -2 66 M1182 188 q8 20 0 58" stroke="#b9a37a" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.55"/>
       </g>
 
       <!-- the harpy talon-scar (flavor foreshadow of T4's apex) -->
@@ -123,8 +110,9 @@ export default {
         <path d="M226 470 L272 470"/>
       </g>
 
-      <!-- the fallen satchel + your survey map -->
-      <g>
+      <!-- the fallen satchel + your survey map, on the lit floor where you landed -->
+      <g data-mount="floor" transform="translate(340 40)">
+        ${shadow(372, 794, 80, 10)}
         <path d="M300 792 Q306 748 372 748 Q438 748 444 792 L432 762 L312 762 Z" fill="url(#gd_sink_mud)" stroke="#2a1e14" stroke-width="3"/>
         <path d="M312 764 Q372 780 432 764" stroke="#2a1e14" stroke-width="2" fill="none" opacity="0.8"/>
         <path d="M330 748 Q372 726 414 748" fill="none" stroke="#4a3a22" stroke-width="4"/>
@@ -132,6 +120,14 @@ export default {
           ? `<g class="beckon"><rect x="344" y="726" width="60" height="40" rx="2" fill="#e4f0d0" stroke="#9fb37e" stroke-width="2" transform="rotate(-8 374 746)"/>
              <path d="M352 742 Q372 734 392 742" stroke="#6b4f37" stroke-width="1.4" fill="none" transform="rotate(-8 374 746)"/></g>`
           : ''}
+      </g>
+
+      <!-- your brass compass, thrown clear in the fall -->
+      <g data-mount="floor">
+        ${shadow(COMPASS.cx, COMPASS.cy + 12, 32, 7)}
+        <ellipse cx="${COMPASS.cx}" cy="${COMPASS.cy}" rx="28" ry="14" fill="url(#sk_brass)" stroke="#4f3b10" stroke-width="2"/>
+        <ellipse cx="${COMPASS.cx}" cy="${COMPASS.cy - 2}" rx="20" ry="9" fill="#e8e2c8" stroke="#4f3b10" stroke-width="1"/>
+        <path d="M${COMPASS.cx - 14} ${COMPASS.cy + 1} L${COMPASS.cx + 14} ${COMPASS.cy - 5}" stroke="#b02a2a" stroke-width="2.5" stroke-linecap="round"/>
       </g>
 
       <!-- the half-buried machete, glinting in the mud (photoreal) -->
@@ -147,7 +143,7 @@ export default {
         ${open
           ? `<path d="M1300 700 L1300 300 Q1420 236 1560 300 L1560 700 Z" fill="#070d08" stroke="#0e1c12" stroke-width="5"/>
              <ellipse cx="1430" cy="520" rx="90" ry="150" fill="url(#gd_sink_sky)" opacity="0.4" class="glow"/>
-             <text x="1430" y="300" text-anchor="middle" font-size="16" fill="#9ce08a" class="flicker"
+             <text x="1430" y="356" text-anchor="middle" font-size="16" fill="#9ce08a" class="flicker"
                font-family="Palatino Linotype, Georgia, serif">the gate stands open</text>`
           : `<image href="art/sink-rootgate.webp" x="1286" y="286" width="288" height="426" preserveAspectRatio="xMidYMax meet"/>
              ${socks.map((g, i) => {
@@ -157,7 +153,7 @@ export default {
                  <rect x="${x - 26}" y="430" width="52" height="60" rx="6" fill="#241a10" stroke="#4a3626" stroke-width="2"/>
                  <g transform="translate(${x}, 460)">${socketTraceIcon(i)}</g>
                  <rect x="${x - 26}" y="500" width="52" height="30" rx="5" fill="#2e3a2c" stroke="#5aa552" stroke-width="1.5"/>
-                 <text x="${x}" y="520" text-anchor="middle" font-size="10" fill="#9ce08a"
+                 <text x="${x}" y="520" text-anchor="middle" font-size="11.5" fill="#9ce08a"
                    font-family="Palatino Linotype, Georgia, serif">${CLANS[g].slice(0, 5)}</text>
                </g>`;
              }).join('')}`}
@@ -174,7 +170,7 @@ export default {
       </g>
 
       <!-- the torn field-guide page, in the mud -->
-      <g class="sway" style="transform-origin: 640px 800px;">
+      <g class="sway" style="transform-origin: 900px 812px;" transform="translate(256 12)">
         <rect x="600" y="770" width="88" height="60" rx="2" fill="#e4dcc0" stroke="#b9a878" stroke-width="2" transform="rotate(6 644 800)"/>
         <path d="M612 786 h64 M612 796 h58 M612 806 h62 M612 816 h40" stroke="#9a8a5c" stroke-width="1.4" transform="rotate(6 644 800)"/>
       </g>
@@ -197,7 +193,7 @@ export default {
     const open = !!state.flags.sinkhole_gateOpen;
 
     spots.push({
-      id: 'fieldguide', x: 590, y: 760, w: 120, h: 90, label: 'A torn field-guide page',
+      id: 'fieldguide', x: 846, y: 772, w: 120, h: 90, label: 'A torn field-guide page',
       onInteract(game) {
         const html = `<div class="leaf-tablet"><div class="leaf-title">Torn from your field guide</div>
           <em>Jaguar:</em> four toes, <strong>no claw tips showing</strong> — claws sheathed when walking.<br>
@@ -225,10 +221,10 @@ export default {
 
     if (!state.flags.sinkhole_mapTaken) {
       spots.push({
-        id: 'satchel', x: 296, y: 720, w: 160, h: 100, label: 'Your fallen satchel',
+        id: 'satchel', x: 636, y: 760, w: 160, h: 100, label: 'Your fallen satchel',
         onInteract(game) {
           game.setFlag('sinkhole_mapTaken');
-          game.addItem('survey_map', { from: { x: 374, y: 746 } });
+          game.addItem('survey_map', { from: { x: 714, y: 786 } });
           game.journal.add('note_survey', {
             title: 'Your survey map (Sinkhole Nave)', category: 'note',
             html: `<div class="leaf-tablet"><div class="leaf-title">Quadrant Nine — draft</div>
@@ -242,7 +238,7 @@ export default {
       });
     } else {
       spots.push({
-        id: 'satchel_empty', x: 296, y: 720, w: 160, h: 100, label: 'Your emptied satchel',
+        id: 'satchel_empty', x: 636, y: 760, w: 160, h: 100, label: 'Your emptied satchel',
         onInteract(game) {
           game.say('Emptied now, mud-soaked, familiar. It has carried chains and stakes and other people\'s ambitions across three valleys. This is the first time it has carried you into anything it could not carry you out of.');
         },
@@ -250,7 +246,7 @@ export default {
     }
 
     spots.push({
-      id: 'compass', x: 470, y: 600, w: 120, h: 110, label: 'Your compass',
+      id: 'compass', x: COMPASS.cx - 60, y: COMPASS.cy - 50, w: 120, h: 96, label: 'Your compass',
       onInteract(game) {
         game.journal.add('note_compass', {
           title: 'Your compass (Sinkhole Nave)', category: 'note',
@@ -264,7 +260,7 @@ export default {
     });
 
     spots.push({
-      id: 'blazes', x: 1130, y: 140, w: 170, h: 140, label: 'Blazes on the rim',
+      id: 'blazes', x: 1090, y: 160, w: 130, h: 120, label: 'Blazes on the rim',
       onInteract(game) {
         game.journal.add('note_blazes', {
           title: 'The rim blazes (Sinkhole Nave)', category: 'note',

@@ -1,10 +1,11 @@
 // SCENE 4 — The Chart Room (combine half-charts).
 // West chart shows ROCKS (channels I & IV fouled). East chart shows DEPTHS
 // (channels II & IV too shallow). Only Channel III is both clear and deep.
-// East (P2) finds bearing-mark H (depth 3).
+// East (P2) finds bearing-mark H (needle E).
 
 import { getRole, isWest, towerName } from '../role.js';
-import { defs, backdrop, rain, towerTag } from '../scenekit.js';
+import { defs, backdrop, rainOutside, interior, bearingOf, towerTag } from '../scenekit.js';
+import { panel, wallDoor } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'chart';
 const SAFE = 'III';
@@ -14,10 +15,19 @@ const CHANNELS = ['I', 'II', 'III', 'IV'];
 const WEST_ROCKS = { I: 'fouled — Kestrel reef', II: 'clear of rock', III: 'clear of rock', IV: 'fouled — the Black Tooth' };
 const EAST_DEPTH = { I: '9 fathoms — deep', II: '1 fathom — dries at low water', III: '8 fathoms — deep', IV: '2 fathoms — shoal' };
 
+// The chart room: a small arched window high on the back wall (the moon over
+// the bay), the slanted chart table filling the room with the survey pinned to
+// it, the plotting plate on its front rail, and the stair door in the left wall.
+const TABLE_FRONT = 820;
+const PLOT = { x: 600, y: 830, w: 400, h: 62 };
+const DOOR = { x1: 205, y1: 330, h1: 440, x2: 40, y2: 270, h2: 620 };
+const DOOR_SPOT = { x: 40, y: 270, w: 165, h: 620 };
+
 function plotted(state) { return !!state.flags.chartroom_plotted; }
 
 export default {
   id: 'chartroom',
+  solution: SAFE,
   get title() { return `${towerName()} · The Chart Room`; },
   get intro() {
     return isWest()
@@ -50,31 +60,44 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
+      ${interior(SLUG, { window: { x: 900, y: 40, w: 340, h: 210, shape: 'arch' }, floorY: 860 })}
 
-      <!-- chart table surface -->
-      <rect x="240" y="250" width="1120" height="600" rx="14" fill="#0e2032" stroke="#8a7f6a" stroke-width="10"/>
-      <text x="800" y="300" text-anchor="middle" font-size="18" fill="#9fc7dd" font-family="Consolas, monospace" letter-spacing="3">
+      <!-- the door to the stair, in the left-hand wall -->
+      ${wallDoor({ ...DOOR, open: done, material: 'wood' })}
+
+      <!-- the slanted chart table, the survey pinned to it -->
+      <g data-mount="floor">
+        <rect x="220" y="252" width="1160" height="${TABLE_FRONT - 252}" rx="10" fill="url(#sk_wood)" stroke="#1c120a" stroke-width="4"/>
+        <rect x="220" y="${TABLE_FRONT}" width="1160" height="${900 - TABLE_FRONT}" fill="url(#sk_darkwood)" stroke="#0b0703" stroke-width="3"/>
+        <rect x="242" y="272" width="1116" height="${TABLE_FRONT - 292}" rx="4" fill="#0e2032" stroke="#5b6b7d" stroke-width="2"/>
+        ${[[256, 286], [1344, 286], [256, TABLE_FRONT - 34], [1344, TABLE_FRONT - 34]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="6" fill="#c9a227"/>`).join('')}
+      </g>
+      <text x="800" y="312" text-anchor="middle" font-size="18" fill="#9fc7dd" font-family="Consolas, monospace" letter-spacing="3">
         ${isWest() ? 'WEST SURVEY — ROCKS & REEFS' : 'EAST SURVEY — DEPTH SOUNDINGS'}</text>
 
       <!-- the two headlands + harbour mouth -->
-      <path d="M240 340 q120 -40 220 0 l0 470 -220 0 z" fill="#1c2431" opacity="0.7"/>
-      <path d="M1360 340 q-120 -40 -220 0 l0 470 220 0 z" fill="#1c2431" opacity="0.7"/>
-      <text x="360" y="820" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">KESTREL PT</text>
-      <text x="1240" y="820" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">GANNET RK</text>
+      <path d="M242 340 q120 -40 218 0 l0 450 -218 0 z" fill="#1c2431" opacity="0.7"/>
+      <path d="M1358 340 q-120 -40 -218 0 l0 450 218 0 z" fill="#1c2431" opacity="0.7"/>
+      <text x="360" y="776" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">KESTREL PT</text>
+      <text x="1240" y="776" text-anchor="middle" font-size="13" fill="#7f8a99" font-family="Consolas, monospace">GANNET RK</text>
 
       <!-- the four channels -->
       ${lanes}
 
-      ${done ? `<text x="800" y="835" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">CHANNEL III BUOYED — the safe water is lit</text>` : ''}
+      ${done ? `<text x="800" y="740" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">CHANNEL III BUOYED — the safe water is lit</text>` : ''}
+
+      <!-- the plotting plate on the table's front rail -->
+      ${panel({ ...PLOT, material: 'brass', mount: 'bolts', body: `
+        <text x="${PLOT.x + PLOT.w / 2}" y="${PLOT.y + 38}" text-anchor="middle" font-size="16" fill="#2a1d05" font-family="Consolas, monospace" letter-spacing="2">${done ? 'CHANNEL ' + SAFE + ' PLOTTED' : 'PLOT THE SAFE CHANNEL'}</text>` })}
 
       ${markHere ? `
       <g class="beckon">
-        <circle cx="290" cy="300" r="22" fill="rgba(201,162,39,0.08)" stroke="#c9a227" stroke-width="3"/>
-        <text x="290" y="308" text-anchor="middle" font-size="20" fill="#e8c85a" font-family="Consolas, monospace" font-weight="bold">3</text>
+        <circle cx="290" cy="300" r="20" fill="url(#sk_brass)" stroke="#c9a227" stroke-width="3"/>
+        <text x="290" y="306" text-anchor="middle" font-size="16" fill="#2a1d05" font-family="Consolas, monospace" font-weight="bold">${bearingOf(3)}</text>
       </g>` : ''}
 
       ${towerTag()}
-      ${rain(SLUG)}
+      ${rainOutside(SLUG)}
     </svg>`;
   },
 
@@ -104,7 +127,7 @@ export default {
         id: 'mark_h', x: 250, y: 260, w: 90, h: 90, label: 'A brass bearing-mark',
         onInteract(game) {
           game.journal.add('mark_h', { title: 'East Tower — pinned to the chart', category: 'sun', sun: { rays: 3, letter: 'H' } });
-          game.say('A brass mark pins the corner of the chart: bearing 3, letter H. Logged.');
+          game.say(`A brass compass-plate pins the corner of the chart, its needle pointing ${bearingOf(3)}, and the letter H. Logged.`);
           game.refreshScene();
         },
       });
@@ -112,12 +135,12 @@ export default {
 
     if (!done) {
       spots.push({
-        id: 'plot', x: 500, y: 760, w: 600, h: 80, label: 'Choose the safe channel',
+        id: 'plot', ...PLOT, label: 'Choose the safe channel',
         onInteract(game) { openChannelPicker(game); },
       });
     } else {
       spots.push({
-        id: 'up', x: 500, y: 760, w: 600, h: 80, label: 'The stair up',
+        id: 'up', ...DOOR_SPOT, label: 'The door to the stair',
         onInteract(game) {
           if (getRole() === 'p2' && !game.journal.has('mark_h')) { game.say('Take the bearing-mark pinning the chart before you go.'); return; }
           game.completeRoom({ delay: 600 });

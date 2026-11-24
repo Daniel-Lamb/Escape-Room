@@ -7,7 +7,7 @@
 // Diver recovers depth-mark C (11 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART, DOCK } from '../divekit.js';
 
 const SLUG = 'lamp';
 const MYCODE = { p1: '374', p2: '195' };   // p1 = Diver mirrors, p2 = Tender bearing
@@ -51,7 +51,7 @@ export default {
     const forWhat = isDiver() ? 'signal-lamp bearing' : 'mirror angles';
 
     spots.push({
-      id: 'relay', x: 556, y: 138, w: 488, h: 184, label: `The ${forWhat} (for your partner)`,
+      id: 'relay', ...DOCK, label: `The ${forWhat} (for your partner)`,
       onInteract(game) {
         const html = `<div class="chartcard"><div class="chart-title">${forWhat}</div>
           <p>${isDiver() ? 'Painted on the corridor wall, for the boat above:' : 'Marked on your optical plan, for the diver below:'}</p>

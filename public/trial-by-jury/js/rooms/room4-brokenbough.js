@@ -19,6 +19,7 @@ const lore = {
 };
 
 export default buildRoom({
+  index: 3,
   id: 'brokenbough',
   slug: 'bb',
   lockLabel: 'Your Reading',

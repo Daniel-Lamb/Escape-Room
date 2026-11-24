@@ -6,6 +6,7 @@
 // the crank handle.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow, wallDoor } from '../../../shared/js/scenekit.js';
 
 registerItems({
   crank_handle: {
@@ -29,6 +30,25 @@ const RUBBLE = new Set(['B2', 'C1', 'D1', 'D2']);
 const DENS = { B1: 'Wolf-stink and a rush of low grey bodies — you scramble back to the Lion Gate with your heart in your teeth.', D3: 'The fallen vault: darkness, heat, and something very large breathing an arm\'s length away. You retreat to the Lion Gate at a speed you will not brag about.' };
 const DEADENDS = { A4: 'An empty bear cage, door long rusted open. Nothing but old straw and older smells.', C2: 'Flooded footing — black water over the boards, ankle-deep and rising nowhere. A dead end.', B4: 'The old feed store: empty racks, a smell of grain ghosts. No way on.' };
 const GOAL = 'D4';
+// The way from the Lion Gate (A1, facing north) to the stair, found through
+// OPEN, written the way Felix's plan reads: onward n, turn right / left.
+function route() {
+  const cols = ['A', 'B', 'C', 'D'], dirs = ['N', 'E', 'S', 'W'];
+  const step = (cell, d) => { let c = cols.indexOf(cell[0]), r = Number(cell[1]); if (d === 'N') r++; if (d === 'S') r--; if (d === 'E') c++; if (d === 'W') c--; return `${cols[c]}${r}`; };
+  const open = (a, b) => OPEN.has(`${a}|${b}`) || OPEN.has(`${b}|${a}`);
+  const prev = new Map([['A1', null]]), queue = ['A1'];
+  while (queue.length) { const cur = queue.shift(); for (const d of dirs) { const nx = step(cur, d); if (!prev.has(nx) && open(cur, nx)) { prev.set(nx, cur); queue.push(nx); } } }
+  const path = []; for (let c = GOAL; c; c = prev.get(c)) path.unshift(c);
+  const words = ['', 'one', 'two', 'three', 'four'], out = [];
+  let facing = 'N', run = 0;
+  for (let i = 1; i < path.length; i++) {
+    const d = dirs.find(x => step(path[i - 1], x) === path[i]);
+    if (d !== facing) { out.push(`onward ${words[run]}`); out.push((dirs.indexOf(d) - dirs.indexOf(facing) + 4) % 4 === 1 ? 'turn right' : 'turn left'); facing = d; run = 0; }
+    run++;
+  }
+  out.push(`onward ${words[run]}`);
+  return out;
+}
 const COLS = ['A', 'B', 'C', 'D'];
 const DIRS = ['N', 'E', 'S', 'W'];
 const FACES = { N: '↑', E: '→', S: '↓', W: '←' };
@@ -42,8 +62,17 @@ function step(cell, dir) {
   return `${COLS[c]}${r}`;
 }
 
+// Layout — the plate (art/hypogeum.webp): a corridor of arches (centre), a big
+// barred cage (right), a torch on the left wall, the corridor-mouth pillar.
+const GATE = { x: 500, y: 430, w: 270, h: 360 };
+const NICHE_DX = -548;                        // Felix's niche -> left wall
+const CAGE_DX = 90, CAGE_DY = 20;             // name board, shelf, trough -> in the painted cage
+const SDOOR = { x1: 1452, y1: 380, h1: 380, x2: 1590, y2: 340, h2: 470 };
+
 export default {
   id: 'hypogeum',
+  solution: route(),
+  lintStates: [{ label: 'plan read', flags: { hypogeum_planSeen: true }, journal: ['note_plan'] }, { label: 'solved', flags: { hypogeum_mazeDone: true }, inventory: ['crank_handle', 'bronze_mirror'] }],
   title: 'The Hypogeum',
   intro: 'The stair lets you out under the arena floor itself — a lattice of cage-tunnels and lift shafts where the ceiling is planking and the planking leaks knife-blades of dusty light and thin continuous sand, and somewhere above you eighty thousand people stamp their feet on your roof.',
 
@@ -55,6 +84,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_hyp_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#1d1812"/>
           <stop offset="1" stop-color="#2b2318"/>
@@ -83,22 +113,21 @@ export default {
         <path d="M700 274 q60 40 120 6 M980 250 q-40 36 -90 20" stroke-width="5"/>
       </g>
 
-      <!-- torch by the Lion Gate -->
-      <g>
-        <rect x="308" y="330" width="12" height="58" rx="4" fill="#3a2b18"/>
-        <ellipse cx="314" cy="316" rx="40" ry="34" fill="url(#gd_hyp_torch)" class="glow"/>
-        <path class="torch-flame" d="M314 330 q11 -19 0 -34 q-11 15 0 34z" fill="#ffa94d"/>
+      <!-- warmth over the plate's torch on the left wall -->
+      <ellipse cx="217" cy="250" rx="80" ry="70" fill="url(#gd_hyp_torch)" class="glow"/>
+
+      <!-- the Lion Gate: mouth of the maze, hung in the first arch of the corridor (photoreal barred gate) -->
+      <g data-mount="wall">
+        ${shadow(GATE.x + GATE.w / 2, GATE.y + GATE.h, GATE.w * 0.55, 12)}
+        <image href="art/hyp-gate.webp" x="${GATE.x}" y="${GATE.y}" width="${GATE.w}" height="${GATE.h}" preserveAspectRatio="xMidYMax meet"/>
+        <rect x="${GATE.x + GATE.w / 2 - 90}" y="${GATE.y - 40}" width="180" height="30" rx="4" fill="url(#sk_stone)" stroke="#2c2418" stroke-width="2"/>
+        <text x="${GATE.x + GATE.w / 2}" y="${GATE.y - 19}" text-anchor="middle" font-size="14" letter-spacing="3" fill="#2c2418"
+          font-family="Palatino Linotype, Georgia, serif">PORTA LEONVM</text>
       </g>
 
-      <!-- the Lion Gate: mouth of the maze (photoreal barred gate) -->
-      <g>
-        <image href="art/hyp-gate.webp" x="346" y="438" width="236" height="322" preserveAspectRatio="xMidYMax meet"/>
-        <text x="464" y="424" text-anchor="middle" font-size="14" letter-spacing="3" fill="#c9b98f"
-          font-family="Palatino Linotype, Georgia, serif" paint-order="stroke" stroke="#0f0c08" stroke-width="3">PORTA LEONVM</text>
-      </g>
-
-      <!-- the niche with Felix's chalk plan -->
-      <g>
+      <!-- the niche with Felix's chalk plan, cut into the left wall -->
+      <g data-mount="inset" transform="translate(${NICHE_DX} 0)">
+        <rect x="592" y="412" width="166" height="206" rx="8" fill="#000" opacity="0.5"/>
         <rect x="600" y="420" width="150" height="190" rx="6" fill="#171209"/>
         ${planSeen
           ? `<g font-family="Palatino Linotype, Georgia, serif" fill="#e8dcc0" opacity="0.9">
@@ -114,7 +143,8 @@ export default {
 
       <!-- Gus's old cage: the barred gate is painted into the plate (right);
            keep the name board, the kindly-built shelf + trough, and token 5 -->
-      <g>
+      <g data-mount="bolts" transform="translate(${CAGE_DX} ${CAGE_DY})">
+        ${shadow(1180, 762, 100, 9)}
         <rect x="1140" y="368" width="120" height="30" rx="4" fill="#6b4f2c" stroke="#2b2015" stroke-width="2"/>
         <text x="1200" y="389" text-anchor="middle" font-size="16" letter-spacing="3" fill="#e8dcc0"
           font-family="Palatino Linotype, Georgia, serif">GVSTVS</text>
@@ -125,33 +155,25 @@ export default {
         ${!state.journal.some(e => e.id === 'token5') ? `<circle cx="1332" cy="732" r="5" fill="#e8dcc0" class="beckon"/>` : ''}
       </g>
 
-      <!-- broken capstan (photoreal) -->
-      <g>
+      <!-- broken capstan (photoreal), fallen on the floor -->
+      <g data-mount="floor">
+        ${shadow(852, 758, 70, 9)}
         <image href="art/hyp-capstan.webp" x="788" y="662" width="128" height="96" preserveAspectRatio="xMidYMax meet"/>
         ${crankHere ? `<g class="beckon"><path d="M905 736 L952 704 L952 678" fill="none" stroke="#c9a227" stroke-width="9" stroke-linecap="round"/></g>` : ''}
       </g>
 
-      <!-- claw-grooved post (flavor) -->
-      <g>
-        <rect x="240" y="360" width="34" height="400" rx="8" fill="#3a2d1c"/>
-        <path d="M248 420 v120 M256 400 v150 M264 430 v110" stroke="#241c12" stroke-width="3"/>
+      <!-- claw grooves (flavor), raked into the painted pillar at the corridor mouth -->
+      <g data-mount="inset" stroke-linecap="round">
+        <path d="M318 440 v130 M332 420 v160 M346 450 v120" stroke="#0e0a06" stroke-width="6"/>
+        <path d="M318 440 v130 M332 420 v160 M346 450 v120" stroke="#8a7a5c" stroke-width="2" opacity="0.6" transform="translate(2 0)"/>
       </g>
 
-      <!-- old feed trough (flavor) -->
+      <!-- old feed trough (flavor), on the floor -->
+      ${shadow(140, 748, 90, 7)}
       <path d="M60 730 h160 a10 10 0 0 1 -8 16 h-144 a10 10 0 0 1 -8 -16 z" fill="#453a2e"/>
 
-      <!-- stair door, far right -->
-      <g>
-        <path d="M1450 760 L1450 380 Q1520 340 1590 380 L1590 760 Z" fill="${mazeDone ? '#0f0c08' : '#241c12'}" stroke="#453a2e" stroke-width="7"/>
-        ${mazeDone
-          ? `<g stroke="#8a7f6a" stroke-width="4">${[700, 660, 620, 580].map((y, i) => `<line x1="${1470 + i * 8}" y1="${y}" x2="${1570 - i * 8}" y2="${y}"/>`).join('')}</g>
-             <text x="1520" y="470" text-anchor="middle" font-size="13" fill="#e8cf96" class="flicker"
-               font-family="Palatino Linotype, Georgia, serif">SCALAE</text>`
-          : `<line x1="1442" y1="540" x2="1598" y2="540" stroke="#5c5546" stroke-width="13"/>
-             <text x="1520" y="510" text-anchor="middle" font-size="12" fill="#8a7f6a"
-               font-family="Palatino Linotype, Georgia, serif">barred from within</text>`}
-      </g>
-
+      <!-- stair door, in the right wall beyond the cage: barred from within until the maze is walked -->
+      ${wallDoor({ ...SDOOR, open: mazeDone, barred: !mazeDone, label: mazeDone ? 'SCALAE' : 'BARRED' })}
       <path d="M0 900 L0 866 Q800 904 1600 866 L1600 900 Z" fill="#0a0705"/>
     </svg>`;
   },
@@ -161,7 +183,7 @@ export default {
     const mazeDone = !!state.flags.hypogeum_mazeDone;
 
     spots.push({
-      id: 'niche', x: 590, y: 410, w: 170, h: 210, label: "Felix's niche",
+      id: 'niche', x: 590 + NICHE_DX, y: 410, w: 170, h: 210, label: "Felix's niche",
       onInteract(game) {
         if (game.getFlag('hypogeum_planSeen')) {
           showPlan(game, false);
@@ -180,7 +202,7 @@ export default {
     });
 
     spots.push({
-      id: 'gate', x: 350, y: 420, w: 220, h: 340, label: 'The Lion Gate — into the dark',
+      id: 'gate', x: GATE.x, y: GATE.y - 40, w: GATE.w, h: GATE.h + 40, label: 'The Lion Gate — into the dark',
       onInteract(game) {
         if (game.getFlag('hypogeum_mazeDone')) {
           game.say('The tunnels beyond the Lion Gate hold no more surprises — you know the road now, and the things in the wrong rooms know you know it.');
@@ -191,7 +213,7 @@ export default {
     });
 
     spots.push({
-      id: 'cage', x: 1030, y: 340, w: 340, h: 420, label: "The lion's old cage",
+      id: 'cage', x: 1160, y: 220, w: 280, h: 600, label: "The lion's old cage",
       onInteract(game) {
         if (!game.journal.has('token5')) {
           game.journal.add('token5', {
@@ -225,7 +247,7 @@ export default {
     });
 
     spots.push({
-      id: 'clawpost', x: 230, y: 350, w: 90, h: 410, label: 'A grooved post',
+      id: 'clawpost', x: 290, y: 390, w: 90, h: 240, label: 'A grooved post',
       onInteract(game) {
         game.say('An oak post taller than a man, grooved deep by claws at a height that makes you stand very still for a moment. Gus examines the marks with connoisseurship. "Before my time," he says. "Amateur work."');
       },
@@ -239,7 +261,7 @@ export default {
     });
 
     spots.push({
-      id: 'stair', x: 1440, y: 370, w: 158, h: 390,
+      id: 'stair', x: 1446, y: 340, w: 152, h: 470,
       label: mazeDone ? 'The stair to the winch gallery' : 'The barred stair door',
       onInteract(game) {
         if (!mazeDone) {

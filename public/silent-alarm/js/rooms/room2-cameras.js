@@ -1,24 +1,32 @@
 // SCENE 2 — The Camera Room / The Feed Matrix (four-way alignment).
-// Each side aims four things; the four bearings for yours are on the OTHER screen.
-//   Hand's four gallery cameras  = E, S, NW, N   = [2,4,7,0]  (shown on the Eye's aim-card)
-//   Eye's four feed channels     = NE, SE, W, S  = [1,3,6,4]  (shown on the Hand's patch-card)
+// SPLIT KNOWLEDGE. Each side aims four things. The OTHER screen shows where your
+// four are logged as pointing now; YOUR screen holds the crew's rule for them —
+// a quarter-turn clockwise from that log (N->E, NE->SE ...). Neither half alone.
+//   Hand cameras: logged NE, S, W, NW (on the Eye feed) -> SE, W, N, NE = [3,6,0,1]
+//   Eye's channels: wired  S,  E,  N, SE (on the Hand's card) -> W,  S, E, SW = [6,4,2,5]
 // The Eye (P2) lifts vault-pin a (position 1, digit 7).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK, panel } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'cam';
 const PTS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 // This side's own correct four bearings (never shown here).
-const MY_TARGET = { p1: [2, 4, 7, 0], p2: [1, 3, 6, 4] };
+const MY_TARGET = { p1: [3, 6, 0, 1], p2: [6, 4, 2, 5] };
+// What the OTHER screen shows about yours: the current (logged / wired) bearing,
+// one quarter-turn anticlockwise of the target.
+const LOGGED = { p1: MY_TARGET.p1.map(v => (v + 6) % 8), p2: MY_TARGET.p2.map(v => (v + 6) % 8) };
 // The card shown on THIS screen is the OTHER side's target (to relay).
-function cardFor(role) { return role === 'p1' ? MY_TARGET.p2 : MY_TARGET.p1; }
+function cardFor(role) { return role === 'p1' ? LOGGED.p2 : LOGGED.p1; }
+const RULE = 'a QUARTER-TURN CLOCKWISE from where it is logged: N→E, NE→SE, E→S, SE→SW, S→W, SW→NW, W→N, NW→NE';
 const fmt = (arr) => arr.map(i => PTS[i]).join(' · ');
 
 function isAimed(state) { return !!state.flags.cameras_aimed; }
 
 export default {
   id: 'cameras',
+  solution: role => MY_TARGET[role].map(v => PTS[v]),
   get title() { return `${roleName()} · The Camera Room`; },
   get intro() {
     return isHand()
@@ -55,12 +63,19 @@ export default {
       </g>
 
       <!-- the relay card (OTHER side's four bearings) -->
-      <g>
-        <rect x="1100" y="150" width="420" height="150" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
-        <text x="1310" y="192" text-anchor="middle" font-size="15" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${isHand() ? 'PATCH-CARD — FEED CHANNELS' : 'AIM-CARD — GALLERY CAMS'}</text>
+      ${dock({ x: 1100, y: 150, w: 420, h: 150 }, `
+        <text x="1310" y="192" text-anchor="middle" font-size="15" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">${isHand() ? 'PATCH-CARD — CHANNELS AS WIRED' : 'FEED — CAMS AS LOGGED AT :20'}</text>
         <text x="1310" y="244" text-anchor="middle" font-size="24" fill="${isHand() ? '#e8c85a' : '#eafff2'}" font-family="Consolas, monospace">${fmt(relay)}</text>
-        <text x="1310" y="278" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">four bearings · read to your partner</text>
-      </g>
+        <text x="1310" y="278" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">where theirs point now · read to your partner</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
+
+      <!-- your own crew-plan note: the rule for YOUR four (the partner has the data) -->
+      ${panel({ x: 150, y: 330, w: 300, h: 130, material: 'paper', mount: 'pinned', tilt: -2, body: `
+        <g font-family="Consolas, monospace" fill="#26221a" transform="rotate(-2 300 395)">
+          <text x="168" y="362" font-size="13" font-weight="bold">${isHand() ? 'PLAN — BLIND THE CAMS' : 'PLAN — ROUTE THE FEED'}</text>
+          <text x="168" y="388" font-size="12">turn each a QUARTER-TURN</text>
+          <text x="168" y="408" font-size="12">CLOCKWISE from where your</text>
+          <text x="168" y="428" font-size="12">partner says it ${isHand() ? 'is logged' : 'is wired'}.</text>
+        </g>` })}
 
       ${done ? `<text x="800" y="820" text-anchor="middle" font-size="18" fill="#8fe0a0" font-family="Consolas, monospace">${isHand() ? 'every corner covered — the route is dark' : 'all four channels routed — the feed is whole'}</text>` : ''}
 
@@ -80,13 +95,24 @@ export default {
     const done = isAimed(state);
 
     spots.push({
-      id: 'card', x: 1100, y: 150, w: 420, h: 150, label: isHand() ? 'The feed patch-card' : 'The camera aim-card',
+      id: 'plan', x: 150, y: 330, w: 300, h: 130, label: 'Your crew-plan note',
+      onInteract(game) {
+        const html = `<div class="dossier"><div class="dossier-title">${isHand() ? 'Plan — blind the gallery cams' : 'Plan — route the feed'}</div>
+          <p>Turn each of your four ${RULE}.</p>
+          <p style="opacity:0.8">Where they point now is on your partner's screen, not yours.</p></div>`;
+        game.journal.add('note_plan2', { title: 'Crew plan — the quarter-turn', category: 'note', html });
+        game.dialog({ title: 'Your Plan Note', html });
+      },
+    });
+
+    spots.push({
+      id: 'card', ...DOCK, label: isHand() ? 'The feed patch-card' : 'The camera aim-card',
       onInteract(game) {
         const relay = cardFor(getRole());
         const html = `<div class="console-card"><div class="console-title">${isHand() ? 'Feed channels — patch-card' : 'Gallery cameras — aim-card'}</div>
           <p style="font-size:22px;color:#eafff2;text-align:center;letter-spacing:2px;">${fmt(relay)}</p>
           <p style="text-align:center;color:#7f8a99;">channel/cam 1 → 4</p></div>
-          <div class="relay">These are your <strong>partner's</strong> four bearings. Read them in order; ask them to read you yours.</div>`;
+          <div class="relay">This is where your <strong>partner's</strong> four point <em>now</em> — not where they must go. Their own plan note turns these into the answer. Read them in order.</div>`;
         game.journal.add('note_card2', { title: isHand() ? 'Feed patch-card' : 'Camera aim-card', category: 'note', html });
         game.dialog({ title: isHand() ? 'The Patch-Card' : 'The Aim-Card', html });
       },
@@ -109,16 +135,6 @@ export default {
       });
     }
 
-    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_a')) {
-      spots.push({
-        id: 'pin_a', x: 1040, y: 610, w: 70, h: 90, label: 'A pin in the DVR metadata',
-        onInteract(game) {
-          game.journal.add('pin_a', { title: 'Recovered from the DVR', category: 'sun', sun: { rays: 1, letter: '7' } });
-          game.say('Buried in the DVR\'s recovered metadata, a scrap of the vault firmware: position 1, digit 7. A vault-pin. Logged — you hold the odd positions, The Hand holds the even.');
-          game.refreshScene();
-        },
-      });
-    }
 
     if (!done) {
       spots.push({
@@ -135,15 +151,27 @@ export default {
       });
     }
 
+    // collectibles last, so they sit on top of the machine they are in
+    if (getRole() === 'p2' && !state.journal.some(e => e.id === 'pin_a')) {
+      spots.push({
+        id: 'pin_a', x: 1040, y: 610, w: 70, h: 90, label: 'A pin in the DVR metadata',
+        onInteract(game) {
+          game.journal.add('pin_a', { title: 'Recovered from the DVR', category: 'sun', sun: { rays: 1, letter: '7' } });
+          game.say('Buried in the DVR\'s recovered metadata, a scrap of the vault firmware: position 1, digit 7. A vault-pin. Logged — you hold the odd positions, The Hand holds the even.');
+          game.refreshScene();
+        },
+      });
+    }
+
     return spots;
   },
 
   hintContext() { return getRole(); },
   hints() {
     return [
-      { text: 'Four things to aim, four bearings. The bearings for yours are drawn on your partner\'s screen, not yours — read them yours in return.', cost: 60 },
-      { text: 'Read the four points on your card to your partner, in order; set the four they read you, 1 through 4.', cost: 120 },
-      { text: isHand() ? 'Your cameras: E, S, NW, N.' : 'Your channels: NE, SE, W, S.', cost: 240 },
+      { text: 'Your partner\'s screen shows where your four point now; your own plan note says how far to turn them from there. You need both halves.', cost: 60 },
+      { text: 'Ask for your four logged bearings, then turn each a quarter-turn clockwise: N→E, NE→SE, E→S, SE→SW, S→W, SW→NW, W→N, NW→NE.', cost: 120 },
+      { text: isHand() ? 'Your cameras: SE, W, N, NE.' : 'Your channels: W, S, E, SW.', cost: 240 },
     ];
   },
 };
@@ -159,8 +187,8 @@ function openDials(game) {
     render(body, api) {
       body.innerHTML = `
         <div class="puzzle-hero pz-cameras"></div>
-        <p class="puzzle-desc">Cycle each of the four to the compass bearing your partner reads
-        you (their card shows your four, in order). N · NE · E · SE · S · SW · W · NW.</p>
+        <p class="puzzle-desc">Your partner can read you where your four point <em>now</em>. Your plan:
+        turn each ${RULE}. Set the results, 1 through 4.</p>
         <div class="puzzle-row" id="cam-dials"></div>
         <div class="puzzle-row"><button class="btn btn-primary" id="cam-go">${isHand() ? 'Lock the Aim' : 'Commit the Routing'}</button></div>
         <div class="puzzle-feedback"></div>`;

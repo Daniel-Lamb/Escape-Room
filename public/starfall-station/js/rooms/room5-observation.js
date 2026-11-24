@@ -4,10 +4,17 @@
 // Reward: deck rights itself, comms console powers -> RV-7 vector
 // (AZ 117 / EL 43, journaled — required at the finale). Shard 5 (4 peaks, K).
 
+import { kitDefs, panel } from '../../../shared/js/scenekit.js';
 const TARGET = { pitch: 12, yaw: 284, roll: 0 };
+
+// Layout — the dome is drawn here (no plate); consoles stand on the deck.
+const ATT = { x: 640, y: 640, w: 330, h: 130 };
+const COM = { x: 1100, y: 640, w: 300, h: 130 };
 
 export default {
   id: 'observation',
+  solution: () => Object.entries(TARGET).map(([k, v]) => `${k} ${v}`),
+  lintStates: [{ label: 'level', flags: { obs_leveled: true } }],
   title: 'Observation Deck',
   intro: 'The dome opens onto everything: stars, the bruise-colored limb of the planet, and — if you look with the wrong part of you — the drop. The deck lists four degrees to port and your inner ear files a formal complaint. The station is tumbling, very slowly, like something asleep and dreaming badly.',
 
@@ -18,6 +25,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <radialGradient id="gd_ob_space" cx="0.5" cy="0.3" r="1">
           <stop offset="0" stop-color="#070d1a"/>
           <stop offset="1" stop-color="#03050c"/>
@@ -39,7 +47,7 @@ export default {
         <path d="M340 640 Q800 520 1260 640" stroke="rgba(255,140,70,0.5)" stroke-width="5" fill="none" class="flicker"/>
 
         <!-- attitude ghosts: glyph HUD projections drifting on the glass -->
-        <g font-family="Consolas, monospace" class="float">
+        <g font-family="Consolas, monospace" class="float" data-fx="projection">
           <g opacity="0.85">
             <rect x="330" y="180" width="150" height="52" rx="8" fill="rgba(13,26,38,0.65)" stroke="rgba(79,216,208,0.45)" stroke-width="1.5"/>
             <text x="352" y="212" font-size="20" fill="#8ff0ea">P: ▲ •</text>
@@ -80,30 +88,36 @@ export default {
           <text x="376" y="602">▲=1  •=2</text>
           <text x="376" y="622">◆=8  ◇=4</text>
           <text x="376" y="642">○=0</text>
-          <text x="376" y="662" font-size="9" fill="#5d7080">calibration — do not lose again</text>
+          <text x="376" y="662" font-size="11.5" fill="#5d7080">calibration — do not lose again</text>
         </g>
       </g>
 
-      <!-- attitude console -->
-      <g>
-        <rect x="640" y="660" width="330" height="150" rx="12" fill="#141c26" stroke="${level ? '#7bc47f' : '#ffb45e'}" stroke-width="4" class="${level ? '' : 'beckon'}"/>
-        <text x="805" y="690" text-anchor="middle" font-size="13" fill="#8fa3b8" font-family="Consolas, monospace">ATTITUDE CONTROL</text>
+      <!-- attitude console, standing on the deck -->
+      ${panel({ ...ATT, material: 'steel', mount: 'console', floorY: 872, rx: 12, body: `
+        <rect x="${ATT.x + 4}" y="${ATT.y + 4}" width="${ATT.w - 8}" height="${ATT.h - 8}" rx="10" fill="none" stroke="${level ? '#7bc47f' : '#ffb45e'}" stroke-width="3" class="${level ? '' : 'beckon'}"/>
+        <text x="${ATT.x + ATT.w / 2}" y="${ATT.y + 30}" text-anchor="middle" font-size="13" fill="#cfd8e3" font-family="Consolas, monospace">ATTITUDE CONTROL</text>
         ${['PITCH', 'YAW', 'ROLL'].map((l, i) => `
-          <text x="${700 + i * 105}" y="726" text-anchor="middle" font-size="11" fill="#5d7080" font-family="Consolas, monospace">${l}</text>
-          <rect x="${664 + i * 105}" y="736" width="72" height="34" rx="6" fill="#0c121c" stroke="#26313f" stroke-width="2"/>
-          <text x="${700 + i * 105}" y="760" text-anchor="middle" font-size="17" fill="${level ? '#7bc47f' : '#8ff0ea'}"
-            font-family="Consolas, monospace">${level ? [12, 284, 0][i] : ['—', '—', '—'][i]}</text>`).join('')}
-      </g>
+          <text x="${ATT.x + 60 + i * 105}" y="${ATT.y + 66}" text-anchor="middle" font-size="11" fill="#9fb0c4" font-family="Consolas, monospace">${l}</text>
+          <rect x="${ATT.x + 24 + i * 105}" y="${ATT.y + 76}" width="72" height="34" rx="6" fill="#0c121c" stroke="#26313f" stroke-width="2"/>
+          <text x="${ATT.x + 60 + i * 105}" y="${ATT.y + 100}" text-anchor="middle" font-size="17" fill="${level ? '#7bc47f' : '#8ff0ea'}"
+            font-family="Consolas, monospace">${level ? [12, 284, 0][i] : ['—', '—', '—'][i]}</text>`).join('')}` })}
 
-      <!-- comms console -->
-      <g>
-        <rect x="1120" y="660" width="300" height="150" rx="12" fill="#141c26" stroke="#2b3547" stroke-width="4"/>
-        <text x="1270" y="690" text-anchor="middle" font-size="13" fill="#8fa3b8" font-family="Consolas, monospace">COMMS</text>
+      <!-- comms console, standing on the deck -->
+      ${panel({ ...COM, material: 'steel', mount: 'console', floorY: 872, rx: 12, body: `
+        <text x="${COM.x + COM.w / 2}" y="${COM.y + 30}" text-anchor="middle" font-size="13" fill="#cfd8e3" font-family="Consolas, monospace">COMMS</text>
         ${level
-          ? `<text x="1270" y="726" text-anchor="middle" font-size="12" fill="#7bc47f" font-family="Consolas, monospace" class="flicker">CARRIER DETECTED</text>
-             <text x="1270" y="750" text-anchor="middle" font-size="12" fill="#8ff0ea" font-family="Consolas, monospace">RV-7 HOLDING</text>
-             <text x="1270" y="774" text-anchor="middle" font-size="12" fill="#8ff0ea" font-family="Consolas, monospace">AZ 117 · EL 43</text>`
-          : `<text x="1270" y="745" text-anchor="middle" font-size="12" fill="#5d7080" font-family="Consolas, monospace">NO SIGNAL — ANTENNA TUMBLING</text>`}
+          ? `<text x="${COM.x + COM.w / 2}" y="${COM.y + 66}" text-anchor="middle" font-size="12" fill="#7bc47f" font-family="Consolas, monospace" class="flicker">CARRIER DETECTED</text>
+             <text x="${COM.x + COM.w / 2}" y="${COM.y + 90}" text-anchor="middle" font-size="12" fill="#8ff0ea" font-family="Consolas, monospace">RV-7 HOLDING</text>
+             <text x="${COM.x + COM.w / 2}" y="${COM.y + 114}" text-anchor="middle" font-size="12" fill="#8ff0ea" font-family="Consolas, monospace">AZ 117 · EL 43</text>`
+          : `<text x="${COM.x + COM.w / 2}" y="${COM.y + 85}" text-anchor="middle" font-size="12" fill="#9fb0c4" font-family="Consolas, monospace">NO SIGNAL — ANTENNA TUMBLING</text>`}` })}
+
+      <!-- the companionway down: an open hatch in the deck, railed on three sides -->
+      <g data-mount="floor">
+        <path d="M1452 706 L1592 700 L1600 778 L1440 786 Z" fill="#020407" stroke="#2b3547" stroke-width="4"/>
+        ${[0, 1, 2, 3].map(i => `<line x1="${1462 + i * 6}" y1="${722 + i * 16}" x2="${1584 - i * 2}" y2="${716 + i * 16}" stroke="#1a2230" stroke-width="5"/>`).join('')}
+        <path d="M1450 706 L1450 610 L1592 604 L1592 700" fill="none" stroke="#5c6675" stroke-width="6" stroke-linejoin="round"/>
+        <line x1="1450" y1="656" x2="1592" y2="652" stroke="#5c6675" stroke-width="4"/>
+        <text x="1520" y="596" text-anchor="middle" font-size="11" fill="#8fa3b8" font-family="Consolas, monospace">DECK 6 ↓</text>
       </g>
 
       <path d="M0 900 L0 862 Q800 905 1600 862 L1600 900 Z" fill="#04070d"/>
@@ -139,7 +153,7 @@ export default {
     });
 
     spots.push({
-      id: 'shard5', x: 272, y: 588, w: 55, h: 60, label: 'A shard in the housing',
+      id: 'shard5', x: 266, y: 584, w: 64, h: 66, label: 'A shard in the housing',
       onInteract(game) {
         game.journal.add('shard5', { title: 'Observation — the telescope housing', category: 'sun', sun: { rays: 4, letter: 'K' } });
         game.say('A memory shard, wedged in the telescope housing: —stars through the dome, and you promising them you\'d stay— A promise someone kept in the strangest possible way.');
@@ -154,7 +168,7 @@ export default {
     });
 
     spots.push({
-      id: 'attitude', x: 630, y: 650, w: 350, h: 170, label: level ? 'Attitude control (level)' : 'Attitude control',
+      id: 'attitude', x: ATT.x - 6, y: ATT.y - 6, w: ATT.w + 12, h: ATT.h + 12, label: level ? 'Attitude control (level)' : 'Attitude control',
       onInteract(game) {
         if (level) { game.say('PITCH 12, YAW 284, ROLL 0. The horizon sits where horizons should. Your inner ear withdraws its complaint.'); return; }
         openAttitudePuzzle(game);
@@ -162,7 +176,7 @@ export default {
     });
 
     spots.push({
-      id: 'comms', x: 1110, y: 650, w: 320, h: 170, label: 'Comms console',
+      id: 'comms', x: COM.x - 6, y: COM.y - 6, w: COM.w + 12, h: COM.h + 12, label: 'Comms console',
       onInteract(game) {
         if (!level) { game.say('NO SIGNAL — ANTENNA TUMBLING, says the comms panel, with the weary patience of a machine that has said it many times to an empty room.'); return; }
         const html = `<div class="datapad"><div class="pad-title">Comms — carrier log</div>
@@ -179,7 +193,7 @@ export default {
     });
 
     spots.push({
-      id: 'exit', x: 1490, y: 380, w: 110, h: 260, label: 'Companionway down',
+      id: 'exit', x: 1436, y: 580, w: 164, h: 210, label: 'Companionway down',
       onInteract(game) {
         if (!level) { game.say('The companionway hatch refuses while the deck reads unsafe attitude. Machines are such sticklers when you are in a hurry.'); return; }
         if (!game.journal.has('note_vector')) { game.say('Gus tips toward the comms console. "The carrier log. Read it, log it. Where we are going, you will want that vector written down."'); return; }

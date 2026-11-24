@@ -5,6 +5,7 @@
 // The Hand (P1) also lifts vault-pin b (position 2, digit 2).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'svc';
@@ -35,15 +36,13 @@ export default {
       ${backdrop(SLUG)}
 
       <!-- the RELAY panel: this screen names the OTHER side's code -->
-      <g>
-        <rect x="600" y="150" width="400" height="180" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
+      ${dock({ x: 600, y: 150, w: 400, h: 180 }, `
         <text x="800" y="196" text-anchor="middle" font-size="18" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}"
           font-family="Consolas, monospace" letter-spacing="2">${isHand() ? 'ALLEY BOX — FEED UPLINK' : 'DOOR SCHEMATIC — SERVICE KEYPAD'}</text>
         <text x="800" y="268" text-anchor="middle" font-size="48" fill="${isHand() ? '#7cffb2' : '#e8c85a'}"
           font-family="Consolas, monospace" letter-spacing="8">${relay}</text>
         <text x="800" y="308" text-anchor="middle" font-size="13" fill="#7f8a99"
-          font-family="Consolas, monospace">read this to your partner</text>
-      </g>
+          font-family="Consolas, monospace">read this to your partner</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
 
       ${isHand() ? `
       <!-- the service door with its 4-dial keypad -->
@@ -100,7 +99,7 @@ export default {
     const open = isOpen(state);
 
     spots.push({
-      id: 'relay', x: 600, y: 150, w: 400, h: 180, label: isHand() ? 'The alley junction box' : 'The door schematic',
+      id: 'relay', ...DOCK, label: isHand() ? 'The alley junction box' : 'The door schematic',
       onInteract(game) {
         const code = RELAY[getRole()];
         const card = isHand()

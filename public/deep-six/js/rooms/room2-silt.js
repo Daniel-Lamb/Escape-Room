@@ -1,17 +1,24 @@
 // SCENE 2 — The Silt Field (sonar overlay).
-// The airlock is buried in the debris grid. The Tender's sonar shows which cell;
-// the Diver digs it. The Diver's depth-sounder shows the gain the Tender must set.
-//   Diver airlock cell = C4  (shown on the Tender's sonar)
+// The airlock is buried in the debris grid. SPLIT KNOWLEDGE: the Tender's sonar
+// lists four hard/soft, ringing/dull contacts but cannot say which is the
+// airlock; the Diver's salvage brief says the airlock rings HARD and HOLLOW but
+// the Diver cannot hear the sonar. Only C4 is both.
+// The Diver's depth-sounder shows the gain the Tender must set.
+//   Diver airlock cell = C4  (deduced: brief on the Diver's slate x contacts on the Tender's sonar)
 //   Tender sonar gain  = 0-8-8 (shown on the Diver's sounder)
 // Tender recovers depth-mark S (8 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
+import { dock } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'silt';
 const MYCODE = { p1: 'C4', p2: '088' };   // p1 = Diver cell, p2 = Tender gain
 const other = () => (getRole() === 'p1' ? 'p2' : 'p1');
 const hasMark = (state) => state.journal.some(e => e.id === 'mark_s');
+// The Tender's sonar contacts — only one is hard AND ringing (hollow).
+const CONTACTS = [['B2', 'soft', 'dull'], ['C4', 'hard', 'ringing'], ['E3', 'hard', 'dull'], ['F1', 'soft', 'ringing']];
+const BRIEF = 'The airlock ring is steel with an air pocket behind it: on sonar it returns HARD and RINGING (hollow).';
 
 export default {
   id: 'silt',
@@ -38,7 +45,19 @@ export default {
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
       ${roleTag()}
-      ${relayPlaque(relay, label)}
+      ${isDiver()
+        ? dock({ x: 556, y: 138, w: 488, h: 184 }, `
+            <text x="800" y="172" text-anchor="middle" font-size="16" fill="#9fc7dd" font-family="Consolas, monospace" letter-spacing="2">${label}</text>
+            <text x="800" y="226" text-anchor="middle" font-size="42" fill="#e8c85a" font-family="Consolas, monospace" letter-spacing="8">${relay.split('').join(' ')}</text>
+            <line x1="580" y1="246" x2="1020" y2="246" stroke="#2f4a55" stroke-width="2"/>
+            <text x="800" y="274" text-anchor="middle" font-size="15" fill="#eafffb" font-family="Consolas, monospace">BRIEF: airlock returns HARD + RINGING</text>
+            <text x="800" y="302" text-anchor="middle" font-size="12" fill="#9fb0c4" font-family="Consolas, monospace">gain is for topside · brief is for you</text>`,
+            { kind: 'tablet', title: 'DIVE SLATE' })
+        : dock({ x: 556, y: 138, w: 488, h: 184 }, `
+            <text x="800" y="168" text-anchor="middle" font-size="16" fill="#9fc7dd" font-family="Consolas, monospace" letter-spacing="2">SONAR CONTACTS · below</text>
+            ${CONTACTS.map(([c, h, r], i) => `<text x="620" y="${204 + i * 28}" font-size="19" fill="#eafffb" font-family="Consolas, monospace">${c}  ${h.padEnd(5)}  ${r}</text>`).join('')}
+            <text x="800" y="316" text-anchor="middle" font-size="12" fill="#9fb0c4" font-family="Consolas, monospace">which is the airlock? your diver knows</text>`,
+            { kind: 'radio', title: 'RADIO LOG' })}
       ${lockPanel(620, 636, open, lockLabel, closed)}
       ${isTender() && !hasMark(state) ? markBeckon(1108, 636, 8, 'S') : ''}
       ${ambient(SLUG)}
@@ -50,15 +69,19 @@ export default {
     const open = !!state.flags.silt_open;
     const spots = [];
     const relay = MYCODE[other()];
-    const forWhat = isDiver() ? 'sonar gain' : 'airlock cell';
+    const forWhat = isDiver() ? 'sonar gain + your brief' : 'sonar contacts';
 
     spots.push({
-      id: 'relay', x: 556, y: 138, w: 488, h: 184, label: `The ${forWhat} (for your partner)`,
+      id: 'relay', ...DOCK, label: `The ${forWhat} (for your partner)`,
       onInteract(game) {
-        const html = `<div class="chartcard"><div class="chart-title">${forWhat}</div>
-          <p>Reading off your instrument, meant for the other:</p>
-          <p style="font-size:30px;letter-spacing:8px;color:#eafffb;text-align:center;">${relay.split('').join(' ')}</p></div>
-          <div class="relay">This is <strong>your partner's</strong> figure. Read it across the line.</div>`;
+        const html = isDiver()
+          ? `<div class="chartcard"><div class="chart-title">sonar gain · for topside</div>
+              <p style="font-size:30px;letter-spacing:8px;color:#eafffb;text-align:center;">${relay.split('').join(' ')}</p></div>
+              <div class="relay">This is <strong>your partner's</strong> figure. Read it up the line.</div>
+              <div class="chartcard" style="margin-top:10px"><div class="chart-title">salvage brief · yours</div><p>${BRIEF}</p></div>`
+          : `<div class="chartcard"><div class="chart-title">sonar contacts · the debris field</div>
+              ${CONTACTS.map(([c, h, r]) => `<p style="font-family:Consolas,monospace;font-size:18px;">${c} — ${h}, ${r}</p>`).join('')}</div>
+              <div class="relay">One of these is the airlock. You can hear them all; only <strong>your diver</strong> knows what an airlock sounds like. Read them the list.</div>`;
         game.journal.add('silt_relay', { title: `${forWhat}`, category: 'note', html });
         game.dialog({ title: forWhat, html });
       },
@@ -105,9 +128,9 @@ export default {
   hintContext() { return getRole(); },
   hints() {
     return [
-      { text: isDiver() ? 'You cannot tell the mounds apart from down there. Your partner\'s sonar names the exact cell — column then row. Ask.' : 'Your gain figure isn\'t on your set; it\'s on your diver\'s sounder. Ask them for it, and read them the airlock cell in return.', cost: 60 },
-      { text: isDiver() ? 'Set the dig marker to the column letter and row number your tender reads off the sonar.' : 'Set the three gain figures your diver reads off the sounder; tell them the airlock cell (column, row).', cost: 120 },
-      { text: isDiver() ? 'The airlock is at cell C-4.' : 'Your sonar gain is 0-8-8.', cost: 240 },
+      { text: isDiver() ? 'You cannot tell the mounds apart from down there — but your slate says what the airlock sounds like on sonar, and your tender can hear every mound.' : 'Your gain figure is on your diver\'s sounder. In return, read them every contact on your sonar — they know what the airlock sounds like; you don\'t.', cost: 60 },
+      { text: isDiver() ? 'Your brief: the airlock returns HARD and RINGING. Have your tender read the four contacts and pick the one that is both. Set column, then row.' : 'Set the three gain figures your diver reads off the sounder; read them all four contacts — cell, hard/soft, ringing/dull.', cost: 120 },
+      { text: isDiver() ? 'C-4 is the only contact that is both hard and ringing. Dig there.' : 'Your sonar gain is 0-8-8.', cost: 240 },
     ];
   },
 };
@@ -117,7 +140,7 @@ function openLock(game) {
   if (role === 'p1') {
     comboLock(game, {
       id: 'silt_lock', title: 'The Dig Marker',
-      desc: 'Set the column letter and row number of the airlock. You cannot see which mound it is — but your tender\'s sonar can. Ask them for the cell.',
+      desc: 'Set the column letter and row number of the airlock. Your brief says how it sounds; your tender\'s sonar can hear every mound. Put the two together.',
       slots: [{ type: 'letter', label: 'col' }, { type: 'digit', label: 'row' }],
       target: 'C4', goLabel: 'Dig Here',
       solvedMsg: 'The marker bites into the right mound and the airlock ring shrugs off its silt.',

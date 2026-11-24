@@ -1,9 +1,10 @@
 # Twin Signal Towers — Complete Walkthrough
 
 > ⚠️ **Total spoilers**, both towers. This is a **two-player co-op**: West Tower = Player 1,
-> East Tower = Player 2, on two screens. In every scene the answer to *your* lock is shown
-> on *your partner's* screen — so the "solution" for each side is something you must hear
-> from the other player. Ask Gus (the storm petrel) if stuck; his third hint gives the
+> East Tower = Player 2, on two screens. In every scene, what *your* lock needs is split:
+> some of it is on your screen, the rest on *your partner's* — in the later scenes one of
+> you holds the data and the other the rule for using it. Cards you read across are kept in
+> your **signal book**, top right. Ask Gus (the storm petrel) if stuck; his third hint gives the
 > answer outright.
 
 Design doc: [DESIGN-SIGNALTOWERS.md](DESIGN-SIGNALTOWERS.md).
@@ -14,18 +15,20 @@ Open `signal-towers/` on **two** devices/tabs. One player picks **West Tower**, 
 each tower advances when its own lock is solved.
 
 ## The six bearing-marks (the finale currency)
-Each keeper finds only three. Pool all six and sort by bearing (1→6): **A S H O R E**.
+Each mark is a little brass compass plate: its needle points one way round the rose, with
+a letter under it. Each keeper finds only three. Pool all six and sweep sunwise from north
+(N, NE, E, SE, S, SW): **A S H O R E**.
 
-| Bearing | Letter | Scene | Found by |
+| Needle | Letter | Scene | Found by |
 |---|---|---|---|
-| 1 | A | 2 Lamp Room | East (P2) |
-| 2 | S | 1 Watch Room | West (P1) |
-| 3 | H | 4 Chart Room | East (P2) |
-| 4 | O | 3 Signal Gallery | West (P1) |
-| 5 | R | 6 Beam Engine | East (P2) |
-| 6 | E | 5 Bell Loft | West (P1) |
+| N | A | 2 Lamp Room (tray at the pedestal's foot) | East (P2) |
+| NE | S | 1 Watch Room (stair newel) | West (P1) |
+| E | H | 4 Chart Room (pinning the chart) | East (P2) |
+| SE | O | 3 Signal Gallery (telescope tripod) | West (P1) |
+| S | R | 6 Beam Engine (drive housing) | East (P2) |
+| SW | E | 5 Bell Loft (bell headstock) | West (P1) |
 
-West holds S(2) O(4) E(6); East holds A(1) H(3) R(5).
+West holds S(NE) O(SE) E(SW); East holds A(N) H(E) R(S).
 
 ---
 
@@ -33,13 +36,16 @@ West holds S(2) O(4) E(6); East holds A(1) H(3) R(5).
 Your hatch code is on your partner's wall.
 - **West wall** shows "EAST HATCH — 5 · 2 · 8" → West reads it to East. **East enters 5-2-8.**
 - **East wall** shows "WEST HATCH — 3 · 7 · 1" → East reads it to West. **West enters 3-7-1.**
-- West also takes bearing-mark **S (2)** from the stair newel. Then both climb.
+- West also takes bearing-mark **S (needle NE)** from the stair newel. Then both climb.
 
-## Scene 2 — The Lamp Room (rotation alignment)
-Turn your four Fresnel panels to the bearings on your partner's lamp-card.
-- **West panels: NE, SE, W, S** (read off the West lamp-card that East is holding).
-- **East panels: E, S, NW, N** (read off the East lamp-card that West is holding).
-- East takes bearing-mark **A (1)** from the lamp tray. Both climb.
+## Scene 2 — The Lamp Room (reef bearings × aiming rule)
+Each of your four panels must throw its light clear of the reef it guards. The reefs round
+your lamp are in your partner's signal book; your lamp's own brass plate says how to aim.
+- **West rule:** the point OPPOSITE the reef. East reads West its reefs **SW, NW, E, N** →
+  **West panels: NE, SE, W, S.**
+- **East rule:** a quarter-turn SUNWISE of the reef. West reads East its reefs **N, E, SW, W** →
+  **East panels: E, S, NW, N.**
+- East takes bearing-mark **A (needle N)** from the tray at the lamp pedestal's foot. Both climb.
 
 ## Scene 3 — The Signal Gallery (flash decode)
 You can see your ship's flashes but not read them; your partner holds the codebook page.
@@ -47,28 +53,32 @@ You can see your ship's flashes but not read them; your partner holds the codebo
   → **West enters HOLD.**
 - **East** sees flashes **2, 3, 1, 4** → reads counts to West → West's Page B (1=R,2=T,3=U,4=N)
   → **East enters TURN.**
-- West takes bearing-mark **O (4)** by the telescope. Both climb.
+- West takes bearing-mark **O (needle SE)** from the telescope tripod. Both climb.
 
 ## Scene 4 — The Chart Room (combine half-charts)
 - **West** sees the rocks: Channels I and IV are fouled. **East** sees the depths: Channels
   II and IV are too shallow. The only channel both clear and deep is **Channel III**.
-- Both select **Channel III**. East takes bearing-mark **H (3)** pinning the chart. Both climb.
+- Both select **Channel III**. East takes bearing-mark **H (needle E)** pinning the chart. Both climb.
 
 ## Scene 5 — The Bell Loft (split rule + values)
 Your bell's toll-count = your gauges, using your partner's rule.
 - **West** gauges 9 and 4; East's plate holds the West rule "difference" → **West tolls 5** (9−4).
 - **East** gauges 5 and 3; West's plate holds the East rule "sum" → **East tolls 8** (5+3).
-- West takes bearing-mark **E (6)** from the bell yoke. Both climb.
+- West takes bearing-mark **E (needle SW)** from the bell headstock. Both climb.
 
-## Scene 6 — The Beam Engine (valve pattern)
-Set your five valves to the pattern on your partner's schematic.
-- **West valves: OPEN, SHUT, OPEN, OPEN, SHUT.**
-- **East valves: SHUT, OPEN, OPEN, SHUT, OPEN.**
-- East takes bearing-mark **R (5)** from the governor housing. Both climb.
+## Scene 6 — The Beam Engine (line pressures × valve rule)
+The towers share one pressure main, so your line pressures show only on your partner's
+repeater (in their signal book). Your engine's plate gives the rule.
+- **West rule:** open the EVEN readings. East reads West **24, 37, 18, 42, 51** →
+  **West valves: OPEN, SHUT, OPEN, OPEN, SHUT.**
+- **East rule:** open any reading ABOVE 30 lb. West reads East **22, 46, 38, 15, 33** →
+  **East valves: SHUT, OPEN, OPEN, SHUT, OPEN.**
+- East takes bearing-mark **R (needle S)** from the drive housing. Both climb.
 
 ## Scene 7 — The Lantern Crown (finale · meta)
 The wreckers' false light burns; drown it by setting the beam to the harbour word.
-- Read each other your three marks. All six, sorted by bearing 1→6: A, S, H, O, R, E.
+- Read each other your three marks as "needle, letter". The plaque: sweep the beam
+  sunwise from north. N:A, NE:S, E:H, SE:O, S:R, SW:E.
 - Both enter **ASHORE** on the beam-bearing wheel.
 - Both beams swing onto the channel, the false light drowns, the Meridian makes harbour.
   **SAFE HARBOUR.**

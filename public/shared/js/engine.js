@@ -72,8 +72,8 @@ import { initGus } from './gus-core.js';
  * @property {(entry: import('./state.js').JournalEntry) => string} [renderCollectible]
  * @property {(entry: import('./state.js').JournalEntry) => string} [collectibleToast]
  * @property {string} [collectibleSfx] playSfx name for a 'sun' collectible add (default 'page')
- * @property {{ title: string, heading: string, story: string }} [victory]
- * @property {{ title: string, heading: string, story: string, retryLabel?: string, restartLabel?: string }} [defeat]
+ * @property {{ title: string, heading: string, story: string, art?: string, poster?: string }} [victory]
+ * @property {{ title: string, heading: string, story: string, art?: string, poster?: string, retryLabel?: string, restartLabel?: string }} [defeat]
  * @property {string} [restartConfirm]
  * @property {string} [assetBase] absolute base URL for resolving a scene's
  *   relative `art/…` refs (deploy-proof across Pages/Vercel/localhost).
@@ -863,7 +863,8 @@ function stopEmbers() {
    ============================================================ */
 
 /** A cinematic video banner for the end screen, resolved against the game's
- *  asset base so it works under any deploy path. Empty when no art is set. */
+ *  asset base so it works under any deploy path. Empty when no art is set.
+ *  @param {string | undefined} art @param {string | undefined} poster */
 function endHeroHtml(art, poster) {
   if (!art) return '';
   const base = cfg.assetBase || '';

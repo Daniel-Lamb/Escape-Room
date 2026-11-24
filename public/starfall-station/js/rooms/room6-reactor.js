@@ -6,6 +6,7 @@
 // Reward: charged capacitor (needed at the uplink). Shard 6 (7 peaks, P).
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   charged_capacitor: {
@@ -27,8 +28,40 @@ const BUSES = [
   { key: 'up', name: 'UPLINK PRE-CHARGE', need: 15 },
 ];
 
+// Layout — read off the plate (art/reactor.webp): the torus left of centre, the
+// glowing cell bank on the right wall, the round servo hatch at the far right.
+const MAN = { x: 70, y: 540, w: 230, h: 160 };
+const CELLSTRIP = { x: 986, y: 458, w: 300, h: 76 };
+const BUS = { x: 1010, y: 580, w: 440, h: 260 };
+const CAP = { x: 1470, y: 760 };
+const DOOR = { cx: 1450, cy: 360, r: 120 };
+const R = {
+  torus:  { x: 230, y: 80, w: 700, h: 420 },
+  shard6: { x: MAN.x + MAN.w / 2 - 32, y: MAN.y + 26, w: 64, h: 70 },
+  rack:   { x: 980, y: 260, w: 310, h: 280 },
+  panel:  { x: BUS.x - 6, y: BUS.y - 6, w: BUS.w + 12, h: BUS.h + 12 },
+  door:   { x: DOOR.cx - 120, y: DOOR.cy - 130, w: 240, h: 260 },
+};
+
 export default {
   id: 'reactor',
+  solution: () => {
+    // which cells sum to each bus's need, each cell used once
+    const out = [];
+    const left = [...CELLS];
+    for (const bus of BUSES) {
+      let pick = null;
+      for (let m = 1; m < 1 << left.length && !pick; m++) {
+        const set = left.filter((_, i) => m & (1 << i));
+        if (set.reduce((a, b) => a + b, 0) === bus.need) pick = set;
+      }
+      if (!pick) return [`nothing powers ${bus.name}`];
+      pick.forEach(v => left.splice(left.indexOf(v), 1));
+      out.push(pick.sort((a, b) => b - a).join('+'));
+    }
+    return out;
+  },
+  lintStates: [{ label: 'balanced', flags: { reactor_fuseOut: true, reactor_balanced: true } }],
   title: 'Reactor Control',
   intro: 'The reactor hall is the station\'s one honest heartbeat — a torus of caged light, still faithfully turning fuel into tomorrow for a crew that left. The control pit is dark, though. Somebody pulled the emergency cells during the evac and left them racked like books nobody meant to return.',
 
@@ -40,6 +73,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_rx_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#151019"/>
           <stop offset="1" stop-color="#241a26"/>
@@ -54,58 +88,54 @@ export default {
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/reactor.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/reactor.mp4" type="video/mp4"/></video></foreignObject>
 
       <!-- the reactor torus is carried by the footage; only a faint heat-bloom accent over it -->
-      <ellipse cx="470" cy="330" rx="150" ry="120" fill="url(#gd_rx_torus)" class="glow" opacity="0.5"/>
+      <ellipse cx="560" cy="320" rx="300" ry="190" fill="url(#gd_rx_torus)" class="glow" opacity="0.45"/>
 
-      <!-- coolant manifold with shard 6 -->
-      <g>
-        <rect x="120" y="380" width="240" height="240" rx="12" fill="rgba(26,20,31,0.72)" stroke="rgba(255,180,94,0.3)" stroke-width="3"/>
-        ${[0, 1, 2].map(k => `<path d="M${150 + k * 60} 380 L${150 + k * 60} 300 Q${150 + k * 60} 270 ${180 + k * 60} 270 L360 270" stroke="#2b3547" stroke-width="12" fill="none"/>`).join('')}
-        <rect x="220" y="470" width="26" height="38" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
-        <text x="233" y="496" text-anchor="middle" font-size="14" fill="#4fd8d0">▮</text>
-        <text x="240" y="590" text-anchor="middle" font-size="11" fill="#5d7080" font-family="Consolas, monospace">COOLANT MANIFOLD</text>
+      <!-- coolant manifold: a pipe block standing on the platform rim, shard 6 in its sample port -->
+      <g data-mount="floor">
+        ${shadow(MAN.x + MAN.w / 2, MAN.y + MAN.h, MAN.w * 0.6, 12)}
+        ${[0, 1, 2].map(k => `<path d="M${MAN.x + 40 + k * 70} ${MAN.y} L${MAN.x + 40 + k * 70} ${MAN.y - 70 + k * 10} Q${MAN.x + 40 + k * 70} ${MAN.y - 110 + k * 10} ${MAN.x + 90 + k * 70} ${MAN.y - 110 + k * 10} L${MAN.x + 260} ${MAN.y - 110 + k * 10}" stroke="#2b3547" stroke-width="12" fill="none"/>`).join('')}
+        <rect x="${MAN.x}" y="${MAN.y}" width="${MAN.w}" height="${MAN.h}" rx="12" fill="url(#sk_steel)" stroke="#0f1217" stroke-width="3"/>
+        <rect x="${MAN.x + MAN.w / 2 - 13}" y="${MAN.y + 40}" width="26" height="38" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="${MAN.x + MAN.w / 2}" y="${MAN.y + 66}" text-anchor="middle" font-size="14" fill="#4fd8d0">▮</text>
+        <text x="${MAN.x + MAN.w / 2}" y="${MAN.y + MAN.h - 16}" text-anchor="middle" font-size="11" fill="#cfd8e3" font-family="Consolas, monospace">COOLANT MANIFOLD</text>
       </g>
 
-      <!-- control pit: bus panel -->
-      <g>
-        <rect x="1080" y="330" width="440" height="300" rx="14" fill="rgba(22,16,25,0.84)" stroke="${solved ? '#7bc47f' : fuseOut ? '#4fd8d0' : '#e05252'}" stroke-width="5" class="${solved ? '' : 'beckon'}"/>
-        <text x="1300" y="362" text-anchor="middle" font-size="14" fill="#8fa3b8" letter-spacing="2" font-family="Consolas, monospace">EMERGENCY POWER — BUS PANEL</text>
-        <text x="1300" y="384" text-anchor="middle" font-size="11.5" fill="#ffb45e" font-family="Consolas, monospace">⚠ MAX TWO CELLS PER BUS ⚠</text>
+      <!-- the painted cell bank on the right wall: its four cells' charge, on a strip bolted beneath -->
+      ${panel({ ...CELLSTRIP, material: 'steel', mount: 'bolts', rx: 6, body: `
+        <text x="${CELLSTRIP.x + CELLSTRIP.w / 2}" y="${CELLSTRIP.y + 20}" text-anchor="middle" font-size="11" fill="#cfd8e3" font-family="Consolas, monospace">EMERGENCY CELL RACK</text>
+        ${CELLS.map((v, i) => `
+          <rect x="${CELLSTRIP.x + 14 + i * 70}" y="${CELLSTRIP.y + 30}" width="60" height="34" rx="6" fill="#0d0a12" stroke="#39485a" stroke-width="2"/>
+          <text x="${CELLSTRIP.x + 44 + i * 70}" y="${CELLSTRIP.y + 54}" text-anchor="middle" font-size="18" fill="#8ff0ea" font-family="Consolas, monospace">${v}</text>`).join('')}` })}
+
+      <!-- the bus panel: a console standing on the deck in front of the cell bank -->
+      ${panel({ ...BUS, material: 'steel', mount: 'console', floorY: 890, rx: 14, body: `
+        <rect x="${BUS.x + 4}" y="${BUS.y + 4}" width="${BUS.w - 8}" height="${BUS.h - 8}" rx="12" fill="none" stroke="${solved ? '#7bc47f' : fuseOut ? '#4fd8d0' : '#e05252'}" stroke-width="3" class="${solved ? '' : 'beckon'}"/>
+        <text x="${BUS.x + BUS.w / 2}" y="${BUS.y + 30}" text-anchor="middle" font-size="13" fill="#cfd8e3" letter-spacing="2" font-family="Consolas, monospace">EMERGENCY POWER — BUS PANEL</text>
+        <text x="${BUS.x + BUS.w / 2}" y="${BUS.y + 50}" text-anchor="middle" font-size="11.5" fill="#ffb45e" font-family="Consolas, monospace">⚠ MAX TWO CELLS PER BUS ⚠</text>
         ${BUSES.map((b, i) => `
           <g>
-            <rect x="1104" y="${400 + i * 70}" width="392" height="54" rx="8" fill="#0d0a12" stroke="#26313f" stroke-width="2"/>
-            <text x="1118" y="${422 + i * 70}" font-size="11" fill="#8fa3b8" font-family="Consolas, monospace">${b.name}</text>
-            <text x="1118" y="${442 + i * 70}" font-size="13" fill="${solved ? '#7bc47f' : '#5d7080'}" font-family="Consolas, monospace">NEED ${b.need} ${solved ? '— FED ✓' : ''}</text>
+            <rect x="${BUS.x + 22}" y="${BUS.y + 64 + i * 62}" width="${BUS.w - 44}" height="52" rx="8" fill="#0d0a12" stroke="#26313f" stroke-width="2"/>
+            <text x="${BUS.x + 36}" y="${BUS.y + 85 + i * 62}" font-size="11" fill="#9fb0c4" font-family="Consolas, monospace">${b.name}</text>
+            <text x="${BUS.x + 36}" y="${BUS.y + 105 + i * 62}" font-size="13" fill="${solved ? '#7bc47f' : '#8fa3b8'}" font-family="Consolas, monospace">NEED ${b.need} ${solved ? '— FED ✓' : ''}</text>
           </g>`).join('')}
         ${fuseOut ? '' : `
           <g class="flicker">
-            <rect x="1400" y="404" width="80" height="46" rx="6" fill="#0d0a12" stroke="#e05252" stroke-width="3"/>
-            <path d="M1414 416 q26 22 52 4 M1420 442 q22 -18 46 -6" stroke="#e05252" stroke-width="4" fill="none"/>
-            <text x="1440" y="470" text-anchor="middle" font-size="9.5" fill="#e05252" font-family="Consolas, monospace">FUSE SLAGGED</text>
-          </g>`}
-        ${solved && !capTaken ? `
-          <g class="beckon">
-            <rect x="1424" y="544" width="44" height="60" rx="8" fill="#1c2734" stroke="#ffb45e" stroke-width="3"/>
-            <path d="M1440 560 L1452 576 L1443 576 L1450 592" stroke="#ffb45e" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <text x="1446" y="620" text-anchor="middle" font-size="9" fill="#ffb45e" font-family="Consolas, monospace">EJECTED</text>
-          </g>` : ''}
-      </g>
+            <rect x="${BUS.x + BUS.w - 110}" y="${BUS.y + 68}" width="80" height="44" rx="6" fill="#0d0a12" stroke="#e05252" stroke-width="3"/>
+            <path d="M${BUS.x + BUS.w - 96} ${BUS.y + 80} q26 22 52 4 M${BUS.x + BUS.w - 90} ${BUS.y + 104} q22 -18 46 -6" stroke="#e05252" stroke-width="4" fill="none"/>
+          </g>`}` })}
+      ${solved && !capTaken ? `
+        <g class="beckon" data-mount="table">
+          ${shadow(CAP.x + 22, CAP.y + 62, 30, 6)}
+          <rect x="${CAP.x}" y="${CAP.y}" width="44" height="60" rx="8" fill="#1c2734" stroke="#ffb45e" stroke-width="3"/>
+          <path d="M${CAP.x + 16} ${CAP.y + 16} L${CAP.x + 28} ${CAP.y + 32} L${CAP.x + 19} ${CAP.y + 32} L${CAP.x + 26} ${CAP.y + 48}" stroke="#ffb45e" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </g>` : ''}
 
-      <!-- cell rack -->
-      <g>
-        <rect x="1080" y="120" width="440" height="130" rx="12" fill="rgba(20,16,25,0.84)" stroke="rgba(255,180,94,0.3)" stroke-width="3"/>
-        <text x="1300" y="148" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace">EMERGENCY CELL RACK</text>
-        ${CELLS.map((v, i) => `
-          <g>
-            <rect x="${1110 + i * 105}" y="162" width="78" height="66" rx="8" fill="#0d0a12" stroke="#39485a" stroke-width="3"/>
-            <text x="${1149 + i * 105}" y="202" text-anchor="middle" font-size="20" fill="#8ff0ea" font-family="Consolas, monospace">${v}</text>
-          </g>`).join('')}
-      </g>
-
-      <!-- servo door -->
-      <g>
-        <path d="M40 640 L40 320 Q120 260 200 320 L200 640 Z" fill="${solved ? 'rgba(11,19,30,0.32)' : 'rgba(25,19,32,0.5)'}" stroke="rgba(255,180,94,0.32)" stroke-width="5"/>
-        <text x="120" y="480" text-anchor="middle" font-size="12" fill="${solved ? '#7bc47f' : '#e05252'}"
-          font-family="Consolas, monospace" ${solved ? 'class="flicker"' : ''}>${solved ? 'SERVOS LIVE' : 'SERVOS DARK'}</text>
+      <!-- the servo door: the painted round hatch on the right, its status lamp beside it -->
+      <g data-mount="wall">
+        ${solved ? `<circle cx="${DOOR.cx}" cy="${DOOR.cy}" r="${DOOR.r}" fill="#04070d" opacity="0.55"/>` : ''}
+        ${panel({ x: DOOR.cx - 60, y: DOOR.cy + DOOR.r + 12, w: 120, h: 30, material: 'steel', mount: 'bolts', rx: 4, body: `
+          <text x="${DOOR.cx}" y="${DOOR.cy + DOOR.r + 32}" text-anchor="middle" font-size="11" fill="${solved ? '#7bc47f' : '#e05252'}"
+            font-family="Consolas, monospace" ${solved ? 'class="flicker"' : ''}>${solved ? 'SERVOS LIVE' : 'SERVOS DARK'}</text>` })}
       </g>
 
       <path d="M0 900 L0 860 Q800 905 1600 860 L1600 900 Z" fill="#04070d"/>
@@ -118,14 +148,14 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'torus', x: 520, y: 130, w: 560, h: 340, label: 'The reactor torus',
+      id: 'torus', ...R.torus, label: 'The reactor torus',
       onInteract(game) {
         game.say('The torus turns its caged orange light, steady as a promise. It will keep burning right through re-entry — loyal to the end, which is the saddest thing you can say about a machine. Present company excepted.');
       },
     });
 
     spots.push({
-      id: 'shard6', x: 205, y: 455, w: 60, h: 70, label: 'A shard in the manifold',
+      id: 'shard6', ...R.shard6, label: 'A shard in the manifold',
       onInteract(game) {
         game.journal.add('shard6', { title: 'Reactor — the coolant manifold', category: 'sun', sun: { rays: 7, letter: 'P' } });
         game.say('The last shard, tucked into the coolant manifold where only a maintenance drone would ever look: —a small drone\'s eye-light in the dark: "I will remember for both of us."— Behind you, Gus\'s fans stutter, just once.');
@@ -133,7 +163,7 @@ export default {
     });
 
     spots.push({
-      id: 'rack', x: 1070, y: 110, w: 460, h: 150, label: 'Emergency cell rack',
+      id: 'rack', ...R.rack, label: 'Emergency cell rack',
       onInteract(game) {
         const html = `<div class="datapad"><div class="pad-title">Emergency cells — rack manifest</div>
           CELL 1: 40 units &nbsp;·&nbsp; CELL 2: 25 units<br>
@@ -146,7 +176,7 @@ export default {
     });
 
     spots.push({
-      id: 'panel', x: 1070, y: 320, w: 460, h: 320, label: fuseOut ? 'Bus panel' : 'Bus panel — fuse slagged',
+      id: 'panel', ...R.panel, label: fuseOut ? 'Bus panel' : 'Bus panel — fuse slagged',
       onInteract(game) {
         if (!fuseOut) {
           if (game.selectedItem === 'magnet_stylus') {
@@ -163,7 +193,7 @@ export default {
         if (solved) {
           if (!state.flags.reactor_capTaken) {
             game.setFlag('reactor_capTaken');
-            game.addItem('charged_capacitor', { from: { x: 1446, y: 574 } });
+            game.addItem('charged_capacitor', { from: { x: CAP.x + 22, y: CAP.y + 30 } });
             game.say('The UPLINK PRE-CHARGE bus finishes its cycle and ejects a charged capacitor, hot and humming. One great shout\'s worth of power, packaged to go.');
             game.refreshScene();
           } else {
@@ -176,7 +206,7 @@ export default {
     });
 
     spots.push({
-      id: 'door', x: 30, y: 310, w: 190, h: 330, label: solved ? 'Servo door' : 'Servo door — dark',
+      id: 'door', ...R.door, label: solved ? 'Servo door' : 'Servo door — dark',
       onInteract(game) {
         if (!solved) { game.say('The door servos are dark. No power on the DOOR SERVOS bus, no dignity in pushing — it\'s rated for eight tons.'); return; }
         if (!state.flags.reactor_capTaken) { game.say('The ejected capacitor is still sitting in the panel. "Take it," says Gus. "Trust me. Where we are going, we will want to be loud."'); return; }

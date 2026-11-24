@@ -5,6 +5,7 @@
 // Foreshadows: crew manifest (VOSS deceased, backup complete), the 212 kg scale.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   keycard_blue: {
@@ -27,8 +28,36 @@ registerItems({
   },
 });
 
+// Layout — read off the plate (art/medbay.webp). Shared with hotspots().
+const BUNKS = [
+  { name: 'OKAFOR', x: 30, y: 356, w: 120, s: 1 },
+  { name: 'IBARRA', x: 30, y: 520, w: 120, s: 1 },
+  { name: 'CHEN', x: 200, y: 330, w: 96, s: 0.85 },
+  { name: 'DELACROIX-SAND', x: 200, y: 500, w: 120, s: 0.8 },
+];
+const FOLD = { x: 360, y: 300, w: 70, h: 250 };
+const PAD = { x: 60, y: 560 };
+const MEM = { x: 518, y: 150, w: 150, h: 184 };
+const MAN = { x: 900, y: 64, w: 300, h: 166 };
+const LOCK = { x: 986, y: 256, w: 228, h: 240 };
+const KEY = { x: 1124, y: 320 };
+const SCALE = { cx: 1092, top: 600, base: 712 };
+const TRAY = { x: 1390, y: 494 };
+const CORE = { x: 1216, y: 230, w: 76, h: 440 };
+const R = {
+  datapad:   { x: PAD.x - 20, y: PAD.y - 20, w: 120, h: 90 },
+  memorial:  { x: MEM.x - 6, y: MEM.y - 6, w: MEM.w + 12, h: MEM.h + 12 },
+  sixthbunk: { x: FOLD.x - 10, y: FOLD.y, w: FOLD.w + 20, h: FOLD.h + 60 },
+  manifest:  { x: MAN.x, y: MAN.y, w: MAN.w, h: MAN.h },
+  scale:     { x: SCALE.cx - 90, y: SCALE.top - 10, w: 180, h: 170 },
+  shard3:    { x: TRAY.x + 40, y: TRAY.y - 20, w: 90, h: 70 },
+  locker:    { x: LOCK.x, y: LOCK.y, w: LOCK.w, h: LOCK.h },
+  coredoor:  { x: CORE.x, y: CORE.y, w: CORE.w, h: CORE.h },
+};
+
 export default {
   id: 'medbay',
+  lintStates: [{ label: 'uv', flags: { med_uvOnPad: true } }, { label: 'open', flags: { med_lockerOpen: true } }],
   title: 'Crew Quarters · Med Bay',
   intro: 'Bunks like emptied envelopes, and beyond the divider, the med bay\'s instruments sleep under dust covers. Five people lived here. The sixth bunk is folded flat, its nameplate unscrewed — recently enough that the screws still sit in a neat little row on the shelf.',
 
@@ -40,6 +69,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_md_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#161723"/>
           <stop offset="1" stop-color="#232434"/>
@@ -50,93 +80,88 @@ export default {
         </radialGradient>
       </defs>
 
+      <!-- background plate: crew bunks (left), a column of crew lockers, then through the hatch the
+           med bay — wall cabinets, a terminal door, counter, monitors, a floor scale. -->
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/medbay.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/medbay.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- QUARTERS side: bunks -->
-      ${[[90, 200], [90, 400], [430, 200], [430, 400]].map(([x, y], i) => `
-      <g>
-        <rect x="${x}" y="${y}" width="280" height="26" rx="6" fill="#2b2c3e"/>
-        <rect x="${x}" y="${y + 26}" width="280" height="60" rx="8" fill="#1d1e2c"/>
-        <rect x="${x + 14}" y="${y + 6}" width="70" height="14" rx="4" fill="#33344a"/>
-        <text x="${x + 49}" y="${y + 17}" text-anchor="middle" font-size="10" fill="#8fa3b8"
-          font-family="Consolas, monospace">${['OKAFOR', 'IBARRA', 'CHEN', 'DELACROIX-SAND'][i]}</text>
+      <!-- nameplates clipped to the bunk rails -->
+      ${BUNKS.map(b => `
+      <g data-mount="bolts">
+        <rect x="${b.x}" y="${b.y}" width="${b.w}" height="${18 * b.s}" rx="3" fill="#1d1e2c" stroke="#3f4a63" stroke-width="1.2"/>
+        <text x="${b.x + b.w / 2}" y="${b.y + 13 * b.s}" text-anchor="middle" font-size="${14.5 * b.s}" fill="#8fa3b8" font-family="Consolas, monospace">${b.name}</text>
       </g>`).join('')}
-      <!-- the folded sixth bunk -->
-      <g>
-        <rect x="260" y="560" width="280" height="20" rx="6" fill="#232435" transform="rotate(-70 270 570)"/>
-        <g fill="#5d7080">${[0, 1, 2, 3].map(k => `<circle cx="${210 + k * 14}" cy="600" r="3"/>`).join('')}</g>
-        <rect x="196" y="612" width="120" height="10" rx="3" fill="#1d1e2c"/>
+
+      <!-- the sixth bunk, folded up flat against the wall and strapped -->
+      <g data-mount="wall">
+        <rect x="${FOLD.x}" y="${FOLD.y}" width="${FOLD.w}" height="${FOLD.h}" rx="6" fill="url(#sk_steel)" stroke="#0f1217" stroke-width="3"/>
+        ${[0.3, 0.7].map(t => `<rect x="${FOLD.x - 4}" y="${FOLD.y + FOLD.h * t}" width="${FOLD.w + 8}" height="8" rx="2" fill="#2a2f38"/>`).join('')}
+        <g fill="#5d7080">${[0, 1, 2, 3].map(k => `<circle cx="${FOLD.x + FOLD.w / 2}" cy="${FOLD.y + FOLD.h + 14 + k * 12}" r="2.5"/>`).join('')}</g>
       </g>
-      <!-- ibarra's datapad on his bunk -->
-      <g class="beckon">
-        <rect x="150" y="440" width="70" height="46" rx="6" fill="#0d1a26" stroke="#4fd8d0" stroke-width="2" transform="rotate(-6 185 463)"/>
-        <g stroke="#2f9e97" stroke-width="2" transform="rotate(-6 185 463)">
-          <line x1="160" y1="454" x2="208" y2="454"/><line x1="160" y1="463" x2="202" y2="463"/><line x1="160" y1="472" x2="196" y2="472"/>
+
+      <!-- Ibarra's datapad, left on his bunk -->
+      <g class="beckon" data-mount="table">
+        ${shadow(PAD.x + 36, PAD.y + 44, 40, 6, 0.6)}
+        <rect x="${PAD.x}" y="${PAD.y}" width="72" height="44" rx="6" fill="#0d1a26" stroke="#4fd8d0" stroke-width="2" transform="rotate(-6 ${PAD.x + 36} ${PAD.y + 22})"/>
+        <g stroke="#2f9e97" stroke-width="2" transform="rotate(-6 ${PAD.x + 36} ${PAD.y + 22})">
+          <line x1="${PAD.x + 10}" y1="${PAD.y + 12}" x2="${PAD.x + 58}" y2="${PAD.y + 12}"/><line x1="${PAD.x + 10}" y1="${PAD.y + 22}" x2="${PAD.x + 52}" y2="${PAD.y + 22}"/><line x1="${PAD.x + 10}" y1="${PAD.y + 32}" x2="${PAD.x + 46}" y2="${PAD.y + 32}"/>
         </g>
       </g>
 
-      <!-- memorial plaque -->
-      <g>
-        <rect x="620" y="150" width="150" height="190" rx="8" fill="#1d2333" stroke="#3f4a63" stroke-width="4"/>
-        <circle cx="695" cy="205" r="26" fill="none" stroke="#8fa3b8" stroke-width="3"/>
-        ${[0, 1, 2, 3, 4].map(k => { const a = (k / 5) * Math.PI * 2 - Math.PI / 2; return `<line x1="${695 + Math.cos(a) * 30}" y1="${205 + Math.sin(a) * 30}" x2="${695 + Math.cos(a) * 38}" y2="${205 + Math.sin(a) * 38}" stroke="#8fa3b8" stroke-width="2.5"/>`; }).join('')}
-        <text x="695" y="268" text-anchor="middle" font-size="13" fill="#bfc8da" font-family="Consolas, monospace">AURORA STATION</text>
-        <text x="695" y="288" text-anchor="middle" font-size="13" fill="#bfc8da" font-family="Consolas, monospace">LOST 2085</text>
-        <text x="695" y="315" text-anchor="middle" font-size="10" fill="#5d7080" font-family="Consolas, monospace">forty-one souls · remembered</text>
-      </g>
+      <!-- memorial plaque, bolted to the upper door of the crew lockers -->
+      ${panel({ ...MEM, material: 'steel', mount: 'bolts', body: `
+        <circle cx="${MEM.x + MEM.w / 2}" cy="${MEM.y + 56}" r="24" fill="none" stroke="#bfc8da" stroke-width="3"/>
+        ${[0, 1, 2, 3, 4].map(k => { const a = (k / 5) * Math.PI * 2 - Math.PI / 2; const cx = MEM.x + MEM.w / 2, cy = MEM.y + 56; return `<line x1="${cx + Math.cos(a) * 28}" y1="${cy + Math.sin(a) * 28}" x2="${cx + Math.cos(a) * 36}" y2="${cy + Math.sin(a) * 36}" stroke="#bfc8da" stroke-width="2.5"/>`; }).join('')}
+        <text x="${MEM.x + MEM.w / 2}" y="${MEM.y + 118}" text-anchor="middle" font-size="12.5" fill="#dbe7f3" font-family="Consolas, monospace">AURORA STATION</text>
+        <text x="${MEM.x + MEM.w / 2}" y="${MEM.y + 138}" text-anchor="middle" font-size="12.5" fill="#dbe7f3" font-family="Consolas, monospace">LOST 2085</text>
+        <text x="${MEM.x + MEM.w / 2}" y="${MEM.y + 162}" text-anchor="middle" font-size="11.5" fill="#9fb0c4" font-family="Consolas, monospace">forty-one souls · remembered</text>` })}
 
-      <!-- MED BAY side -->
-      <!-- manifest screen -->
-      <g>
-        <rect x="860" y="140" width="300" height="200" rx="10" fill="rgba(13,26,38,0.85)" stroke="rgba(79,216,208,0.3)" stroke-width="2"/>
-        <text x="1010" y="170" text-anchor="middle" font-size="14" fill="#4fd8d0" font-family="Consolas, monospace">CREW MANIFEST</text>
+      <!-- crew manifest, on a screen bolted to the med-bay wall above the cabinets -->
+      ${panel({ ...MAN, material: 'glass', mount: 'bolts', rx: 8, body: `
+        <text x="${MAN.x + MAN.w / 2}" y="${MAN.y + 28}" text-anchor="middle" font-size="13" fill="#4fd8d0" font-family="Consolas, monospace">CREW MANIFEST</text>
         ${['OKAFOR — EVAC ✓', 'IBARRA — EVAC ✓', 'CHEN — EVAC ✓', 'DELACROIX — EVAC ✓', 'SANDOVAL — EVAC ✓'].map((t, i) =>
-          `<text x="880" y="${196 + i * 20}" font-size="11.5" fill="#7bc47f" font-family="Consolas, monospace">${t}</text>`).join('')}
-        <text x="880" y="316" font-size="11.5" fill="#ff8f8f" font-family="Consolas, monospace" class="flicker">VOSS, E. — DECEASED · BACKUP: COMPLETE</text>
-      </g>
+          `<text x="${MAN.x + 18}" y="${MAN.y + 50 + i * 18}" font-size="11.5" fill="#7bc47f" font-family="Consolas, monospace">${t}</text>`).join('')}
+        <text x="${MAN.x + 18}" y="${MAN.y + 148}" font-size="11.5" fill="#ff8f8f" font-family="Consolas, monospace" class="flicker">VOSS, E. — DECEASED · BACKUP: COMPLETE</text>` })}
 
-      <!-- scale -->
-      <g>
-        <rect x="880" y="560" width="140" height="60" rx="8" fill="#1c2734" stroke="#2b3547" stroke-width="3"/>
-        <rect x="870" y="616" width="160" height="14" rx="4" fill="#2b3547"/>
-        <text x="950" y="596" text-anchor="middle" font-size="14" fill="#ffb45e" font-family="Consolas, monospace" class="flicker">212.4 KG ?</text>
-      </g>
-
-      <!-- neural lab tray with shard 3 -->
-      <g>
-        <rect x="1090" y="560" width="200" height="20" rx="6" fill="#26313f"/>
-        <rect x="1110" y="520" width="160" height="40" rx="6" fill="#141c26" stroke="#2b3547" stroke-width="3"/>
-        <rect x="1160" y="528" width="26" height="26" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
-        <text x="1173" y="546" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
-        <text x="1190" y="600" text-anchor="middle" font-size="11" fill="#5d7080" font-family="Consolas, monospace">NEURAL LAB — SEALED</text>
-      </g>
-
-      <!-- med locker (photoreal cabinet) -->
-      <g>
-        <image href="art/med-locker.webp" x="1338" y="238" width="184" height="404" preserveAspectRatio="xMidYMax slice"/>
+      <!-- the med locker: the painted wall cabinets, with a keypad on the right door -->
+      <g data-mount="wall">
         ${open ? `
-          <rect x="1352" y="258" width="158" height="360" rx="6" fill="rgba(6,10,16,0.82)"/>
+          <rect x="${LOCK.x}" y="${LOCK.y}" width="${LOCK.w}" height="${LOCK.h}" rx="6" fill="rgba(6,10,16,0.86)"/>
           ${taken ? '' : `<g class="beckon">
-            <rect x="1380" y="330" width="34" height="52" rx="6" fill="none" stroke="#7bc47f" stroke-width="3"/>
-            <rect x="1440" y="336" width="48" height="30" rx="4" fill="#1d3a63" stroke="#4a7cb5" stroke-width="2"/>
+            <rect x="${LOCK.x + 40}" y="${LOCK.y + 90}" width="34" height="52" rx="6" fill="none" stroke="#7bc47f" stroke-width="3"/>
+            <rect x="${LOCK.x + 110}" y="${LOCK.y + 100}" width="48" height="30" rx="4" fill="#1d3a63" stroke="#4a7cb5" stroke-width="2"/>
           </g>`}`
         : `
-          <rect x="1390" y="400" width="80" height="100" rx="8" fill="#101a26" stroke="${uv ? '#7a5fd0' : '#39485a'}" stroke-width="3"/>
-          ${uv ? `<ellipse cx="1430" cy="450" rx="70" ry="80" fill="url(#gd_md_uv)"/>` : ''}
+          <rect x="${KEY.x}" y="${KEY.y}" width="80" height="100" rx="8" fill="#101a26" stroke="${uv ? '#7a5fd0' : '#39485a'}" stroke-width="3"/>
+          ${uv ? `<ellipse cx="${KEY.x + 40}" cy="${KEY.y + 50}" rx="70" ry="80" fill="url(#gd_md_uv)"/>` : ''}
           ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((d, i) => {
             const col = i % 3, row = Math.floor(i / 3);
-            const x = 1402 + col * 26, y = 416 + row * 22;
+            const x = KEY.x + 14 + col * 26, y = KEY.y + 18 + row * 22;
             const hot = uv && [2, 0, 8, 5].includes(d);
             return `<text x="${x}" y="${y}" font-size="13" text-anchor="middle" font-family="Consolas, monospace"
               fill="${hot ? '#c9a6ff' : '#5d7080'}" ${hot ? 'class="flicker"' : ''}>${d}</text>`;
           }).join('')}
-          <text x="1430" y="530" text-anchor="middle" font-size="10" fill="#8fa3b8" font-family="Consolas, monospace">MED LOCKER</text>`}
+          <text x="${KEY.x + 40}" y="${KEY.y + 122}" text-anchor="middle" font-size="11.5" fill="#26313f" font-family="Consolas, monospace">MED LOCKER</text>`}
       </g>
 
-      <!-- exit: core door -->
-      <g>
-        <path d="M1560 640 L1560 300 L1600 300 L1600 640 Z" fill="#0b131e" stroke="#2b3547" stroke-width="6"/>
-        <rect x="1566" y="440" width="26" height="40" rx="4" fill="#101a26" stroke="#4a7cb5" stroke-width="2"/>
+      <!-- the floor scale (painted) and its readout on a slim post -->
+      <g data-mount="post">
+        <rect x="${SCALE.cx - 3}" y="${SCALE.top + 34}" width="6" height="${SCALE.base - SCALE.top - 34}" fill="#9aa7b8"/>
+        <rect x="${SCALE.cx - 62}" y="${SCALE.top}" width="124" height="36" rx="6" fill="#141c26" stroke="#3a4656" stroke-width="2"/>
+        <text x="${SCALE.cx}" y="${SCALE.top + 24}" text-anchor="middle" font-size="14" fill="#ffb45e" font-family="Consolas, monospace" class="flicker">212.4 KG ?</text>
+      </g>
+
+      <!-- the neural-lab tray, set on the counter, shard 3 in its cradle -->
+      <g data-mount="table">
+        ${shadow(TRAY.x + 90, TRAY.y + 40, 96, 8, 0.6)}
+        <rect x="${TRAY.x}" y="${TRAY.y}" width="180" height="38" rx="6" fill="#141c26" stroke="#2b3547" stroke-width="3"/>
+        <rect x="${TRAY.x + 70}" y="${TRAY.y + 6}" width="26" height="26" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="${TRAY.x + 83}" y="${TRAY.y + 24}" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
+        <text x="${TRAY.x + 90}" y="${TRAY.y + 60}" text-anchor="middle" font-size="11.5" fill="#26313f" font-family="Consolas, monospace">NEURAL LAB — SEALED</text>
+      </g>
+
+      <!-- core access: the painted terminal door, its badge reader lit blue -->
+      <g data-mount="wall">
+        <rect x="${CORE.x + 10}" y="${CORE.y + 96}" width="26" height="40" rx="4" fill="#101a26" stroke="#4a7cb5" stroke-width="2" class="beckon"/>
       </g>
 
       <path d="M0 900 L0 860 Q800 905 1600 860 L1600 900 Z" fill="#04070d"/>
@@ -150,7 +175,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'datapad', x: 130, y: 425, w: 110, h: 80, label: "Ibarra's datapad",
+      id: 'datapad', ...R.datapad, label: "Ibarra's datapad",
       onInteract(game) {
         const html = `<div class="datapad"><div class="pad-title">Personal log — M. Ibarra</div>
           "...Chen says using one code for everything will get me killed someday. I told her:
@@ -163,7 +188,7 @@ export default {
     });
 
     spots.push({
-      id: 'memorial', x: 610, y: 140, w: 170, h: 210, label: 'Memorial plaque',
+      id: 'memorial', ...R.memorial, label: 'Memorial plaque',
       onInteract(game) {
         const html = `<div class="datapad"><div class="pad-title">Memorial</div>
           AURORA STATION — <strong>LOST 2085</strong><br>
@@ -176,14 +201,14 @@ export default {
     });
 
     spots.push({
-      id: 'sixthbunk', x: 180, y: 540, w: 200, h: 100, label: 'The folded bunk',
+      id: 'sixthbunk', ...R.sixthbunk, label: 'The folded bunk',
       onInteract(game) {
         game.say('The sixth bunk, folded flat, nameplate gone. Four screws in a tidy row — removed by someone who kept their hands busy so the rest of them wouldn\'t shake.');
       },
     });
 
     spots.push({
-      id: 'manifest', x: 850, y: 130, w: 320, h: 220, label: 'Crew manifest',
+      id: 'manifest', ...R.manifest, label: 'Crew manifest',
       onInteract(game) {
         const html = `<div class="datapad corrupt"><div class="pad-title">Crew manifest — final</div>
           OKAFOR, J. — EVACUATED ✓<br>IBARRA, M. — EVACUATED ✓<br>CHEN, R. — EVACUATED ✓<br>
@@ -200,14 +225,14 @@ export default {
     });
 
     spots.push({
-      id: 'scale', x: 860, y: 550, w: 180, h: 90, label: 'Med scale',
+      id: 'scale', ...R.scale, label: 'Med scale',
       onInteract(game) {
         game.say('You step on the med scale out of habit. It reads 212.4 kilograms, then politely offers to recalibrate itself, because clearly one of you is broken.');
       },
     });
 
     spots.push({
-      id: 'shard3', x: 1145, y: 510, w: 90, h: 70, label: 'A shard on the tray',
+      id: 'shard3', ...R.shard3, label: 'A shard on the tray',
       onInteract(game) {
         game.journal.add('shard3', { title: 'Med Bay — the neural-lab tray', category: 'sun', sun: { rays: 5, letter: 'E' } });
         game.say('A memory shard on the sealed neural lab\'s tray: —a hospital bed; a voice, gentle and terrible: "the body won\'t make the year, Elin"— You hold it a long moment before the suit logs it.');
@@ -216,7 +241,7 @@ export default {
 
     if (!open) {
       spots.push({
-        id: 'locker', x: 1330, y: 230, w: 210, h: 400, label: 'Med locker — keypad',
+        id: 'locker', ...R.locker, label: 'Med locker — keypad',
         onInteract(game) {
           if (game.selectedItem === 'uv_lamp') {
             game.setFlag('med_uvOnPad');
@@ -231,11 +256,11 @@ export default {
       });
     } else if (!taken) {
       spots.push({
-        id: 'locker_open', x: 1330, y: 230, w: 210, h: 400, label: 'Inside the locker',
+        id: 'locker_open', ...R.locker, label: 'Inside the locker',
         onInteract(game) {
           game.setFlag('med_lockerTaken');
-          game.addItem('biogel', { from: { x: 1397, y: 356 }, silent: true });
-          game.addItem('keycard_blue', { from: { x: 1464, y: 351 }, silent: true });
+          game.addItem('biogel', { from: { x: LOCK.x + 57, y: LOCK.y + 116 }, silent: true });
+          game.addItem('keycard_blue', { from: { x: LOCK.x + 134, y: LOCK.y + 115 }, silent: true });
           game.say('Inside: a biogel canister — "organic-derived conductive medium" — and Chen\'s blue keycard, CORE ACCESS stamped across it. She left it behind. On purpose, you suspect.');
           game.refreshScene();
         },
@@ -243,7 +268,7 @@ export default {
     }
 
     spots.push({
-      id: 'coredoor', x: 1545, y: 290, w: 55, h: 360, label: 'Core access door',
+      id: 'coredoor', ...R.coredoor, label: 'Core access door',
       onInteract(game) {
         if (!game.hasItem('keycard_blue')) {
           game.say('CORE ACCESS — LEVEL 2 REQUIRED, says the reader, in the blue font of bureaucracies that outlive their buildings.');

@@ -9,6 +9,7 @@
 // Produces: ochre_pot. Token 3 (TREE-FROG, "O") on the pigment shelf.
 
 import { registerItems } from '../../../shared/js/items.js';
+import { kitDefs, shadow } from '../../../shared/js/scenekit.js';
 
 registerItems({
   ochre_pot: {
@@ -65,6 +66,8 @@ function neighbours(g, s) {
 
 export default {
   id: 'paintedgrove',
+  solution: Object.entries(SOLUTION).filter(([, on]) => !on).map(([k]) => k.split('').map(c => ({ r: 'River', h: 'Heights', f: 'Fern', s: 'Scar' })[c]).join(' ')),
+  lintStates: [{ label: 'solved', flags: { paintedgrove_solved: true }, inventory: ['ochre_pot'] }],
   title: 'The Painted Grove',
   intro: 'The stairs bring you up into a colonnade of painted trunks, every one daubed with clan-marks in ochre and green, and at the heart of them a great slab of bark stands on a stone easel — a map of the valley, cut into five grounds, its borders drawn in boundary-stones that someone, long ago, arranged into a quarrel.',
 
@@ -76,6 +79,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_grove_air" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0e1c12"/>
           <stop offset="0.5" stop-color="#16281a"/>
@@ -106,41 +110,32 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/paintedgrove.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/paintedgrove.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- painted trunks in a colonnade -->
-      ${[120, 300, 1300, 1490].map((x, i) => `
-        <g>
-          <rect x="${x}" y="90" width="72" height="640" rx="10" fill="url(#gd_grove_trunk)"/>
-          <path d="M${x + 12} 120 Q${x - 4} 380 ${x + 16} 640" stroke="#2c2014" stroke-width="4" fill="none" opacity="0.6"/>
-          <g fill="none" stroke="${['#c96fb0', '#5aa552', '#d1a53f', '#c0392b'][i]}" stroke-width="4" opacity="0.8">
-            <circle cx="${x + 36}" cy="${260 + i * 30}" r="16"/>
-            <path d="M${x + 22} ${320 + i * 20} q14 -10 28 0"/>
-          </g>
-        </g>`).join('')}
+      <!-- the trunks, their carved marks and the light are all painted in the plate -->
 
-      <!-- the canopy light-shaft onto the easel -->
-      <polygon points="640,10 960,10 1040,700 560,700" fill="url(#gd_grove_beam)" class="moonbeam"/>
-
-      <!-- the two clan murals, upper wall (fixed marks; hotspot area kept clear of top-left) -->
-      <g>
-        <rect x="470" y="120" width="300" height="120" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="3" opacity="0.9"/>
+      <!-- the two clan murals, cut into the bark of the great left trunk -->
+      <g data-mount="inset" transform="translate(-190 40)">
+        <rect x="462" y="112" width="316" height="136" rx="10" fill="#000" opacity="0.5"/>
+        <rect x="470" y="120" width="300" height="120" rx="8" fill="url(#sk_darkwood)" stroke="#070d08" stroke-width="3"/>
         <text x="620" y="146" text-anchor="middle" font-size="13" fill="#9fb37e" letter-spacing="2"
           font-family="Palatino Linotype, Georgia, serif">THE GROUNDS AND THEIR MARKS</text>
         ${[['CROWN', 'tree-frog', '#5aa552'], ['RIVER', 'jaguar', '#d1a53f'], ['HEIGHTS', 'tapir', '#9fb37e']].map((m, i) =>
           `<text x="${500 + i * 92}" y="180" text-anchor="middle" font-size="11" fill="${m[2]}"
             font-family="Palatino Linotype, Georgia, serif">${m[0]}</text>
-           <text x="${500 + i * 92}" y="200" text-anchor="middle" font-size="10" fill="#c3d3a0" font-style="italic">${m[1]}</text>`).join('')}
+           <text x="${500 + i * 92}" y="200" text-anchor="middle" font-size="11.5" fill="#c3d3a0" font-style="italic">${m[1]}</text>`).join('')}
         ${[['FERN', 'macaw', '#c0392b'], ['SCAR', 'tapir', '#9fb37e']].map((m, i) =>
           `<text x="${560 + i * 92}" y="224" text-anchor="middle" font-size="11" fill="${m[2]}"
             font-family="Palatino Linotype, Georgia, serif">${m[0]}</text>
            <text x="${560 + i * 92}" y="222" text-anchor="middle" font-size="0">${m[1]}</text>`).join('')}
-        <text x="606" y="224" text-anchor="middle" font-size="10" fill="#c3d3a0" font-style="italic">macaw</text>
-        <text x="698" y="224" text-anchor="middle" font-size="10" fill="#c3d3a0" font-style="italic">tapir</text>
+        <text x="606" y="224" text-anchor="middle" font-size="11.5" fill="#c3d3a0" font-style="italic">macaw</text>
+        <text x="698" y="224" text-anchor="middle" font-size="11.5" fill="#c3d3a0" font-style="italic">tapir</text>
       </g>
 
-      <!-- the three carved laws on a leaning slab (right) -->
-      <g>
-        <rect x="1050" y="250" width="210" height="230" rx="8" fill="#2e3a2c" stroke="#070d08" stroke-width="4" transform="rotate(3 1155 365)"/>
-        <g transform="rotate(3 1155 365)" fill="#9fb37e" font-family="Palatino Linotype, Georgia, serif" opacity="0.8">
+      <!-- the three carved laws, on a stone slab leaning against the right trunk's foot -->
+      <g data-mount="table" transform="translate(24 172)">
+        ${shadow(1160, 486, 120, 12)}
+        <line x1="1155" y1="300" x2="1190" y2="484" stroke="#1b140c" stroke-width="8" stroke-linecap="round"/>
+        <rect x="1050" y="250" width="210" height="230" rx="8" fill="url(#sk_stone)" stroke="#2c2418" stroke-width="4" transform="rotate(3 1155 365)"/>
+        <g transform="rotate(3 1155 365)" fill="#1e1a10" font-family="Palatino Linotype, Georgia, serif" opacity="0.9">
           <text x="1155" y="288" text-anchor="middle" font-size="12" letter-spacing="1">THE LAWS OF GROUND</text>
           <line x1="1075" y1="300" x2="1235" y2="300" stroke="#5aa552" stroke-width="1.5"/>
           <text x="1075" y="330" font-size="11">A · none share a</text>
@@ -152,8 +147,9 @@ export default {
         </g>
       </g>
 
-      <!-- THE BARK MAP on its easel -->
-      <g>
+      <!-- THE BARK MAP on its easel, standing on the clearing floor -->
+      <g data-mount="easel" transform="translate(-60 0)">
+        ${shadow(800, 722, 160, 16)}
         <path d="M700 720 L740 470 M900 720 L860 470" stroke="#4a3626" stroke-width="14" stroke-linecap="round"/>
         <rect x="640" y="300" width="320" height="300" rx="14" fill="url(#gd_grove_bark)" stroke="#3a2a1c" stroke-width="6"/>
         <rect x="662" y="322" width="276" height="256" rx="10" fill="#2e3a2c" opacity="0.5"/>
@@ -175,10 +171,11 @@ export default {
              <path d="M726 400 L874 504 M726 504 L874 400" stroke="#c0392b" stroke-width="3" opacity="0.5" stroke-dasharray="6 5"/>`}
       </g>
 
-      <!-- the pigment shelf (left of the easel) -->
-      <g>
+      <!-- the pigment bench (left of the easel), on its own stubby legs -->
+      <g data-mount="floor" transform="translate(-20 60)">
+        ${shadow(460, 640, 120, 12)}
+        ${[376, 544].map(x => `<rect x="${x - 7}" y="574" width="14" height="66" rx="3" fill="#3a2a1c"/>`).join('')}
         <rect x="360" y="560" width="200" height="18" rx="5" fill="#4a3626" stroke="#2c2014" stroke-width="3"/>
-        <rect x="372" y="500" width="180" height="62" rx="6" fill="#3a2a1c" opacity="0.7"/>
         ${[400, 448, 496].map((x, i) => `
           <path d="M${x - 12} 520 Q${x - 14} 556 ${x} 558 Q${x + 14} 556 ${x + 12} 520 Z"
             fill="${['#5aa552', '#d1a53f', '#c96fb0'][i]}" stroke="#2c2014" stroke-width="2"/>
@@ -198,8 +195,8 @@ export default {
         </g>` : ''}
       </g>
 
-      <!-- pigment-stained handprint, far too old (flavor) -->
-      <g opacity="0.4">
+      <!-- pigment-stained handprint on the right trunk's bark, far too old (flavor) -->
+      <g opacity="0.45" transform="translate(-60 -180)">
         <path d="M1350 560 q-6 -18 4 -22 q4 10 2 18 M1360 556 q0 -20 8 -20 q2 12 -2 20 M1372 558 q4 -18 12 -14 q0 12 -6 18 M1344 566 q-12 -6 -12 2 q8 4 14 2 M1348 560 Q1360 590 1378 566 Z"
           fill="#a3541f"/>
       </g>
@@ -222,7 +219,7 @@ export default {
     const solved = !!state.flags.paintedgrove_solved;
 
     spots.push({
-      id: 'easel', x: 640, y: 300, w: 320, h: 300, label: solved ? 'The bark map, at peace' : 'The bark map',
+      id: 'easel', x: 580, y: 300, w: 320, h: 300, label: solved ? 'The bark map, at peace' : 'The bark map',
       onInteract(game) {
         if (game.getFlag('paintedgrove_solved')) {
           game.say('The boundary-stones rest where you set them: every ground at faith with three neighbours, no mark touching its like, the macaw and the jaguar kept a full ground apart. The painted valley holds its breath and, for the first time in a long age, is not arguing.');
@@ -244,7 +241,7 @@ export default {
     });
 
     spots.push({
-      id: 'murals', x: 470, y: 118, w: 300, h: 124, label: 'The clan murals',
+      id: 'murals', x: 280, y: 158, w: 300, h: 124, label: 'The clan murals',
       onInteract(game) {
         const html = `<div class="leaf-tablet"><div class="leaf-title">The grounds and their marks</div>
           The murals name each ground's clan, painted and permanent:<br>
@@ -260,7 +257,7 @@ export default {
     });
 
     spots.push({
-      id: 'laws', x: 1050, y: 250, w: 220, h: 240, label: 'The carved laws of ground',
+      id: 'laws', x: 1074, y: 420, w: 220, h: 240, label: 'The carved laws of ground',
       onInteract(game) {
         const html = `<div class="leaf-tablet carved"><div class="leaf-title">The Laws of Ground</div>
           <strong>Law A.</strong> "No clan abides its neighbour's mark — bordering grounds never share."<br><br>
@@ -274,10 +271,10 @@ export default {
 
     if (!state.flags.paintedgrove_potTaken) {
       spots.push({
-        id: 'ochre', x: 510, y: 500, w: 80, h: 90, label: 'A sealed ochre pot',
+        id: 'ochre', x: 490, y: 560, w: 80, h: 90, label: 'A sealed ochre pot',
         onInteract(game) {
           game.setFlag('paintedgrove_potTaken');
-          game.addItem('ochre_pot', { from: { x: 540, y: 536 } });
+          game.addItem('ochre_pot', { from: { x: 520, y: 596 } });
           game.say('A sealed gourd of red ochre — the pigment the grove paints its laws in. You pocket it. "The colour of oaths and boundary-lines," Gus notes. "It will matter. Most things down here do, eventually and inconveniently."');
           game.refreshScene();
         },
@@ -286,7 +283,7 @@ export default {
 
     if (!(state.journal || []).some(e => e.id === 'token3')) {
       spots.push({
-        id: 'token3', x: 356, y: 566, w: 74, h: 70, label: 'A disc on the pigment shelf',
+        id: 'token3', x: 336, y: 626, w: 74, h: 70, label: 'A disc on the pigment shelf',
         onInteract(game) {
           game.journal.add('token3', { title: 'Court token — the pigment shelf', category: 'sun', sun: { creature: 'tree-frog', letter: 'O' } });
           game.say('Tucked among the pigment pots, a carved disc: a tree-frog\'s wide-eyed face above the letter O. "Exhibit three," says Gus. "The Crown\'s own mark, you\'ll notice. The tree-frog sits at the centre of everything here. Remember that."');
@@ -296,7 +293,7 @@ export default {
     }
 
     spots.push({
-      id: 'handprint', x: 1320, y: 540, w: 90, h: 60, label: 'A handprint on the trunk',
+      id: 'handprint', x: 1270, y: 340, w: 100, h: 90, label: 'A handprint on the trunk',
       onInteract(game) {
         game.say('A pigment-stained handprint on the bark — ochre gone brown with age, the fingers a little too long, the thumb set a little too wide. Whoever pressed it here painted these laws, and did so a very long time before anyone thought to call this Quadrant Nine.');
       },
@@ -304,7 +301,7 @@ export default {
 
     // exit is the parted trunks, available once solved
     spots.push({
-      id: 'exit', x: 1280, y: 300, w: 120, h: 380, label: solved ? 'The parted trunks' : 'The colonnade',
+      id: 'exit', x: 905, y: 300, w: 130, h: 380, label: solved ? 'The parted trunks' : 'The colonnade',
       onInteract(game) {
         if (!game.getFlag('paintedgrove_solved')) {
           game.say('The painted trunks stand shoulder to shoulder, and they do not part for a valley still at war with itself. Set the borders right on the bark map and the grove will open the way — grove-logic, but consistent.');
@@ -389,7 +386,7 @@ function openBorderPuzzle(game) {
             <circle cx="${x}" cy="${y}" r="${isCrown ? 38 : 32}" fill="${markColor[MARK[g]]}" opacity="0.18"/>
             <text x="${x}" y="${y - 4}" text-anchor="middle" font-size="11" fill="#e4f0d0"
               font-family="Palatino Linotype, Georgia, serif" font-weight="700">${GROUND_NAME[g].split(' ').pop()}</text>
-            <text x="${x}" y="${y + 12}" text-anchor="middle" font-size="10" fill="${markColor[MARK[g]]}"
+            <text x="${x}" y="${y + 12}" text-anchor="middle" font-size="11.5" fill="${markColor[MARK[g]]}"
               font-family="Palatino Linotype, Georgia, serif" font-style="italic">${MARK[g]}</text>
           </g>`;
         };

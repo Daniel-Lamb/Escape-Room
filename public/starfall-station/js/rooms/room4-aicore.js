@@ -5,8 +5,36 @@
 // Unique solution: A=1, B=0, C=1, D=0. A fused relay must first be cleared
 // with the magnet stylus.
 
+import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
+// Layout — read off the plate (art/aicore.webp): server racks along both walls,
+// a round pedestal with cradle arms centre, the emitter ring above it.
+const PED = { cx: 800, top: 622 };
+const SHARD = { x: 900, y: 590 };
+const READ = { x: 700, y: 676, w: 200, h: 56 };
+const BRK = { x: 1084, y: 250, w: 160, h: 330 };
+const SCH = { x: 372, y: 140, w: 330, h: 110 };
+const BH = { x: 440, y: 330, w: 160, h: 310 };
+const R = {
+  cradle:    { x: 640, y: 520, w: 240, h: 150 },
+  shard4:    { x: SHARD.x - 18, y: SHARD.y - 16, w: 64, h: 70 },
+  schematic: { x: SCH.x, y: SCH.y, w: SCH.w, h: SCH.h },
+  racks:     { x: 1260, y: 200, w: 320, h: 440 },
+  breakers:  { x: BRK.x - 6, y: BRK.y - 6, w: BRK.w + 12, h: BRK.h + 12 },
+  bulkhead:  { x: BH.x - 6, y: BH.y, w: BH.w + 12, h: BH.h },
+};
+
 export default {
   id: 'aicore',
+  solution: () => {
+    // the one switch setting the core's own logic accepts: door live, alarm dark
+    for (let m = 0; m < 16; m++) {
+      const sw = [0, 1, 2, 3].map(i => !!(m & (1 << i)));
+      const { door, alarm } = evalLogic(sw);
+      if (door && !alarm) return sw.map((on, i) => `${'ABCD'[i]} ${on ? 'up' : 'down'}`);
+    }
+    return ['no setting opens the core'];
+  },
+  lintStates: [{ label: 'cleared', flags: { core_relayCleared: true, core_sw0: true, core_sw2: true } }, { label: 'open', flags: { core_relayCleared: true, core_doorOpen: true } }],
   title: 'AI Core',
   intro: 'The core chamber should be the loudest room on the station — a mind\'s worth of coolant and light. It is a cathedral of dead racks around an empty cradle. "This is where the resident intelligence lived," says Gus, quieter than you have ever heard a machine be. "Before."',
 
@@ -18,6 +46,7 @@ export default {
     return `
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
+        ${kitDefs()}
         <linearGradient id="gd_ac_wall" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0e1119"/>
           <stop offset="1" stop-color="#191d2c"/>
@@ -30,58 +59,46 @@ export default {
 
       <foreignObject x="0" y="0" width="1600" height="900"><video xmlns="http://www.w3.org/1999/xhtml" autoplay loop muted playsinline poster="art/aicore.webp" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="art/aicore.mp4" type="video/mp4"/></video></foreignObject>
 
-      <!-- dead server racks (photoreal); a failing LED or two kept flickering for life -->
-      ${[60, 260, 460, 1140, 1340].map((x, i) => `
-      <g opacity="0.94">
-        <image href="art/core-rack.webp" x="${x - 2}" y="150" width="164" height="500" preserveAspectRatio="xMidYMax meet"/>
-        <circle cx="${x + 30}" cy="${262 + i * 33}" r="3.5" fill="#e05252" class="flicker" opacity="0.85"/>
-      </g>`).join('')}
+      <!-- the painted racks are dead; a failing LED or two still flickers on their faces -->
+      ${[[90, 300], [210, 380], [300, 460], [1300, 330], [1420, 410], [1520, 300]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="#e05252" class="flicker" opacity="0.85"/>`).join('')}
 
-      <!-- the empty cradle -->
-      <g>
-        <ellipse cx="800" cy="500" rx="220" ry="70" fill="url(#gd_ac_cradle)" class="glow"/>
-        <ellipse cx="800" cy="520" rx="150" ry="44" fill="#0a0d14" stroke="#26313f" stroke-width="5"/>
-        <path d="M690 480 Q800 400 910 480" fill="none" stroke="#26313f" stroke-width="8"/>
-        ${[0, 1, 2, 3, 4].map(k => `<line x1="${710 + k * 45}" y1="${472 - Math.sin((k / 4) * Math.PI) * 58}" x2="${710 + k * 45}" y2="518" stroke="#1a2130" stroke-width="5"/>`).join('')}
-        <!-- socket where a mind used to plug in -->
-        <rect x="770" y="492" width="60" height="24" rx="6" fill="#04070d" stroke="#2f9e97" stroke-width="2" opacity="0.9"/>
-        <!-- pedestal readout -->
-        <rect x="700" y="580" width="200" height="54" rx="8" fill="rgba(13,26,38,0.85)" stroke="rgba(79,216,208,0.28)" stroke-width="2"/>
-        <text x="800" y="602" text-anchor="middle" font-size="11.5" fill="#ff8f8f" font-family="Consolas, monospace" class="flicker">RESIDENT INSTANCE: MIGRATED</text>
-        <text x="800" y="620" text-anchor="middle" font-size="11.5" fill="#ffb45e" font-family="Consolas, monospace">→ MAINTENANCE CHASSIS 7</text>
-        <!-- shard 4 -->
-        <rect x="908" y="498" width="24" height="34" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
-        <text x="920" y="521" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
+      <!-- the empty cradle: socket and shard on the painted pedestal, readout bolted to its face -->
+      <g data-mount="table">
+        <ellipse cx="${PED.cx}" cy="${PED.top}" rx="220" ry="60" fill="url(#gd_ac_cradle)" class="glow"/>
+        <rect x="${PED.cx - 30}" y="${PED.top - 14}" width="60" height="22" rx="6" fill="#04070d" stroke="#2f9e97" stroke-width="2" opacity="0.95"/>
+        <rect x="${SHARD.x}" y="${SHARD.y}" width="24" height="34" rx="4" fill="#101a26" stroke="#2f9e97" stroke-width="2" class="beckon"/>
+        <text x="${SHARD.x + 12}" y="${SHARD.y + 23}" text-anchor="middle" font-size="13" fill="#4fd8d0">▮</text>
       </g>
+      ${panel({ ...READ, material: 'glass', mount: 'bolts', rx: 6, body: `
+        <text x="${READ.x + READ.w / 2}" y="${READ.y + 24}" text-anchor="middle" font-size="11" fill="#ff8f8f" font-family="Consolas, monospace" class="flicker">RESIDENT INSTANCE: MIGRATED</text>
+        <text x="${READ.x + READ.w / 2}" y="${READ.y + 42}" text-anchor="middle" font-size="11" fill="#ffb45e" font-family="Consolas, monospace">→ MAINTENANCE CHASSIS 7</text>` })}
 
-      <!-- breaker panel -->
-      <g>
-        <rect x="1400" y="230" width="170" height="330" rx="10" fill="rgba(20,24,36,0.85)" stroke="${solved ? '#7bc47f' : cleared ? '#4fd8d0' : '#ffb45e'}" stroke-width="4" class="${solved ? '' : 'beckon'}"/>
-        <text x="1485" y="258" text-anchor="middle" font-size="12" fill="#8fa3b8" font-family="Consolas, monospace">ISOLATION LOGIC</text>
+      <!-- the isolation breakers: a cabinet bolted to the right-hand pillar -->
+      ${panel({ ...BRK, material: 'steel', mount: 'bolts', body: `
+        <rect x="${BRK.x + 4}" y="${BRK.y + 4}" width="${BRK.w - 8}" height="${BRK.h - 8}" rx="8" fill="none" stroke="${solved ? '#7bc47f' : cleared ? '#4fd8d0' : '#ffb45e'}" stroke-width="3" class="${solved ? '' : 'beckon'}"/>
+        <text x="${BRK.x + BRK.w / 2}" y="${BRK.y + 30}" text-anchor="middle" font-size="11.5" fill="#cfd8e3" font-family="Consolas, monospace">ISOLATION LOGIC</text>
         ${['A', 'B', 'C', 'D'].map((l, i) => `
           <g>
-            <rect x="1424" y="${276 + i * 62}" width="50" height="44" rx="6" fill="#0c0f18" stroke="#26313f" stroke-width="2"/>
-            <rect x="${sw[i] ? 1430 : 1430}" y="${sw[i] ? 280 + i * 62 : 298 + i * 62}" width="38" height="18" rx="4" fill="${sw[i] ? '#4fd8d0' : '#39485a'}"/>
-            <text x="1500" y="${304 + i * 62}" font-size="15" fill="#8fa3b8" font-family="Consolas, monospace">${l} ${sw[i] ? '=1' : '=0'}</text>
+            <rect x="${BRK.x + 18}" y="${BRK.y + 46 + i * 60}" width="50" height="42" rx="6" fill="#0c0f18" stroke="#26313f" stroke-width="2"/>
+            <rect x="${BRK.x + 24}" y="${sw[i] ? BRK.y + 50 + i * 60 : BRK.y + 68 + i * 60}" width="38" height="18" rx="4" fill="${sw[i] ? '#4fd8d0' : '#39485a'}"/>
+            <text x="${BRK.x + 82}" y="${BRK.y + 73 + i * 60}" font-size="15" fill="#cfd8e3" font-family="Consolas, monospace">${l} ${sw[i] ? '=1' : '=0'}</text>
           </g>`).join('')}
-        ${cleared ? '' : `<g><circle cx="1485" cy="540" r="12" fill="#0c0f18" stroke="#e05252" stroke-width="3"/><path d="M1477 532 L1493 548 M1493 532 L1477 548" stroke="#e05252" stroke-width="2.5"/><text x="1485" y="574" text-anchor="middle" font-size="9.5" fill="#e05252" font-family="Consolas, monospace">RELAY FUSED</text></g>`}
-      </g>
+        ${cleared ? '' : `<g><circle cx="${BRK.x + BRK.w / 2}" cy="${BRK.y + BRK.h - 40}" r="12" fill="#0c0f18" stroke="#e05252" stroke-width="3"/><path d="M${BRK.x + BRK.w / 2 - 8} ${BRK.y + BRK.h - 48} l16 16 m0 -16 l-16 16" stroke="#e05252" stroke-width="2.5"/><text x="${BRK.x + BRK.w / 2}" y="${BRK.y + BRK.h - 14}" text-anchor="middle" font-size="11.5" fill="#e05252" font-family="Consolas, monospace">RELAY FUSED</text></g>`}` })}
 
-      <!-- etched schematic on the wall -->
-      <g>
-        <rect x="1130" y="80" width="330" height="110" rx="8" fill="rgba(16,19,30,0.85)" stroke="rgba(79,216,208,0.3)" stroke-width="2"/>
-        <text x="1295" y="108" text-anchor="middle" font-size="12.5" fill="#4fd8d0" font-family="Consolas, monospace">DOOR = A ∧ ¬B ∧ (C ∨ D)</text>
-        <text x="1295" y="132" text-anchor="middle" font-size="12.5" fill="#ff8f8f" font-family="Consolas, monospace">ALARM = B ∨ (¬C ∧ D) ∨ (C ∧ D)</text>
-        <text x="1295" y="166" text-anchor="middle" font-size="10.5" fill="#5d7080" font-family="Consolas, monospace">door LIVE · alarm DARK — hand-etched, underlined twice</text>
-      </g>
+      <!-- the logic, etched into a steel plate bolted above the far bulkhead -->
+      ${panel({ ...SCH, material: 'steel', mount: 'bolts', body: `
+        <text x="${SCH.x + SCH.w / 2}" y="${SCH.y + 32}" text-anchor="middle" font-size="12.5" fill="#4fd8d0" font-family="Consolas, monospace">DOOR = A ∧ ¬B ∧ (C ∨ D)</text>
+        <text x="${SCH.x + SCH.w / 2}" y="${SCH.y + 56}" text-anchor="middle" font-size="12.5" fill="#ff8f8f" font-family="Consolas, monospace">ALARM = B ∨ (¬C ∧ D) ∨ (C ∧ D)</text>
+        <text x="${SCH.x + SCH.w / 2}" y="${SCH.y + 86}" text-anchor="middle" font-size="11.5" fill="#9fb0c4" font-family="Consolas, monospace">door LIVE · alarm DARK — underlined twice</text>` })}
 
-      <!-- far bulkhead -->
-      <g>
-        <path d="M40 640 L40 320 Q120 260 200 320 L200 640 Z" fill="${solved ? '#0b131e' : '#161a26'}" stroke="#26313f" stroke-width="8"/>
+      <!-- the far bulkhead, between the left racks and the pedestal -->
+      <g data-mount="wall">
+        <path d="M${BH.x} ${BH.y + BH.h} L${BH.x} ${BH.y + 50} Q${BH.x + BH.w / 2} ${BH.y - 10} ${BH.x + BH.w} ${BH.y + 50} L${BH.x + BH.w} ${BH.y + BH.h} Z" fill="${solved ? '#0b131e' : 'url(#sk_steel)'}" stroke="#26313f" stroke-width="7"/>
         ${solved
-          ? `<text x="120" y="470" text-anchor="middle" font-size="13" fill="#7bc47f" font-family="Consolas, monospace" class="flicker">RELEASED</text>`
-          : `<circle cx="120" cy="470" r="20" fill="#0c0f18" stroke="#e05252" stroke-width="4"/>
-             <rect x="112" y="462" width="16" height="16" rx="3" fill="#e05252" opacity="0.8"/>`}
+          ? `<text x="${BH.x + BH.w / 2}" y="${BH.y + BH.h / 2}" text-anchor="middle" font-size="13" fill="#7bc47f" font-family="Consolas, monospace" class="flicker">RELEASED</text>`
+          : `<circle cx="${BH.x + BH.w / 2}" cy="${BH.y + BH.h / 2}" r="20" fill="#0c0f18" stroke="#e05252" stroke-width="4"/>
+             <rect x="${BH.x + BH.w / 2 - 8}" y="${BH.y + BH.h / 2 - 8}" width="16" height="16" rx="3" fill="#e05252" opacity="0.8"/>`}
+        ${shadow(BH.x + BH.w / 2, BH.y + BH.h, BH.w * 0.6, 10)}
       </g>
 
       <path d="M0 900 L0 860 Q800 905 1600 860 L1600 900 Z" fill="#04070d"/>
@@ -94,7 +111,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'cradle', x: 640, y: 420, w: 320, h: 160, label: 'The empty cradle',
+      id: 'cradle', ...R.cradle, label: 'The empty cradle',
       onInteract(game) {
         const html = `<div class="datapad corrupt"><div class="pad-title">Core cradle — status</div>
           RESIDENT INTELLIGENCE: <span class="pad-bad">NOT FOUND</span><br>
@@ -111,7 +128,7 @@ export default {
     });
 
     spots.push({
-      id: 'shard4', x: 895, y: 485, w: 55, h: 65, label: 'A shard by the socket',
+      id: 'shard4', ...R.shard4, label: 'A shard by the socket',
       onInteract(game) {
         game.journal.add('shard4', { title: 'AI Core — the cradle socket', category: 'sun', sun: { rays: 2, letter: 'W' } });
         game.say('A memory shard, left beside the empty socket like a flower on a grave: —the upload chair, counting backward from ten, reaching seven— The count never finishes. You know, somehow, that it never got to finish.');
@@ -119,7 +136,7 @@ export default {
     });
 
     spots.push({
-      id: 'schematic', x: 1120, y: 70, w: 350, h: 130, label: 'Etched schematic',
+      id: 'schematic', ...R.schematic, label: 'Etched schematic',
       onInteract(game) {
         const html = `<div class="datapad"><div class="pad-title">Isolation logic — hand-etched</div>
           DOOR&nbsp;&nbsp;= A ∧ ¬B ∧ (C ∨ D)<br>
@@ -132,14 +149,14 @@ export default {
     });
 
     spots.push({
-      id: 'racks', x: 240, y: 150, w: 390, h: 470, label: 'Dead racks',
+      id: 'racks', ...R.racks, label: 'Dead racks',
       onInteract(game) {
         game.say('Rack after rack, cold as a filing cabinet. Enough silicon to hold a mind — and none of it holding one. The emptiness here is specific. Curated, almost.');
       },
     });
 
     spots.push({
-      id: 'breakers', x: 1390, y: 220, w: 190, h: 350, label: cleared ? 'Isolation breakers' : 'Breakers — relay fused',
+      id: 'breakers', ...R.breakers, label: cleared ? 'Isolation breakers' : 'Breakers — relay fused',
       onInteract(game) {
         if (!cleared) {
           if (game.selectedItem === 'magnet_stylus') {
@@ -159,7 +176,7 @@ export default {
     });
 
     spots.push({
-      id: 'bulkhead', x: 30, y: 310, w: 190, h: 330, label: solved ? 'Bulkhead — released' : 'Far bulkhead — sealed',
+      id: 'bulkhead', ...R.bulkhead, label: solved ? 'Bulkhead — released' : 'Far bulkhead — sealed',
       onInteract(game) {
         if (!solved) { game.say('Magnetically bolted, and the bolts answer to the isolation logic. The etched schematic by the breakers is somebody\'s gift to the future. Accept it.'); return; }
         if (!game.journal.has('shard4')) { game.say('"The shard by the socket," says Gus, hovering low over the cradle. "It is the heaviest one. I know. Take it anyway."'); return; }

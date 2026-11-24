@@ -8,33 +8,20 @@ import { initEngine, startRun, teardown, retryCurrentRoom, game } from '../../sh
 import { GUS } from './gus.js';
 import { setRole, getRole, saveKeyForRole, towerName } from './role.js';
 import rooms from './rooms/index.js';
+import { bearingOf, compassPlate } from './scenekit.js';
+import { kitDefs } from '../../shared/js/scenekit.js';
 
 const $ = (sel) => document.querySelector(sel);
 
 // A bearing-mark journal card: brass compass-rose plate with a depth number + letter.
+// A bearing-mark in the log: a compass plate whose needle points its bearing.
 function bearingCard(e) {
-  const depth = e.sun.rays;
-  const cx = 40, cy = 34, r = 15;
-  let ticks = '';
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
-    const long = i % 2 === 0;
-    ticks += `<line x1="${(cx + Math.cos(a) * (r - (long ? 6 : 3))).toFixed(1)}"
-                     y1="${(cy + Math.sin(a) * (r - (long ? 6 : 3))).toFixed(1)}"
-                     x2="${(cx + Math.cos(a) * r).toFixed(1)}"
-                     y2="${(cy + Math.sin(a) * r).toFixed(1)}"
-                     stroke="#c9a227" stroke-width="${long ? 2.2 : 1.3}" stroke-linecap="round"/>`;
-  }
   return `<svg viewBox="0 0 80 92" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="${cx}" cy="${cy}" r="${r + 4}" fill="none" stroke="#7a5f18" stroke-width="2"/>
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(201,162,39,0.06)" stroke="#c9a227" stroke-width="1.6"/>
-      ${ticks}
-      <text x="${cx}" y="${cy + 7}" text-anchor="middle" font-size="19" fill="#e8c85a"
-        font-family="Consolas, monospace" font-weight="bold">${depth}</text>
-      <text x="${cx}" y="82" text-anchor="middle" font-size="26" fill="#e8dcc0"
-        font-family="Georgia, serif">${e.sun.letter}</text>
+      <defs>${kitDefs()}</defs>
+      <g transform="translate(40 34)">${compassPlate(e.sun.rays, '', 30)}</g>
+      <text x="40" y="86" text-anchor="middle" font-size="22" fill="#e8dcc0" font-family="Georgia, serif">${e.sun.letter}</text>
     </svg>
-    <div class="journal-sun-cap">bearing ${depth} &middot; "${e.sun.letter}"</div>`;
+    <div class="journal-sun-cap">needle ${bearingOf(e.sun.rays)} &middot; "${e.sun.letter}"</div>`;
 }
 
 const CONFIG = {
@@ -44,7 +31,7 @@ const CONFIG = {
   journalEmpty: "The log is dry so far. Every reading, chart, and codebook page you examine is copied here — and the brass bearing-marks you find. You will each hold only half the marks: to spell the harbour word at the crown, you must read yours to your partner and theirs to you.",
   collectiblesTitle: 'Bearing-Marks',
   renderCollectible: bearingCard,
-  collectibleToast: (e) => `Bearing-mark pocketed: depth ${e.sun.rays} — "${e.sun.letter}"`,
+  collectibleToast: (e) => `Bearing-mark pocketed: needle ${bearingOf(e.sun.rays)} — "${e.sun.letter}"`,
   victory: {
     art: 'art/end-win.mp4',
     poster: 'art/end-win.webp',

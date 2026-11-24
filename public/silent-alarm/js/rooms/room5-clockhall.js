@@ -1,15 +1,16 @@
 // SCENE 5 — The Clock Hall / The Automata (split rule + values arithmetic).
 // Your numbers are on your screen; the rule for them is on your partner's plate.
-//   Hand's gauges 9 & 4; Eye's plate says DIFFERENCE  -> Hand sets 5
-//   Eye's readouts 6 & 2; Hand's plate says SUM        -> Eye sets 8
+//   Hand's gauges 7 & 1; Eye's plate says DIFFERENCE  -> Hand sets 6
+//   Eye's readouts 3 & 4; Hand's plate says SUM        -> Eye sets 7
 // The Hand (P1) lifts vault-pin f (position 6, digit 6).
 
 import { getRole, isHand, roleName, otherRoleName } from '../role.js';
+import { dock, DOCK } from '../../../shared/js/scenekit.js';
 import { defs, backdrop, ambient, roleTag } from '../heistkit.js';
 
 const SLUG = 'clk';
-const MY_NUMBERS = { p1: [9, 4], p2: [6, 2] };       // this side's own two dials
-const MY_ANSWER = { p1: 5, p2: 8 };                  // own numbers under the partner's rule
+const MY_NUMBERS = { p1: [7, 1], p2: [3, 4] };       // this side's own two dials (not shared with any other game)
+const MY_ANSWER = { p1: 6, p2: 7 };                  // own numbers under the partner's rule
 const RELAY_RULE = { p1: 'SUM', p2: 'DIFFERENCE' };  // the plate I hold = the rule for the PARTNER's numbers
 
 function isSolved(state) { return !!state.flags.clockhall_solved; }
@@ -53,12 +54,10 @@ export default {
       </g>
 
       <!-- the plate you hold: the rule for your PARTNER's numbers -->
-      <g>
-        <rect x="1100" y="170" width="420" height="140" rx="8" fill="#0b141c" stroke="${isHand() ? '#c9a227' : '#7cffb2'}" stroke-width="4"/>
+      ${dock({ x: 1100, y: 170, w: 420, h: 140 }, `
         <text x="1310" y="212" text-anchor="middle" font-size="14" fill="${isHand() ? '#8aa0b4' : '#4f9c78'}" font-family="Consolas, monospace" letter-spacing="2">ENGRAVED PLATE</text>
         <text x="1310" y="262" text-anchor="middle" font-size="30" fill="#e8e2d4" font-family="Georgia, serif" letter-spacing="3">set the ${relayRule}</text>
-        <text x="1310" y="294" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">this rule is for your partner's numbers · read it to them</text>
-      </g>
+        <text x="1310" y="294" text-anchor="middle" font-size="12" fill="#7f8a99" font-family="Consolas, monospace">this rule is for your partner's numbers · read it to them</text>`, { kind: isHand() ? 'tablet' : 'radio', title: isHand() ? 'EARPIECE' : 'VAN CONSOLE' })}
 
       <!-- the setting dial -->
       <g font-family="Consolas, monospace" text-anchor="middle">
@@ -97,7 +96,7 @@ export default {
     });
 
     spots.push({
-      id: 'plate', x: 1100, y: 170, w: 420, h: 140, label: 'The engraved plate',
+      id: 'plate', ...DOCK, label: 'The engraved plate',
       onInteract(game) {
         const rule = RELAY_RULE[getRole()];
         const html = `<div class="dossier"><div class="dossier-title">Engraved plate</div>
@@ -153,7 +152,7 @@ export default {
     return [
       { text: 'Your gauges give the numbers; your partner\'s plate gives the rule for them. And the plate you hold is the rule for their numbers. Trade.', cost: 60 },
       { text: isHand() ? 'Your plate holds the EYE\'s rule; your gauges hold the HAND\'s numbers — swap with your partner and apply what they read you.' : 'Your plate holds the HAND\'s rule; your readouts hold the EYE\'s numbers — swap and apply theirs.', cost: 120 },
-      { text: isHand() ? 'Set 5 (9 − 4).' : 'Set 8 (6 + 2).', cost: 240 },
+      { text: isHand() ? 'Set 6 (7 − 1).' : 'Set 7 (3 + 4).', cost: 240 },
     ];
   },
 };

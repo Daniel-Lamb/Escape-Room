@@ -5,16 +5,27 @@
 // Waking (P1) finds mirror-shard R (1).
 
 import { getRole, isWaking, sideName, otherSideName } from '../role.js';
-import { defs, backdrop, sideTag, mirrorWrite, sconce, tint } from '../glasskit.js';
+import { defs, backdrop, sideTag, mirrorWrite, mirrorGlass, sconce, tint } from '../glasskit.js';
+import { panel, shadow, wallDoor } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'parlour';
 const MIRROR_WORD_SHOWN = { p1: 'HEARTH', p2: 'CANDLE' };  // the PARTNER's word, shown reversed here
 const MY_ANSWER = { p1: 'CANDLE', p2: 'HEARTH' };          // this side's own door-word
 
+// Where things are on the parlour plate: the over-mantel (the portrait's place),
+// the bare wainscot between the second window and the fireplace, the firebox,
+// and the right-hand wall by the curtains (vanishing point about 800,450).
+const MIRROR = { x: 945, y: 150, w: 170, h: 256 };
+const PLAQUE = { x: 585, y: 305, w: 280, h: 160 };
+const HEARTH = { x: 945, y: 485, w: 180, h: 160 };
+const DOOR = { x1: 1445, y1: 250, h1: 529, x2: 1585, y2: 207, h2: 643 };
+const DOOR_SPOT = { x: DOOR.x1, y: DOOR.y2, w: DOOR.x2 - DOOR.x1, h: DOOR.h2 };
+
 function open(state) { return !!state.flags.parlour_open; }
 
 export default {
   id: 'parlour',
+  lintStates: [{ label: 'solved', flags: { parlour_open: true } }],
   get title() { return `${sideName()} · The Parlour`; },
   get intro() {
     return isWaking()
@@ -30,38 +41,34 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
-      ${sconce(SLUG, 240, 300)}
+      ${sconce(SLUG, 900, 582, 'stand')}
 
-      <!-- the great mirror frame (the seam between you) -->
-      <g>
-        <rect x="1120" y="150" width="360" height="470" rx="10" fill="none" stroke="${t.accentDim}" stroke-width="14"/>
-        <rect x="1140" y="170" width="320" height="430" fill="${isWaking() ? 'rgba(201,204,214,0.06)' : 'rgba(255,207,138,0.05)'}"/>
-        <text x="1300" y="400" text-anchor="middle" font-size="16" fill="${t.accentDim}" font-family="Georgia, serif" opacity="0.7">${isWaking() ? 'your friend, in the glass' : 'your friend, in the room'}</text>
+      <!-- the Whitlock mirror, standing on the mantel where the portrait hung -->
+      <g data-mount="table">
+        ${shadow(MIRROR.x + MIRROR.w / 2, MIRROR.y + MIRROR.h + 2, MIRROR.w * 0.55, 6)}
+        <rect x="${MIRROR.x}" y="${MIRROR.y}" width="${MIRROR.w}" height="${MIRROR.h}" rx="10" fill="url(#sk_brass)" stroke="#3a2a0c" stroke-width="3" filter="url(#sk_drop)"/>
+        ${mirrorGlass(MIRROR.x + 16, MIRROR.y + 16, MIRROR.w - 32, MIRROR.h - 32)}
       </g>
 
-      <!-- the far-wall plaque: the PARTNER's door-word, mirror-written -->
-      <g>
-        <rect x="560" y="180" width="440" height="150" rx="8" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="3"/>
-        <text x="780" y="222" text-anchor="middle" font-size="15" fill="${t.accentDim}" font-family="Georgia, serif" letter-spacing="2">SCRATCHED ON THE FAR WALL</text>
-        ${mirrorWrite(MIRROR_WORD_SHOWN[getRole()], 780, 290, 44, t.ink)}
-      </g>
+      <!-- the far-wall writing, scratched into the wainscot panel between window and hearth -->
+      ${panel({ ...PLAQUE, material: 'darkwood', mount: 'inset', body: `
+        <text x="${PLAQUE.x + PLAQUE.w / 2}" y="${PLAQUE.y + 34}" text-anchor="middle" font-size="13" fill="${t.accentDim}" font-family="Georgia, serif" letter-spacing="2">SCRATCHED ON THE FAR WALL</text>
+        ${mirrorWrite(MIRROR_WORD_SHOWN[getRole()], PLAQUE.x + PLAQUE.w / 2, PLAQUE.y + 108, 44, t.ink)}` })}
 
-      <!-- the door + word-lock -->
-      <g>
-        <rect x="600" y="470" width="240" height="360" rx="6" fill="${done ? '#0a0810' : t.wall1}" stroke="${t.accentDim}" stroke-width="6"/>
-        ${done
-          ? `<text x="720" y="660" text-anchor="middle" font-size="20" fill="${t.accent}" font-family="Georgia, serif">the door stands open</text>`
-          : `<circle cx="800" cy="650" r="10" fill="${t.accentDim}"/>
-             <rect x="620" y="740" width="200" height="54" rx="8" fill="${t.panel}" stroke="${t.accentDim}" stroke-width="2"/>
-             <text x="720" y="776" text-anchor="middle" font-size="24" fill="${t.accent}" font-family="Consolas, monospace" letter-spacing="6">${(state.flags.parlour_guess || '______')}</text>`}
-      </g>
+      <!-- the door in the right-hand wall, its word-lock plate on the leaf -->
+      ${wallDoor({ ...DOOR, open: done })}
+      ${done ? '' : `
+      <g transform="translate(1515 586) skewY(8) translate(-1515 -586)">
+        ${panel({ x: 1463, y: 562, w: 104, h: 48, material: 'brass', mount: 'bolts', rx: 4, body: `
+          <text x="1515" y="594" text-anchor="middle" font-size="19" fill="#2a1d05" font-family="Consolas, monospace" letter-spacing="3">${(state.flags.parlour_guess || '______')}</text>` })}
+      </g>`}
 
       ${markHere ? `
       <g class="beckon">
+        ${shadow(1051, 758, 30, 5)}
         <polygon points="1030,690 1075,682 1082,726 1060,760 1028,750 1020,714" fill="rgba(201,204,214,0.10)" stroke="#c9ccd6" stroke-width="2.5"/>
         <text x="1050" y="726" text-anchor="middle" font-size="18" fill="#dfe6f2" font-family="Consolas, monospace" font-weight="bold">1</text>
-        <text x="1050" y="792" text-anchor="middle" font-size="13" fill="#c9ccd6" font-family="Georgia, serif">a mirror-shard</text>
-      </g>` : ''}
+              </g>` : ''}
 
       ${sideTag()}
     </svg>`;
@@ -72,7 +79,7 @@ export default {
     const t = tint();
 
     spots.push({
-      id: 'plaque', x: 560, y: 180, w: 440, h: 150, label: 'Backwards writing on the far wall',
+      id: 'plaque', ...PLAQUE, label: 'Backwards writing on the far wall',
       onInteract(game) {
         const word = MIRROR_WORD_SHOWN[getRole()];
         const html = `<div class="cipher"><div class="cipher-title">Scratched on the far wall — backwards</div>
@@ -85,7 +92,7 @@ export default {
     });
 
     spots.push({
-      id: 'mirror', x: 1120, y: 150, w: 360, h: 470, label: 'The Whitlock mirror',
+      id: 'mirror', ...MIRROR, label: 'The Whitlock mirror',
       onInteract(game) {
         game.say(isWaking()
           ? 'Your friend stands where your reflection should be, mouthing words you cannot hear through the glass. You will have to speak them aloud instead.'
@@ -94,7 +101,7 @@ export default {
     });
 
     spots.push({
-      id: 'hearth', x: 180, y: 640, w: 200, h: 180, label: 'The cold hearth',
+      id: 'hearth', ...HEARTH, label: 'The cold hearth',
       onInteract(game) { game.say('The fire is out and the clock has stopped. The whole house is holding its breath between one reflection and the other.'); },
     });
 
@@ -111,12 +118,12 @@ export default {
 
     if (!open(state)) {
       spots.push({
-        id: 'door', x: 600, y: 470, w: 240, h: 360, label: 'The door — a word-lock',
+        id: 'door', ...DOOR_SPOT, label: 'The door — a word-lock',
         onInteract(game) { openDoor(game); },
       });
     } else {
       spots.push({
-        id: 'out', x: 600, y: 470, w: 240, h: 360, label: 'Through the door',
+        id: 'out', ...DOOR_SPOT, label: 'Through the door',
         onInteract(game) {
           if (isWaking() && !game.journal.has('shard_r')) { game.say('There is a mirror-shard by the hearth — take it before you leave the parlour.'); return; }
           game.completeRoom({ delay: 600 });

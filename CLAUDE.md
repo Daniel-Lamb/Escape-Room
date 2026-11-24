@@ -1,19 +1,24 @@
 # Escape Room — project instructions for Claude
 
 A series of hour-long, browser-native escape rooms. One shared engine, hand-authored
-SVG scenes, synthesized Web Audio, zero runtime dependencies. Four games are **LIVE**,
-each 7 sub-rooms. Deployed to GitHub Pages (`daniel-lamb.github.io/Escape-Room`) and
+SVG scenes over photoreal background plates, synthesized Web Audio, zero runtime
+dependencies. Eleven games are **LIVE**: five single-player, four two-player (two
+screens, one player each) and two group games. Deployed to GitHub Pages (`daniel-lamb.github.io/Escape-Room`) and
 Vercel. Repo: `Daniel-Lamb/Escape-Room`.
 
 ## Layout & source of truth
-- **Games:** `public/<game>/` — `pilgrims-road` (medieval, Room I), `starfall-station`
-  (sci-fi + twist, Room II), `wild-court` (jungle + verdict twist, Room III),
-  `gate-of-life` (Rome/Colosseum, Room IV). **Edit `public/`, never `dist/`** (`dist/`
+- **Games:** `public/<game>/`.
+  Single-player: `pilgrims-road` (medieval), `starfall-station` (sci-fi + twist),
+  `wild-court` (jungle + verdict twist), `gate-of-life` (Rome/Colosseum),
+  `tomb-of-the-scarab` (Egypt, 5 rooms).
+  Two-player (`js/role.js` holds p1/p2): `signal-towers`, `looking-glass`,
+  `silent-alarm`, `deep-six`. Group (p1–p4): `the-vault`, `trial-by-jury` (5 rooms each). **Edit `public/`, never `dist/`** (`dist/`
   is the built copy).
 - **Each game:** `js/rooms/roomN-*.js` (one ES module per sub-room), `js/gus.js` (the
   re-themeable companion), `skin.css`, `index.html`.
 - **Shared engine:** `public/shared/js/` (`engine.js`, `state.js`, `items.js`,
-  `gus-core.js`, `audio.js`) + `public/shared/css/`.
+  `gus-core.js`, `audio.js`, and `scenekit.js` — the mounting helpers every prop is
+  drawn with) + `public/shared/css/`.
 - **Room dashboard:** `src/` (Astro + TS + Tailwind).
 - **Room authoring contract:** [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md). Design
   docs and walkthroughs per game in [docs/](docs/).
@@ -33,6 +38,30 @@ modals. All game logic flows through the `game` API object passed into callbacks
   art.
 - Every torch/candle uses `torch-flame` + `glow`; drifting embers/particles and (jungle)
   canopy light-shafts are the signature ambient overlays.
+
+## Placement & logic checks (run after any room change)
+Every room's props sit on something: a wall, the floor, a table, a shelf, or the plate
+feature they belong to. Nothing floats. Draw props through `public/shared/js/scenekit.js`
+(`panel`, `grounded`, `shelf`, `pedestal`, `wallDoor`, `shadow`); it marks each mount
+with `data-mount`. Lighting washes carry `data-fx`. In duo and group games, a card the
+player reads to a partner docks in the kit at the top-right corner (`dock()` / `DOCK`).
+Details are in [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) under "Placement".
+
+- `npm run lint:rooms`: layout and logic lint across every game and role. It checks
+  Gus zone, bounds, floating panels, hidden hotspots, unreadable text, three hint
+  tiers, that the last hint states the room's answer, and that the first hint never does.
+- `npm run walk:rooms`: from each room's solved state, it confirms the exit can always
+  be taken, and that every game's collectibles pool to one full set.
+- `npm run docs:solutions`: regenerates [docs/SOLUTIONS.md](docs/SOLUTIONS.md) from
+  the code. Never hand-edit that file.
+- Contact sheet: `/shared/dev/sheet.html?game=<game>&role=p1` on localhost shows every
+  room and declared state with its hotspots. Add `&bare=1` to flag click-zones with no
+  scene art under them.
+
+Rooms describe extra states for these tools with `lintStates`
+(`[{ label, flags, inventory, journal }]`). Include the solved state, together with the items
+the player holds at that point. A room whose answer constant isn't one of the common
+names declares `solution` (a string or array, or a function of the role).
 
 ## ⭐ Active initiative: the visual & interaction upgrade
 The owner is replacing the procedural-SVG art and CSS-primitive puzzles with
