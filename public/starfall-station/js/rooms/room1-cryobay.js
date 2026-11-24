@@ -259,7 +259,7 @@ export default {
     }
 
     spots.push({
-      id: 'viewport', ...R.viewport, label: 'The viewport',
+      id: 'viewport', plate: 'the viewport', ...R.viewport, label: 'The viewport',
       onInteract(game) {
         game.say('The planet fills half the glass, and the horizon has a faint orange fringe it should not have. That fringe is where orbits go to die. Yours is on the schedule.');
       },

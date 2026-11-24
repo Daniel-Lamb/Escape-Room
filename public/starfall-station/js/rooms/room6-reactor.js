@@ -206,7 +206,7 @@ export default {
     });
 
     spots.push({
-      id: 'door', ...R.door, label: solved ? 'Servo door' : 'Servo door — dark',
+      id: 'door', plate: 'the servo door', ...R.door, label: solved ? 'Servo door' : 'Servo door — dark',
       onInteract(game) {
         if (!solved) { game.say('The door servos are dark. No power on the DOOR SERVOS bus, no dignity in pushing — it\'s rated for eight tons.'); return; }
         if (!state.flags.reactor_capTaken) { game.say('The ejected capacitor is still sitting in the panel. "Take it," says Gus. "Trust me. Where we are going, we will want to be loud."'); return; }

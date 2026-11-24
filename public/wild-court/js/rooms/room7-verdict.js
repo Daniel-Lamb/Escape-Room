@@ -399,7 +399,7 @@ export default {
     });
 
     spots.push({
-      id: 'jurors', x: 620, y: 300, w: 320, h: 110, label: 'The firefly jurors',
+      id: 'jurors', plate: 'the firefly-lit canopy', x: 620, y: 300, w: 320, h: 110, label: 'The firefly jurors',
       onInteract(game) {
         game.say('Ten thousand fireflies bank the tiers, and they are not swarming — they are SEATED. When you shift your weight, the light shifts with you, the way a gallery turns its heads. You resist the urge to straighten your shirt. You straighten it anyway.');
       },

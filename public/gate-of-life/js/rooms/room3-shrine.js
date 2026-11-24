@@ -281,7 +281,7 @@ export default {
     }
 
     spots.push({
-      id: 'statue', x: 700, y: 260, w: 200, h: 280, label: 'Nemesis',
+      id: 'statue', plate: 'the statue of Nemesis', x: 700, y: 260, w: 200, h: 280, label: 'Nemesis',
       onInteract(game) {
         game.say('Nemesis, lady of due measure, who gives every man exactly what he is owed. Gus regards her from the doorway with narrow professional distaste and stays out of scourge-reach. Some rivalries are older than paperwork.');
       },
@@ -302,7 +302,7 @@ export default {
     });
 
     spots.push({
-      id: 'door', x: DOORWAY.x - 10, y: DOORWAY.y - 8, w: DOORWAY.w + 20, h: DOORWAY.h + 16, label: done ? 'To the lanista\'s tablinum' : 'The barred passage',
+      id: 'door', plate: 'the barred doorway', x: DOORWAY.x - 10, y: DOORWAY.y - 8, w: DOORWAY.w + 20, h: DOORWAY.h + 16, label: done ? 'To the lanista\'s tablinum' : 'The barred passage',
       onInteract(game) {
         if (!done) {
           game.say('The bar behind the altar is the goddess\'s own: it lifts when her lamp is lit, and not before. The inscription on the altar names her price.');

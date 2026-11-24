@@ -101,7 +101,7 @@ export default {
     });
 
     spots.push({
-      id: 'hearth', ...HEARTH, label: 'The cold hearth',
+      id: 'hearth', plate: 'the fireplace', ...HEARTH, label: 'The cold hearth',
       onInteract(game) { game.say('The fire is out and the clock has stopped. The whole house is holding its breath between one reflection and the other.'); },
     });
 

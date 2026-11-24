@@ -155,6 +155,11 @@ the player can believe holds it.
   top-right `DOCK` via `dock(fromRect, inner, { kind, title })`. Its hotspot spreads
   `...DOCK` and opens the full card. Fixed things (a plate on the wall, writing on a
   slate) stay mounted where they are.
+- **A hotspot on the plate alone names what it points at.** Where a hotspot has no
+  drawn prop under it (a fireplace, a window, a doorway the plate paints), declare the
+  feature on the hotspot: `{ id: 'hearth', plate: 'the fireplace', … }`. The contact
+  sheet's `&bare=1` report flags any hotspot with neither art nor a `plate:`, and
+  `&bare=review` crops the plate under each one so it can be checked before declaring.
 - **Exterior plates get interiors.** If the plate shows the outside but the room is
   inside (Signal Towers), draw the interior shell over it, with the plate visible only
   through a window (`interior()` in `signal-towers/js/scenekit.js`).

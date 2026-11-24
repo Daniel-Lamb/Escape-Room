@@ -268,7 +268,7 @@ export default {
     }
 
     spots.push({
-      id: 'coredoor', ...R.coredoor, label: 'Core access door',
+      id: 'coredoor', plate: 'the core access door', ...R.coredoor, label: 'Core access door',
       onInteract(game) {
         if (!game.hasItem('keycard_blue')) {
           game.say('CORE ACCESS — LEVEL 2 REQUIRED, says the reader, in the blue font of bureaucracies that outlive their buildings.');

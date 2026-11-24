@@ -136,7 +136,7 @@ export default {
           html: '<p>"The jackal leads the dead to the door. Number those who walk behind him — the scarabs, then the blossoms, then the ibis: so speaks the door."</p>' });
         game.say('"Number those who walk behind him." Not every figure, then — only the company that follows the jackal. Copied to your palette.');
       } });
-    spots.push({ id: 'rubble', x: 140, y: 260, w: 520, h: 380, label: 'The collapsed entrance',
+    spots.push({ id: 'rubble', plate: 'the collapsed entrance', x: 140, y: 260, w: 520, h: 380, label: 'The collapsed entrance',
       onInteract(game) { game.say('Tons of it. You could dig for a week and only run out of air faster. Forward is the only way.'); } });
 
     if (!open) {

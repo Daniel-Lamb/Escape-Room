@@ -6,7 +6,7 @@
 // Tender recovers depth-mark E (14 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK, loreArt } from '../divekit.js';
 
 const SLUG = 'boiler';
 const GAUGES = { p1: [12, 5], p2: [13, 6] };
@@ -44,6 +44,7 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
+      ${loreArt(isDiver() ? 'lore_stokers' : '')}
       ${roleTag()}
       ${relayPlaque(relay, label)}
       ${gauges}

@@ -301,7 +301,7 @@ export default {
 
     // exit is the parted trunks, available once solved
     spots.push({
-      id: 'exit', x: 905, y: 300, w: 130, h: 380, label: solved ? 'The parted trunks' : 'The colonnade',
+      id: 'exit', plate: 'the colonnade of trunks', x: 905, y: 300, w: 130, h: 380, label: solved ? 'The parted trunks' : 'The colonnade',
       onInteract(game) {
         if (!game.getFlag('paintedgrove_solved')) {
           game.say('The painted trunks stand shoulder to shoulder, and they do not part for a valley still at war with itself. Set the borders right on the bark map and the grove will open the way — grove-logic, but consistent.');

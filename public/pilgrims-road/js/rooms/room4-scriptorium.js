@@ -193,7 +193,7 @@ export default {
 
     if (!lit) {
       spots.push({
-        id: 'dark_desks', ...R.desks, label: 'Writing desks',
+        id: 'dark_desks', plate: 'the writing desks', ...R.desks, label: 'Writing desks',
         onInteract(game) { game.say('Vellum, ink horns, a pen case — all of it drowned in dark. You need light before this room will talk.'); },
       });
       spots.push({

@@ -178,7 +178,7 @@ export default {
     const spots = [];
 
     spots.push({
-      id: 'racks', ...R.racks, label: flow ? 'The racks (blooming)' : 'Dead grow racks',
+      id: 'racks', plate: 'the grow racks', ...R.racks, label: flow ? 'The racks (blooming)' : 'Dead grow racks',
       onInteract(game) {
         game.say(flow
           ? 'Green is happening at speed. Bioluminescent algae climb the drip lines like they have somewhere to be. The ring smells alive.'
@@ -187,7 +187,7 @@ export default {
     });
 
     spots.push({
-      id: 'racksR', ...R.racksR, label: flow ? 'The far racks (blooming)' : 'The far racks',
+      id: 'racksR', plate: 'the far grow racks', ...R.racksR, label: flow ? 'The far racks (blooming)' : 'The far racks',
       onInteract(game) {
         game.say(flow
           ? 'The far racks have caught up: leaf on leaf, a green you can smell.'

@@ -183,7 +183,7 @@ export default {
     });
 
     spots.push({
-      id: 'fresco', x: 520, y: 160, w: 540, h: 300, label: 'The fresco',
+      id: 'fresco', plate: 'the wall fresco', x: 520, y: 160, w: 540, h: 300, label: 'The fresco',
       onInteract(game) {
         game.say('The amphitheatre in cutaway: lift shafts, winch galleries, the western works. Your drawings — you\'d know your own line-weight anywhere — copied by a workshop hand and signed by a man who never held a pen underground. You check the fresco for errors out of habit. There are two.');
       },
@@ -197,7 +197,7 @@ export default {
     });
 
     spots.push({
-      id: 'scrolls', x: 20, y: 260, w: 160, h: 400, label: 'The scroll shelves',
+      id: 'scrolls', plate: 'the scroll shelves', x: 20, y: 260, w: 160, h: 400, label: 'The scroll shelves',
       onInteract(game) {
         game.say('Contracts, purchases, appeals. Every scroll a man; every seal a decision made over lunch. Somewhere in this wall is the scroll with your name on it, and there is no time in the world you would spend finding it.');
       },

@@ -5,7 +5,7 @@
 // Tender recovers depth-mark D (20 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART, DOCK } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, ART, DOCK, loreArt } from '../divekit.js';
 
 const SLUG = 'telegraph';
 const TG_TARGET = [1, 2, 2, 1];              // the diver's coupled-pointer goal
@@ -37,6 +37,7 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
+      ${loreArt(isDiver() ? '' : 'lore_log')}
       ${roleTag()}
       ${relayPlaque(relayFor(), relayLabel())}
       ${lockPanel(620, 636, open, isDiver() ? 'TELEGRAPH' : 'WINCH', closed)}

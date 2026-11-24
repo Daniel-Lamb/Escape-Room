@@ -5,7 +5,7 @@
 // Diver also recovers depth-mark A (5 fathoms).
 
 import { getRole, isDiver } from '../role.js';
-import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, relayPlaque, markBeckon, lockPanel, comboLock, loreSpot, DOCK, loreArt } from '../divekit.js';
 
 const SLUG = 'descent';
 const MYCODE = { p1: '629', p2: '417' };   // p1 = Diver hatch, p2 = Tender winch
@@ -33,6 +33,7 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
+      ${loreArt(isDiver() ? 'lore_hull' : 'lore_brief')}
       ${roleTag()}
       ${relayPlaque(relay, label)}
       ${lockPanel(620, 636, open, lockLabel, closed)}

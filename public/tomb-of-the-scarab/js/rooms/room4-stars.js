@@ -99,7 +99,7 @@ export default {
           html: '<p>"Sopdet rises after Sah, the three who walk together. When she stands beneath the eastern mark, the way will open."</p><p>Two stars on the dial shine equally bright. Only one of them keeps company with Sah\'s three.</p>' });
         game.say('"Sopdet rises after Sah, the three who walk together." Two bright stars on the dial — and only one follows the three. Copied to your palette.');
       } });
-    spots.push({ id: 'nut', x: 400, y: 40, w: 800, h: 220, label: 'Nut, the sky',
+    spots.push({ id: 'nut', plate: 'Nut, painted arching across the ceiling', x: 400, y: 40, w: 800, h: 220, label: 'Nut, the sky',
       onInteract(game) { game.say('Nut arches overhead, star-swallower and star-mother. She births the sun each dawn from her mouth — the very trick you are trying to copy.'); } });
 
     if (!done) {

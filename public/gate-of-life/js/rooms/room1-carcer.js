@@ -117,7 +117,7 @@ export default {
       </g>
 
       <!-- old small bones in the far corner -->
-      <g stroke="#cfc6b4" stroke-width="4" stroke-linecap="round" opacity="0.7">
+      <g data-mount="floor" stroke="#cfc6b4" stroke-width="4" stroke-linecap="round" opacity="0.7">
         <path d="M80 620 l44 12 M100 644 l40 -6 M136 626 l16 18"/>
         <circle cx="70" cy="616" r="7" fill="#cfc6b4" stroke="none"/>
       </g>
@@ -186,7 +186,7 @@ export default {
     }
 
     spots.push({
-      id: 'window', x: 1160, y: 60, w: 260, h: 150, label: 'The barred window',
+      id: 'window', plate: 'the barred window', x: 1160, y: 60, w: 260, h: 150, label: 'The barred window',
       onInteract(game) {
         game.say('High and barred, and through it the sky and the roar. The sun is climbing. When it stands straight overhead, the lifts come down for the condemned — you drew the schedule yourself, in better days.');
       },

@@ -205,3 +205,59 @@ export function comboLock(game, opts) {
     },
   });
 }
+
+/*
+ * What each lore hotspot is about, drawn where it sits. The diver's lore spot
+ * is always the patch of wreck at 240,410 (250×190), the tender's the end of
+ * the equipment table at 1214,470 (240×150); each thing is mounted on what is
+ * there — the hull rail, the silt, the stokehold deck, the table.
+ */
+const LORE_AT = { diver: { x: 240, y: 410, w: 250, h: 190 }, tender: { x: 1214, y: 470, w: 240, h: 150 } };
+// The diver's lore props sit in the murky water, so they take the water's colour.
+const MURK = `<filter id="dv_murk" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.5 0.12 0.06 0 0  0.08 0.58 0.16 0 0.03  0.08 0.16 0.52 0 0.05  0 0 0 1 0"/></filter>`;
+export function loreArt(id) {
+  const art = loreBody(id);
+  return art && !/^lore_(brief|manifest|log)$/.test(id) ? `<g filter="url(#dv_murk)">${MURK}${art}</g>` : art;
+}
+function loreBody(id) {
+  const D = LORE_AT.diver, T = LORE_AT.tender;
+  const sh = (cx, cy, rx) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${Math.max(6, rx * 0.16)}" fill="#000" opacity="0.5"/>`;
+  switch (id) {
+    case 'lore_hull':   // the ship's nameplate, torn from the rail and propped on the deck
+      return panel({ x: D.x + 38, y: D.y + 96, w: 180, h: 68, material: 'brass', mount: 'table', tilt: -7, body: `
+        <text x="${D.x + 128}" y="${D.y + 137}" text-anchor="middle" font-size="20" fill="#2a1d05" font-family="Georgia, serif" letter-spacing="2" transform="rotate(-7 ${D.x + 128} ${D.y + 130})">CORMORANT</text>
+        <rect data-fx="verdigris" x="${D.x + 38}" y="${D.y + 96}" width="180" height="68" rx="6" fill="#3f8f78" opacity="0.35" transform="rotate(-7 ${D.x + 128} ${D.y + 130})"/>
+        ${[[54, 106], [200, 112], [62, 150]].map(([dx, dy]) => `<circle cx="${D.x + dx}" cy="${D.y + dy}" r="5" fill="#c9c0a8" opacity="0.7"/>`).join('')}` });
+    case 'lore_effects':   // a passenger's case, half sunk in the silt
+      return `<g data-mount="floor">${sh(D.x + 125, D.y + 168, 100)}
+        <rect x="${D.x + 55}" y="${D.y + 96}" width="140" height="70" rx="8" fill="#4a3320" stroke="#1c120a" stroke-width="3" transform="rotate(-8 ${D.x + 125} ${D.y + 130})"/>
+        <rect x="${D.x + 60}" y="${D.y + 104}" width="130" height="10" fill="#b08a3e" opacity="0.8" transform="rotate(-8 ${D.x + 125} ${D.y + 130})"/>
+        <path d="M${D.x} ${D.y + 184} Q${D.x + 60} ${D.y + 128} ${D.x + 125} ${D.y + 150} Q${D.x + 190} ${D.y + 132} ${D.x + 250} ${D.y + 186} Z" fill="#3b4636" opacity="0.6"/>
+        <path d="M${D.x + 20} ${D.y + 186} Q${D.x + 70} ${D.y + 146} ${D.x + 125} ${D.y + 160} Q${D.x + 180} ${D.y + 148} ${D.x + 232} ${D.y + 188} Z" fill="#46523f" opacity="0.85"/>
+      </g>`;
+    case 'lore_stokers':   // the stokers' post: a shovel against the bunker, a coal scuttle
+      return `<g data-mount="floor">${sh(D.x + 125, D.y + 180, 110)}
+        <path d="M${D.x + 60} ${D.y + 180} L${D.x + 92} ${D.y + 40}" stroke="#3a2818" stroke-width="9" stroke-linecap="round"/>
+        <path d="M${D.x + 40} ${D.y + 182} L${D.x + 86} ${D.y + 182} L${D.x + 80} ${D.y + 140} L${D.x + 48} ${D.y + 140} Z" fill="url(#sk_iron)" stroke="#0c0f13" stroke-width="2"/>
+        <path d="M${D.x + 120} ${D.y + 180} L${D.x + 220} ${D.y + 180} L${D.x + 206} ${D.y + 110} L${D.x + 134} ${D.y + 110} Z" fill="url(#sk_iron)" stroke="#0c0f13" stroke-width="3"/>
+        <ellipse cx="${D.x + 170}" cy="${D.y + 112}" rx="38" ry="9" fill="#141414"/>
+        ${[0, 1, 2, 3].map(i => `<circle cx="${D.x + 150 + i * 13}" cy="${D.y + 108 - (i % 2) * 4}" r="7" fill="#1e1e1e"/>`).join('')}
+      </g>`;
+    case 'lore_lastmsg':   // the outgoing message pad, clipped to its board on the ledge
+      return panel({ x: D.x + 50, y: D.y + 40, w: 150, h: 126, material: 'paper', mount: 'table', tilt: -6, body: `
+        <rect x="${D.x + 100}" y="${D.y + 34}" width="50" height="14" rx="3" fill="url(#sk_steel)" transform="rotate(-6 ${D.x + 125} ${D.y + 103})"/>
+        <text x="${D.x + 125}" y="${D.y + 76}" text-anchor="middle" font-size="15" fill="#3a2f12" font-family="Consolas, monospace" transform="rotate(-6 ${D.x + 125} ${D.y + 103})">OUTGOING</text>
+        ${[0, 1, 2, 3].map(i => `<line x1="${D.x + 66}" y1="${D.y + 96 + i * 16}" x2="${D.x + 184 - (i % 2) * 30}" y2="${D.y + 96 + i * 16}" stroke="#6b5a3a" stroke-width="2" transform="rotate(-6 ${D.x + 125} ${D.y + 103})"/>`).join('')}` });
+    case 'lore_brief':   // the salvage brief, in its folder on the table
+    case 'lore_manifest':   // the passenger manifest, a ledger open on the table
+    case 'lore_log': {   // the captain's log, closed on the table
+      const title = { lore_brief: 'SALVAGE BRIEF', lore_manifest: 'MANIFEST', lore_log: 'LOG' }[id];
+      const mat = id === 'lore_log' ? 'darkwood' : id === 'lore_brief' ? 'parchment' : 'paper';
+      return panel({ x: T.x + 30, y: T.y + 40, w: 180, h: 96, material: mat, mount: 'table', tilt: -4, body: `
+        <text x="${T.x + 120}" y="${T.y + 94}" text-anchor="middle" font-size="16" fill="${id === 'lore_log' ? '#e8d9b0' : '#3a2f12'}" font-family="Georgia, serif" letter-spacing="2" transform="rotate(-4 ${T.x + 120} ${T.y + 88})">${title}</text>
+        ${id === 'lore_manifest' ? `<line x1="${T.x + 120}" y1="${T.y + 44}" x2="${T.x + 120}" y2="${T.y + 132}" stroke="#8a7446" stroke-width="2" transform="rotate(-4 ${T.x + 120} ${T.y + 88})"/>` : ''}` });
+    }
+    default:
+      return '';
+  }
+}

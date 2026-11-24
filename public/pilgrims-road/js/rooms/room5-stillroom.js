@@ -325,7 +325,7 @@ export default {
     });
 
     spots.push({
-      id: 'stair', ...R.stair, label: 'Stairs up',
+      id: 'stair', plate: 'the stone stair', ...R.stair, label: 'Stairs up',
       onInteract(game) {
         if (game.hasItem('drugged_meat')) {
           if (!game.journal.has('sun5')) {

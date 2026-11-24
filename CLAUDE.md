@@ -56,7 +56,8 @@ Details are in [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) under "Placement".
   the code. Never hand-edit that file.
 - Contact sheet: `/shared/dev/sheet.html?game=<game>&role=p1` on localhost shows every
   room and declared state with its hotspots. Add `&bare=1` to flag click-zones with no
-  scene art under them.
+  scene art under them and no `plate: '<feature>'` naming the painted feature they
+  point at (`&bare=review` crops the plate under each one).
 
 Rooms describe extra states for these tools with `lintStates`
 (`[{ label, flags, inventory, journal }]`). Include the solved state, together with the items

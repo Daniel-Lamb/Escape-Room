@@ -149,7 +149,7 @@ export default {
     });
 
     spots.push({
-      id: 'racks', ...R.racks, label: 'Dead racks',
+      id: 'racks', plate: 'the server racks', ...R.racks, label: 'Dead racks',
       onInteract(game) {
         game.say('Rack after rack, cold as a filing cabinet. Enough silicon to hold a mind — and none of it holding one. The emptiness here is specific. Curated, almost.');
       },

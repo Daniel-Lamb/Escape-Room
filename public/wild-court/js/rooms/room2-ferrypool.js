@@ -326,7 +326,7 @@ export default {
 
     // --- the stairs (exit) ---
     spots.push({
-      id: 'stairs', x: STAIRS.x, y: STAIRS.y, w: STAIRS.w, h: STAIRS.h, label: ferried ? 'The far stairs' : 'The sealed stairs',
+      id: 'stairs', plate: 'the stone stairs', x: STAIRS.x, y: STAIRS.y, w: STAIRS.w, h: STAIRS.h, label: ferried ? 'The far stairs' : 'The sealed stairs',
       onInteract(game) {
         if (!game.getFlag('ferrypool_ferried')) {
           game.say('Stairs climb from the far ledge into a grove of painted trunks — but the way is sealed until all three charges stand safe on the far bank, delivered whole. The Court counts what arrives, and it is still counting.');

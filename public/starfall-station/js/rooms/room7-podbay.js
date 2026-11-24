@@ -200,7 +200,7 @@ function podSpots(state) {
 
   if (!gone) {
     spots.push({
-      id: 'pod', x: 100, y: 300, w: 510, h: 340, label: 'The escape pod',
+      id: 'pod', plate: 'the escape pod', x: 100, y: 300, w: 510, h: 340, label: 'The escape pod',
       onInteract(game) {
         if (!scanned) {
           game.setFlag('podbay_scan1');
@@ -245,7 +245,7 @@ function podSpots(state) {
   });
 
   spots.push({
-    id: 'bulkhead', ...PB.doors, label: revealed ? 'To the uplink array' : 'Rear bulkhead',
+    id: 'bulkhead', plate: 'the rear bulkhead doors', ...PB.doors, label: revealed ? 'To the uplink array' : 'Rear bulkhead',
     onInteract(game) {
       if (!revealed) {
         game.say('MAINTENANCE ONLY. The lock reads your suit and, oddly, hesitates — like it is politely pretending not to recognize you.');
@@ -411,7 +411,7 @@ function arraySpots(state) {
   const spots = [];
 
   spots.push({
-    id: 'emitter', x: UA.emit.x - 90, y: UA.emit.y - 90, w: 180, h: 180, label: gel ? 'The emitter (mended)' : 'The emitter — cracked',
+    id: 'emitter', plate: 'the uplink emitter dish', x: UA.emit.x - 90, y: UA.emit.y - 90, w: 180, h: 180, label: gel ? 'The emitter (mended)' : 'The emitter — cracked',
     onInteract(game) {
       if (gel) { game.say('The biogel has set into the crack like green glass. Organic-derived conductive medium, the label said. There is a joke in there. You are not ready to laugh at it yet.'); return; }
       if (game.selectedItem === 'biogel') {
@@ -496,7 +496,7 @@ function arraySpots(state) {
   });
 
   spots.push({
-    id: 'rv7', x: UA.rv7.x - 75, y: UA.rv7.y - 60, w: 150, h: 110, label: 'RV-7, holding',
+    id: 'rv7', plate: 'RV-7, the point of light among the stars', x: UA.rv7.x - 75, y: UA.rv7.y - 60, w: 150, h: 110, label: 'RV-7, holding',
     onInteract(game) {
       game.say('The rescue ship holds its patient distance beyond the debris field. "WE ARE LISTENING," its beacon repeats. They knew, you realize. They have known what kind of rescue this would be since before they set out.');
     },

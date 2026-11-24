@@ -9,7 +9,7 @@
 // Tender recovers depth-mark S (8 fathoms).
 
 import { getRole, isDiver, isTender } from '../role.js';
-import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot, DOCK } from '../divekit.js';
+import { defs, backdrop, ambient, roleTag, markBeckon, lockPanel, comboLock, loreSpot, DOCK, loreArt } from '../divekit.js';
 import { dock } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'silt';
@@ -44,6 +44,7 @@ export default {
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>${defs(SLUG)}</defs>
       ${backdrop(SLUG)}
+      ${loreArt(isDiver() ? 'lore_effects' : 'lore_manifest')}
       ${roleTag()}
       ${isDiver()
         ? dock({ x: 556, y: 138, w: 488, h: 184 }, `
