@@ -350,6 +350,11 @@ export function initEngine(roomModules, { onEnd, config }) {
     if (typing) skipTyping();
     else nextMessage();
   });
+  // Touch screens have no hover to show what's clickable: tapping empty space
+  // in the scene makes every hotspot glow for a moment instead.
+  $('#hotspots').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget && matchMedia('(hover: none)').matches) revealHotspots();
+  });
   mountDevSkip();
 }
 
@@ -467,6 +472,7 @@ function enterRoom(idx, immediate = false) {
 
   renderScene(true);
   game.clearSay();
+  maybeTouchTip();
   if (currentRoom.intro && !state.flags[`room${idx}_introSeen`]) {
     state.flags[`room${idx}_introSeen`] = true;
     saveState();
@@ -504,6 +510,30 @@ function renderScene(withEntrance) {
     sceneEl.classList.add('scene-enter');
   }
   renderHotspots();
+}
+
+/** @type {number} */
+let revealHandle = 0;
+/** Make every hotspot glow briefly (touch screens: tap on empty scene space). */
+function revealHotspots() {
+  const layer = $('#hotspots');
+  layer.classList.remove('reveal');
+  void layer.offsetWidth;   // restart the glow if it's already running
+  layer.classList.add('reveal');
+  clearTimeout(revealHandle);
+  revealHandle = window.setTimeout(() => layer.classList.remove('reveal'), 1600);
+}
+
+/** Once a session, tell a touch player how to find what they can tap. */
+let touchTipDone = false;
+function maybeTouchTip() {
+  if (touchTipDone || !matchMedia('(hover: none)').matches) return;
+  touchTipDone = true;
+  try {
+    if (sessionStorage.getItem('escape-touch-tip')) return;
+    sessionStorage.setItem('escape-touch-tip', '1');
+  } catch { /* private mode: show it anyway */ }
+  window.setTimeout(() => toast('Tip: tap an empty spot in the scene to see everything you can touch.'), 2500);
 }
 
 function renderHotspots() {

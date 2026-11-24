@@ -16,6 +16,15 @@
 }
 
 #title-screen, #role-screen { background: #08090c; overflow: hidden; }
+/* Either screen can be taller than a phone: the title on a phone held
+   sideways (375px tall), the role picker's four cards held upright. Let them
+   scroll, keep the cover and scrim fixed behind, and centre the title only
+   when it fits (auto margins collapse to 0 rather than pushing its top out of
+   reach, as grid centring would). */
+#title-screen, #role-screen { overflow-x: hidden; overflow-y: auto; }
+#title-screen > #title-bg, #role-screen > #title-bg, #title-screen::after, #role-screen::after { position: fixed; }
+#title-screen { place-items: normal; justify-items: center; }
+#title-screen > .title-content { margin-block: auto; padding-block: 20px; }
 
 /* the cover (its image is set inline on #title-bg per game) */
 #title-bg {

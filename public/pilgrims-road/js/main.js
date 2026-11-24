@@ -102,7 +102,7 @@ $('#btn-how').addEventListener('click', () => {
     html: `
       <p><strong>You have one hour.</strong> At dawn they hang you. Escape through seven
       chambers of Vayne Keep by following Brother Edmund's trail of carved suns.</p>
-      <p><strong>Look at everything.</strong> Move your cursor over each scene — glowing
+      <p><strong>Look at everything.</strong> Move your cursor over each scene (on a phone, tap an empty spot) — glowing
       regions can be examined. Every puzzle is solvable from clues inside the castle.
       No outside knowledge, no guessing, no pixel-hunting.</p>
       <p><strong>Your satchel.</strong> Items appear at the bottom. Click an item to hold it,

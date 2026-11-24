@@ -113,7 +113,7 @@ $('#btn-how').addEventListener('click', () => {
     html: `
       <p><strong>You are sealed in.</strong> The entrance has collapsed and the air is thin.
       Escape through five chambers by completing the burial rites the walls describe.</p>
-      <p><strong>Look at everything.</strong> Move your cursor over each scene — glowing regions
+      <p><strong>Look at everything.</strong> Move your cursor over each scene (on a phone, tap an empty spot) — glowing regions
       can be examined. Every puzzle is solvable from what is painted, carved, or weighed inside
       this tomb. No outside knowledge, no guessing.</p>
       <p><strong>Your palette.</strong> Items appear at the bottom. Click one to hold it, then click
