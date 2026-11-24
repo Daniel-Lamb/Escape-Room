@@ -1035,6 +1035,52 @@ button { font-family: inherit; cursor: pointer; }
   .hud-btn { padding: 7px 9px; }
 }
 
+/* ============ PHONES ============
+   Gus is drawn at a fixed 74x86px, but on a phone-sized scene his reserved
+   corner (220x250 of the 1600x900 scene) is only ~50px wide. Size him as a
+   share of the scene instead, so he stays inside that corner. */
+@media (max-width: 860px) and (max-height: 900px) {
+  #gus-dock { width: min(74px, 11.5%); height: auto; aspect-ratio: 74 / 86; left: min(14px, 1%); top: min(14px, 2%); }
+}
+
+/* A phone held upright: the 16:9 room is as wide as the screen and can't grow,
+   so say where a bigger room is, in the empty space under it (not over the art). */
+@media (orientation: portrait) and (max-width: 560px) {
+  #stage { align-content: center; gap: 14px; }
+  #stage::after {
+    content: "\21BB  Turn your phone sideways for a bigger room";
+    font-size: 12.5px; letter-spacing: 0.04em; color: var(--text-dim); opacity: 0.85; text-align: center;
+  }
+}
+
+/* A phone on its side is short: the full-height bars (HUD 60, narration 74,
+   satchel 84) left the room a 208x117 strip at 812x375. Slim the HUD and set
+   the narration and the satchel side by side in one row under the scene. The
+   narration still sits below the art, never over it. */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root { --hud-h: 42px; --narr-h: 62px; }
+  #game-screen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: var(--hud-h) minmax(0, 1fr) var(--narr-h);
+    grid-template-areas: "hud hud" "stage stage" "narr inv";
+  }
+  #hud { grid-area: hud; padding: 0 12px; }
+  #stage { grid-area: stage; padding: 6px 12px; }
+  #scene-wrap {
+    max-width: calc((100vh - var(--hud-h) - var(--narr-h) - 12px) * 16 / 9);
+    max-width: calc((100dvh - var(--hud-h) - var(--narr-h) - 12px) * 16 / 9);
+  }
+  #narration-bar { grid-area: narr; height: auto; padding: 5px 8px 5px 12px; }
+  #message-card { padding: 5px 30px 5px 12px; }
+  #message-text { font-size: 14px; line-height: 1.4; }
+  #inventory { grid-area: inv; height: auto; max-width: 46vw; padding: 0 12px; gap: 10px; border-top: 1px solid rgba(201, 162, 39, 0.14); border-left: 1px solid rgba(201, 162, 39, 0.14); }
+  #inv-label { display: none; }
+  #inv-slots { gap: 8px; }
+  .inv-item { width: 46px; height: 46px; }
+  .inv-item svg { width: 30px; height: 30px; }
+}
+
 /* ============ DEV ROOM-JUMPER (inspection tool, all games) ============ */
 #dev-skip {
   position: fixed; left: 10px; bottom: 10px; z-index: 99999;
