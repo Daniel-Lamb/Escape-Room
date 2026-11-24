@@ -364,6 +364,17 @@ button { font-family: inherit; cursor: pointer; }
 }
 .hotspot.label-below::after { bottom: auto; top: calc(100% + 8px); }
 
+/* Touch screens: a small hotspot's hit area grows into the free space around
+   it; the engine works out how far on each side (shared/js/hit-area.js) and
+   never into a neighbour's. Invisible: the outline and label stay put. */
+@media (pointer: coarse) {
+  .hotspot::before {
+    content: ""; position: absolute;
+    left: calc(-1 * var(--hit-l, 0%)); right: calc(-1 * var(--hit-r, 0%));
+    top: calc(-1 * var(--hit-t, 0%)); bottom: calc(-1 * var(--hit-b, 0%));
+  }
+}
+
 /* ---- NARRATION BAR (reserved strip below the scene — NEVER covers it) ---- */
 
 #narration-bar {

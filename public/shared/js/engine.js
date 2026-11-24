@@ -7,6 +7,7 @@ import { state, saveState, resetState, getSaveKey, TOTAL_SECONDS } from './state
 import * as audio from './audio.js';
 import { getItem, getCombo } from './items.js';
 import { initGus } from './gus-core.js';
+import { touchGrowth } from './hit-area.js';
 
 /** @typedef {import('./state.js').SaveState} SaveState */
 
@@ -506,7 +507,9 @@ function renderHotspots() {
   const layer = $('#hotspots');
   layer.innerHTML = '';
   const spots = currentRoom.hotspots(state) || [];
-  for (const spot of spots) {
+  // touch screens: how far each small hotspot's hit area may grow into free space
+  const growth = touchGrowth(spots);
+  for (const [i, spot] of spots.entries()) {
     const el = document.createElement('button');
     el.className = 'hotspot';
     el.dataset.label = spot.label || '';
@@ -516,6 +519,14 @@ function renderHotspots() {
     el.style.top = `${(spot.y / 900) * 100}%`;
     el.style.width = `${(spot.w / 1600) * 100}%`;
     el.style.height = `${(spot.h / 900) * 100}%`;
+    const g = growth[i];
+    if (g.l || g.r || g.t || g.b) {
+      // .hotspot::before (touch only): left/right are % of the hotspot's width, top/bottom of its height
+      el.style.setProperty('--hit-l', `${(g.l / spot.w) * 100}%`);
+      el.style.setProperty('--hit-r', `${(g.r / spot.w) * 100}%`);
+      el.style.setProperty('--hit-t', `${(g.t / spot.h) * 100}%`);
+      el.style.setProperty('--hit-b', `${(g.b / spot.h) * 100}%`);
+    }
     if (spot.y < 120) el.classList.add('label-below');
     el.addEventListener('click', () => {
       audio.playSfx('click');

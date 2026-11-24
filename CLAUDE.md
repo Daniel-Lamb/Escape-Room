@@ -52,6 +52,9 @@ Details are in [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) under "Placement".
   tiers, that the last hint states the room's answer, and that the first hint never does.
 - `npm run walk:rooms`: from each room's solved state, it confirms the exit can always
   be taken, and that every game's collectibles pool to one full set.
+- `npm run check:touch`: on touch screens each small hotspot gets a larger invisible
+  hit area grown into the free space around it (`shared/js/hit-area.js`); this checks
+  that no grown area meets another hotspot's, enters the Gus corner, or leaves the scene.
 - `npm run docs:solutions`: regenerates [docs/SOLUTIONS.md](docs/SOLUTIONS.md) from
   the code. Never hand-edit that file.
 - Contact sheet: `/shared/dev/sheet.html?game=<game>&role=p1` on localhost shows every
