@@ -340,3 +340,28 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---- Tap targets: at least 24px everywhere a finger lands (WCAG 2.5.8) ----
+   The look doesn't change: the extra area is padding cancelled by an equal
+   negative margin, or an invisible ring around the control. */
+.nav-links a { padding: 6px 2px; margin: -6px -2px; }
+.foot-col a, .foot-bar a { display: inline-block; padding: 4px 0; margin: -4px 0; }
+.row-help-btn { position: relative; }
+.row-help-btn::before { content: ""; position: absolute; inset: -3px; border-radius: 50%; }
+/* The carousel dots sit 9px apart, too close for 24px areas that don't
+   overlap; on touch screens and narrow phones each dot becomes a 24px button
+   with the same 9px dot drawn in its middle (the row gets a little wider). */
+@media (pointer: coarse), (max-width: 560px) {
+  .billboard-dots { gap: 0; }
+  .bb-dot, .bb-dot:hover, .bb-dot.on {
+    width: 24px; height: 24px; display: grid; place-items: center;
+    border: 0; background: transparent; transform: none;
+  }
+  .bb-dot::after {
+    content: ""; width: 9px; height: 9px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.2);
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .bb-dot:hover::after { background: rgba(255, 255, 255, 0.55); }
+  .bb-dot.on::after { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
+}
