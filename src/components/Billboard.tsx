@@ -24,6 +24,15 @@ export default function Billboard() {
   const n = slides.length
   const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
+  // Only slides that are showing or one step away get an image source, so the
+  // page doesn't fetch every cover up front; the rest load as the carousel
+  // reaches them (the neighbours are always ready before they fade in).
+  const near = (i: number) => [i, (i + 1) % n, (i - 1 + n) % n]
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set(near(0)))
+  useEffect(() => {
+    setLoaded((s) => (near(idx).every((i) => s.has(i)) ? s : new Set([...s, ...near(idx)])))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx, n])
   const drag = useRef({ x: 0, active: false, moved: false })
 
   const step = (dir: number) => {
@@ -82,7 +91,9 @@ export default function Billboard() {
         <img
           key={r.id}
           className={`billboard-img${i === idx ? " is-active" : ""}`}
-          src={cover(r.art)}
+          src={loaded.has(i) ? cover(r.art) : undefined}
+          fetchPriority={i === 0 ? "high" : "auto"}
+          decoding="async"
           alt=""
           draggable={false}
           aria-hidden={i !== idx}

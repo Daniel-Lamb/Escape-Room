@@ -37,7 +37,9 @@
 .title-content, .role-content { position: relative; z-index: 2; }
 
 /* ---- title screen ---- */
-.title-content { font-family: var(--entry-sans); animation: fadeUp 0.9s var(--ease-out) both; }
+.title-content { font-family: var(--entry-sans); animation: fadeUp 0.9s var(--ease-out) both;
+  /* never wider than the screen: a long title wraps, it doesn't widen (and clip) the whole block */
+  min-width: 0; max-width: 100%; }
 .title-kicker {
   font-family: var(--entry-sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.26em;
   text-transform: uppercase; color: var(--entry-dim); margin-bottom: 18px; animation: none;
@@ -47,6 +49,11 @@
   font-size: clamp(46px, 9vw, 100px);
   background: none; -webkit-text-fill-color: var(--entry-ink); color: var(--entry-ink);
   filter: drop-shadow(0 8px 44px rgba(0, 0, 0, 0.65));
+  overflow-wrap: break-word;   /* last resort for a single word wider than the screen */
+}
+/* narrow phones: step the title down so two-word lines ("Looking Glass") still fit */
+@media (max-width: 400px) {
+  #title-screen #game-title { font-size: clamp(34px, 11.5vw, 46px); }
 }
 .title-sub {
   font-family: var(--entry-sans); font-style: normal; font-size: clamp(15px, 1.9vw, 20px);
