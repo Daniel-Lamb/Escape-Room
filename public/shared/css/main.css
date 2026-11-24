@@ -645,6 +645,10 @@ button { font-family: inherit; cursor: pointer; }
 
 .puzzle-desc { color: var(--text-dim); font-size: 15px; margin-bottom: 18px; }
 
+/* phone held upright, drawing too small to read (shared/js/phone.js adds it) */
+.puzzle-rotate-hint { margin: -8px 0 14px; text-align: center; font-size: 13px; letter-spacing: 0.02em; color: var(--gold-bright); }
+@media (orientation: landscape), (min-width: 561px) { .puzzle-rotate-hint { display: none; } }
+
 .puzzle-row { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 14px 0; }
 
 .puzzle-input {

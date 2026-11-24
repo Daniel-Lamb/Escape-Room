@@ -174,7 +174,12 @@ Controls inside the modal use the shared classes (`.dial`, `.dial-btn`, `.tile`,
 `.lever-track`, `.btn`, `.puzzle-input`) so they take the skin's `--chrome-*` metal; a
 game-specific control sets at least its own background, border and `font: inherit`.
 Text in a modal, including SVG text after the SVG is scaled to the modal, is 11px or more.
-`/shared/dev/modals.html?all=1` checks all of this for every modal of every game.
+`/shared/dev/modals.html?all=1` checks all of this for every modal of every game; add
+`&w=375&h=812` (a phone held upright) or `&w=812&h=375` (on its side) to check them as a phone
+shows them, which also requires every tappable thing to be at least 24px. Rows of controls
+must fit a ~300px-wide modal body (let text wrap; never let buttons shrink). A wide drawing
+whose labels drop under 11px on a phone held upright gets a "turn your phone sideways" line
+automatically (`shared/js/phone.js`); it must pass when the phone is on its side.
 
 ## Hotspot rules
 

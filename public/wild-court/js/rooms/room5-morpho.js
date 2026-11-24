@@ -417,7 +417,8 @@ function openMosaicPuzzle(game) {
           const inner = filled
             ? `<g transform="translate(${x - 17},${y - 17})">${tessera(filled, 34, false)}</g>`
             : `<circle cx="${x}" cy="${y}" r="15" fill="#101a12" stroke="#5aa552" stroke-width="2" stroke-dasharray="3 3"/>`;
-          return `<g data-sock="${k}" style="cursor:pointer">${inner}
+          // an invisible r=27 hit circle under the socket: ~25px to tap even on a phone held upright
+          return `<g data-sock="${k}" style="cursor:pointer"><circle cx="${x}" cy="${y + 4}" r="27" fill="transparent"/>${inner}
             <text x="${x}" y="${y + 31}" text-anchor="middle" font-size="12" fill="#9fb37e"
               font-family="Palatino Linotype, Georgia, serif">${SOCKET_LABEL[k].split(' · ')[1]}</text></g>`;
         };

@@ -130,3 +130,27 @@
   --chrome-ink: #f0e6c8;
   --chrome-screw: #24160a;
 }
+
+/* Totem of Teeth puzzle: one row per drum. The arrows never shrink; on a
+   phone the gaps tighten, the glyph shrinks and the name wraps instead of
+   pushing the row past the modal. */
+.totem-row {
+  display: flex; align-items: center; gap: 14px; margin: 10px auto; max-width: 500px; padding: 8px 14px;
+  border-radius: 12px; border: 1px solid rgba(107, 79, 55, 0.8); background: rgba(74, 54, 38, 0.35);
+}
+.totem-row.is-lashed { border-color: #5aa552; background: rgba(34, 58, 38, 0.55); }
+.totem-num { width: 32px; flex: 0 0 auto; text-align: center; font-family: 'Palatino Linotype', Georgia, serif; opacity: 0.8; }
+.totem-row .dial-btn { flex: 0 0 auto; }
+.totem-face { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; justify-content: center; }
+.totem-face svg { width: 52px; height: 52px; flex: 0 0 auto; }
+.totem-text { text-align: left; min-width: 160px; }
+.totem-name { letter-spacing: 0.1em; font-weight: 700; }
+.totem-kenning { font-size: 12px; opacity: 0.7; font-style: italic; }
+@media (max-width: 560px) {
+  .totem-row { gap: 8px; padding: 8px 10px; }
+  .totem-num { width: 18px; }
+  .totem-face { gap: 8px; justify-content: flex-start; }
+  .totem-face svg { width: 38px; height: 38px; }
+  .totem-text { min-width: 0; }
+  .totem-name { letter-spacing: 0.04em; overflow-wrap: anywhere; }
+}

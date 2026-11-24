@@ -8,6 +8,7 @@ import * as audio from './audio.js';
 import { getItem, getCombo } from './items.js';
 import { initGus } from './gus-core.js';
 import { touchGrowth } from './hit-area.js';
+import { noteSmallDrawing } from './phone.js';
 
 /** @typedef {import('./state.js').SaveState} SaveState */
 
@@ -266,6 +267,8 @@ export const game = {
       },
     };
     def.render(modal.body, api);
+    // phone held upright: if the puzzle's drawing is too small to read, say to turn it
+    requestAnimationFrame(() => noteSmallDrawing(modal.body));
     return modal;
   },
 

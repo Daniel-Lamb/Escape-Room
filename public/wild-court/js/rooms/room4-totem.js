@@ -587,19 +587,18 @@ function openTotemPuzzle(game) {
         const c = CREATURES[faceIdx];
         const lashed = i === 2 && !cut;
         const btnAttrs = lashed ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : '';
+        // layout lives in skin.css (.totem-row), so a phone can tighten it
         return `
-        <div style="display:flex; align-items:center; gap:14px; margin:10px auto; max-width:500px; padding:8px 14px;
-          border-radius:12px; border:1px solid ${lashed ? '#5aa552' : 'rgba(107,79,55,0.8)'};
-          background:${lashed ? 'rgba(34,58,38,0.55)' : 'rgba(74,54,38,0.35)'};">
-          <div style="width:32px; text-align:center; font-family:'Palatino Linotype', Georgia, serif; opacity:0.8;">${ROMAN[i]}</div>
+        <div class="totem-row${lashed ? ' is-lashed' : ''}">
+          <div class="totem-num">${ROMAN[i]}</div>
           <button class="dial-btn" data-row="${i}" data-d="-1" ${btnAttrs}>&#9664;</button>
-          <div style="flex:1; display:flex; align-items:center; gap:12px; justify-content:center;">
-            <svg viewBox="0 0 72 72" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
+          <div class="totem-face">
+            <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
               <g opacity="${lashed ? 0.5 : 1}">${creatureGlyph(c.key)}</g>${lashed ? vineOverlay : ''}
             </svg>
-            <div style="text-align:left; min-width:160px;">
-              <div style="letter-spacing:0.1em; font-weight:700;">${c.name}</div>
-              <div style="font-size:12px; opacity:0.7; font-style:italic;">${c.kenning}${lashed ? ' — lashed fast in strangler vine' : ''}</div>
+            <div class="totem-text">
+              <div class="totem-name">${c.name}</div>
+              <div class="totem-kenning">${c.kenning}${lashed ? ' — lashed fast in strangler vine' : ''}</div>
             </div>
           </div>
           <button class="dial-btn" data-row="${i}" data-d="1" ${btnAttrs}>&#9654;</button>

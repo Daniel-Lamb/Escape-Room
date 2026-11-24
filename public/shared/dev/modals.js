@@ -4,6 +4,7 @@
 //
 //   shared/dev/modals.html?game=the-vault&role=p2
 //   shared/dev/modals.html?all=1     every game and role, one summary table
+//   shared/dev/modals.html?all=1&w=375&h=812   …as a phone shows them (adds a 24px tap-size check)
 //
 // To find the modals it clicks every hotspot of every room in every state the
 // room declares (fresh + lintStates), with nothing held and then with each held
@@ -19,6 +20,7 @@
 const params = new URLSearchParams(location.search);
 const LOCAL = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) || location.hostname.endsWith('.localhost');
 const HERE = new URL('./', import.meta.url);
+import { noteSmallDrawing } from '../js/phone.js';
 
 const GAMES = ['pilgrims-road', 'starfall-station', 'wild-court', 'gate-of-life', 'tomb-of-the-scarab',
   'signal-towers', 'looking-glass', 'silent-alarm', 'deep-six', 'the-vault', 'trial-by-jury'];
@@ -118,6 +120,7 @@ function renderModal(cellParent, room, { def, where }) {
   };
   let error = null;
   try { def.render(body, api); } catch (e) { error = e.message; }
+  try { noteSmallDrawing(body); } catch { /* render failed */ }   // as the engine does on a phone held upright
   return { cell, card, body, error, room: room.id, id: def.id || def.title, where };
 }
 
@@ -171,10 +174,27 @@ async function check(m) {
     const r = el.getBoundingClientRect();
     return r.width > 0 && px(el) < 11;
   });
-  if (tiny) fails.push(`text under 11px: "${tiny.textContent.trim().slice(0, 20)}" (${px(tiny).toFixed(1)}px)`);
+  // a drawing too small to read on a phone held upright carries the turn-sideways line: counted, not failed
+  const hinted = !!tiny && !!m.body.querySelector('.puzzle-rotate-hint') && getComputedStyle(m.body.querySelector('.puzzle-rotate-hint')).display !== 'none';
+  if (tiny && !hinted) fails.push(`text under 11px: "${tiny.textContent.trim().slice(0, 20)}" (${px(tiny).toFixed(1)}px)`);
+  // on a phone, everything tappable is at least 24px (WCAG 2.5.8): buttons and
+  // inputs, and clickable parts of a drawing (the outermost element with a hand cursor)
+  if (innerWidth <= 900) {
+    const tappable = [...m.body.querySelectorAll('*')].filter(el => {
+      if (el.matches('button, input, select, textarea')) return true;
+      return getComputedStyle(el).cursor === 'pointer' && getComputedStyle(el.parentElement).cursor !== 'pointer';
+    });
+    const small = tappable.filter(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && Math.min(r.width, r.height) < 24; });
+    if (small.length) {
+      const r = small[0].getBoundingClientRect();
+      const name = (small[0].getAttribute('aria-label') || small[0].textContent || small[0].tagName).trim().replace(/\s+/g, ' ').slice(0, 16);
+      fails.push(`${small.length} tap target${small.length > 1 ? 's' : ''} under 24px, e.g. "${name}" (${Math.round(r.width)}x${Math.round(r.height)})`);
+    }
+  }
   if (fails.length) m.cell.classList.add('fail');
   m.cell.querySelector('.tag').insertAdjacentHTML('beforeend', fails.length ? `<br>✗ ${fails.join('<br>✗ ')}` : ' ✓');
-  return { ...m, fails, controls, styled, hero: !!hero };
+  if (hinted) m.cell.querySelector('.tag').insertAdjacentHTML('beforeend', ' · turn-sideways line shown');
+  return { ...m, fails, controls, styled, hero: !!hero, hinted };
 }
 
 // --------------------------------------------------------------------- page
@@ -222,7 +242,7 @@ async function runGame() {
   const summary = {
     game, role, puzzles: results.length, heroes: results.filter(r => r.hero).length,
     controls: results.reduce((a, r) => a + r.controls, 0), styled: results.reduce((a, r) => a + r.styled, 0),
-    failing: bad.length, roomsWithout: silent,
+    failing: bad.length, roomsWithout: silent, hinted: results.filter(r => r.hinted).map(r => `${r.room}/${r.id}`),
     fails: bad.map(r => `${r.room}/${r.id}: ${r.fails.join('; ')}`),
   };
   report.className = bad.length ? 'bad' : '';
@@ -246,6 +266,8 @@ async function runAll() {
       setTimeout(() => res({ game: g, role: r, puzzles: 0, heroes: 0, controls: 0, styled: 0, failing: 1, roomsWithout: [], fails: ['timed out'] }), 30000);
     });
     f.src = `modals.html?game=${g}${r ? `&role=${r}` : ''}`;
+    // &w=375&h=812 checks every modal as a phone shows it
+    if (params.get('w')) Object.assign(f.style, { width: `${+params.get('w')}px`, height: `${+params.get('h') || 812}px` });
     document.body.appendChild(f);
     const s = await got;
     f.remove();
@@ -256,10 +278,12 @@ async function runAll() {
       + `<td${cls(s.failing)}>${s.failing}</td><td>${s.roomsWithout.join(', ')}</td></tr>`);
   }
   const t = all.reduce((a, s) => ({ p: a.p + s.puzzles, h: a.h + s.heroes, c: a.c + s.controls, s: a.s + s.styled, f: a.f + s.failing }), { p: 0, h: 0, c: 0, s: 0, f: 0 });
+  const hinted = [...new Set(all.flatMap(s => (s.hinted || []).map(x => `${s.game} ${x}`)))];
   const rep = document.getElementById('report');
   rep.className = t.f ? 'bad' : '';
   rep.textContent = `${all.length} game/role views: ${t.p} puzzle modals · ${t.h}/${t.p} header bands load · ${t.s}/${t.c} controls styled · ${t.f} failing`
-    + (t.f ? `\n\n${all.flatMap(s => s.fails.map(x => `${s.game}${s.role ? ` ${s.role}` : ''} ${x}`)).join('\n')}` : '');
+    + (t.f ? `\n\n${all.flatMap(s => s.fails.map(x => `${s.game}${s.role ? ` ${s.role}` : ''} ${x}`)).join('\n')}` : '')
+    + (hinted.length ? `\n\nToo small to read held upright; shows the turn-sideways line (${hinted.length}):\n${hinted.join('\n')}` : '');
   window.__modalSummaryAll = all;
 }
 
