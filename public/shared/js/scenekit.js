@@ -341,3 +341,18 @@ export function dock(from, inner, opts = {}) {
   const ty = D.y + top + (D.h - top - pad - from.h * k) / 2 - from.y * k;
   return kit({ ...D, kind: opts.kind || 'tablet', title: opts.title || '', body: `<g transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${k.toFixed(3)})">${inner}</g>` });
 }
+
+/**
+ * A puzzle-modal header cut from the room's own plate: the standard
+ * .puzzle-hero band, zoomed in and centred on the scene point the puzzle is
+ * about (the door, the scales, the dial), so a game without dedicated puzzle
+ * art still opens each modal on the thing being worked.
+ * @param {string} src   the plate image (as the page resolves it)
+ * @param {{x:number, y:number}} [at]  scene coordinates (1600×900) to centre on
+ * @param {number} [zoom]  how much wider than the band the plate is drawn
+ */
+export function plateHero(src, at = { x: 800, y: 450 }, zoom = 1.7) {
+  const px = Math.min(100, Math.max(0, at.x / 16)).toFixed(1);
+  const py = Math.min(100, Math.max(0, at.y / 9)).toFixed(1);
+  return `<div class="puzzle-hero" style="background-image:url(${src}); background-size:${Math.round(zoom * 100)}% auto; background-position:${px}% ${py}%"></div>`;
+}

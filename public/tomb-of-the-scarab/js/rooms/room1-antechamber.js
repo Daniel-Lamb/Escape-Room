@@ -6,7 +6,7 @@
 // three figures striding ahead of the guide are heralds, not the dead's company.)
 // Reward: the first amulet (scarab sign, N, 2 beads).
 
-import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
+import { kitDefs, panel, shadow, plateHero } from '../../../shared/js/scenekit.js';
 
 function doorOpen(state) { return !!state.flags.ante_doorOpen; }
 
@@ -179,6 +179,7 @@ function openDoor(game) {
     title: 'The Sealed Door',
     render(body, api) {
       body.innerHTML = `
+        ${plateHero('art/antechamber.webp', { x: DOOR.x + DOOR.w / 2, y: DOOR.y + DOOR.h / 2 })}
         <p class="puzzle-desc">Three glyph-rings, each numbered 0 through 9.
         <em>"Number those who walk behind the jackal — the scarabs, then the blossoms, then the ibis."</em></p>
         <div class="puzzle-row" id="ante-dials"></div>

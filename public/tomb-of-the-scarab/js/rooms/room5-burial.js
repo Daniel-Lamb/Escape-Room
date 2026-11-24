@@ -5,7 +5,7 @@
 // hollows and the letters read A-N-K-H. (The bead counts, 1-2-3-4, agree: the
 // hollows are also cut smallest to largest.) Speak ANKH and come forth by day.
 
-import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
+import { kitDefs, panel, shadow, plateHero } from '../../../shared/js/scenekit.js';
 
 const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const WORD = 'ANKH';
@@ -116,6 +116,7 @@ function openDoor(game) {
     title: 'The False Door',
     render(body, api) {
       body.innerHTML = `
+        ${plateHero('art/burial.webp', { x: FD.x + FD.w / 2, y: FD.y + FD.h / 2 })}
         <p class="puzzle-desc">Four hollows, each carved with a sign, and beneath each a brass letter-ring. <em>"Let each charm lie in the hollow that bears its sign, and read."</em>
         ${amulets.length < 4
           ? `<br><strong style="color:var(--danger);">Your palette holds only ${amulets.length} of the four amulets.</strong> Each chamber kept one.`

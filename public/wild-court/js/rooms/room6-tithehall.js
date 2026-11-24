@@ -59,7 +59,7 @@ export default {
     const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'], n = SEQ.length, k = Math.ceil(n / 3);
     return [`${words[k]} against ${words[k]}`, `${words[1]} against ${words[1]}`];
   },
-  lintStates: [{ label: 'solved', flags: { tithehall_solved: true, tithehall_compassTaken: true }, inventory: ['vance_compass', 'hollow_pod'] }],
+  lintStates: [{ label: 'scale strung', flags: { tithehall_scaleStrung: true } }, { label: 'solved', flags: { tithehall_scaleStrung: true, tithehall_solved: true, tithehall_compassTaken: true }, inventory: ['vance_compass', 'hollow_pod'] }],
   title: 'The Tithe Hall',
   intro: 'The great wing folds shut behind you on a long hall of green-black stone: an offering table set with eight golden cacao pods, and a bronze scale taller than you holding out one pan like an open palm — the other dangles from a snapped cord — while Gus paces the plinth already talking: "The Scale of Truth, counsel. Mind your questions. It only answers two."',
 

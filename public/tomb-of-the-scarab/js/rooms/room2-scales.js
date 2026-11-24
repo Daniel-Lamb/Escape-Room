@@ -6,7 +6,7 @@
 // leaves a cup empty.)
 // Reward: amulet (feather sign, H, 4 beads).
 
-import { kitDefs, panel, shadow, pedestal } from '../../../shared/js/scenekit.js';
+import { kitDefs, panel, shadow, pedestal, plateHero } from '../../../shared/js/scenekit.js';
 
 const HEART = 13;
 const STONES = [1, 2, 4, 7, 9];
@@ -158,6 +158,7 @@ function openScale(game) {
     title: 'The Weighing of the Heart',
     render(body, api) {
       body.innerHTML = `
+        ${plateHero('art/scales.webp', { x: SCALE.cx, y: (SCALE.beamY + SCALE.topY) / 2 })}
         <p class="puzzle-desc">The stone heart weighs <strong>${HEART} deben</strong>. The feather's pan has
         <strong>${CUPS} cups</strong> — set one stone in each, so the three together are the heart's equal.</p>
         <div class="puzzle-row" id="sc-stones"></div>

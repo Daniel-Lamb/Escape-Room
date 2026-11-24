@@ -129,13 +129,15 @@ order they spell is checked end to end by `npm run walk:rooms`.
 
 **6. The Tithe Hall**
 
-- The snapped cord wants cordage. You have carried some since the pool. → **The vine cord, on the broken pan.**
+- (1) The snapped cord wants cordage. You have carried some since the pool. → **The vine cord, on the broken pan.**
+- (2) Three against three: balance means the lie waits in the two you held back; a tilt means it hides on the LIGHTER side. Then one against one. → **Three against three, then one against one of the lighter group — and if those two balance, it is the third. The Scale never needs a third answer.**
 - Collectible: **A**
 
 **7. The Verdict Roots**
 
 - (1) Everything strange you journaled — the compass, the bird with your voice, 1911 — was one fact wearing many masks. → **You were summoned. The trials were testimony. Touch the Speaking Stone and hear the verdict.**
-- (2) Spread your survey on the Stone. Wax and ochre knead into a seal — and a dead man's compass makes a fine straightedge. → **Map on the Stone; combine beeswax and ochre if you haven't; paste on the map; then walk out.**
+- (2) As the totem eats: sky, shadow-cat, coil, singer, dancer. And the advocate insists on the last word. → **C-A-N-O-P-Y. Canopy.**
+- (3) Spread your survey on the Stone. Wax and ochre knead into a seal — and a dead man's compass makes a fine straightedge. → **Map on the Stone; combine beeswax and ochre if you haven't; paste on the map; then walk out.**
 
 **Collectibles pooled across the game** (unnumbered): N, P, O, Y, C, A — the finale's entry above says how they are read.
 

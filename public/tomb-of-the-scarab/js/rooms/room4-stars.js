@@ -6,7 +6,7 @@
 // mark (rotation 3). Bringing the decoy bright star up (rotation 6) fails.
 // Reward: amulet (star sign, K, 3 beads).
 
-import { kitDefs, panel, shadow, wallDoor } from '../../../shared/js/scenekit.js';
+import { kitDefs, panel, shadow, wallDoor, plateHero } from '../../../shared/js/scenekit.js';
 
 const SAH = 2;      // slot of Sah's three-star belt
 const BRIGHT = 3;   // slot of Sopdet (rises right after Sah)
@@ -145,6 +145,7 @@ function openDial(game) {
     title: 'The Star-Dial',
     render(body, api) {
       body.innerHTML = `
+        ${plateHero('art/stars.webp', { x: DIAL.cx, y: DIAL.cy })}
         <p class="puzzle-desc">Turn the heavens until <em>Sopdet</em> stands beneath the eastern mark. <em>"Sopdet rises after Sah, the three who walk together."</em></p>
         <div class="puzzle-row"><div id="st-dial"></div></div>
         <div class="puzzle-row">

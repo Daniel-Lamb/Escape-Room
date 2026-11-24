@@ -6,7 +6,7 @@
 // truth (whose scale you balanced one hall back). Read naively it is "TAAM".
 // Reward: amulet (ibis sign, A, 1 bead).
 
-import { kitDefs, panel, shadow } from '../../../shared/js/scenekit.js';
+import { kitDefs, panel, shadow, plateHero } from '../../../shared/js/scenekit.js';
 
 const ANSWER = 'MAAT';
 
@@ -155,6 +155,7 @@ function openCabinet(game) {
     title: 'The Cartouche Cabinet',
     render(body, api) {
       body.innerHTML = `
+        ${plateHero('art/scribe.webp', { x: CAB.x + CAB.w / 2, y: CAB.y + CAB.h / 2 })}
         <p class="puzzle-desc">Four signs ringed in a cartouche, carved left to right as you see them. Read them with the scribe's key — and his first lesson — and speak the name.</p>
         <div class="puzzle-row" style="gap:6px;">
           <svg viewBox="0 0 300 70" width="300" height="70" xmlns="http://www.w3.org/2000/svg">

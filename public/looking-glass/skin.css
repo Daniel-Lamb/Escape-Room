@@ -136,3 +136,14 @@
 #gus-dock::after { color: #cfd4e2; border-color: rgba(201,204,214,0.45); }
 .gus-portrait { filter: drop-shadow(0 0 18px rgba(201,204,214,0.3)); }
 .gus-tier.next { border-color: rgba(201,204,214,0.4); }
+
+/* puzzle-modal chrome: the dials, levers and tiles are silver here */
+:root {
+  --chrome-hi: #f2f4f8;
+  --chrome-mid: #aab1bd;
+  --chrome-lo: #555c69;
+  --chrome-face-hi: #232634;
+  --chrome-face-lo: #0c0d14;
+  --chrome-ink: #eef1f6;
+  --chrome-screw: #2a2e38;
+}

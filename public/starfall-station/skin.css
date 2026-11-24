@@ -177,3 +177,14 @@
 .gus-portrait { filter: drop-shadow(0 0 18px rgba(79, 216, 208, 0.35)); }
 .gus-speech { color: #bfe8e4; }
 .gus-tier.next { border-color: rgba(79, 216, 208, 0.4); }
+
+/* puzzle-modal chrome: the dials, levers and tiles are steel here */
+:root {
+  --chrome-hi: #e3ebf3;
+  --chrome-mid: #8a97a8;
+  --chrome-lo: #323b48;
+  --chrome-face-hi: #1b2633;
+  --chrome-face-lo: #080c12;
+  --chrome-ink: #cfeaf5;
+  --chrome-screw: #1c232c;
+}

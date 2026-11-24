@@ -6,7 +6,7 @@
 // optional tumbler-chip to pocket, and a thing to examine.
 
 import { getRole, roleName, nextName, ROLES, NEXT, PREV } from './role.js';
-import { kitDefs, dock, DOCK, panel, shadow } from '../../shared/js/scenekit.js';
+import { kitDefs, dock, DOCK, panel, shadow, plateHero } from '../../shared/js/scenekit.js';
 
 /* ---------- split knowledge: serial plate (yours) x rule (a crewmate's) ----------
  * No lock code is ever shown whole. Each station has a serial stamped on its
@@ -76,7 +76,7 @@ export function roleTag() {
 /**
  * A K-slot combination lock (digits 0-9 or letters A-Z). Your slot values must
  * match the code your crewmate reads off their screen.
- * opts: { id, title, desc, slots:[{type:'digit'|'letter', label?}], target,
+ * opts: { id, title, desc, hero? (a plateHero() header), slots:[{type:'digit'|'letter', label?}], target,
  *         goLabel?, solvedMsg, failMsg?, onSolve?(game) }
  */
 export function comboLock(game, opts) {
@@ -91,6 +91,7 @@ export function comboLock(game, opts) {
     title: opts.title,
     render(body, api) {
       body.innerHTML = `
+        ${opts.hero || ''}
         <p class="puzzle-desc">${opts.desc}</p>
         <div class="puzzle-row" id="cl-dials"></div>
         <div class="puzzle-row"><button class="btn btn-primary" id="cl-go">${opts.goLabel || 'Set It'}</button></div>
@@ -291,6 +292,7 @@ export function buildRoom(cfg) {
             const holder = roleName(PREV[role]);
             comboLock(game, {
               id: `${slug}_lock`,
+              hero: plateHero(art(`${slug}.webp`), { x: 800, y: 470 }, 1.25),
               title: cfg.lockLabel,
               desc: `Three dials, 0&ndash;9. Your serial plate reads <strong>${serialOf(role).split('').join(' ')}</strong> &mdash; but the code is that serial worked by a rule, and the rule is on <strong>${holder}</strong>'s screen. Ask them.`,
               slots: [{ type: 'digit' }, { type: 'digit' }, { type: 'digit' }],

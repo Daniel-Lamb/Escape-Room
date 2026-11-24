@@ -437,7 +437,7 @@ export default {
     });
 
     spots.push({
-      id: 'dais', x: 850, y: 706, w: 280, h: 110, label: 'The moonlit dais',
+      id: 'dais', x: 850, y: 676, w: 280, h: 140, label: 'The moonlit dais',
       onInteract(game) {
         const html = `<div class="leaf-tablet carved"><div class="leaf-title">The Dais Line</div>
           <em>"The Court reads from the sky downward — each face takes the meal directly beneath it,
@@ -481,7 +481,7 @@ export default {
 
     if (!state.flags.totem_vinesCut) {
       spots.push({
-        id: 'vines', x: 575, y: 370, w: 310, h: 120, label: 'Strangler vines — drum III',
+        id: 'vines', x: 605, y: 370, w: 250, h: 120, label: 'Strangler vines — drum III',
         onInteract(game) {
           if (game.selectedItem === 'machete') {
             game.setFlag('totem_vinesCut');

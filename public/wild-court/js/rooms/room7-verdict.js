@@ -86,7 +86,7 @@ let walkingOut = false;   // session-local guard: completeRoom fires exactly onc
 
 export default {
   id: 'verdict',
-  lintStates: [{ label: 'rite done', flags: { verdict_revealed: true, verdict_podPlaced: true, verdict_wordSpoken: true, verdict_mapSealed: true } }],
+  lintStates: [{ label: 'the word', flags: { verdict_revealed: true, verdict_podPlaced: true } }, { label: 'rite done', flags: { verdict_revealed: true, verdict_podPlaced: true, verdict_wordSpoken: true, verdict_mapSealed: true } }],
   title: 'The Verdict Roots',
   intro: 'The last passage does not open into another chamber — it opens into a courtroom: a root amphitheater beneath the open night canopy, tiers banked with ten thousand fireflies sitting still as a sworn jury, six pairs of eyes catching the green moonlight from bough and coil and leaf, vast root-doors sealed at the far end, and at the center, waiting with the patience of something that has waited since 1911, a single carved stone.',
 

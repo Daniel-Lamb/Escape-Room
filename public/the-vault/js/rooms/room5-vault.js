@@ -7,6 +7,7 @@
 
 import { getRole, roleName } from '../role.js';
 import { defs, backdrop, roleTag, comboLock, art } from '../crewkit.js';
+import { plateHero } from '../../../shared/js/scenekit.js';
 
 const SLUG = 'vault';
 const COMBO = '413796';
@@ -57,6 +58,7 @@ export default {
       onInteract(game) {
         comboLock(game, {
           id: 'vault_lock',
+          hero: plateHero(art('vault.webp'), { x: 800, y: 430 }, 1.4),
           title: 'The Master Time-Lock',
           desc: 'Six dials, 0&ndash;9. No one of you has the whole code &mdash; it is stamped across the six brass tumbler-chips. The engraving says how they fall: <em>the odd tumblers first, low to high &mdash; then the even.</em>',
           slots: [

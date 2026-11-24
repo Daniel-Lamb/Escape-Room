@@ -159,6 +159,12 @@ the player can believe holds it.
   inside (Signal Towers), draw the interior shell over it, with the plate visible only
   through a window (`interior()` in `signal-towers/js/scenekit.js`).
 
+## Puzzle-modal header
+
+Every puzzle modal opens on a `.puzzle-hero` band. Use the game's dedicated `art/pz-*.webp`
+when it has one; otherwise cut it from the room's plate with
+`plateHero('art/<room>.webp', { x, y }, zoom)` (scene coordinates of the thing being worked).
+
 ## Hotspot rules
 
 - **Later hotspots stack on top** (the engine appends them in order). Push a

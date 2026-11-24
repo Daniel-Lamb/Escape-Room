@@ -135,3 +135,14 @@
 #gus-dock::after { color: var(--parchment); border-color: rgba(230,209,106,0.45); }
 .gus-portrait { filter: drop-shadow(0 0 18px rgba(230,209,106,0.3)); }
 .gus-tier.next { border-color: rgba(230,209,106,0.4); }
+
+/* puzzle-modal chrome: the dials, levers and tiles are carved wood here */
+:root {
+  --chrome-hi: #d8ad74;
+  --chrome-mid: #8a5c30;
+  --chrome-lo: #3b2412;
+  --chrome-face-hi: #2a1c10;
+  --chrome-face-lo: #100a05;
+  --chrome-ink: #f3e6cc;
+  --chrome-screw: #24160a;
+}

@@ -126,22 +126,29 @@ plate and mounted through `shared/js/scenekit.js`, relays are docked, and
 `npm run lint:rooms` and `npm run walk:rooms` are clean for every role.
 
 Gus is drawn from `form.art` (a photoreal cut-out) when a game has one, else from its
-`form.portrait()` SVG (`shared/js/gus-core.js`); both are complete forms. Puzzle-modal hero
-art is optional chrome over the procedural modal UI.
+`form.portrait()` SVG (`shared/js/gus-core.js`); both are complete forms. Every puzzle modal
+opens on a header band: dedicated `pz-*` art, or — where a game has none — a crop of the
+room's own plate centred on the puzzle's object (`plateHero()` in `shared/js/scenekit.js`).
+Counts are puzzle modals with a header / puzzle modals. The controls inside every modal
+(R4) are drawn as physical fittings in `shared/css/main.css`: dials are drum windows in a
+bezel on a screwed plate with embossed buttons, levers are ball handles riding a slotted
+plate, tiles are bevelled plaques. Each skin sets the metal through `--chrome-*`
+variables: brass by default, steel (Starfall, Silent Alarm, The Vault), silver (Looking
+Glass), carved wood (Wild Court, Trial by Jury). So every game's controls are ✅ too.
 
-| Game | Rooms | Background plates (WebP + looping MP4) | Layout pass | Puzzle-modal hero art | Gus portrait |
+| Game | Rooms | Background plates (WebP + looping MP4) | Layout pass | Puzzle-modal chrome (header / controls) | Gus portrait |
 |---|---|---|---|---|---|
-| Pilgrim's Road | 7 | ✅ (+ tunnel) | ✅ | 6 | ✅ |
-| Starfall Station | 7 | ✅ | ✅ | 7 | ✅ |
-| Wild Court | 7 | ✅ | ✅ | 6 | ✅ |
-| Gate of Life | 7 | ✅ | ✅ | 7 | ✅ |
-| Tomb of the Scarab | 5 | ✅ | ✅ | none (puzzles use the procedural modal UI) | ✅ SVG portrait (heart-scarab) |
-| Signal Towers | 7 | ✅ exterior storm plates, seen through drawn tower interiors | ✅ | 7 | ✅ |
-| Looking Glass | 7 | ✅ | ✅ | 6 | ✅ |
-| Silent Alarm | 7 | ✅ | ✅ | 7 | ✅ |
-| Deep Six | 7 | ✅ | ✅ | 2 | ✅ |
-| The Vault | 5 | ✅ (stills) | ✅ | none (puzzles use the procedural modal UI) | ✅ SVG portrait (ferret) |
-| Trial by Jury | 5 | ✅ (stills) | ✅ | 2 | ✅ SVG portrait (tamarin) |
+| Pilgrim's Road | 7 | ✅ (+ tunnel) | ✅ | ✅ 6/6 | ✅ |
+| Starfall Station | 7 | ✅ | ✅ | ✅ 9/9 | ✅ |
+| Wild Court | 7 | ✅ | ✅ | ✅ 6/6 | ✅ |
+| Gate of Life | 7 | ✅ | ✅ | ✅ 7/7 | ✅ |
+| Tomb of the Scarab | 5 | ✅ | ✅ | ✅ 5/5, cut from each room's plate (`plateHero`) | ✅ SVG portrait (heart-scarab) |
+| Signal Towers | 7 | ✅ exterior storm plates, seen through drawn tower interiors | ✅ | ✅ 7/7 | ✅ |
+| Looking Glass | 7 | ✅ | ✅ | ✅ 6/6 | ✅ |
+| Silent Alarm | 7 | ✅ | ✅ | ✅ 7/7 | ✅ |
+| Deep Six | 7 | ✅ | ✅ | ✅ 2/2 (shared lock + telegraph) | ✅ |
+| The Vault | 5 | ✅ (stills) | ✅ | ✅ every lock, cut from its room's plate (`plateHero`) | ✅ SVG portrait (ferret) |
+| Trial by Jury | 5 | ✅ (stills) | ✅ | ✅ 2/2 (shared lock + verdict) | ✅ SVG portrait (tamarin) |
 
 ## Asset pipeline (mechanics)
 
