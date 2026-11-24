@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- This page loads its own files by relative path (skin.css, js/main.js, art/),
+       so it must be read as a folder: "/wild-court" -> "/wild-court/". Pages adds
+       the slash itself; other hosts may not. -->
+  <script>if (!/\/$|\.\w+$/.test(location.pathname)) location.replace(location.pathname + '/' + location.search + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Silent Alarm — A Two-Screen Heist</title>
   <meta name="description" content="A two-player co-op heist in your browser. One of you is inside the museum with your hands on the locks; the other is in the van with the schematics — and every code you need is on your partner's screen." />

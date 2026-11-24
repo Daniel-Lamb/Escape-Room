@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- This page loads its own files by relative path (skin.css, js/main.js, art/),
+       so it must be read as a folder: "/wild-court" -> "/wild-court/". Pages adds
+       the slash itself; other hosts may not. -->
+  <script>if (!/\/$|\.\w+$/.test(location.pathname)) location.replace(location.pathname + '/' + location.search + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twin Signal Towers — A Two-Keeper Escape</title>
   <meta name="description" content="A two-player co-op escape room in your browser. Two keepers, two lighthouses, one sinking ship — and every lock's answer is on the other keeper's screen." />

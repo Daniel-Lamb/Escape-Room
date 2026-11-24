@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- This page loads its own files by relative path (skin.css, js/main.js, art/),
+       so it must be read as a folder: "/wild-court" -> "/wild-court/". Pages adds
+       the slash itself; other hosts may not. -->
+  <script>if (!/\/$|\.\w+$/.test(location.pathname)) location.replace(location.pathname + '/' + location.search + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Pilgrim's Road — Escape Vayne Keep</title>
   <meta name="description" content="An hour-long medieval castle escape room in your browser. Seven chambers, one hour until dawn, and a ghostly knight named Gus to help you." />
