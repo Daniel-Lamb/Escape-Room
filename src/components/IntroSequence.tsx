@@ -22,6 +22,12 @@ const coverModules = import.meta.glob("../covers/*.webp", {
 const cover = (art: string): string | undefined =>
   coverModules[`../covers/${art}.webp`];
 
+// "Eleven doors." — the count follows the live rooms, so a new room can't
+// leave the tagline behind.
+const NUMBER_WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+  "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
+const doorCount = (n: number): string => `${NUMBER_WORDS[n] ?? n} door${n === 1 ? "" : "s"}`;
+
 const SEEN_KEY = "escape-intro-seen"; // once per browser session
 const HOLD_MS = 6800; // auto fly-through if the player just watches
 const EXIT_MS = 850; // must match the .intro-overlay transition
@@ -130,7 +136,7 @@ export default function IntroSequence() {
             <h1 className="intro-word">ESCAPE&nbsp;ROOMS</h1>
           </div>
           <div className="intro-bottom">
-            <p className="intro-sub">Ten doors. One hour each. Choose yours.</p>
+            <p className="intro-sub">{doorCount(liveRooms.length)}. One hour each. Choose yours.</p>
             <div className="intro-actions">
               <button ref={enterRef} className="intro-enter" onClick={flyThrough}>
                 &#9654;&nbsp; Enter
