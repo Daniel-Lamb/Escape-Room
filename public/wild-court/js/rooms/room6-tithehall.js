@@ -421,7 +421,7 @@ function openScaleRite(game) {
           #th-pods { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
           .th-tile { width: 66px; padding: 8px 4px; text-align: center; cursor: pointer; user-select: none; }
           .th-tally { font-size: 20px; font-weight: 700; font-family: "Palatino Linotype", Georgia, serif; }
-          .th-where { font-size: 10px; opacity: 0.7; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
+          .th-where { font-size: 11px; opacity: 0.7; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
           .th-tile.th-onpan .th-where { color: #ffe08a; opacity: 1; }
           .th-tile.th-accuse { outline: 2px solid #c96fb0; }
           #th-beam, .th-pan { transition: transform 0.9s cubic-bezier(0.25, 0.9, 0.35, 1.12); }

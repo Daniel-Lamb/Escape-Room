@@ -418,18 +418,19 @@ function openMosaicPuzzle(game) {
             ? `<g transform="translate(${x - 17},${y - 17})">${tessera(filled, 34, false)}</g>`
             : `<circle cx="${x}" cy="${y}" r="15" fill="#101a12" stroke="#5aa552" stroke-width="2" stroke-dasharray="3 3"/>`;
           return `<g data-sock="${k}" style="cursor:pointer">${inner}
-            <text x="${x}" y="${y + 30}" text-anchor="middle" font-size="8" fill="#9fb37e"
-              font-family="Palatino Linotype, Georgia, serif">${SOCKET_LABEL[k]}</text></g>`;
+            <text x="${x}" y="${y + 31}" text-anchor="middle" font-size="12" fill="#9fb37e"
+              font-family="Palatino Linotype, Georgia, serif">${SOCKET_LABEL[k].split(' · ')[1]}</text></g>`;
         };
         const svg = body.querySelector('#mo-svg');
         svg.innerHTML = `
           <path d="M300 40 Q120 -6 60 90 Q34 190 150 240 Q250 276 300 250 Z" fill="${rev ? '#2f6fb0' : '#2a3630'}" opacity="${rev ? 0.55 : 0.4}" stroke="#0e1c12" stroke-width="2"/>
           <path d="M340 40 Q520 -6 580 90 Q606 190 490 240 Q390 276 340 250 Z" fill="#2a3630" opacity="0.4" stroke="#0e1c12" stroke-width="2"/>
           <ellipse cx="320" cy="150" rx="14" ry="120" fill="#1c2417"/>
-          <text x="150" y="20" text-anchor="middle" font-size="10" fill="#9fb37e" font-family="Palatino Linotype, Georgia, serif" opacity="0.7">the key (mirror me)</text>
-          <text x="490" y="20" text-anchor="middle" font-size="10" fill="#9ce08a" font-family="Palatino Linotype, Georgia, serif" opacity="0.7">your wing</text>
+          <text x="150" y="20" text-anchor="middle" font-size="12" fill="#9fb37e" font-family="Palatino Linotype, Georgia, serif" opacity="0.7">the key (mirror me)</text>
+          <text x="490" y="20" text-anchor="middle" font-size="12" fill="#9ce08a" font-family="Palatino Linotype, Georgia, serif" opacity="0.7">your wing</text>
           ${SOCKETS.map(keyCell).join('')}
-          ${SOCKETS.map(socketCell).join('')}`;
+          ${SOCKETS.map(socketCell).join('')}
+          ${[['top', 78], ['mid', 154], ['low', 228]].map(([t, ty]) => `<text x="452" y="${ty}" font-size="12" fill="#9fb37e" opacity="0.85" font-family="Palatino Linotype, Georgia, serif">${t}</text>`).join('')}`;
         svg.querySelectorAll('[data-sock]').forEach(el => {
           el.addEventListener('click', () => onSocket(el.dataset.sock));
         });

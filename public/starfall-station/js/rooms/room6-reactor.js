@@ -61,7 +61,8 @@ export default {
     }
     return out;
   },
-  lintStates: [{ label: 'balanced', flags: { reactor_fuseOut: true, reactor_balanced: true } }],
+  lintStates: [{ label: 'fuse out', flags: { reactor_fuseOut: true } },
+    { label: 'balanced', flags: { reactor_fuseOut: true, reactor_balanced: true } }],
   title: 'Reactor Control',
   intro: 'The reactor hall is the station\'s one honest heartbeat — a torus of caged light, still faithfully turning fuel into tomorrow for a crew that left. The control pit is dark, though. Somebody pulled the emergency cells during the evac and left them racked like books nobody meant to return.',
 

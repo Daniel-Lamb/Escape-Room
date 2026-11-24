@@ -113,7 +113,8 @@ const SUN = { cx: 684, cy: 450 };
 export default {
   id: 'stillroom',
   solution: Object.keys(NEEDED).map(k => k[0].toUpperCase() + k.slice(1)),
-  lintStates: [{ label: 'lit', flags: { stillroom_hearthLit: true, stillroom_leftTaken: true, stillroom_meatTaken: true, stillroom_brewed: true }, inventory: ['drugged_meat'] }],
+  lintStates: [{ label: 'recipe whole', flags: { stillroom_leftTaken: true, stillroom_meatTaken: true }, inventory: ['full_recipe', 'meat_shank', 'bent_spoon'] },
+    { label: 'lit', flags: { stillroom_hearthLit: true, stillroom_leftTaken: true, stillroom_meatTaken: true, stillroom_brewed: true }, inventory: ['drugged_meat'] }],
   title: 'The Still-Room',
   intro: 'A vaulted cellar under the kitchens: cold hearth, copper kettle, and a wall of labeled jars — the physicker\'s garden, bottled. Rosemary, dust, and under it all a smell you know from the night they arrested you: valerian, like old boots.',
 

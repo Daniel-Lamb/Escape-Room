@@ -384,9 +384,9 @@ function openBorderPuzzle(game) {
           return `<g>
             <circle cx="${x}" cy="${y}" r="${isCrown ? 46 : 40}" fill="#2e3a2c" stroke="${markColor[MARK[g]]}" stroke-width="4"/>
             <circle cx="${x}" cy="${y}" r="${isCrown ? 38 : 32}" fill="${markColor[MARK[g]]}" opacity="0.18"/>
-            <text x="${x}" y="${y - 4}" text-anchor="middle" font-size="11" fill="#e4f0d0"
+            <text x="${x}" y="${y - 3}" text-anchor="middle" font-size="14.5" fill="#e4f0d0"
               font-family="Palatino Linotype, Georgia, serif" font-weight="700">${GROUND_NAME[g].split(' ').pop()}</text>
-            <text x="${x}" y="${y + 12}" text-anchor="middle" font-size="11.5" fill="${markColor[MARK[g]]}"
+            <text x="${x}" y="${y + 17}" text-anchor="middle" font-size="14.5" fill="${markColor[MARK[g]]}"
               font-family="Palatino Linotype, Georgia, serif" font-style="italic">${MARK[g]}</text>
           </g>`;
         };

@@ -170,6 +170,12 @@ Every puzzle modal opens on a `.puzzle-hero` band. Use the game's dedicated `art
 when it has one; otherwise cut it from the room's plate with
 `plateHero('art/<room>.webp', { x, y }, zoom)` (scene coordinates of the thing being worked).
 
+Controls inside the modal use the shared classes (`.dial`, `.dial-btn`, `.tile`,
+`.lever-track`, `.btn`, `.puzzle-input`) so they take the skin's `--chrome-*` metal; a
+game-specific control sets at least its own background, border and `font: inherit`.
+Text in a modal, including SVG text after the SVG is scaled to the modal, is 11px or more.
+`/shared/dev/modals.html?all=1` checks all of this for every modal of every game.
+
 ## Hotspot rules
 
 - **Later hotspots stack on top** (the engine appends them in order). Push a

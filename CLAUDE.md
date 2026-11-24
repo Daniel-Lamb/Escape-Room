@@ -58,10 +58,16 @@ Details are in [docs/ROOM_CONTRACT.md](docs/ROOM_CONTRACT.md) under "Placement".
   room and declared state with its hotspots. Add `&bare=1` to flag click-zones with no
   scene art under them and no `plate: '<feature>'` naming the painted feature they
   point at (`&bare=review` crops the plate under each one).
+- Modal gallery: `/shared/dev/modals.html?game=<game>&role=p1` opens every puzzle modal
+  the way a player reaches it (every hotspot, every declared state, each held item,
+  through dialogs) and renders it with the game's CSS. Each modal is checked for a
+  header band that loads, a title, styled controls with the metal chrome, no sideways
+  overflow and no text under 11px. `?all=1` checks every game and role in one table.
 
 Rooms describe extra states for these tools with `lintStates`
 (`[{ label, flags, inventory, journal }]`). Include the solved state, together with the items
-the player holds at that point. A room whose answer constant isn't one of the common
+the player holds at that point, and the state just before each puzzle opens (the dog asleep,
+the recipe whole), so the tools reach every modal. A room whose answer constant isn't one of the common
 names declares `solution` (a string or array, or a function of the role).
 
 ## ⭐ Active initiative: the visual & interaction upgrade

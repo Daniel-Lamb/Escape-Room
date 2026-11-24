@@ -72,7 +72,8 @@ function aligned(state) {
 export default {
   id: 'greathall',
   solution: Object.entries(pullsNeeded()).map(([h, n]) => `${WORDS[n]} pull${n === 1 ? '' : 's'} of ${h}`),
-  lintStates: [{ label: 'open', flags: { greathall_dogAsleep: true, greathall_oiled: true, greathall_tapestryOpen: true } }],
+  lintStates: [{ label: 'gears oiled', flags: { greathall_dogAsleep: true, greathall_oiled: true } },
+    { label: 'open', flags: { greathall_dogAsleep: true, greathall_oiled: true, greathall_tapestryOpen: true } }],
   title: 'The Great Hall',
   intro: 'The Great Hall of Vayne: twin hearths banked to embers, banners breathing in the draft, and windows tall as trees — through which the sky has turned the grey-blue of a blade. Near the dais, chained, something enormous lifts its head.',
 

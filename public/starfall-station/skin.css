@@ -126,7 +126,7 @@
 .seq-slot .seq-ord {
   position: absolute;
   top: 3px; left: 7px;
-  font-size: 10px;
+  font-size: 11px;
   color: #5d7080;
   font-family: Consolas, monospace;
 }
@@ -149,6 +149,7 @@
   margin: 12px auto 4px;
 }
 .seq-chip {
+  font: inherit;
   width: 120px;
   padding: 9px 6px;
   display: grid;

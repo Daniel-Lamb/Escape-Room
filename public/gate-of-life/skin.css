@@ -321,7 +321,7 @@
 .ordo-slot .ord {
   position: absolute;
   top: 3px; left: 7px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dim);
 }
 .ordo-slot.filled {
@@ -343,6 +343,7 @@
   margin: 12px auto 4px;
 }
 .ordo-chip {
+  font: inherit;
   width: 118px;
   padding: 9px 6px;
   display: grid;
